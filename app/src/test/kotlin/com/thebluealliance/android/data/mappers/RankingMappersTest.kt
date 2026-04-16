@@ -7,18 +7,20 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class RankingMappersTest {
-
     @Test
     fun `toSortOrderEntity persists both sort order and extra stats metadata`() {
-        val response = RankingResponseDto(
-            sortOrderInfo = listOf(
-                RankingSortOrderDto(name = "Ranking Score", precision = 2),
-                RankingSortOrderDto(name = "Auto", precision = 0),
-            ),
-            extraStatsInfo = listOf(
-                RankingSortOrderDto(name = "Cargo", precision = 1),
-            ),
-        )
+        val response =
+            RankingResponseDto(
+                sortOrderInfo =
+                    listOf(
+                        RankingSortOrderDto(name = "Ranking Score", precision = 2),
+                        RankingSortOrderDto(name = "Auto", precision = 0),
+                    ),
+                extraStatsInfo =
+                    listOf(
+                        RankingSortOrderDto(name = "Cargo", precision = 1),
+                    ),
+            )
 
         val entity = response.toSortOrderEntity("2026test")
 
@@ -29,13 +31,15 @@ class RankingMappersTest {
 
     @Test
     fun `getSortOrderInfo decodes metadata names and precision`() {
-        val response = RankingResponseDto(
-            sortOrderInfo = listOf(
-                RankingSortOrderDto(name = "Ranking Score", precision = 2),
-                RankingSortOrderDto(name = "Auto", precision = 0),
-            ),
-            extraStatsInfo = emptyList(),
-        )
+        val response =
+            RankingResponseDto(
+                sortOrderInfo =
+                    listOf(
+                        RankingSortOrderDto(name = "Ranking Score", precision = 2),
+                        RankingSortOrderDto(name = "Auto", precision = 0),
+                    ),
+                extraStatsInfo = emptyList(),
+            )
         val entity = response.toSortOrderEntity("2026test")
         assertEquals(true, entity.sortOrderInfo.startsWith("["))
 
@@ -50,11 +54,12 @@ class RankingMappersTest {
 
     @Test
     fun `getExtraStatsInfo returns empty list for malformed json`() {
-        val entity = EventRankingSortOrderEntity(
-            eventKey = "2026test",
-            sortOrderInfo = "[]",
-            extraStatsInfo = "not-json",
-        )
+        val entity =
+            EventRankingSortOrderEntity(
+                eventKey = "2026test",
+                sortOrderInfo = "[]",
+                extraStatsInfo = "not-json",
+            )
 
         val extraStats = entity.getExtraStatsInfo()
 

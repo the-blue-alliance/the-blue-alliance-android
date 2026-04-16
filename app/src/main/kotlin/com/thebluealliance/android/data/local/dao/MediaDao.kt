@@ -10,10 +10,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MediaDao {
     @Query("SELECT * FROM media WHERE teamKey = :teamKey AND year = :year")
-    fun observeByTeamYear(teamKey: String, year: Int): Flow<List<MediaEntity>>
+    fun observeByTeamYear(
+        teamKey: String,
+        year: Int,
+    ): Flow<List<MediaEntity>>
 
     @Query("DELETE FROM media WHERE teamKey = :teamKey AND year = :year")
-    suspend fun deleteByTeamYear(teamKey: String, year: Int)
+    suspend fun deleteByTeamYear(
+        teamKey: String,
+        year: Int,
+    )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(media: List<MediaEntity>)

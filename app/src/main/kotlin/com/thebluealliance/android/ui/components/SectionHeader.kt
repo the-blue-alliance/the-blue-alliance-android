@@ -28,7 +28,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 
-data class SectionHeaderInfo(val key: String, val label: String, val itemIndex: Int)
+data class SectionHeaderInfo(
+    val key: String,
+    val label: String,
+    val itemIndex: Int,
+)
 
 @Composable
 fun SectionHeader(
@@ -40,21 +44,22 @@ fun SectionHeader(
     var menuExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(TBAIndigo400)
-            .clickable(enabled = isStuck) { menuExpanded = true },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(TBAIndigo400)
+                .clickable(enabled = isStuck) { menuExpanded = true },
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
                 color = Color.White,
             )
             if (isStuck) {
@@ -77,12 +82,20 @@ fun SectionHeader(
                     text = {
                         Text(
                             text = info.label,
-                            fontWeight = if (info.label == label) FontWeight.Bold else FontWeight.Normal,
-                            color = if (info.label == label) {
-                                TBAIndigo400
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
+                            fontWeight =
+                                if (info.label ==
+                                    label
+                                ) {
+                                    FontWeight.Bold
+                                } else {
+                                    FontWeight.Normal
+                                },
+                            color =
+                                if (info.label == label) {
+                                    TBAIndigo400
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                },
                         )
                     },
                     onClick = {

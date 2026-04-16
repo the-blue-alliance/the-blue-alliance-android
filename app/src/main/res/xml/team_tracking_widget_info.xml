@@ -5,10 +5,7 @@
     android:description="@string/widget_description"
     android:minWidth="40dp"
     android:minHeight="40dp"
-    android:targetCellWidth="4"
-    android:targetCellHeight="2"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:initialLayout="@layout/widget_loading"
-    android:previewLayout="@layout/widget_preview"
     android:updatePeriodMillis="0" />

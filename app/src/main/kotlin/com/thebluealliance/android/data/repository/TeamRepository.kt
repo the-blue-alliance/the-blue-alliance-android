@@ -19,70 +19,86 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TeamRepository @Inject constructor(
-    private val api: TbaApi,
-    private val db: TBADatabase,
-    private val teamDao: TeamDao,
-    private val mediaDao: MediaDao,
-    private val eventTeamDao: EventTeamDao,
-    private val teamEventStatusDao: TeamEventStatusDao,
-) {
-    fun searchTeams(query: String): Flow<List<Team>> =
-        teamDao.search(query).map { list -> list.map { it.toDomain() } }
+class TeamRepository
+    @Inject
+    constructor(
+        private val api: TbaApi,
+        private val db: TBADatabase,
+        private val teamDao: TeamDao,
+        private val mediaDao: MediaDao,
+        private val eventTeamDao: EventTeamDao,
+        private val teamEventStatusDao: TeamEventStatusDao,
+    ) {
+        fun searchTeams(query: String): Flow<List<Team>> =
+            teamDao.search(query).map { list -> list.map { it.toDomain() } }
 
-    fun observeAllTeams(): Flow<List<Team>> =
-        teamDao.observeAll().map { list -> list.map { it.toDomain() } }
+        fun observeAllTeams(): Flow<List<Team>> =
+            teamDao.observeAll().map { list -> list.map { it.toDomain() } }
 
-    fun observeTeam(key: String): Flow<Team?> =
-        teamDao.observe(key).map { it?.toDomain() }
+        fun observeTeam(key: String): Flow<Team?> = teamDao.observe(key).map { it?.toDomain() }
 
-    fun observeTeams(keys: List<String>): Flow<List<Team>> =
-        teamDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
+        fun observeTeams(keys: List<String>): Flow<List<Team>> =
+            teamDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
 
-    fun observeTeamMedia(teamKey: String, year: Int): Flow<List<Media>> =
-        mediaDao.observeByTeamYear(teamKey, year).map { list -> list.map { it.toDomain() } }
+        fun observeTeamMedia(
+            teamKey: String,
+            year: Int,
+        ): Flow<List<Media>> =
+            mediaDao.observeByTeamYear(teamKey, year).map { list -> list.map { it.toDomain() } }
 
-    /** @return number of teams fetched */
-    suspend fun refreshTeamsPage(page: Int): Int {
-        val dtos = api.getTeams(page)
-        teamDao.insertAll(dtos.map { it.toEntity() })
-        return dtos.size
-    }
+        /** @return number of teams fetched */
+        suspend fun refreshTeamsPage(page: Int): Int {
+            val dtos = api.getTeams(page)
+            teamDao.insertAll(dtos.map { it.toEntity() })
+            return dtos.size
+        }
 
-    fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
-        eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
+        fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
+            eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
 
-    suspend fun refreshEventTeams(eventKey: String) {
-        try {
-            val dtos = api.getEventTeams(eventKey)
-            db.withTransaction {
-                teamDao.insertAll(dtos.map { it.toEntity() })
-                eventTeamDao.deleteByEvent(eventKey)
-                eventTeamDao.insertAll(dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) })
+        suspend fun refreshEventTeams(eventKey: String) {
+            try {
+                val dtos = api.getEventTeams(eventKey)
+                db.withTransaction {
+                    teamDao.insertAll(dtos.map { it.toEntity() })
+                    eventTeamDao.deleteByEvent(eventKey)
+                    eventTeamDao.insertAll(
+                        dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) },
+                    )
+                }
+            } catch (_: Exception) {
             }
-        } catch (_: Exception) { }
-    }
+        }
 
-    suspend fun refreshTeam(teamKey: String) {
-        val dto = api.getTeam(teamKey)
-        teamDao.insertAll(listOf(dto.toEntity()))
-    }
+        suspend fun refreshTeam(teamKey: String) {
+            val dto = api.getTeam(teamKey)
+            teamDao.insertAll(listOf(dto.toEntity()))
+        }
 
-    suspend fun refreshTeamMedia(teamKey: String, year: Int) {
-        val dtos = api.getTeamMedia(teamKey, year)
-        db.withTransaction {
-            mediaDao.deleteByTeamYear(teamKey, year)
-            mediaDao.insertAll(dtos.map { it.toEntity(teamKey, year) })
+        suspend fun refreshTeamMedia(
+            teamKey: String,
+            year: Int,
+        ) {
+            val dtos = api.getTeamMedia(teamKey, year)
+            db.withTransaction {
+                mediaDao.deleteByTeamYear(teamKey, year)
+                mediaDao.insertAll(dtos.map { it.toEntity(teamKey, year) })
+            }
+        }
+
+        fun observeTeamEventPitLocation(
+            teamKey: String,
+            eventKey: String,
+        ): Flow<String?> = teamEventStatusDao.observe(teamKey, eventKey).map { it?.pitLocation }
+
+        suspend fun refreshTeamEventPitLocation(
+            teamKey: String,
+            eventKey: String,
+        ) {
+            try {
+                val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
+                teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
+            } catch (_: Exception) {
+            }
         }
     }
-
-    fun observeTeamEventPitLocation(teamKey: String, eventKey: String): Flow<String?> =
-        teamEventStatusDao.observe(teamKey, eventKey).map { it?.pitLocation }
-
-    suspend fun refreshTeamEventPitLocation(teamKey: String, eventKey: String) {
-        try {
-            val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
-            teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
-        } catch (_: Exception) { }
-    }
-}

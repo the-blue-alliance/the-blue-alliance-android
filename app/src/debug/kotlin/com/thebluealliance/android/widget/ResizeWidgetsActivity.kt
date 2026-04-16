@@ -2,6 +2,7 @@ package com.thebluealliance.android.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.SizeF
@@ -24,18 +25,18 @@ import kotlinx.coroutines.launch
  * Supported sizes: 1x1, 2x1, 2x2, 4x1, 4x2
  */
 class ResizeWidgetsActivity : ComponentActivity() {
-
     companion object {
         private const val TAG = "ResizeWidgetsActivity"
 
         // Size tiers in dp matching TeamTrackingWidget.Companion
-        private val SIZE_TIERS = listOf(
-            "4x2" to Pair(250, 110),
-            "4x1" to Pair(250, 60),
-            "2x2" to Pair(110, 110),
-            "2x1" to Pair(110, 60),
-            "1x1" to Pair(60, 60),
-        )
+        private val SIZE_TIERS =
+            listOf(
+                "4x2" to Pair(250, 110),
+                "4x1" to Pair(250, 60),
+                "2x2" to Pair(110, 110),
+                "2x1" to Pair(110, 60),
+                "1x1" to Pair(60, 60),
+            )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,17 +94,20 @@ class ResizeWidgetsActivity : ComponentActivity() {
         label: String,
     ) {
         try {
-            val options = Bundle().apply {
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
-                putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
-                // Android 12+ uses OPTION_APPWIDGET_SIZES for Glance SizeMode.Responsive
-                putParcelableArrayList(
-                    AppWidgetManager.OPTION_APPWIDGET_SIZES,
-                    arrayListOf(SizeF(widthDp.toFloat(), heightDp.toFloat())),
-                )
-            }
+            val options =
+                Bundle().apply {
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, widthDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, widthDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, heightDp)
+                    putInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, heightDp)
+                    // Android 12+ uses OPTION_APPWIDGET_SIZES for Glance SizeMode.Responsive
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        putParcelableArrayList(
+                            AppWidgetManager.OPTION_APPWIDGET_SIZES,
+                            arrayListOf(SizeF(widthDp.toFloat(), heightDp.toFloat())),
+                        )
+                    }
+                }
             awm.updateAppWidgetOptions(appWidgetId, options)
 
             val glanceId = manager.getGlanceIdBy(appWidgetId)

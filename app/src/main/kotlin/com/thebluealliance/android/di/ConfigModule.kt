@@ -18,19 +18,19 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 @Module
 @InstallIn(SingletonComponent::class)
 object ConfigModule {
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        @ApplicationContext context: Context,
+    ): SharedPreferences = context.getSharedPreferences("tba_config", Context.MODE_PRIVATE)
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
-        context.getSharedPreferences("tba_config", Context.MODE_PRIVATE)
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
     @Provides
     @Singleton
-    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig =
-        FirebaseRemoteConfig.getInstance()
-
-    @Provides
-    @Singleton
-    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
-        context.dataStore
+    fun provideDataStore(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> = context.dataStore
 }

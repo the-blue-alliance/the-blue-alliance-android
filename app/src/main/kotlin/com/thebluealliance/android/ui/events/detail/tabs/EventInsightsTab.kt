@@ -34,36 +34,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.util.openUrl
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.int
-import com.thebluealliance.android.util.openUrl
 
 sealed class StatType {
     object StandardOPRs : StatType()
+
     object QualInsights : StatType()
+
     object PlayoffInsights : StatType()
-    data class COPR(val statName: String) : StatType()
+
+    data class COPR(
+        val statName: String,
+    ) : StatType()
 }
 
 enum class OprSortColumn {
-    TEAM, OPR, DPR, CCWM
+    TEAM,
+    OPR,
+    DPR,
+    CCWM,
 }
 
 enum class CoprSortColumn {
-    TEAM, VALUE
+    TEAM,
+    VALUE,
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -95,19 +104,21 @@ fun EventInsightsTab(
     var coprSortColumn by remember { mutableStateOf(CoprSortColumn.VALUE) }
     var coprSortAscending by remember { mutableStateOf(false) }
     var showStatSelector by remember { mutableStateOf(false) }
-    val defaultStatType = when {
-        hasOprData -> StatType.StandardOPRs
-        hasInsightsData && insights.qual != null -> StatType.QualInsights
-        hasInsightsData && insights.playoff != null -> StatType.PlayoffInsights
-        hasCoprData -> StatType.COPR(coprs.coprs.keys.first())
-        else -> StatType.StandardOPRs
-    }
+    val defaultStatType =
+        when {
+            hasOprData -> StatType.StandardOPRs
+            hasInsightsData && insights.qual != null -> StatType.QualInsights
+            hasInsightsData && insights.playoff != null -> StatType.PlayoffInsights
+            hasCoprData -> StatType.COPR(coprs.coprs.keys.first())
+            else -> StatType.StandardOPRs
+        }
     var selectedStatType by remember { mutableStateOf(defaultStatType) }
 
     // Get available COPR stat names
-    val coprStatNames = remember(coprs) {
-        coprs?.coprs?.keys?.sorted() ?: emptyList()
-    }
+    val coprStatNames =
+        remember(coprs) {
+            coprs?.coprs?.keys?.sorted() ?: emptyList()
+        }
 
     if (showStatSelector) {
         StatSelectorDialog(
@@ -121,19 +132,20 @@ fun EventInsightsTab(
                     coprSortColumn = CoprSortColumn.VALUE
                     coprSortAscending = false
                 }
-            }
+            },
         )
     }
 
     val layoutDirection = LocalLayoutDirection.current
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = innerPadding.calculateTopPadding(),
-                start = innerPadding.calculateStartPadding(layoutDirection),
-                end = innerPadding.calculateEndPadding(layoutDirection)
-            )
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    start = innerPadding.calculateStartPadding(layoutDirection),
+                    end = innerPadding.calculateEndPadding(layoutDirection),
+                ),
     ) {
         when (val statType = selectedStatType) {
             is StatType.StandardOPRs -> {
@@ -202,57 +214,60 @@ private fun StatSelectorDialog(
             LazyColumn {
                 item {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(StatType.StandardOPRs) }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelect(StatType.StandardOPRs) }
+                                .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = currentSelection is StatType.StandardOPRs,
-                            onClick = { onSelect(StatType.StandardOPRs) }
+                            onClick = { onSelect(StatType.StandardOPRs) },
                         )
                         Text(
                             text = "OPRs (OPR / DPR / CCWM)",
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }
 
                 item {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(StatType.QualInsights) }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelect(StatType.QualInsights) }
+                                .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = currentSelection is StatType.QualInsights,
-                            onClick = { onSelect(StatType.QualInsights) }
+                            onClick = { onSelect(StatType.QualInsights) },
                         )
                         Text(
                             text = "Qual Insights",
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }
 
                 item {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(StatType.PlayoffInsights) }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .clickable { onSelect(StatType.PlayoffInsights) }
+                                .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = currentSelection is StatType.PlayoffInsights,
-                            onClick = { onSelect(StatType.PlayoffInsights) }
+                            onClick = { onSelect(StatType.PlayoffInsights) },
                         )
                         Text(
                             text = "Playoff Insights",
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 8.dp),
                         )
                     }
                 }
@@ -263,25 +278,28 @@ private fun StatSelectorDialog(
                         Text(
                             text = "Component OPRs",
                             style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                            modifier = Modifier.padding(vertical = 8.dp),
                         )
                     }
 
                     items(availableCoprStats) { statName ->
                         Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(StatType.COPR(statName)) }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onSelect(StatType.COPR(statName)) }
+                                    .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             RadioButton(
-                                selected = currentSelection is StatType.COPR && currentSelection.statName == statName,
-                                onClick = { onSelect(StatType.COPR(statName)) }
+                                selected =
+                                    currentSelection is StatType.COPR &&
+                                        currentSelection.statName == statName,
+                                onClick = { onSelect(StatType.COPR(statName)) },
                             )
                             Text(
                                 text = statName,
-                                modifier = Modifier.padding(start = 8.dp)
+                                modifier = Modifier.padding(start = 8.dp),
                             )
                         }
                     }
@@ -305,31 +323,33 @@ private fun InsightsView(
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
-    val insightHeader = when (title) {
-        "Qual Insights" -> "Qual Insight"
-        "Playoff Insights" -> "Playoff Insight"
-        else -> "Insight"
-    }
+    val insightHeader =
+        when (title) {
+            "Qual Insights" -> "Qual Insight"
+            "Playoff Insights" -> "Playoff Insight"
+            else -> "Insight"
+        }
 
     if (insightsData == null) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Text("No $title data available")
         }
         return
     }
 
-    val insightsList = remember(insightsData) {
-        try {
-            val jsonElement = Json.parseToJsonElement(insightsData)
-            val jsonObject = jsonElement as? JsonObject ?: return@remember emptyList()
-            parseInsightsData(jsonObject)
-        } catch (_: Exception) {
-            emptyList()
+    val insightsList =
+        remember(insightsData) {
+            try {
+                val jsonElement = Json.parseToJsonElement(insightsData)
+                val jsonObject = jsonElement as? JsonObject ?: return@remember emptyList()
+                parseInsightsData(jsonObject)
+            } catch (_: Exception) {
+                emptyList()
+            }
         }
-    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -337,34 +357,33 @@ private fun InsightsView(
     ) {
         stickyHeader {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF5C6BC0))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(TBAIndigo400)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = insightHeader,
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.weight(1.5f)
+                    modifier = Modifier.weight(1.5f),
                 )
                 Text(
                     text = "Value",
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 IconButton(
                     onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier.padding(0.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
@@ -373,20 +392,21 @@ private fun InsightsView(
         items(insightsList) { insight ->
             Column {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = insight.name,
                         modifier = Modifier.weight(1.5f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = insight.value,
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Box(modifier = Modifier.weight(0.4f))
                 }
@@ -399,15 +419,19 @@ private fun InsightsView(
                 text = "Learn more about OPR",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable { onOpenOprLink() }
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .clickable { onOpenOprLink() }
+                        .padding(16.dp),
             )
         }
     }
 }
 
-data class InsightItem(val name: String, val value: String)
+data class InsightItem(
+    val name: String,
+    val value: String,
+)
 
 private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
     val items = mutableListOf<InsightItem>()
@@ -422,7 +446,12 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
                     val success = (value[0] as? JsonPrimitive)?.int ?: 0
                     val opportunities = (value[1] as? JsonPrimitive)?.int ?: 0
                     val percentage = (value[2] as? JsonPrimitive)?.doubleOrNull ?: 0.0
-                    items.add(InsightItem(formattedName, "$success / $opportunities (%.1f%%)".format(percentage)))
+                    items.add(
+                        InsightItem(
+                            formattedName,
+                            "$success / $opportunities (%.1f%%)".format(percentage),
+                        ),
+                    )
                 } else if (key == "high_score" && value.size >= 3) {
                     // Format as: score (match)
                     val score = (value[0] as? JsonPrimitive)?.int ?: 0
@@ -433,22 +462,40 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
                     val total = (value[0] as? JsonPrimitive)?.doubleOrNull ?: 0.0
                     val allianceAvg = (value[1] as? JsonPrimitive)?.doubleOrNull ?: 0.0
                     val teamAvg = (value[2] as? JsonPrimitive)?.doubleOrNull ?: 0.0
-                    val totalStr = if (total % 1.0 == 0.0) total.toInt().toString() else "%.2f".format(total)
-                    items.add(InsightItem(formattedName, "$totalStr total / ${"%.2f".format(allianceAvg)} alliance / ${"%.2f".format(teamAvg)} team"))
+                    val totalStr =
+                        if (total % 1.0 ==
+                            0.0
+                        ) {
+                            total.toInt().toString()
+                        } else {
+                            "%.2f".format(total)
+                        }
+                    items.add(
+                        InsightItem(
+                            formattedName,
+                            "$totalStr total / ${"%.2f".format(
+                                allianceAvg,
+                            )} alliance / ${"%.2f".format(teamAvg)} team",
+                        ),
+                    )
                 } else {
                     // Generic array formatting
                     items.add(InsightItem(formattedName, value.toString()))
                 }
             }
             is JsonPrimitive -> {
-                val formattedValue = when {
-                    value.isString -> value.content
-                    else -> {
-                        val num = value.doubleOrNull ?: 0.0
-                        if (num % 1.0 == 0.0) num.toInt().toString()
-                        else "%.2f".format(num)
+                val formattedValue =
+                    when {
+                        value.isString -> value.content
+                        else -> {
+                            val num = value.doubleOrNull ?: 0.0
+                            if (num % 1.0 == 0.0) {
+                                num.toInt().toString()
+                            } else {
+                                "%.2f".format(num)
+                            }
+                        }
                     }
-                }
                 items.add(InsightItem(formattedName, formattedValue))
             }
             else -> {
@@ -460,14 +507,13 @@ private fun parseInsightsData(jsonObject: JsonObject): List<InsightItem> {
     return items
 }
 
-private fun formatStatName(key: String): String {
-    return key
+private fun formatStatName(key: String): String =
+    key
         .replace("_", " ")
         .split(" ")
         .joinToString(" ") { word ->
             word.replaceFirstChar { it.uppercase() }
         }
-}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -480,23 +526,29 @@ private fun StandardOPRsView(
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
-    val teamKeys = oprs.oprs.keys.union(oprs.dprs.keys).union(oprs.ccwms.keys).toList()
+    val teamKeys =
+        oprs.oprs.keys
+            .union(oprs.dprs.keys)
+            .union(oprs.ccwms.keys)
+            .toList()
 
-    val sortedTeams = remember(oprs, sortColumn, sortAscending) {
-        teamKeys.sortedWith { a, b ->
-            val result = when (sortColumn) {
-                OprSortColumn.TEAM -> {
-                    val teamA = a.substring(3).toIntOrNull() ?: 0
-                    val teamB = b.substring(3).toIntOrNull() ?: 0
-                    teamA.compareTo(teamB)
-                }
-                OprSortColumn.OPR -> (oprs.oprs[a] ?: 0.0).compareTo(oprs.oprs[b] ?: 0.0)
-                OprSortColumn.DPR -> (oprs.dprs[a] ?: 0.0).compareTo(oprs.dprs[b] ?: 0.0)
-                OprSortColumn.CCWM -> (oprs.ccwms[a] ?: 0.0).compareTo(oprs.ccwms[b] ?: 0.0)
+    val sortedTeams =
+        remember(oprs, sortColumn, sortAscending) {
+            teamKeys.sortedWith { a, b ->
+                val result =
+                    when (sortColumn) {
+                        OprSortColumn.TEAM -> {
+                            val teamA = a.substring(3).toIntOrNull() ?: 0
+                            val teamB = b.substring(3).toIntOrNull() ?: 0
+                            teamA.compareTo(teamB)
+                        }
+                        OprSortColumn.OPR -> (oprs.oprs[a] ?: 0.0).compareTo(oprs.oprs[b] ?: 0.0)
+                        OprSortColumn.DPR -> (oprs.dprs[a] ?: 0.0).compareTo(oprs.dprs[b] ?: 0.0)
+                        OprSortColumn.CCWM -> (oprs.ccwms[a] ?: 0.0).compareTo(oprs.ccwms[b] ?: 0.0)
+                    }
+                if (sortAscending) result else -result
             }
-            if (sortAscending) result else -result
         }
-    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -504,11 +556,12 @@ private fun StandardOPRsView(
     ) {
         stickyHeader {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF5C6BC0))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(TBAIndigo400)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 OprHeaderItem(
                     text = "Team",
@@ -522,7 +575,7 @@ private fun StandardOPRsView(
                         } else {
                             onSortChange(OprSortColumn.TEAM, true)
                         }
-                    }
+                    },
                 )
                 OprHeaderItem(
                     text = "OPR",
@@ -536,7 +589,7 @@ private fun StandardOPRsView(
                         } else {
                             onSortChange(OprSortColumn.OPR, false)
                         }
-                    }
+                    },
                 )
                 OprHeaderItem(
                     text = "DPR",
@@ -550,7 +603,7 @@ private fun StandardOPRsView(
                         } else {
                             onSortChange(OprSortColumn.DPR, false)
                         }
-                    }
+                    },
                 )
                 OprHeaderItem(
                     text = "CCWM",
@@ -564,16 +617,16 @@ private fun StandardOPRsView(
                         } else {
                             onSortChange(OprSortColumn.CCWM, false)
                         }
-                    }
+                    },
                 )
                 IconButton(
                     onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier.padding(0.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
@@ -582,30 +635,31 @@ private fun StandardOPRsView(
         items(sortedTeams) { teamKey ->
             Column {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = teamKey.substring(3),
                         modifier = Modifier.weight(1.2f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.oprs[teamKey] ?: 0.0),
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.dprs[teamKey] ?: 0.0),
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.ccwms[teamKey] ?: 0.0),
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Box(modifier = Modifier.weight(0.4f))
                 }
@@ -618,9 +672,10 @@ private fun StandardOPRsView(
                 text = "Learn more about OPR",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable { onOpenOprLink() }
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .clickable { onOpenOprLink() }
+                        .padding(16.dp),
             )
         }
     }
@@ -640,19 +695,21 @@ private fun COPRView(
 ) {
     val teamKeys = coprData.keys.toList()
 
-    val sortedTeams = remember(coprData, sortColumn, sortAscending) {
-        teamKeys.sortedWith { a, b ->
-            val result = when (sortColumn) {
-                CoprSortColumn.TEAM -> {
-                    val teamA = a.substring(3).toIntOrNull() ?: 0
-                    val teamB = b.substring(3).toIntOrNull() ?: 0
-                    teamA.compareTo(teamB)
-                }
-                CoprSortColumn.VALUE -> (coprData[a] ?: 0.0).compareTo(coprData[b] ?: 0.0)
+    val sortedTeams =
+        remember(coprData, sortColumn, sortAscending) {
+            teamKeys.sortedWith { a, b ->
+                val result =
+                    when (sortColumn) {
+                        CoprSortColumn.TEAM -> {
+                            val teamA = a.substring(3).toIntOrNull() ?: 0
+                            val teamB = b.substring(3).toIntOrNull() ?: 0
+                            teamA.compareTo(teamB)
+                        }
+                        CoprSortColumn.VALUE -> (coprData[a] ?: 0.0).compareTo(coprData[b] ?: 0.0)
+                    }
+                if (sortAscending) result else -result
             }
-            if (sortAscending) result else -result
         }
-    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -660,11 +717,12 @@ private fun COPRView(
     ) {
         stickyHeader {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF5C6BC0))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(TBAIndigo400)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 CoprHeaderItem(
                     text = "Team",
@@ -678,7 +736,7 @@ private fun COPRView(
                         } else {
                             onSortChange(CoprSortColumn.TEAM, true)
                         }
-                    }
+                    },
                 )
                 CoprHeaderItem(
                     text = statName,
@@ -692,16 +750,16 @@ private fun COPRView(
                         } else {
                             onSortChange(CoprSortColumn.VALUE, false)
                         }
-                    }
+                    },
                 )
                 IconButton(
                     onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp)
+                    modifier = Modifier.padding(0.dp),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
@@ -710,20 +768,21 @@ private fun COPRView(
         items(sortedTeams) { teamKey ->
             Column {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = teamKey.substring(3),
                         modifier = Modifier.weight(1.2f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(coprData[teamKey] ?: 0.0),
                         modifier = Modifier.weight(2f),
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
                     )
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -735,9 +794,10 @@ private fun COPRView(
                 text = "Learn more about OPR",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .clickable { onOpenOprLink() }
-                    .padding(16.dp),
+                modifier =
+                    Modifier
+                        .clickable { onOpenOprLink() }
+                        .padding(16.dp),
             )
         }
     }
@@ -750,23 +810,24 @@ private fun OprHeaderItem(
     sortColumn: OprSortColumn,
     currentSort: OprSortColumn,
     ascending: Boolean,
-    onSortClick: () -> Unit
+    onSortClick: () -> Unit,
 ) {
     Row(
         modifier = modifier.clickable { onSortClick() },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
         )
         if (currentSort == sortColumn) {
             Icon(
-                imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White
+                imageVector =
+                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                contentDescription =
+                    if (ascending) "Sorted Ascending" else "Sorted Descending",
+                tint = Color.White,
             )
         }
     }
@@ -779,23 +840,24 @@ private fun CoprHeaderItem(
     sortColumn: CoprSortColumn,
     currentSort: CoprSortColumn,
     ascending: Boolean,
-    onSortClick: () -> Unit
+    onSortClick: () -> Unit,
 ) {
     Row(
         modifier = modifier.clickable { onSortClick() },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
         )
         if (currentSort == sortColumn) {
             Icon(
-                imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White
+                imageVector =
+                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                contentDescription =
+                    if (ascending) "Sorted Ascending" else "Sorted Descending",
+                tint = Color.White,
             )
         }
     }

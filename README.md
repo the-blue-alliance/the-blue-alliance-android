@@ -4,6 +4,10 @@ An Android app for accessing information about the [FIRST Robotics Competition](
 
 Available on the [Google Play Store](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient&hl=en).
 
+## Alpha Testing
+
+We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
+
 ## Get Involved
 
 The Blue Alliance is built by volunteers. We'd love your help!
@@ -12,83 +16,97 @@ The Blue Alliance is built by volunteers. We'd love your help!
 - **Report bugs or request features** on the [issue tracker](https://github.com/the-blue-alliance/the-blue-alliance-android/issues)
 - **Contribute code** by forking the repo, making changes on a branch, and opening a pull request
 
-## Features
-
-- **Events** -- Browse competitions by year and week, view event details including teams, match results, rankings, alliances, and awards
-- **Teams** -- Browse teams, view team details with year-by-year event participation and media
-- **Districts** -- Browse district listings and rankings
-- **Search** -- Find teams and events across all of TBA
-- **myTBA** -- Sign in with Google to save favorite teams and events, and set up push notifications for match scores, upcoming matches, schedule changes, and more
-- **Deep linking** -- Open thebluealliance.com links directly in the app
-- **Push notifications** -- Receive alerts for match scores, upcoming matches, event updates, and more via Firebase Cloud Messaging
-
 ## Tech Stack
 
-- **UI:** Jetpack Compose with Material 3
-- **Architecture:** MVVM with Hilt dependency injection
-- **Data:** Room database with Retrofit networking, repository pattern bridging API and local storage
-- **Auth:** Firebase Auth with Google Sign-In
-- **Messaging:** Firebase Cloud Messaging with WorkManager retry
-- **Navigation:** Type-safe Compose Navigation
-- **Language:** Kotlin
+Kotlin, Jetpack Compose (Material 3), Hilt, Room, Retrofit, Firebase.
 
-## Development Setup
+## First-time setup
 
-### Prerequisites
+Fresh clone to running app in three steps.
 
-1. Install [Android Studio](https://developer.android.com/studio) and a JDK (17+).
-2. Install [Docker](https://www.docker.com/products/docker-desktop/) (includes Docker Compose).
-3. Fork and clone this repository.
+### 1. Prerequisites
 
-### Local backend server
+- **[Android Studio](https://developer.android.com/studio)** — on first open of the project, Gradle sync installs the required SDK components for you.
+- **JDK 17** — bundled with Android Studio (`jbr/`). If you build from the CLI without Android Studio, install one separately (`brew install openjdk@17` on macOS).
 
-The app's debug build connects to a local TBA server at `http://10.0.2.2:8080/` (the emulator's alias for `localhost`). Use Docker Compose to run the backend locally:
+### 2. Clone and stub `google-services.json`
 
 ```bash
-# Clone the backend repo (if you haven't already)
-git clone https://github.com/the-blue-alliance/the-blue-alliance.git
-
-# Start all services (TBA server, Datastore emulator, Firebase emulator)
-cd the-blue-alliance
-docker compose up
+git clone https://github.com/the-blue-alliance/the-blue-alliance-android.git
+cd the-blue-alliance-android
+cp  app/src/debug/google-services.json.example  app/src/debug/google-services.json
+cp wear/src/debug/google-services.json.example wear/src/debug/google-services.json
 ```
 
-This starts:
-- **TBA server** at `http://localhost:8080` -- the API the Android app talks to
-- **Datastore emulator** at `http://localhost:8089`
-- **Firebase emulator** at `http://localhost:4000` (admin UI)
+You don't need a real Firebase project or a `local.properties` file for the first build — the stubs are enough, and Gradle falls back to sane defaults for everything else.
 
-To import data into your local server, visit `http://localhost:8080/local/bootstrap` in a browser.
+### 3. Open in Android Studio and run
 
-Running the local backend is the easiest way to test logged-in features like myTBA favorites and notifications, since the Docker Compose setup includes a Firebase Auth emulator that handles sign-in without any additional configuration.
+Open the cloned directory in Android Studio. It will download Gradle, the Android SDK platform, and build tools on first sync (takes a few minutes). Then **Tools → Device Manager → Create Device** to make an emulator (any recent Phone AVD), select it in the run target dropdown, and hit the green ▶ button.
 
-> **Tip:** If you'd rather skip running the backend locally, you can point the app at the production API by adding this to `local.properties`:
-> ```
-> tba.url.debug=https://www.thebluealliance.com/
-> tba.api.key.debug=YOUR_KEY_HERE
-> ```
-> Get an API key from the [TBA Account page](https://www.thebluealliance.com/account).
+The app will launch with empty lists because no data source is connected yet — see [Connecting to data](#connecting-to-data) below.
 
-### Firebase project (optional)
+## Connecting to data
 
-A Firebase project is **not required** if you're using the local Docker Compose backend -- the Firebase Auth emulator handles authentication automatically.
+After the first build succeeds, pick one of these to see real content.
 
-If you want to test against the production API with real Google Sign-In or push notifications, set up a Firebase project:
+### Option A: Point at the production API (simplest)
 
-1. Create a project in the [Firebase console](https://console.firebase.google.com/) (e.g. `yourname-tba-dev`).
+Copy the template and edit:
+
+```bash
+cp local.properties.example local.properties
+```
+
+Then uncomment and fill in:
+
+```properties
+tba.url.debug=https://www.thebluealliance.com/
+tba.api.key.debug=YOUR_KEY_HERE
+```
+
+Get an API key from the [TBA Account page](https://www.thebluealliance.com/account). Rebuild and you'll see real events, teams, and matches.
+
+### Option B: Run the local backend (for backend development)
+
+The Android debug build defaults to `http://10.0.2.2:8080/` (the emulator's alias for the host's `localhost`), which is where the TBA server runs inside its Docker Compose stack. Follow the setup instructions in the [TBA backend repository](https://github.com/the-blue-alliance/the-blue-alliance) to start it; once Docker Compose is running, rebuild the Android app and you'll see local data.
+
+The Docker Compose stack includes a Firebase Auth emulator, and debug builds of the Android app are wired to it in `AuthModule` — so Google Sign-In works against the local backend with the stub `google-services.json` alone. No real Firebase project needed.
+
+## Firebase project (optional)
+
+Only needed if you want to test Google Sign-In or push notifications **against production**. For local development the stub `google-services.json` is enough.
+
+To set up a real project:
+
+1. Create a project in the [Firebase console](https://console.firebase.google.com/).
 2. Add an Android app with package name `com.thebluealliance.androidclient.development`.
 3. Add your debug signing SHA-1 fingerprint ([instructions](https://developers.google.com/android/guides/client-auth)).
-4. Download `google-services.json` and place it in `app/src/debug/`.
+4. Download the real `google-services.json` and overwrite `app/src/debug/google-services.json`.
 
-### Build and run
+## Code quality
+
+The project enforces formatting and Android Lint in CI via [`ci-lint.yaml`](.github/workflows/ci-lint.yaml).
+
+### Formatting (ktlint)
 
 ```bash
-./gradlew :app:installDebug
+./gradlew ktlintCheck    # fail on any violation
+./gradlew ktlintFormat   # auto-fix what it can
 ```
 
-## Alpha Testing
+Install the pre-commit hook once to catch formatting issues before they reach CI:
 
-We publish pre-release builds to a closed alpha track on Google Play. To join, request access to the [thebluealliance-android-alpha](https://groups.google.com/g/thebluealliance-android-alpha) Google Group, then opt in to the alpha on the [Play Store listing](https://play.google.com/store/apps/details?id=com.thebluealliance.androidclient).
+```bash
+./gradlew addKtlintCheckGitPreCommitHook
+```
+
+### Android Lint
+
+```bash
+./gradlew :app:lintDebug
+./gradlew :wear:lintDebug
+```
 
 ## Testing
 

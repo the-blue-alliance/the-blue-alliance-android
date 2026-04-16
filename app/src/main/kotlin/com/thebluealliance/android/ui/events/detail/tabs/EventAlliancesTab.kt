@@ -16,9 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.displayTitle
@@ -35,7 +34,7 @@ fun EventAlliancesTab(
 ) {
     if (alliances == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
@@ -52,9 +51,10 @@ fun EventAlliancesTab(
     ) {
         items(alliances, key = { "${it.eventKey}_${it.number}" }) { alliance ->
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -64,7 +64,6 @@ fun EventAlliancesTab(
                     Text(
                         text = alliance.displayTitle,
                         style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
                     )
                     alliance.playoffSummary?.let { summary ->
                         Surface(
@@ -86,7 +85,9 @@ fun EventAlliancesTab(
                 ) {
                     alliance.picks.forEachIndexed { index, teamKey ->
                         Text(
-                            text = teamKey.removePrefix("frc") + if (index < alliance.picks.lastIndex) "," else "",
+                            text =
+                                teamKey.removePrefix("frc") +
+                                    if (index < alliance.picks.lastIndex) "," else "",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.clickable { onTeamClick(teamKey) },

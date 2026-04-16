@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +24,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -55,23 +58,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
+import coil3.compose.AsyncImage
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.DisposableEffect
 import com.thebluealliance.android.ui.components.TBATopAppBar
-import com.thebluealliance.android.ui.theme.TBABlue
+import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 private val TABS = listOf("Favorites", "Notifications")
 
@@ -155,10 +153,11 @@ fun MyTBAScreen(
     ) { innerPadding ->
         if (!uiState.isSignedIn) {
             Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                modifier =
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
             ) {
                 SignInPrompt(onSignIn = onSignIn)
             }
@@ -166,25 +165,28 @@ fun MyTBAScreen(
         }
 
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val personIcon = rememberVectorPainter(Icons.Default.Person)
                 AsyncImage(
                     model = uiState.userPhotoUrl,
                     contentDescription = "Profile photo",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
                     placeholder = personIcon,
                     error = personIcon,
                     fallback = personIcon,
@@ -228,7 +230,7 @@ fun MyTBAScreen(
             PrimaryScrollableTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 edgePadding = 0.dp,
-                containerColor = Color(0xFF5C6BC0),
+                containerColor = TBAIndigo400,
                 contentColor = Color.White,
                 divider = {
                     HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
@@ -237,19 +239,25 @@ fun MyTBAScreen(
                     TabRowDefaults.SecondaryIndicator(
                         modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
                         height = 3.dp,
-                        color = Color.White
+                        color = Color.White,
                     )
-                }
+                },
             ) {
                 TABS.forEachIndexed { index, title ->
                     Tab(
                         selected = pagerState.currentPage == index,
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(
+                                    index,
+                                )
+                            }
+                        },
                         text = {
                             Text(
                                 text = title,
+                                style = MaterialTheme.typography.labelLarge,
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold,
                             )
                         },
                     )
@@ -266,21 +274,27 @@ fun MyTBAScreen(
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     when (page) {
-                        MyTBATabs.FAVORITES -> FavoritesTab(
-                            favorites = uiState.favorites,
-                            onNavigateToTeam = onNavigateToTeam,
-                            onNavigateToEvent = onNavigateToEvent,
-                            listState = favoritesListState,
-                            canPinShortcuts = uiState.canPinShortcuts,
-                            onAddShortcut = viewModel::requestPinShortcut,
-                        )
+                        MyTBATabs.FAVORITES ->
+                            FavoritesTab(
+                                favorites = uiState.favorites,
+                                onNavigateToTeam = onNavigateToTeam,
+                                onNavigateToEvent = onNavigateToEvent,
+                                listState = favoritesListState,
+                                canPinShortcuts = uiState.canPinShortcuts,
+                                onAddShortcut = viewModel::requestPinShortcut,
+                                onRemoveFavorite = viewModel::removeFavorite,
+                            )
 
-                        MyTBATabs.NOTIFICATIONS -> NotificationsTab(
-                            uiState.subscriptions,
-                            onNavigateToTeam,
-                            onNavigateToEvent,
-                            notificationsListState
-                        )
+                        MyTBATabs.NOTIFICATIONS ->
+                            NotificationsTab(
+                                subscriptions = uiState.subscriptions,
+                                onNavigateToTeam = onNavigateToTeam,
+                                onNavigateToEvent = onNavigateToEvent,
+                                listState = notificationsListState,
+                                onRemoveSubscription = { sub ->
+                                    viewModel.removeSubscription(sub.modelKey, sub.modelType)
+                                },
+                            )
                     }
                 }
             }
@@ -322,6 +336,7 @@ private fun FavoritesTab(
     listState: LazyListState,
     canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
+    onRemoveFavorite: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -339,8 +354,9 @@ private fun FavoritesTab(
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                     }
                 },
-                showMenu = canPinShortcuts,
+                canPinShortcuts = canPinShortcuts,
                 onAddShortcut = { onAddShortcut(favorite) },
+                onRemove = { onRemoveFavorite(favorite) },
             )
         }
     }
@@ -350,27 +366,25 @@ private fun FavoritesTab(
 private fun FavoriteItem(
     favorite: Favorite,
     onClick: () -> Unit,
-    showMenu: Boolean,
+    canPinShortcuts: Boolean,
     onAddShortcut: () -> Unit,
+    onRemove: () -> Unit,
 ) {
-    val typeLabel = when (favorite.modelType) {
-        ModelType.EVENT -> "Event"
-        ModelType.TEAM -> "Team"
-        ModelType.MATCH -> "Match"
-        else -> "Other"
-    }
+    val typeLabel =
+        when (favorite.modelType) {
+            ModelType.EVENT -> "Event"
+            ModelType.TEAM -> "Team"
+            ModelType.MATCH -> "Match"
+            else -> "Other"
+        }
     var menuExpanded by remember { mutableStateOf(false) }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(
-                start = 16.dp,
-                top = if (showMenu) 8.dp else 12.dp,
-                bottom = if (showMenu) 8.dp else 12.dp,
-                end = if (showMenu) 4.dp else 16.dp,
-            ),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -378,8 +392,7 @@ private fun FavoriteItem(
         ) {
             Text(
                 text = favorite.modelKey,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = typeLabel,
@@ -387,18 +400,18 @@ private fun FavoriteItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (showMenu) {
-            Box {
-                IconButton(onClick = { menuExpanded = true }) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More options",
-                    )
-                }
-                DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
-                ) {
+        Box {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options",
+                )
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+            ) {
+                if (canPinShortcuts) {
                     DropdownMenuItem(
                         text = { Text("Add shortcut to home screen") },
                         leadingIcon = {
@@ -413,6 +426,19 @@ private fun FavoriteItem(
                         },
                     )
                 }
+                DropdownMenuItem(
+                    text = { Text("Remove") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        menuExpanded = false
+                        onRemove()
+                    },
+                )
             }
         }
     }
@@ -424,6 +450,7 @@ private fun NotificationsTab(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
+    onRemoveSubscription: (Subscription) -> Unit,
 ) {
     if (subscriptions.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -433,32 +460,79 @@ private fun NotificationsTab(
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
-            val typeLabel = when (subscription.modelType) {
-                ModelType.EVENT -> "Event"
-                ModelType.TEAM -> "Team"
-                ModelType.MATCH -> "Match"
-                else -> "Other"
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        when (subscription.modelType) {
-                            ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
-                            ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
-                        }
+            SubscriptionItem(
+                subscription = subscription,
+                onClick = {
+                    when (subscription.modelType) {
+                        ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
+                        ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
                     }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-            ) {
-                Text(
-                    text = subscription.modelKey,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                },
+                onRemove = { onRemoveSubscription(subscription) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun SubscriptionItem(
+    subscription: Subscription,
+    onClick: () -> Unit,
+    onRemove: () -> Unit,
+) {
+    val typeLabel =
+        when (subscription.modelType) {
+            ModelType.EVENT -> "Event"
+            ModelType.TEAM -> "Team"
+            ModelType.MATCH -> "Match"
+            else -> "Other"
+        }
+    var menuExpanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = subscription.modelKey,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Box {
+            IconButton(onClick = { menuExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More options",
                 )
-                Text(
-                    text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+            }
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { menuExpanded = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text("Remove") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = null,
+                        )
+                    },
+                    onClick = {
+                        menuExpanded = false
+                        onRemove()
+                    },
                 )
             }
         }

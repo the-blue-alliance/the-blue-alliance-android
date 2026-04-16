@@ -15,37 +15,41 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DistrictRepository @Inject constructor(
-    private val api: TbaApi,
-    private val db: TBADatabase,
-    private val districtDao: DistrictDao,
-    private val districtRankingDao: DistrictRankingDao,
-) {
-    fun observeDistrict(key: String): Flow<District?> =
-        districtDao.observe(key).map { it?.toDomain() }
+class DistrictRepository
+    @Inject
+    constructor(
+        private val api: TbaApi,
+        private val db: TBADatabase,
+        private val districtDao: DistrictDao,
+        private val districtRankingDao: DistrictRankingDao,
+    ) {
+        fun observeDistrict(key: String): Flow<District?> =
+            districtDao.observe(key).map { it?.toDomain() }
 
-    fun observeDistrictsForYear(year: Int): Flow<List<District>> =
-        districtDao.observeByYear(year).map { list -> list.map { it.toDomain() } }
+        fun observeDistrictsForYear(year: Int): Flow<List<District>> =
+            districtDao.observeByYear(year).map { list -> list.map { it.toDomain() } }
 
-    fun observeDistrictRankings(districtKey: String): Flow<List<DistrictRanking>> =
-        districtRankingDao.observeByDistrict(districtKey).map { list -> list.map { it.toDomain() } }
+        fun observeDistrictRankings(districtKey: String): Flow<List<DistrictRanking>> =
+            districtRankingDao.observeByDistrict(districtKey).map { list ->
+                list.map { it.toDomain() }
+            }
 
-    suspend fun refreshDistrictsForYear(year: Int) {
-        val dtos = api.getDistrictsForYear(year)
-        db.withTransaction {
-            districtDao.deleteByYear(year)
-            districtDao.insertAll(dtos.map { it.toEntity() })
+        suspend fun refreshDistrictsForYear(year: Int) {
+            val dtos = api.getDistrictsForYear(year)
+            db.withTransaction {
+                districtDao.deleteByYear(year)
+                districtDao.insertAll(dtos.map { it.toEntity() })
+            }
         }
-    }
 
-    suspend fun refreshDistrictRankings(districtKey: String) {
-        val dtos = api.getDistrictRankings(districtKey) ?: return
-        db.withTransaction {
-            districtRankingDao.deleteByDistrict(districtKey)
-            districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
+        suspend fun refreshDistrictRankings(districtKey: String) {
+            val dtos = api.getDistrictRankings(districtKey) ?: return
+            db.withTransaction {
+                districtRankingDao.deleteByDistrict(districtKey)
+                districtRankingDao.insertAll(dtos.map { it.toEntity(districtKey) })
+            }
         }
-    }
 
-    suspend fun getDistrictHistory(districtAbbreviation: String): List<Int> =
-        api.getDistrictHistory(districtAbbreviation).map { it.year }.sortedDescending()
-}
+        suspend fun getDistrictHistory(districtAbbreviation: String): List<Int> =
+            api.getDistrictHistory(districtAbbreviation).map { it.year }.sortedDescending()
+    }

@@ -17,10 +17,11 @@ class TeamTrackingWidgetSettingsAction : ActionCallback {
         val manager = GlanceAppWidgetManager(context)
         val appWidgetId = manager.getAppWidgetId(glanceId)
 
-        val intent = Intent(context, TeamTrackingWidgetConfigActivity::class.java).apply {
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-        }
+        val intent =
+            Intent(context, TeamTrackingWidgetConfigActivity::class.java).apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
         context.startActivity(intent)
     }
 }

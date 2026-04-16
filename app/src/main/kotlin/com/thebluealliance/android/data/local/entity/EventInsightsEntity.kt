@@ -9,4 +9,3 @@ data class EventInsightsEntity(
     val qualInsights: String?, // JSON object of qual insights
     val playoffInsights: String?, // JSON object of playoff insights
 )
-

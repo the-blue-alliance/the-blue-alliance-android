@@ -6,4 +6,5 @@
     <string name="last_match">Last match</string>
     <string name="next_match">Next match</string>
     <string name="set_tracked_team">Set team</string>
+    <string name="no_upcoming_events">No upcoming events</string>
 </resources>

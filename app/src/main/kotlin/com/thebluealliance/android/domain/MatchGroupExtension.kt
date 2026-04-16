@@ -15,12 +15,13 @@ import com.thebluealliance.android.domain.model.PlayoffType
  * The logic here was largely lifted from https://github.com/the-blue-alliance/the-blue-alliance/blob/ad984d18edf671c37662d642b77ae20e6cbfeb38/src/backend/common/helpers/playoff_type_helper.py#L176
  */
 
-internal val PLAYOFF_COMP_LEVELS = setOf(
-    CompLevel.OCTOFINAL,
-    CompLevel.QUARTERFINAL,
-    CompLevel.SEMIFINAL,
-    CompLevel.FINAL,
-)
+internal val PLAYOFF_COMP_LEVELS =
+    setOf(
+        CompLevel.OCTOFINAL,
+        CompLevel.QUARTERFINAL,
+        CompLevel.SEMIFINAL,
+        CompLevel.FINAL,
+    )
 
 /**
  * Get a match's grouping.
@@ -76,75 +77,79 @@ private fun Match.getDoubleElim4Round(): MatchGroup.DoubleEliminationRound {
 /**
  * Get the double elimination round for pre-2023 double elim format
  */
-private fun Match.getLegacyDoubleElimRound(): MatchGroup.DoubleEliminationRound {
-    return when (compLevel) {
-        CompLevel.OCTOFINAL -> when {
-            setNumber <= 4 -> MatchGroup.DoubleEliminationRound.Round(1)
-            setNumber <= 6 -> MatchGroup.DoubleEliminationRound.Round(2)
-            else -> MatchGroup.DoubleEliminationRound.Unknown
-        }
+private fun Match.getLegacyDoubleElimRound(): MatchGroup.DoubleEliminationRound =
+    when (compLevel) {
+        CompLevel.OCTOFINAL ->
+            when {
+                setNumber <= 4 -> MatchGroup.DoubleEliminationRound.Round(1)
+                setNumber <= 6 -> MatchGroup.DoubleEliminationRound.Round(2)
+                else -> MatchGroup.DoubleEliminationRound.Unknown
+            }
 
-        CompLevel.QUARTERFINAL -> when {
-            setNumber <= 2 -> MatchGroup.DoubleEliminationRound.Round(2)
-            setNumber <= 4 -> MatchGroup.DoubleEliminationRound.Round(3)
-            else -> MatchGroup.DoubleEliminationRound.Unknown
-        }
+        CompLevel.QUARTERFINAL ->
+            when {
+                setNumber <= 2 -> MatchGroup.DoubleEliminationRound.Round(2)
+                setNumber <= 4 -> MatchGroup.DoubleEliminationRound.Round(3)
+                else -> MatchGroup.DoubleEliminationRound.Unknown
+            }
 
         CompLevel.SEMIFINAL -> MatchGroup.DoubleEliminationRound.Round(4)
-        CompLevel.FINAL -> when {
-            setNumber == 1 -> MatchGroup.DoubleEliminationRound.Round(5)
-            setNumber == 2 -> MatchGroup.DoubleEliminationRound.Finals
-            else -> MatchGroup.DoubleEliminationRound.Unknown
-        }
+        CompLevel.FINAL ->
+            when {
+                setNumber == 1 -> MatchGroup.DoubleEliminationRound.Round(5)
+                setNumber == 2 -> MatchGroup.DoubleEliminationRound.Finals
+                else -> MatchGroup.DoubleEliminationRound.Unknown
+            }
 
         else -> MatchGroup.DoubleEliminationRound.Unknown
     }
-}
 
 /**
  * Get a short label for this match
  *
  * Examples: "Q1", "SF2-1", "F1-1", "R1-8"
  */
-fun Match.getShortLabel(playoffType: PlayoffType): String {
-    return when (val group = getGroup(playoffType)) {
+fun Match.getShortLabel(playoffType: PlayoffType): String =
+    when (val group = getGroup(playoffType)) {
         is MatchGroup.DoubleEliminationRound.Round -> "R${group.number}-$setNumber"
         MatchGroup.DoubleEliminationRound.Finals -> "F-$matchNumber"
 
         is MatchGroup.CompetitionLevel,
-        MatchGroup.DoubleEliminationRound.Unknown -> getCompLevelShortLabel()
+        MatchGroup.DoubleEliminationRound.Unknown,
+        -> getCompLevelShortLabel()
     }
-}
 
 /**
  * Get a full label for this match
  *
  * Examples: "Qual 1", "Final 1-1", "Match 8 (Round 1)"
  */
-fun Match.getFullLabel(playoffType: PlayoffType): String {
-    return when (val group = getGroup(playoffType)) {
+fun Match.getFullLabel(playoffType: PlayoffType): String =
+    when (val group = getGroup(playoffType)) {
         is MatchGroup.DoubleEliminationRound.Round -> "Match $setNumber (Round ${group.number})"
         MatchGroup.DoubleEliminationRound.Finals -> "Final $matchNumber"
 
         is MatchGroup.CompetitionLevel,
-        MatchGroup.DoubleEliminationRound.Unknown -> getCompLevelFullLabel()
+        MatchGroup.DoubleEliminationRound.Unknown,
+        -> getCompLevelFullLabel()
     }
-}
 
-private fun Match.getCompLevelShortLabel(): String = when (compLevel) {
-    CompLevel.QUAL -> "Q$matchNumber"
-    CompLevel.OCTOFINAL -> "EF$setNumber-$matchNumber"
-    CompLevel.QUARTERFINAL -> "QF$setNumber-$matchNumber"
-    CompLevel.SEMIFINAL -> "SF$setNumber-$matchNumber"
-    CompLevel.FINAL -> "F$setNumber-$matchNumber"
-    else -> "${compLevel.code}$setNumber-$matchNumber"
-}
+private fun Match.getCompLevelShortLabel(): String =
+    when (compLevel) {
+        CompLevel.QUAL -> "Q$matchNumber"
+        CompLevel.OCTOFINAL -> "EF$setNumber-$matchNumber"
+        CompLevel.QUARTERFINAL -> "QF$setNumber-$matchNumber"
+        CompLevel.SEMIFINAL -> "SF$setNumber-$matchNumber"
+        CompLevel.FINAL -> "F$setNumber-$matchNumber"
+        else -> "${compLevel.code}$setNumber-$matchNumber"
+    }
 
-private fun Match.getCompLevelFullLabel(): String = when (compLevel) {
-    CompLevel.QUAL -> "Qual $matchNumber"
-    CompLevel.OCTOFINAL -> "Eights $setNumber-$matchNumber"
-    CompLevel.QUARTERFINAL -> "Quarters $setNumber-$matchNumber"
-    CompLevel.SEMIFINAL -> "Semis $setNumber-$matchNumber"
-    CompLevel.FINAL -> "Final $setNumber-$matchNumber"
-    else -> "${compLevel.code}$setNumber-$matchNumber"
-}
+private fun Match.getCompLevelFullLabel(): String =
+    when (compLevel) {
+        CompLevel.QUAL -> "Qual $matchNumber"
+        CompLevel.OCTOFINAL -> "Eights $setNumber-$matchNumber"
+        CompLevel.QUARTERFINAL -> "Quarters $setNumber-$matchNumber"
+        CompLevel.SEMIFINAL -> "Semis $setNumber-$matchNumber"
+        CompLevel.FINAL -> "Final $setNumber-$matchNumber"
+        else -> "${compLevel.code}$setNumber-$matchNumber"
+    }

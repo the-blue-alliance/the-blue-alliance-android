@@ -4,33 +4,33 @@ import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.MatchGroup
 import com.thebluealliance.android.domain.model.PlayoffType
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf
 
 class MatchGroupExtensionTest {
-
     private fun createMatch(
         compLevel: CompLevel = CompLevel.QUAL,
         matchNumber: Int = 1,
         setNumber: Int = 1,
-    ): Match = Match(
-        key = "2023test_${compLevel.code}m${matchNumber}",
-        eventKey = "2023test",
-        compLevel = compLevel,
-        matchNumber = matchNumber,
-        setNumber = setNumber,
-        time = null,
-        actualTime = null,
-        predictedTime = null,
-        redTeamKeys = listOf("frc1", "frc2", "frc3"),
-        redScore = 100,
-        blueTeamKeys = listOf("frc4", "frc5", "frc6"),
-        blueScore = 110,
-        winningAlliance = "blue",
-    )
+    ): Match =
+        Match(
+            key = "2023test_${compLevel.code}m$matchNumber",
+            eventKey = "2023test",
+            compLevel = compLevel,
+            matchNumber = matchNumber,
+            setNumber = setNumber,
+            time = null,
+            actualTime = null,
+            predictedTime = null,
+            redTeamKeys = listOf("frc1", "frc2", "frc3"),
+            redScore = 100,
+            blueTeamKeys = listOf("frc4", "frc5", "frc6"),
+            blueScore = 110,
+            winningAlliance = "blue",
+        )
 
     @Nested
     inner class GetGroupTests {
@@ -254,7 +254,11 @@ class MatchGroupExtensionTest {
                     val match = createMatch(compLevel = CompLevel.OCTOFINAL, setNumber = setNum)
                     val result = match.getGroup(PlayoffType.LEGACY_DOUBLE_ELIM_8_TEAM)
                     val round = assertInstanceOf<MatchGroup.DoubleEliminationRound.Round>(result)
-                    assertEquals(1, round.number, "OCTOFINAL setNumber $setNum should map to Round 1")
+                    assertEquals(
+                        1,
+                        round.number,
+                        "OCTOFINAL setNumber $setNum should map to Round 1",
+                    )
                 }
             }
 
@@ -264,7 +268,11 @@ class MatchGroupExtensionTest {
                     val match = createMatch(compLevel = CompLevel.OCTOFINAL, setNumber = setNum)
                     val result = match.getGroup(PlayoffType.LEGACY_DOUBLE_ELIM_8_TEAM)
                     val round = assertInstanceOf<MatchGroup.DoubleEliminationRound.Round>(result)
-                    assertEquals(2, round.number, "OCTOFINAL setNumber $setNum should map to Round 2")
+                    assertEquals(
+                        2,
+                        round.number,
+                        "OCTOFINAL setNumber $setNum should map to Round 2",
+                    )
                 }
             }
 
@@ -286,7 +294,11 @@ class MatchGroupExtensionTest {
                     val match = createMatch(compLevel = CompLevel.QUARTERFINAL, setNumber = setNum)
                     val result = match.getGroup(PlayoffType.LEGACY_DOUBLE_ELIM_8_TEAM)
                     val round = assertInstanceOf<MatchGroup.DoubleEliminationRound.Round>(result)
-                    assertEquals(2, round.number, "QUARTERFINAL setNumber $setNum should map to Round 2")
+                    assertEquals(
+                        2,
+                        round.number,
+                        "QUARTERFINAL setNumber $setNum should map to Round 2",
+                    )
                 }
             }
 
@@ -296,7 +308,11 @@ class MatchGroupExtensionTest {
                     val match = createMatch(compLevel = CompLevel.QUARTERFINAL, setNumber = setNum)
                     val result = match.getGroup(PlayoffType.LEGACY_DOUBLE_ELIM_8_TEAM)
                     val round = assertInstanceOf<MatchGroup.DoubleEliminationRound.Round>(result)
-                    assertEquals(3, round.number, "QUARTERFINAL setNumber $setNum should map to Round 3")
+                    assertEquals(
+                        3,
+                        round.number,
+                        "QUARTERFINAL setNumber $setNum should map to Round 3",
+                    )
                 }
             }
 
@@ -367,16 +383,19 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 1, setNumber = 2)
             assertEquals("EF2-1", match.getShortLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 3, setNumber = 4)
+            val match2 =
+                createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 3, setNumber = 4)
             assertEquals("EF4-3", match2.getShortLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
         @Test
         fun `QUARTERFINAL match label is QF followed by set and match number`() {
-            val match = createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 1)
+            val match =
+                createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("QF1-1", match.getShortLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 2, setNumber = 3)
+            val match2 =
+                createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 2, setNumber = 3)
             assertEquals("QF3-2", match2.getShortLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
@@ -385,7 +404,8 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("SF1-1", match.getShortLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 2, setNumber = 2)
+            val match2 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 2, setNumber = 2)
             assertEquals("SF2-2", match2.getShortLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
@@ -403,10 +423,12 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("R1-1", match.getShortLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 5)
+            val match2 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 5)
             assertEquals("R2-5", match2.getShortLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
 
-            val match3 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 13)
+            val match3 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 13)
             assertEquals("R5-13", match3.getShortLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
         }
 
@@ -421,7 +443,8 @@ class MatchGroupExtensionTest {
 
         @Test
         fun `Unknown double elim round uses comp level label`() {
-            val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 20)
+            val match =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 20)
             assertEquals("SF20-1", match.getShortLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
         }
 
@@ -448,16 +471,19 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 1, setNumber = 2)
             assertEquals("Eights 2-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 3, setNumber = 4)
+            val match2 =
+                createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 3, setNumber = 4)
             assertEquals("Eights 4-3", match2.getFullLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
         @Test
         fun `QUARTERFINAL match full label is Quarters followed by set and match number`() {
-            val match = createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 1)
+            val match =
+                createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("Quarters 1-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 2, setNumber = 3)
+            val match2 =
+                createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 2, setNumber = 3)
             assertEquals("Quarters 3-2", match2.getFullLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
@@ -466,7 +492,8 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("Semis 1-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 2, setNumber = 2)
+            val match2 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 2, setNumber = 2)
             assertEquals("Semis 2-2", match2.getFullLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
@@ -484,10 +511,12 @@ class MatchGroupExtensionTest {
             val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1)
             assertEquals("Match 1 (Round 1)", match.getFullLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
 
-            val match2 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 5)
+            val match2 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 5)
             assertEquals("Match 5 (Round 2)", match2.getFullLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
 
-            val match3 = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 13)
+            val match3 =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 13)
             assertEquals("Match 13 (Round 5)", match3.getFullLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
         }
 
@@ -502,7 +531,8 @@ class MatchGroupExtensionTest {
 
         @Test
         fun `Unknown double elim round uses comp level full label`() {
-            val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 20)
+            val match =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 20)
             assertEquals("Semis 20-1", match.getFullLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))
         }
 
@@ -524,7 +554,8 @@ class MatchGroupExtensionTest {
 
         @Test
         fun `zero set number`() {
-            val match = createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 0)
+            val match =
+                createMatch(compLevel = CompLevel.QUARTERFINAL, matchNumber = 1, setNumber = 0)
             assertEquals("QF0-1", match.getShortLabel(PlayoffType.BRACKET_8_TEAM))
             assertEquals("Quarters 0-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
         }
@@ -538,7 +569,8 @@ class MatchGroupExtensionTest {
 
         @Test
         fun `very large set number in double elim`() {
-            val match = createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1000)
+            val match =
+                createMatch(compLevel = CompLevel.SEMIFINAL, matchNumber = 1, setNumber = 1000)
             val result = match.getGroup(PlayoffType.DOUBLE_ELIM_8_TEAM)
             assertInstanceOf<MatchGroup.DoubleEliminationRound.Unknown>(result)
             assertEquals("SF1000-1", match.getShortLabel(PlayoffType.DOUBLE_ELIM_8_TEAM))

@@ -14,7 +14,7 @@ The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alli
 
 After installing a debug build, always relaunch the app on the emulator:
 ```bash
-adb shell am force-stop com.thebluealliance.android.dev && adb shell am start -n com.thebluealliance.android.dev/com.thebluealliance.android.MainActivity
+adb shell am force-stop com.thebluealliance.androidclient.development && adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
 ```
 
 ## Emulator Interaction

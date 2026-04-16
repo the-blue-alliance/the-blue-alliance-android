@@ -1,19 +1,19 @@
 [versions]
-agp = "9.1.0"
+agp = "9.1.1"
 kotlin = "2.3.20"
 ksp = "2.3.6"
 
 compose-bom = "2026.03.01"
 activity = "1.13.0"
-navigation3-runtime = "1.0.1"
-navigation3-ui = "1.0.1"
+navigation3-runtime = "1.1.0"
+navigation3-ui = "1.1.0"
 hilt = "2.59.2"
 hilt-androidx = "1.3.0"
 lifecycle = "2.10.0"
 core-ktx = "1.18.0"
 shortcuts = "1.1.0"
 coroutines = "1.10.2"
-serialization = "1.10.0"
+serialization = "1.11.0"
 
 retrofit = "3.0.0"
 okhttp = "5.3.2"
@@ -22,18 +22,18 @@ retrofit-serialization = "1.0.0"
 room = "2.8.4"
 datastore = "1.2.1"
 
-coil = "2.7.0"
-aboutlibraries = "14.0.0-b02"
+coil = "3.4.0"
+aboutlibraries = "14.0.1"
 
-firebase-bom = "34.11.0"
+firebase-bom = "34.12.0"
 google-services = "4.4.4"
-firebase-crashlytics-plugin = "3.0.6"
-credentials = "1.5.0"
+firebase-crashlytics-plugin = "3.0.7"
+credentials = "1.6.0"
 googleid = "1.2.0"
 
 work = "2.11.2"
 glance = "1.2.0-rc01"
-wear-compose = "1.6.0"
+wear-compose = "1.6.1"
 wear-complications = "1.3.0"
 core-splashscreen = "1.2.0"
 
@@ -42,6 +42,7 @@ turbine = "1.2.1"
 mockk = "1.14.9"
 play-publisher = "4.0.0"
 lifecycle-process = "2.10.0"
+ktlint-gradle = "14.2.0"
 
 [libraries]
 # Compose
@@ -90,7 +91,8 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 
 # Coil
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
 # AboutLibraries
 aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
@@ -120,7 +122,7 @@ glance-preview = { group = "androidx.glance", name = "glance-preview", version.r
 glance-appwidget-preview = { group = "androidx.glance", name = "glance-appwidget-preview", version.ref = "glance" }
 
 # Wear OS
-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "wear-compose" }
+wear-compose-material3 = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "wear-compose" }
 wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wear-compose" }
 wear-complications-data-source-ktx = { group = "androidx.wear.watchface", name = "watchface-complications-data-source-ktx", version.ref = "wear-complications" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
@@ -131,6 +133,7 @@ datastore-preferences = { group = "androidx.datastore", name = "datastore-prefer
 # Testing
 junit-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
 junit-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
@@ -148,3 +151,4 @@ room = { id = "androidx.room", version.ref = "room" }
 aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "play-publisher" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }

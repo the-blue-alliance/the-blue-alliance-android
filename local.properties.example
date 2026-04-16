@@ -1,0 +1,14 @@
+## Copy this file to local.properties and edit as needed.
+## local.properties is gitignored — safe to put secrets here.
+## You only need this file if you want to override the defaults;
+## the app builds and runs against the local Docker backend without it.
+
+# API key for debug builds. "tba-dev-key" works with the local Docker
+# backend. For production, get a real key at
+# https://www.thebluealliance.com/account.
+tba.api.key.debug=tba-dev-key
+
+# By default debug builds hit the local Docker backend at
+# http://10.0.2.2:8080/ (the emulator's alias for the host's localhost).
+# Uncomment to hit production instead.
+#tba.url.debug=https://www.thebluealliance.com/

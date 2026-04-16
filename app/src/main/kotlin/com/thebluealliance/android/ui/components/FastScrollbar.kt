@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -31,12 +30,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 private val ThumbWidth = 4.dp
 private val ThumbHeight = 48.dp
-private val TouchTargetWidth = 24.dp
+private val TouchTargetWidth = 48.dp
 
 @Composable
 fun FastScrollbar(
@@ -47,8 +47,11 @@ fun FastScrollbar(
     val totalItems by remember { derivedStateOf { listState.layoutInfo.totalItemsCount } }
     val thumbFraction by remember {
         derivedStateOf {
-            if (totalItems == 0) 0f
-            else listState.firstVisibleItemIndex.toFloat() / totalItems
+            if (totalItems == 0) {
+                0f
+            } else {
+                listState.firstVisibleItemIndex.toFloat() / totalItems
+            }
         }
     }
     val isScrolling by remember { derivedStateOf { listState.isScrollInProgress } }
@@ -58,10 +61,10 @@ fun FastScrollbar(
     val alpha = remember { Animatable(0f) }
     LaunchedEffect(isScrolling, isDragging) {
         if (isScrolling || isDragging) {
-            alpha.animateTo(1f, tween(150))
+            alpha.animateTo(1f, TBAMotionTokens.fastEffectsSpec())
         } else {
             delay(1500)
-            alpha.animateTo(0f, tween(300))
+            alpha.animateTo(0f, TBAMotionTokens.defaultEffectsSpec())
         }
     }
 
@@ -73,43 +76,54 @@ fun FastScrollbar(
         if (totalItems > 0) {
             // Invisible touch target: full-height strip on the right edge for drag gestures
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .fillMaxHeight()
-                    .width(TouchTargetWidth)
-                    .onSizeChanged { trackHeightPx = it.height.toFloat() }
-                    .pointerInput(totalItems) {
-                        detectVerticalDragGestures(
-                            onDragStart = { isDragging = true },
-                            onDragEnd = { isDragging = false },
-                            onDragCancel = { isDragging = false },
-                            onVerticalDrag = { change, _ ->
-                                change.consume()
-                                val fraction = (change.position.y / trackHeightPx).coerceIn(0f, 1f)
-                                val targetIndex = (fraction * totalItems).roundToInt()
-                                    .coerceIn(0, (totalItems - 1).coerceAtLeast(0))
-                                listState.requestScrollToItem(targetIndex)
-                            },
-                        )
-                    },
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .fillMaxHeight()
+                        .width(TouchTargetWidth)
+                        .onSizeChanged { trackHeightPx = it.height.toFloat() }
+                        .pointerInput(totalItems) {
+                            detectVerticalDragGestures(
+                                onDragStart = { isDragging = true },
+                                onDragEnd = { isDragging = false },
+                                onDragCancel = { isDragging = false },
+                                onVerticalDrag = { change, _ ->
+                                    change.consume()
+                                    val fraction =
+                                        (change.position.y / trackHeightPx).coerceIn(
+                                            0f,
+                                            1f,
+                                        )
+                                    val targetIndex =
+                                        (fraction * totalItems)
+                                            .roundToInt()
+                                            .coerceIn(0, (totalItems - 1).coerceAtLeast(0))
+                                    listState.requestScrollToItem(targetIndex)
+                                },
+                            )
+                        },
             )
 
             // Visible thumb indicator
             Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(end = 4.dp)
-                    .alpha(alpha.value)
-                    .offset {
-                        val thumbHeightPx = ThumbHeight.toPx()
-                        val scrollableTrack = (trackHeightPx - thumbHeightPx).coerceAtLeast(0f)
-                        val offsetY = (thumbFraction * scrollableTrack).coerceIn(0f, scrollableTrack)
-                        IntOffset(0, offsetY.roundToInt())
-                    }
-                    .width(ThumbWidth)
-                    .height(ThumbHeight)
-                    .clip(RoundedCornerShape(ThumbWidth / 2))
-                    .background(MaterialTheme.colorScheme.onSurfaceVariant),
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(end = 4.dp)
+                        .alpha(alpha.value)
+                        .offset {
+                            val thumbHeightPx = ThumbHeight.toPx()
+                            val scrollableTrack = (trackHeightPx - thumbHeightPx).coerceAtLeast(0f)
+                            val offsetY =
+                                (thumbFraction * scrollableTrack).coerceIn(
+                                    0f,
+                                    scrollableTrack,
+                                )
+                            IntOffset(0, offsetY.roundToInt())
+                        }.width(ThumbWidth)
+                        .height(ThumbHeight)
+                        .clip(RoundedCornerShape(ThumbWidth / 2))
+                        .background(MaterialTheme.colorScheme.onSurfaceVariant),
             )
         }
     }

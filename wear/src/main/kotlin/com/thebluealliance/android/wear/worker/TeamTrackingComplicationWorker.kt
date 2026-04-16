@@ -18,11 +18,11 @@ import com.thebluealliance.android.wear.data.WearTbaApi
 import com.thebluealliance.android.wear.data.dto.EventDto
 import com.thebluealliance.android.wear.data.dto.MatchDto
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -30,447 +30,512 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
-class TeamTrackingComplicationWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters,
-    private val api: WearTbaApi,
-) : CoroutineWorker(appContext, workerParams) {
+class TeamTrackingComplicationWorker
+    @AssistedInject
+    constructor(
+        @Assisted appContext: Context,
+        @Assisted workerParams: WorkerParameters,
+        private val api: WearTbaApi,
+    ) : CoroutineWorker(appContext, workerParams) {
+        companion object {
+            private const val TAG = "ComplicationRefresh"
+            private const val WORK_NAME = "complication_refresh"
+            private const val FAST_WORK_NAME = "complication_fast_refresh"
 
-    companion object {
-        private const val TAG = "ComplicationRefresh"
-        private const val WORK_NAME = "complication_refresh"
-        private const val FAST_WORK_NAME = "complication_fast_refresh"
+            private val timeFormat = DateTimeFormatter.ofPattern("h:mm")
 
-        private val timeFormat = DateTimeFormatter.ofPattern("h:mm")
+            fun enqueuePeriodicRefresh(context: Context) {
+                val request =
+                    PeriodicWorkRequestBuilder<TeamTrackingComplicationWorker>(
+                        6,
+                        TimeUnit.HOURS,
+                    ).build()
+                WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                    WORK_NAME,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    request,
+                )
+            }
 
-        fun enqueuePeriodicRefresh(context: Context) {
-            val request = PeriodicWorkRequestBuilder<TeamTrackingComplicationWorker>(
-                6, TimeUnit.HOURS,
-            ).build()
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP,
-                request,
-            )
+            fun cancelPeriodicRefresh(context: Context) {
+                val wm = WorkManager.getInstance(context)
+                wm.cancelUniqueWork(WORK_NAME)
+                wm.cancelUniqueWork(FAST_WORK_NAME)
+            }
+
+            private fun enqueueFastRefresh(context: Context) {
+                val request =
+                    OneTimeWorkRequestBuilder<TeamTrackingComplicationWorker>()
+                        .setInitialDelay(15, TimeUnit.MINUTES)
+                        .build()
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    FAST_WORK_NAME,
+                    ExistingWorkPolicy.REPLACE,
+                    request,
+                )
+            }
+
+            fun enqueueImmediateRefresh(context: Context) {
+                val request = OneTimeWorkRequestBuilder<TeamTrackingComplicationWorker>().build()
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    "complication_immediate_refresh",
+                    ExistingWorkPolicy.REPLACE,
+                    request,
+                )
+            }
         }
 
-        fun cancelPeriodicRefresh(context: Context) {
-            val wm = WorkManager.getInstance(context)
-            wm.cancelUniqueWork(WORK_NAME)
-            wm.cancelUniqueWork(FAST_WORK_NAME)
-        }
+        /** Intermediate result of fetching a team's event/match data. */
+        private data class TeamEventData(
+            val events: List<EventDto>,
+            val currentEvent: EventDto?,
+            val teamMatches: List<MatchDto>,
+            val avatarBase64: String?,
+        )
 
-        private fun enqueueFastRefresh(context: Context) {
-            val request = OneTimeWorkRequestBuilder<TeamTrackingComplicationWorker>()
-                .setInitialDelay(15, TimeUnit.MINUTES)
-                .build()
-            WorkManager.getInstance(context).enqueueUniqueWork(
-                FAST_WORK_NAME,
-                ExistingWorkPolicy.REPLACE,
-                request,
-            )
-        }
-
-        fun enqueueImmediateRefresh(context: Context) {
-            val request = OneTimeWorkRequestBuilder<TeamTrackingComplicationWorker>().build()
-            WorkManager.getInstance(context).enqueueUniqueWork(
-                "complication_immediate_refresh",
-                ExistingWorkPolicy.REPLACE,
-                request,
-            )
-        }
-    }
-
-    /** Intermediate result of fetching a team's event/match data. */
-    private data class TeamEventData(
-        val events: List<EventDto>,
-        val currentEvent: EventDto?,
-        val teamMatches: List<MatchDto>,
-        val avatarBase64: String?,
-    )
-
-    override suspend fun doWork(): Result {
-        return try {
+        override suspend fun doWork(): Result {
             val trackerPrefs = TeamTrackerPreferences(applicationContext)
-            val trackerTeam = trackerPrefs.teamNumber
-            var anyActiveEvent = false
+            return try {
+                val trackerTeam = trackerPrefs.teamNumber
+                var anyActiveEvent = false
 
-            if (trackerTeam.isNotBlank()) {
-                val teamKey = "frc$trackerTeam"
-                val data = fetchTeamEventData(teamKey)
+                if (trackerTeam.isNotBlank()) {
+                    val teamKey = "frc$trackerTeam"
+                    val data = fetchTeamEventData(teamKey)
 
-                // Update all active complications
-                val complicationIds = TeamTrackingComplicationPreferences.getActiveComplicationIds(applicationContext)
-                for (complicationId in complicationIds) {
+                    // Update all active complications
+                    val complicationIds =
+                        TeamTrackingComplicationPreferences.getActiveComplicationIds(
+                            applicationContext,
+                        )
+                    for (complicationId in complicationIds) {
+                        try {
+                            val prefs =
+                                TeamTrackingComplicationPreferences(
+                                    applicationContext,
+                                    complicationId,
+                                )
+                            val hasActive = updateComplication(prefs, trackerTeam, data)
+                            if (hasActive) anyActiveEvent = true
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Failed to update complication $complicationId", e)
+                        }
+                    }
+
+                    // Update app-level team tracker
                     try {
-                        val prefs = TeamTrackingComplicationPreferences(applicationContext, complicationId)
-                        val hasActive = updateComplication(prefs, trackerTeam, data)
+                        val hasActive = updateAppTracker(trackerPrefs, trackerTeam, data)
                         if (hasActive) anyActiveEvent = true
                     } catch (e: Exception) {
-                        Log.e(TAG, "Failed to update complication $complicationId", e)
+                        Log.e(TAG, "Failed to update app tracker", e)
                     }
                 }
 
-                // Update app-level team tracker
-                try {
-                    val hasActive = updateAppTracker(trackerPrefs, trackerTeam, data)
-                    if (hasActive) anyActiveEvent = true
-                } catch (e: Exception) {
-                    Log.e(TAG, "Failed to update app tracker", e)
+                if (anyActiveEvent) {
+                    enqueueFastRefresh(applicationContext)
                 }
-            }
 
-            if (anyActiveEvent) {
-                enqueueFastRefresh(applicationContext)
-            }
+                // Request complication data update from the watch face
+                requestComplicationUpdate()
 
-            // Request complication data update from the watch face
-            requestComplicationUpdate()
-
-            Result.success()
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to update complications", e)
-            Result.retry()
-        }
-    }
-
-    private fun requestComplicationUpdate() {
-        val requester = ComplicationDataSourceUpdateRequester.create(
-            applicationContext,
-            ComponentName(applicationContext, TeamTrackingComplicationService::class.java),
-        )
-        requester.requestUpdateAll()
-    }
-
-    // region Data fetching
-
-    /** Fetch events, current event matches, and avatar for a team. */
-    private suspend fun fetchTeamEventData(teamKey: String): TeamEventData {
-        val year = LocalDate.now().year
-
-        // Let this throw — doWork() catches it and returns Result.retry(),
-        // preserving cached data instead of overwriting with empty values.
-        val events = api.getTeamEvents(teamKey, year)
-
-        val currentEvent = findCurrentEvent(events, teamKey)
-
-        val teamMatches = if (currentEvent != null) {
-            try {
-                api.getEventMatches(currentEvent.key)
-                    .filter { match ->
-                        val red = match.alliances?.red?.teamKeys ?: emptyList()
-                        val blue = match.alliances?.blue?.teamKeys ?: emptyList()
-                        teamKey in red || teamKey in blue
-                    }
-                    .sortedWith(
-                        compareBy(
-                            { compLevelOrder(it.compLevel) },
-                            { it.setNumber },
-                            { it.matchNumber },
-                        ),
-                    )
+                Result.success()
             } catch (e: Exception) {
-                Log.w(TAG, "Failed to fetch matches for ${currentEvent.key}", e)
-                emptyList()
+                Log.e(TAG, "Failed to update complications", e)
+                Result.retry()
+            } finally {
+                trackerPrefs.isLoading = false
             }
-        } else {
-            emptyList()
         }
 
-        val avatarBase64 = fetchAvatar(teamKey, year)
-
-        return TeamEventData(events, currentEvent, teamMatches, avatarBase64)
-    }
-
-    private suspend fun fetchAvatar(teamKey: String, year: Int): String? {
-        return try {
-            val media = api.getTeamMedia(teamKey, year)
-            val avatar = media.firstOrNull { it.type == "avatar" }
-                ?: api.getTeamMedia(teamKey, year - 1).firstOrNull { it.type == "avatar" }
-            avatar?.base64Image
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to fetch avatar for $teamKey", e)
-            null
+        private fun requestComplicationUpdate() {
+            val requester =
+                ComplicationDataSourceUpdateRequester.create(
+                    applicationContext,
+                    ComponentName(applicationContext, TeamTrackingComplicationService::class.java),
+                )
+            requester.requestUpdateAll()
         }
-    }
 
-    // endregion
+        // region Data fetching
 
-    // region Complication update
+        /** Fetch events, current event matches, and avatar for a team. */
+        private suspend fun fetchTeamEventData(teamKey: String): TeamEventData {
+            val year = LocalDate.now().year
 
-    /** Returns true if the team has an active event. */
-    private fun updateComplication(prefs: TeamTrackingComplicationPreferences, teamNumber: String, data: TeamEventData): Boolean {
+            // Let this throw — doWork() catches it and returns Result.retry(),
+            // preserving cached data instead of overwriting with empty values.
+            val events = api.getTeamEvents(teamKey, year)
 
-        if (data.currentEvent == null) {
-            prefs.matchLabel = ""
-            prefs.matchTime = ""
-            prefs.activeEventName = ""
+            val currentEvent = findCurrentEvent(events, teamKey)
 
-            val nextEvent = findUpcomingEvent(data.events)
-            if (nextEvent != null) {
-                prefs.upcomingEventName = nextEvent.shortName ?: nextEvent.name
-                prefs.upcomingEventDate = nextEvent.startDate?.let {
-                    LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
-                } ?: ""
-            } else {
-                prefs.upcomingEventName = ""
-                prefs.upcomingEventDate = ""
+            val teamMatches =
+                if (currentEvent != null) {
+                    try {
+                        api
+                            .getEventMatches(currentEvent.key)
+                            .filter { match ->
+                                val red = match.alliances?.red?.teamKeys ?: emptyList()
+                                val blue = match.alliances?.blue?.teamKeys ?: emptyList()
+                                teamKey in red || teamKey in blue
+                            }.sortedWith(
+                                compareBy(
+                                    { compLevelOrder(it.compLevel) },
+                                    { it.setNumber },
+                                    { it.matchNumber },
+                                ),
+                            )
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to fetch matches for ${currentEvent.key}", e)
+                        emptyList()
+                    }
+                } else {
+                    emptyList()
+                }
+
+            val avatarBase64 = fetchAvatar(teamKey, year)
+
+            return TeamEventData(events, currentEvent, teamMatches, avatarBase64)
+        }
+
+        private suspend fun fetchAvatar(
+            teamKey: String,
+            year: Int,
+        ): String? =
+            try {
+                val media = api.getTeamMedia(teamKey, year)
+                val avatar =
+                    media.firstOrNull { it.type == "avatar" }
+                        ?: api.getTeamMedia(teamKey, year - 1).firstOrNull { it.type == "avatar" }
+                avatar?.base64Image
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to fetch avatar for $teamKey", e)
+                null
             }
 
-            if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
-            return false
-        }
+        // endregion
 
-        val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
-        if (nextMatch != null) {
-            prefs.matchLabel = getShortLabel(nextMatch)
-            prefs.matchTime = formatMatchTime(nextMatch)
-        } else {
-            prefs.matchLabel = ""
-            prefs.matchTime = ""
-        }
-        prefs.activeEventName = data.currentEvent.shortName ?: data.currentEvent.name
+        // region Complication update
 
-        if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
-        return true
-    }
+        /** Returns true if the team has an active event. */
+        private fun updateComplication(
+            prefs: TeamTrackingComplicationPreferences,
+            teamNumber: String,
+            data: TeamEventData,
+        ): Boolean {
+            if (data.currentEvent == null) {
+                prefs.matchLabel = ""
+                prefs.matchTime = ""
+                prefs.activeEventName = ""
 
-    // endregion
-
-    // region App tracker update
-
-    /** Returns true if the team has an active event. */
-    private suspend fun updateAppTracker(prefs: TeamTrackerPreferences, teamNumber: String, data: TeamEventData): Boolean {
-        val teamKey = "frc$teamNumber"
-
-        // Fetch team nickname — keep existing on failure
-        prefs.teamNickname = try {
-            api.getTeam(teamKey).nickname ?: prefs.teamNickname
-        } catch (e: Exception) {
-            Log.w(TAG, "Failed to fetch team info for $teamKey", e)
-            prefs.teamNickname
-        }
-
-        if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
-
-        if (data.currentEvent == null) {
-            prefs.hasActiveEvent = false
-            prefs.eventName = ""
-            prefs.record = ""
-            clearLastMatch(prefs)
-            clearNextMatch(prefs)
-
-            val upcoming = findAllUpcomingEvents(data.events)
-            prefs.upcomingEvents = if (upcoming.isNotEmpty()) {
-                upcoming.joinToString("|") { event ->
-                    val name = event.shortName ?: event.name
-                    val date = event.startDate?.let {
+                val nextEvent = findUpcomingEvent(data.events)
+                if (nextEvent != null) {
+                    prefs.upcomingEventName = nextEvent.shortName ?: nextEvent.name
+                    prefs.upcomingEventDate = nextEvent.startDate?.let {
                         LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
                     } ?: ""
-                    "$date \u2014 $name"
+                } else {
+                    prefs.upcomingEventName = ""
+                    prefs.upcomingEventDate = ""
                 }
+
+                if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
+                return false
+            }
+
+            val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
+            if (nextMatch != null) {
+                prefs.matchLabel = getShortLabel(nextMatch)
+                prefs.matchTime = formatMatchTime(nextMatch)
             } else {
-                ""
+                prefs.matchLabel = ""
+                prefs.matchTime = ""
             }
-            return false
+            prefs.activeEventName = data.currentEvent.shortName ?: data.currentEvent.name
+
+            if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
+            return true
         }
 
-        prefs.hasActiveEvent = true
-        prefs.eventName = data.currentEvent.shortName ?: data.currentEvent.name
-        prefs.upcomingEvents = ""
+        // endregion
 
-        // Compute qual record
-        val qualMatches = data.teamMatches.filter {
-            it.compLevel == "qm" && (it.alliances?.red?.score ?: -1) >= 0
-        }
-        var wins = 0
-        var losses = 0
-        var ties = 0
-        for (match in qualMatches) {
-            val alliance = if (teamKey in (match.alliances?.red?.teamKeys ?: emptyList())) "red" else "blue"
-            when {
-                match.winningAlliance == alliance -> wins++
-                match.winningAlliance.isNullOrBlank() -> ties++
-                else -> losses++
-            }
-        }
-        prefs.record = "$wins-$losses-$ties"
+        // region App tracker update
 
-        // Last played match
-        val lastMatch = data.teamMatches.lastOrNull { (it.alliances?.red?.score ?: -1) >= 0 }
-        if (lastMatch != null) {
-            prefs.lastMatchLabel = getShortLabel(lastMatch)
-            prefs.lastMatchRedTeams = teamKeysToNumbers(lastMatch.alliances?.red?.teamKeys)
-            prefs.lastMatchBlueTeams = teamKeysToNumbers(lastMatch.alliances?.blue?.teamKeys)
-            prefs.lastMatchRedScore = lastMatch.alliances?.red?.score ?: -1
-            prefs.lastMatchBlueScore = lastMatch.alliances?.blue?.score ?: -1
-            prefs.lastMatchWinningAlliance = lastMatch.winningAlliance ?: ""
-            val lastAlliance = if (teamKey in (lastMatch.alliances?.red?.teamKeys ?: emptyList())) "red" else "blue"
-            prefs.lastAlliance = lastAlliance
-            prefs.lastMatchBonusRp = extractBonusRp(lastMatch, lastAlliance)
-        } else {
-            clearLastMatch(prefs)
-        }
+        /** Returns true if the team has an active event. */
+        private suspend fun updateAppTracker(
+            prefs: TeamTrackerPreferences,
+            teamNumber: String,
+            data: TeamEventData,
+        ): Boolean {
+            val teamKey = "frc$teamNumber"
 
-        // Next unplayed match
-        val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
-        if (nextMatch != null) {
-            prefs.nextMatchLabel = getShortLabel(nextMatch)
-            prefs.nextMatchRedTeams = teamKeysToNumbers(nextMatch.alliances?.red?.teamKeys)
-            prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
-            prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
-            prefs.nextMatchTime = formatMatchTimeRaw(nextMatch)
-            prefs.nextAlliance = if (teamKey in (nextMatch.alliances?.red?.teamKeys ?: emptyList())) "red" else "blue"
-        } else {
-            clearNextMatch(prefs)
-        }
-
-        return true
-    }
-
-    private fun clearLastMatch(prefs: TeamTrackerPreferences) {
-        prefs.lastMatchLabel = ""
-        prefs.lastMatchRedTeams = ""
-        prefs.lastMatchBlueTeams = ""
-        prefs.lastMatchRedScore = -1
-        prefs.lastMatchBlueScore = -1
-        prefs.lastMatchWinningAlliance = ""
-        prefs.lastAlliance = ""
-        prefs.lastMatchBonusRp = 0
-    }
-
-    /** Extract bonus RPs (total minus win/tie RPs) from score_breakdown. */
-    private fun extractBonusRp(match: MatchDto, alliance: String): Int {
-        val breakdown = match.scoreBreakdown?.get(alliance)?.jsonObject ?: return 0
-        val totalRp = breakdown["rp"]?.jsonPrimitive?.intOrNull ?: return 0
-        val winRp = when {
-            match.winningAlliance == alliance -> 2
-            match.winningAlliance.isNullOrBlank() -> 1
-            else -> 0
-        }
-        return (totalRp - winRp).coerceAtLeast(0)
-    }
-
-    private fun clearNextMatch(prefs: TeamTrackerPreferences) {
-        prefs.nextMatchLabel = ""
-        prefs.nextMatchRedTeams = ""
-        prefs.nextMatchBlueTeams = ""
-        prefs.nextMatchTime = ""
-        prefs.nextMatchTimeIsEstimate = false
-        prefs.nextAlliance = ""
-    }
-
-    // endregion
-
-    // region Helpers
-
-    private fun teamKeysToNumbers(keys: List<String>?): String =
-        keys?.joinToString(", ") { it.removePrefix("frc") } ?: ""
-
-    private fun findUpcomingEvent(events: List<EventDto>): EventDto? =
-        findAllUpcomingEvents(events).firstOrNull()
-
-    private fun findAllUpcomingEvents(events: List<EventDto>): List<EventDto> {
-        val today = LocalDate.now()
-        return events.filter { event ->
-            val start = event.startDate?.let { LocalDate.parse(it) } ?: return@filter false
-            !start.isBefore(today)
-        }.sortedBy { it.startDate ?: "" }
-    }
-
-    /**
-     * Find the current event: running today > recently ended (within 3 days).
-     * Among concurrent events, prefer the one with unplayed matches.
-     */
-    private suspend fun findCurrentEvent(events: List<EventDto>, teamKey: String): EventDto? {
-        if (events.isEmpty()) return null
-        val today = LocalDate.now()
-
-        val currentEvents = events.filter { event ->
-            val start = event.startDate?.let { LocalDate.parse(it) } ?: return@filter false
-            val end = event.endDate?.let { LocalDate.parse(it) } ?: start
-            today in start..end
-        }
-
-        if (currentEvents.size > 1) {
-            for (event in currentEvents) {
+            // Fetch team nickname — keep existing on failure
+            prefs.teamNickname =
                 try {
-                    val matches = api.getEventMatches(event.key)
-                    val hasUnplayed = matches.any { match ->
-                        val red = match.alliances?.red?.teamKeys ?: emptyList()
-                        val blue = match.alliances?.blue?.teamKeys ?: emptyList()
-                        (teamKey in red || teamKey in blue) && (match.alliances?.red?.score ?: -1) < 0
-                    }
-                    if (hasUnplayed) return event
+                    api.getTeam(teamKey).nickname ?: prefs.teamNickname
                 } catch (e: Exception) {
-                    Log.w(TAG, "Failed to check matches for ${event.key}", e)
+                    Log.w(TAG, "Failed to fetch team info for $teamKey", e)
+                    prefs.teamNickname
+                }
+
+            if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
+
+            if (data.currentEvent == null) {
+                prefs.hasActiveEvent = false
+                prefs.eventName = ""
+                prefs.record = ""
+                clearLastMatch(prefs)
+                clearNextMatch(prefs)
+
+                val upcoming = findAllUpcomingEvents(data.events)
+                prefs.upcomingEvents =
+                    if (upcoming.isNotEmpty()) {
+                        upcoming.joinToString("|") { event ->
+                            val name = event.shortName ?: event.name
+                            val date =
+                                event.startDate?.let {
+                                    LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
+                                } ?: ""
+                            "$date \u2014 $name"
+                        }
+                    } else {
+                        ""
+                    }
+                return false
+            }
+
+            prefs.hasActiveEvent = true
+            prefs.eventName = data.currentEvent.shortName ?: data.currentEvent.name
+            prefs.upcomingEvents = ""
+
+            // Compute qual record
+            val qualMatches =
+                data.teamMatches.filter {
+                    it.compLevel == "qm" && (it.alliances?.red?.score ?: -1) >= 0
+                }
+            var wins = 0
+            var losses = 0
+            var ties = 0
+            for (match in qualMatches) {
+                val alliance =
+                    if (teamKey in
+                        (match.alliances?.red?.teamKeys ?: emptyList())
+                    ) {
+                        "red"
+                    } else {
+                        "blue"
+                    }
+                when {
+                    match.winningAlliance == alliance -> wins++
+                    match.winningAlliance.isNullOrBlank() -> ties++
+                    else -> losses++
                 }
             }
-            return currentEvents.maxByOrNull { it.eventType ?: 0 }
+            prefs.record = "$wins-$losses-$ties"
+
+            // Last played match
+            val lastMatch = data.teamMatches.lastOrNull { (it.alliances?.red?.score ?: -1) >= 0 }
+            if (lastMatch != null) {
+                prefs.lastMatchLabel = getShortLabel(lastMatch)
+                prefs.lastMatchRedTeams = teamKeysToNumbers(lastMatch.alliances?.red?.teamKeys)
+                prefs.lastMatchBlueTeams = teamKeysToNumbers(lastMatch.alliances?.blue?.teamKeys)
+                prefs.lastMatchRedScore = lastMatch.alliances?.red?.score ?: -1
+                prefs.lastMatchBlueScore = lastMatch.alliances?.blue?.score ?: -1
+                prefs.lastMatchWinningAlliance = lastMatch.winningAlliance ?: ""
+                val lastAlliance =
+                    if (teamKey in
+                        (lastMatch.alliances?.red?.teamKeys ?: emptyList())
+                    ) {
+                        "red"
+                    } else {
+                        "blue"
+                    }
+                prefs.lastAlliance = lastAlliance
+                prefs.lastMatchBonusRp = extractBonusRp(lastMatch, lastAlliance)
+            } else {
+                clearLastMatch(prefs)
+            }
+
+            // Next unplayed match
+            val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
+            if (nextMatch != null) {
+                prefs.nextMatchLabel = getShortLabel(nextMatch)
+                prefs.nextMatchRedTeams = teamKeysToNumbers(nextMatch.alliances?.red?.teamKeys)
+                prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
+                prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
+                prefs.nextMatchTime = formatMatchTimeRaw(nextMatch)
+                prefs.nextAlliance =
+                    if (teamKey in
+                        (nextMatch.alliances?.red?.teamKeys ?: emptyList())
+                    ) {
+                        "red"
+                    } else {
+                        "blue"
+                    }
+            } else {
+                clearNextMatch(prefs)
+            }
+
+            return true
         }
 
-        if (currentEvents.isNotEmpty()) return currentEvents.first()
-
-        // Most recently ended (within 3 days)
-        val recentPast = events.filter { event ->
-            val end = event.endDate?.let { LocalDate.parse(it) } ?: return@filter false
-            end.isBefore(today) && end.isAfter(today.minusDays(4))
-        }.maxByOrNull { it.endDate ?: "" }
-
-        return recentPast
-    }
-
-    private fun compLevelOrder(compLevel: String): Int = when (compLevel) {
-        "qm" -> 0
-        "ef" -> 1
-        "qf" -> 2
-        "sf" -> 3
-        "f" -> 4
-        else -> Int.MAX_VALUE
-    }
-
-    /** Simplified short label — "Q18", "SF2-1", "F1-1" */
-    private fun getShortLabel(match: MatchDto): String = when (match.compLevel) {
-        "qm" -> "Q${match.matchNumber}"
-        "ef" -> "EF${match.setNumber}-${match.matchNumber}"
-        "qf" -> "QF${match.setNumber}-${match.matchNumber}"
-        "sf" -> "SF${match.setNumber}-${match.matchNumber}"
-        "f" -> "F${match.setNumber}-${match.matchNumber}"
-        else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
-    }
-
-    /** Format match time with estimate prefix for complication display. */
-    private fun formatMatchTime(match: MatchDto): String {
-        val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
-        val instant = Instant.ofEpochSecond(epochSeconds)
-        val zoned = instant.atZone(ZoneId.systemDefault())
-        val today = LocalDate.now()
-        val matchDate = zoned.toLocalDate()
-        val prefix = if (match.predictedTime != null) "~" else ""
-
-        return if (matchDate == today) {
-            val amPm = if (zoned.hour < 12) "A" else "P"
-            "$prefix${timeFormat.format(zoned)}$amPm"
-        } else {
-            zoned.format(DateTimeFormatter.ofPattern("EEE"))
+        private fun clearLastMatch(prefs: TeamTrackerPreferences) {
+            prefs.lastMatchLabel = ""
+            prefs.lastMatchRedTeams = ""
+            prefs.lastMatchBlueTeams = ""
+            prefs.lastMatchRedScore = -1
+            prefs.lastMatchBlueScore = -1
+            prefs.lastMatchWinningAlliance = ""
+            prefs.lastAlliance = ""
+            prefs.lastMatchBonusRp = 0
         }
-    }
 
-    /** Format match time without estimate prefix — app tracker stores the flag separately. */
-    private fun formatMatchTimeRaw(match: MatchDto): String {
-        val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
-        val instant = Instant.ofEpochSecond(epochSeconds)
-        val zoned = instant.atZone(ZoneId.systemDefault())
-        val today = LocalDate.now()
-        val matchDate = zoned.toLocalDate()
-
-        return if (matchDate == today) {
-            val amPm = if (zoned.hour < 12) "A" else "P"
-            "${timeFormat.format(zoned)}$amPm"
-        } else {
-            zoned.format(DateTimeFormatter.ofPattern("EEE"))
+        /** Extract bonus RPs (total minus win/tie RPs) from score_breakdown. */
+        private fun extractBonusRp(
+            match: MatchDto,
+            alliance: String,
+        ): Int {
+            val breakdown = match.scoreBreakdown?.get(alliance)?.jsonObject ?: return 0
+            val totalRp = breakdown["rp"]?.jsonPrimitive?.intOrNull ?: return 0
+            val winRp =
+                when {
+                    match.winningAlliance == alliance -> 2
+                    match.winningAlliance.isNullOrBlank() -> 1
+                    else -> 0
+                }
+            return (totalRp - winRp).coerceAtLeast(0)
         }
-    }
 
-    // endregion
-}
+        private fun clearNextMatch(prefs: TeamTrackerPreferences) {
+            prefs.nextMatchLabel = ""
+            prefs.nextMatchRedTeams = ""
+            prefs.nextMatchBlueTeams = ""
+            prefs.nextMatchTime = ""
+            prefs.nextMatchTimeIsEstimate = false
+            prefs.nextAlliance = ""
+        }
+
+        // endregion
+
+        // region Helpers
+
+        private fun teamKeysToNumbers(keys: List<String>?): String =
+            keys?.joinToString(", ") { it.removePrefix("frc") } ?: ""
+
+        private fun findUpcomingEvent(events: List<EventDto>): EventDto? =
+            findAllUpcomingEvents(events).firstOrNull()
+
+        private fun findAllUpcomingEvents(events: List<EventDto>): List<EventDto> {
+            val today = LocalDate.now()
+            return events
+                .filter { event ->
+                    val start = event.startDate?.let { LocalDate.parse(it) } ?: return@filter false
+                    !start.isBefore(today)
+                }.sortedBy { it.startDate ?: "" }
+        }
+
+        /**
+         * Find the current event: running today > recently ended (within 3 days).
+         * Among concurrent events, prefer the one with unplayed matches.
+         */
+        private suspend fun findCurrentEvent(
+            events: List<EventDto>,
+            teamKey: String,
+        ): EventDto? {
+            if (events.isEmpty()) return null
+            val today = LocalDate.now()
+
+            val currentEvents =
+                events.filter { event ->
+                    val start = event.startDate?.let { LocalDate.parse(it) } ?: return@filter false
+                    val end = event.endDate?.let { LocalDate.parse(it) } ?: start
+                    today in start..end
+                }
+
+            if (currentEvents.size > 1) {
+                for (event in currentEvents) {
+                    try {
+                        val matches = api.getEventMatches(event.key)
+                        val hasUnplayed =
+                            matches.any { match ->
+                                val red = match.alliances?.red?.teamKeys ?: emptyList()
+                                val blue = match.alliances?.blue?.teamKeys ?: emptyList()
+                                (teamKey in red || teamKey in blue) &&
+                                    (match.alliances?.red?.score ?: -1) < 0
+                            }
+                        if (hasUnplayed) return event
+                    } catch (e: Exception) {
+                        Log.w(TAG, "Failed to check matches for ${event.key}", e)
+                    }
+                }
+                return currentEvents.maxByOrNull { it.eventType ?: 0 }
+            }
+
+            if (currentEvents.isNotEmpty()) return currentEvents.first()
+
+            // Most recently ended (within 3 days)
+            val recentPast =
+                events
+                    .filter { event ->
+                        val end = event.endDate?.let { LocalDate.parse(it) } ?: return@filter false
+                        end.isBefore(today) && end.isAfter(today.minusDays(4))
+                    }.maxByOrNull { it.endDate ?: "" }
+
+            return recentPast
+        }
+
+        private fun compLevelOrder(compLevel: String): Int =
+            when (compLevel) {
+                "qm" -> 0
+                "ef" -> 1
+                "qf" -> 2
+                "sf" -> 3
+                "f" -> 4
+                else -> Int.MAX_VALUE
+            }
+
+        /** Simplified short label — "Q18", "SF2-1", "F1-1" */
+        private fun getShortLabel(match: MatchDto): String =
+            when (match.compLevel) {
+                "qm" -> "Q${match.matchNumber}"
+                "ef" -> "EF${match.setNumber}-${match.matchNumber}"
+                "qf" -> "QF${match.setNumber}-${match.matchNumber}"
+                "sf" -> "SF${match.setNumber}-${match.matchNumber}"
+                "f" -> "F${match.setNumber}-${match.matchNumber}"
+                else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
+            }
+
+        /** Format match time with estimate prefix for complication display. */
+        private fun formatMatchTime(match: MatchDto): String {
+            val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
+            val instant = Instant.ofEpochSecond(epochSeconds)
+            val zoned = instant.atZone(ZoneId.systemDefault())
+            val today = LocalDate.now()
+            val matchDate = zoned.toLocalDate()
+            val prefix = if (match.predictedTime != null) "~" else ""
+
+            return if (matchDate == today) {
+                val amPm = if (zoned.hour < 12) "A" else "P"
+                "$prefix${timeFormat.format(zoned)}$amPm"
+            } else {
+                zoned.format(DateTimeFormatter.ofPattern("EEE"))
+            }
+        }
+
+        /** Format match time without estimate prefix — app tracker stores the flag separately. */
+        private fun formatMatchTimeRaw(match: MatchDto): String {
+            val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
+            val instant = Instant.ofEpochSecond(epochSeconds)
+            val zoned = instant.atZone(ZoneId.systemDefault())
+            val today = LocalDate.now()
+            val matchDate = zoned.toLocalDate()
+
+            return if (matchDate == today) {
+                val amPm = if (zoned.hour < 12) "A" else "P"
+                "${timeFormat.format(zoned)}$amPm"
+            } else {
+                zoned.format(DateTimeFormatter.ofPattern("EEE"))
+            }
+        }
+
+        // endregion
+    }

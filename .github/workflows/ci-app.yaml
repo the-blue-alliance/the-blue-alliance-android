@@ -1,4 +1,4 @@
-name: CI
+name: CI — App
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  app-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -48,7 +48,7 @@ jobs:
       - name: Run unit tests
         run: ./gradlew :app:testDebugUnitTest --stacktrace
 
-  release-build:
+  app-release-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

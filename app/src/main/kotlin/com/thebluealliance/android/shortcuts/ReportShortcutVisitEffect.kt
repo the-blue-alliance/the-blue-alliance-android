@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.pm.ShortcutManagerCompat
-import com.thebluealliance.android.domain.model.ModelType
 
 /**
  * Report that an item that is a valid shortcut (i.e. a team or an event) was visited when this
@@ -16,9 +15,7 @@ import com.thebluealliance.android.domain.model.ModelType
  * This reports the use to ShortcutManager so that the system can rank shortcuts appropriately.
  */
 @Composable
-fun ReportShortcutVisitEffect(
-    modelKey: String?
-) {
+fun ReportShortcutVisitEffect(modelKey: String?) {
     val context = LocalContext.current
     LaunchedEffect(modelKey) {
         modelKey?.let {

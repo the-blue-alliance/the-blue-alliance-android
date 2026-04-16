@@ -34,17 +34,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.DistrictRanking
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
-import com.thebluealliance.android.ui.common.EmptyBox
-import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
@@ -99,7 +98,7 @@ fun DistrictDetailScreen(
                         IconButton(onClick = onNavigateUp) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back"
+                                contentDescription = "Back",
                             )
                         }
                     },
@@ -114,11 +113,24 @@ fun DistrictDetailScreen(
                     TABS.forEachIndexed { index, title ->
                         Tab(
                             selected = pagerState.currentPage == index,
-                            onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(
+                                        index,
+                                    )
+                                }
+                            },
                             text = {
                                 Text(
                                     text = title,
-                                    color = if (pagerState.currentPage == index) Color.White else Color.White.copy(alpha = 0.7f)
+                                    color =
+                                        if (pagerState.currentPage ==
+                                            index
+                                        ) {
+                                            Color.White
+                                        } else {
+                                            Color.White.copy(alpha = 0.7f)
+                                        },
                                 )
                             },
                         )
@@ -130,26 +142,31 @@ fun DistrictDetailScreen(
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
-                .padding(top = innerPadding.calculateTopPadding())
-                .background(MaterialTheme.colorScheme.background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.eventSections != null && uiState.rankings != null,
+                isRefreshing =
+                    isRefreshing && uiState.eventSections != null && uiState.rankings != null,
                 onRefresh = { viewModel.refreshTab(page) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (page) {
-                    DistrictDetailTabs.EVENTS -> EventsTab(
-                        sections = uiState.eventSections,
-                        onNavigateToEvent = onNavigateToEvent,
-                        innerPadding = bottomPadding,
-                    )
-                    DistrictDetailTabs.RANKINGS -> RankingsTab(
-                        rankings = uiState.rankings,
-                        onNavigateToTeam = onNavigateToTeam,
-                        innerPadding = bottomPadding,
-                    )
+                    DistrictDetailTabs.EVENTS ->
+                        EventsTab(
+                            sections = uiState.eventSections,
+                            onNavigateToEvent = onNavigateToEvent,
+                            innerPadding = bottomPadding,
+                        )
+                    DistrictDetailTabs.RANKINGS ->
+                        RankingsTab(
+                            rankings = uiState.rankings,
+                            onNavigateToTeam = onNavigateToTeam,
+                            innerPadding = bottomPadding,
+                        )
                 }
             }
         }
@@ -174,37 +191,40 @@ private fun EventsTab(
 
     val allEvents = sections.flatMap { it.events }
     val today = remember { LocalDate.now() }
-    val thisWeekResult = remember(allEvents, today) {
-        computeThisWeekEvents(allEvents, today, today.year)
-    }
+    val thisWeekResult =
+        remember(allEvents, today) {
+            computeThisWeekEvents(allEvents, today, today.year)
+        }
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    val headerInfos = remember(sections, thisWeekResult) {
-        buildList {
-            var index = 0
-            if (thisWeekResult != null) {
-                add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
-                index += 1 + thisWeekResult.events.size + 1 // header + items + divider
-            }
-            sections.forEach { section ->
-                val headerKey = "header_${section.label}"
-                add(SectionHeaderInfo(headerKey, section.label, index))
-                index += 1 + section.events.size // header + items
+    val headerInfos =
+        remember(sections, thisWeekResult) {
+            buildList {
+                var index = 0
+                if (thisWeekResult != null) {
+                    add(SectionHeaderInfo("this_week_header", thisWeekResult.label, index))
+                    index += 1 + thisWeekResult.events.size + 1 // header + items + divider
+                }
+                sections.forEach { section ->
+                    val headerKey = "header_${section.label}"
+                    add(SectionHeaderInfo(headerKey, section.label, index))
+                    index += 1 + section.events.size // header + items
+                }
             }
         }
-    }
 
     val headerKeys = remember(headerInfos) { headerInfos.map { it.key }.toSet() }
 
     val stuckHeaderKey by remember {
         derivedStateOf {
-            val stuck = listState.layoutInfo.visibleItemsInfo
-                .firstOrNull { item ->
-                    val key = item.key as? String
-                    key != null && key in headerKeys && item.offset <= 0
-                }?.key as? String
+            val stuck =
+                listState.layoutInfo.visibleItemsInfo
+                    .firstOrNull { item ->
+                        val key = item.key as? String
+                        key != null && key in headerKeys && item.offset <= 0
+                    }?.key as? String
             stuck ?: headerInfos.firstOrNull()?.key
         }
     }
@@ -264,14 +284,14 @@ private fun RankingsTab(
 ) {
     if (rankings == null) {
         LoadingBox(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding),
         )
         return
     }
     if (rankings.isEmpty()) {
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
-            message = "No rankings"
+            message = "No rankings",
         )
         return
     }
@@ -281,87 +301,102 @@ private fun RankingsTab(
     ) {
         stickyHeader {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(TBAIndigo400)
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(TBAIndigo400)
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "Rank",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.10f)
+                    modifier = Modifier.weight(0.10f),
                 )
                 Text(
                     text = "Team",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n1",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n2",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "DCMP",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Rookie\nBonus",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Total\nPoints",
                     style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f)
+                    modifier = Modifier.weight(0.15f),
                 )
             }
         }
 
         items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
-            val event1Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(0)?.total?.toInt()?.toString() ?: "-"
-            val event2Points = ranking.eventPoints.filter { !it.districtCmp }.getOrNull(1)?.total?.toInt()?.toString() ?: "-"
-            val dcmpPoints = ranking.eventPoints.find { it.districtCmp }?.total?.toInt()?.toString() ?: "-"
+            val event1Points =
+                ranking.eventPoints
+                    .filter { !it.districtCmp }
+                    .getOrNull(
+                        0,
+                    )?.total
+                    ?.toInt()
+                    ?.toString()
+                    ?: "-"
+            val event2Points =
+                ranking.eventPoints
+                    .filter { !it.districtCmp }
+                    .getOrNull(
+                        1,
+                    )?.total
+                    ?.toInt()
+                    ?.toString()
+                    ?: "-"
+            val dcmpPoints =
+                ranking.eventPoints
+                    .find { it.districtCmp }
+                    ?.total
+                    ?.toInt()
+                    ?.toString() ?: "-"
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onNavigateToTeam(ranking.teamKey) }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToTeam(ranking.teamKey) }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "#${ranking.rank}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
@@ -397,8 +432,7 @@ private fun RankingsTab(
                 )
                 Text(
                     text = "${ranking.pointTotal.toInt()} pts",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )

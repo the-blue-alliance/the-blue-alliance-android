@@ -12,14 +12,22 @@ interface FavoriteDao {
     @Query("SELECT * FROM favorites ORDER BY modelType, modelKey ASC")
     fun observeAll(): Flow<List<FavoriteEntity>>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM favorites WHERE modelKey = :modelKey AND modelType = :modelType)")
-    fun isFavorite(modelKey: String, modelType: Int): Flow<Boolean>
+    @Query(
+        "SELECT EXISTS(SELECT 1 FROM favorites WHERE modelKey = :modelKey AND modelType = :modelType)",
+    )
+    fun isFavorite(
+        modelKey: String,
+        modelType: Int,
+    ): Flow<Boolean>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(favorites: List<FavoriteEntity>)
 
     @Query("DELETE FROM favorites WHERE modelKey = :modelKey AND modelType = :modelType")
-    suspend fun delete(modelKey: String, modelType: Int)
+    suspend fun delete(
+        modelKey: String,
+        modelType: Int,
+    )
 
     @Query("DELETE FROM favorites")
     suspend fun deleteAll()

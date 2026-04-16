@@ -10,13 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun LoadingBox(
-    modifier: Modifier = Modifier,
-) {
-  Box(
-      modifier.fillMaxSize().verticalScroll(rememberScrollState()),
-      contentAlignment = Alignment.Center,
-  ) {
-    CircularProgressIndicator()
-  }
+fun LoadingBox(modifier: Modifier = Modifier) {
+    Box(
+        modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator()
+    }
 }

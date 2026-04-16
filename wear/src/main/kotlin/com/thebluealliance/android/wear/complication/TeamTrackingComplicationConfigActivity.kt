@@ -24,15 +24,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.FilledTonalButton
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackingComplicationConfigActivity : ComponentActivity() {
-
     private var complicationId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +41,7 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
         complicationId = intent?.getIntExtra(
             "android.support.wearable.complications.EXTRA_CONFIG_COMPLICATION_ID",
-            -1
+            -1,
         ) ?: -1
 
         // Support passing team number directly via intent (for ADB configuration)
@@ -54,10 +55,14 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                ConfigScreen(
-                    initialTeam = existingTeam,
-                    onSave = { teamNumber -> saveAndFinish(teamNumber) },
-                )
+                AppScaffold {
+                    ScreenScaffold {
+                        ConfigScreen(
+                            initialTeam = existingTeam,
+                            onSave = { teamNumber -> saveAndFinish(teamNumber) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -65,8 +70,13 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
     private fun saveAndFinish(teamNumber: String) {
         Log.d(TAG, "saveAndFinish: team=$teamNumber, complicationId=$complicationId")
         if (teamNumber.isNotBlank()) {
+            val prefs = TeamTrackerPreferences(this)
+            val teamChanged = prefs.teamNumber != teamNumber
+            if (teamChanged) {
+                prefs.clearCachedData()
+            }
             // Single source of truth for tracked team
-            TeamTrackerPreferences(this).teamNumber = teamNumber
+            prefs.teamNumber = teamNumber
 
             if (complicationId >= 0) {
                 TeamTrackingComplicationPreferences.addComplicationId(this, complicationId)
@@ -74,10 +84,11 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
 
             TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
 
-            ComplicationDataSourceUpdateRequester.create(
-                this,
-                ComponentName(this, TeamTrackingComplicationService::class.java),
-            ).requestUpdateAll()
+            ComplicationDataSourceUpdateRequester
+                .create(
+                    this,
+                    ComponentName(this, TeamTrackingComplicationService::class.java),
+                ).requestUpdateAll()
         }
         setResult(Activity.RESULT_OK)
         finish()
@@ -101,58 +112,62 @@ private fun ConfigScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = if (initialTeam.isNotBlank()) "Change Team" else "Team Number",
-            style = MaterialTheme.typography.title3,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(bottom = 8.dp),
         )
         BasicTextField(
             state = textFieldState,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colors.surface,
-                    shape = MaterialTheme.shapes.small,
-                )
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            textStyle = TextStyle(
-                color = MaterialTheme.colors.onSurface,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center,
-            ),
-            cursorBrush = SolidColor(MaterialTheme.colors.primary),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        shape = MaterialTheme.shapes.medium,
+                    ).padding(horizontal = 12.dp, vertical = 8.dp),
+            textStyle =
+                TextStyle(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                ),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             lineLimits = androidx.compose.foundation.text.input.TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-            ),
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                ),
             decorator = { innerTextField ->
                 if (textFieldState.text.isEmpty() && initialTeam.isNotBlank()) {
                     Text(
                         text = initialTeam,
-                        style = TextStyle(
-                            color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                        ),
+                        style =
+                            TextStyle(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 20.sp,
+                                textAlign = TextAlign.Center,
+                            ),
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
                 innerTextField()
             },
         )
-        Button(
+        FilledTonalButton(
             onClick = { save() },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-        ) {
-            Text("Save")
-        }
+            label = { Text("Save") },
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+        )
     }
 }

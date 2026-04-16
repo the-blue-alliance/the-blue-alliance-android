@@ -1,8 +1,5 @@
 package com.thebluealliance.android.domain.model
 
-import android.R.attr.type
-import com.google.common.io.Files.map
-
 data class Event(
     val key: String,
     val name: String,
@@ -58,12 +55,12 @@ enum class PlayoffType(
     BEST_OF_5(typeInt = 6),
     BEST_OF_3(typeInt = 7),
 
-    OTHER(typeInt = 8);
+    OTHER(typeInt = 8),
+    ;
 
     companion object {
         private val typeIntMap = entries.associateBy(PlayoffType::typeInt)
-        fun fromInt(typeInt: Int): PlayoffType {
-            return typeIntMap[typeInt] ?: OTHER
-        }
+
+        fun fromInt(typeInt: Int): PlayoffType = typeIntMap[typeInt] ?: OTHER
     }
 }

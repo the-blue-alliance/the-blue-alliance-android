@@ -13,7 +13,10 @@ interface SubscriptionDao {
     fun observeAll(): Flow<List<SubscriptionEntity>>
 
     @Query("SELECT * FROM subscriptions WHERE modelKey = :modelKey AND modelType = :modelType")
-    fun observe(modelKey: String, modelType: Int): Flow<SubscriptionEntity?>
+    fun observe(
+        modelKey: String,
+        modelType: Int,
+    ): Flow<SubscriptionEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(subscriptions: List<SubscriptionEntity>)

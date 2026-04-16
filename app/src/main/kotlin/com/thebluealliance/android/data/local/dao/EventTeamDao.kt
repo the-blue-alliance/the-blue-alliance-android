@@ -25,5 +25,8 @@ interface EventTeamDao {
     suspend fun deleteByTeam(teamKey: String)
 
     @Query("DELETE FROM event_teams WHERE teamKey = :teamKey AND eventKey LIKE :yearPrefix || '%'")
-    suspend fun deleteByTeamAndYear(teamKey: String, yearPrefix: String)
+    suspend fun deleteByTeamAndYear(
+        teamKey: String,
+        yearPrefix: String,
+    )
 }

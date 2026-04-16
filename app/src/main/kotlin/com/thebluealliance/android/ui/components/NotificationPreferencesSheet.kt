@@ -32,9 +32,10 @@ fun NotificationPreferencesSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val availableTypes = NotificationType.forModelType(modelType)
-    val selectedNotifications = remember {
-        mutableStateListOf<String>().apply { addAll(currentNotifications) }
-    }
+    val selectedNotifications =
+        remember {
+            mutableStateListOf<String>().apply { addAll(currentNotifications) }
+        }
     val favoriteState = remember { androidx.compose.runtime.mutableStateOf(isFavorite) }
 
     ModalBottomSheet(
@@ -85,8 +86,11 @@ fun NotificationPreferencesSheet(
                     Switch(
                         checked = type.serverKey in selectedNotifications,
                         onCheckedChange = { checked ->
-                            if (checked) selectedNotifications.add(type.serverKey)
-                            else selectedNotifications.remove(type.serverKey)
+                            if (checked) {
+                                selectedNotifications.add(type.serverKey)
+                            } else {
+                                selectedNotifications.remove(type.serverKey)
+                            }
                         },
                     )
                 }
@@ -94,9 +98,10 @@ fun NotificationPreferencesSheet(
 
             TextButton(
                 onClick = { onSave(favoriteState.value, selectedNotifications.toList()) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 24.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 24.dp),
             ) {
                 Text("Save")
             }

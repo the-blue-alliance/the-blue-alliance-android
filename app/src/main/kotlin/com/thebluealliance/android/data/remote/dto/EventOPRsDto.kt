@@ -15,6 +15,5 @@ data class EventOPRsDto(
 // Alternative: Use JsonElement for the whole response
 @Serializable
 data class EventOPRsResponseDto(
-    val response: JsonObject
+    val response: JsonObject,
 )
-

@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,32 +40,30 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.Vignette
-import androidx.wear.compose.material.VignettePosition
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
+import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.CircularProgressIndicator
+import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.EdgeButtonSize
+import androidx.wear.compose.material3.FilledTonalButton
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackerActivity : ComponentActivity() {
-
     private lateinit var trackerPrefs: TeamTrackerPreferences
     private val state = mutableStateOf(TeamTrackerState())
 
-    private val prefListener = SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-        loadState()
-    }
+    private val prefListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
+            loadState()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -78,11 +78,13 @@ class TeamTrackerActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                val currentState by state
-                TeamTrackerScreen(
-                    state = currentState,
-                    onChangeTeam = { launchConfigActivity() },
-                )
+                AppScaffold {
+                    val currentState by state
+                    TeamTrackerScreen(
+                        state = currentState,
+                        onChangeTeam = { launchConfigActivity() },
+                    )
+                }
             }
         }
     }
@@ -98,30 +100,34 @@ class TeamTrackerActivity : ComponentActivity() {
     }
 
     private fun loadState() {
-        state.value = TeamTrackerState(
-            teamNumber = trackerPrefs.teamNumber,
-            teamNickname = trackerPrefs.teamNickname,
-            avatarBase64 = trackerPrefs.avatarBase64,
-            eventName = trackerPrefs.eventName,
-            record = trackerPrefs.record,
-            hasActiveEvent = trackerPrefs.hasActiveEvent,
-            lastMatchLabel = trackerPrefs.lastMatchLabel,
-            lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
-            lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
-            lastMatchRedScore = trackerPrefs.lastMatchRedScore,
-            lastMatchBlueScore = trackerPrefs.lastMatchBlueScore,
-            lastMatchWinningAlliance = trackerPrefs.lastMatchWinningAlliance,
-            lastAlliance = trackerPrefs.lastAlliance,
-            lastMatchBonusRp = trackerPrefs.lastMatchBonusRp,
-            nextMatchLabel = trackerPrefs.nextMatchLabel,
-            nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
-            nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
-            nextMatchTime = trackerPrefs.nextMatchTime,
-            nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
-            nextAlliance = trackerPrefs.nextAlliance,
-            upcomingEvents = trackerPrefs.upcomingEvents
-                .split("|").filter { it.isNotBlank() },
-        )
+        state.value =
+            TeamTrackerState(
+                teamNumber = trackerPrefs.teamNumber,
+                teamNickname = trackerPrefs.teamNickname,
+                avatarBase64 = trackerPrefs.avatarBase64,
+                eventName = trackerPrefs.eventName,
+                record = trackerPrefs.record,
+                hasActiveEvent = trackerPrefs.hasActiveEvent,
+                isLoading = trackerPrefs.isLoading,
+                lastMatchLabel = trackerPrefs.lastMatchLabel,
+                lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
+                lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
+                lastMatchRedScore = trackerPrefs.lastMatchRedScore,
+                lastMatchBlueScore = trackerPrefs.lastMatchBlueScore,
+                lastMatchWinningAlliance = trackerPrefs.lastMatchWinningAlliance,
+                lastAlliance = trackerPrefs.lastAlliance,
+                lastMatchBonusRp = trackerPrefs.lastMatchBonusRp,
+                nextMatchLabel = trackerPrefs.nextMatchLabel,
+                nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
+                nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
+                nextMatchTime = trackerPrefs.nextMatchTime,
+                nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
+                nextAlliance = trackerPrefs.nextAlliance,
+                upcomingEvents =
+                    trackerPrefs.upcomingEvents
+                        .split("|")
+                        .filter { it.isNotBlank() },
+            )
     }
 
     private fun launchConfigActivity() {
@@ -138,6 +144,7 @@ data class TeamTrackerState(
     val eventName: String = "",
     val record: String = "",
     val hasActiveEvent: Boolean = false,
+    val isLoading: Boolean = false,
     val lastMatchLabel: String = "",
     val lastMatchRedTeams: String = "",
     val lastMatchBlueTeams: String = "",
@@ -170,22 +177,55 @@ private fun TeamTrackerScreen(
         return
     }
 
-    val listState = rememberScalingLazyListState()
+    val columnState = rememberTransformingLazyColumnState()
 
-    Scaffold(
-        timeText = { TimeText() },
-        vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
-        positionIndicator = { PositionIndicator(scalingLazyListState = listState) },
-    ) {
-        ScalingLazyColumn(
-            state = listState,
+    // Reset scroll position when team changes
+    LaunchedEffect(state.teamNumber) {
+        columnState.scrollToItem(0)
+    }
+
+    ScreenScaffold(
+        scrollState = columnState,
+        edgeButton = {
+            EdgeButton(
+                onClick = onChangeTeam,
+                buttonSize = EdgeButtonSize.Small,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_settings),
+                    contentDescription = stringResource(R.string.change_team),
+                )
+            }
+        },
+    ) { contentPadding ->
+        TransformingLazyColumn(
+            state = columnState,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            autoCentering = null,
-            contentPadding = PaddingValues(top = 28.dp, start = 10.dp, end = 10.dp, bottom = 40.dp),
+            contentPadding = contentPadding,
         ) {
+            item { Spacer(modifier = Modifier.height(8.dp)) }
             item { TeamHeader(state) }
-            item { EventSubtitle(state) }
+
+            val hasMatchData =
+                state.lastMatchLabel.isNotBlank() || state.nextMatchLabel.isNotBlank()
+            val sparseContent = !hasMatchData && state.upcomingEvents.size <= 1
+            if (!state.isLoading && sparseContent) {
+                item { Spacer(modifier = Modifier.height(4.dp)) }
+            }
+
+            if (state.isLoading) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().height(48.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+            } else {
+                item { EventSubtitle(state) }
+            }
 
             if (state.lastMatchLabel.isNotBlank()) {
                 item {
@@ -212,30 +252,13 @@ private fun TeamTrackerScreen(
                         redTeams = state.nextMatchRedTeams,
                         blueTeams = state.nextMatchBlueTeams,
                         trackedTeam = state.teamNumber,
-                        timeText = buildString {
-                            if (state.nextMatchTimeIsEstimate) append("~")
-                            append(state.nextMatchTime)
-                        }.takeIf { state.nextMatchTime.isNotBlank() },
+                        timeText =
+                            buildString {
+                                if (state.nextMatchTimeIsEstimate) append("~")
+                                append(state.nextMatchTime)
+                            }.takeIf { state.nextMatchTime.isNotBlank() },
                     )
                 }
-            }
-
-            item {
-                Chip(
-                    onClick = onChangeTeam,
-                    label = { Text(stringResource(R.string.change_team)) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_settings),
-                            contentDescription = null,
-                            modifier = Modifier.size(ChipDefaults.IconSize),
-                        )
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    colors = ChipDefaults.secondaryChipColors(),
-                )
             }
         }
     }
@@ -243,9 +266,7 @@ private fun TeamTrackerScreen(
 
 @Composable
 private fun EmptyState(onChangeTeam: () -> Unit) {
-    Scaffold(
-        timeText = { TimeText() },
-    ) {
+    ScreenScaffold {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
@@ -258,16 +279,15 @@ private fun EmptyState(onChangeTeam: () -> Unit) {
                     painter = painterResource(R.drawable.tba_lamp),
                     contentDescription = null,
                     modifier = Modifier.size(48.dp).padding(bottom = 16.dp),
-                    tint = MaterialTheme.colors.primary,
+                    tint = MaterialTheme.colorScheme.primary,
                 )
-                Chip(
+                FilledTonalButton(
                     onClick = onChangeTeam,
                     label = { Text(stringResource(R.string.set_tracked_team)) },
                     icon = {
                         Icon(
                             painter = painterResource(R.drawable.ic_settings),
                             contentDescription = null,
-                            modifier = Modifier.size(ChipDefaults.IconSize),
                         )
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -279,31 +299,34 @@ private fun EmptyState(onChangeTeam: () -> Unit) {
 
 @Composable
 private fun TeamHeader(state: TeamTrackerState) {
-    val bitmap = remember(state.avatarBase64) {
-        state.avatarBase64?.let { base64 ->
-            try {
-                val bytes = Base64.decode(base64, Base64.DEFAULT)
-                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            } catch (_: Exception) {
-                null
+    val bitmap =
+        remember(state.avatarBase64) {
+            state.avatarBase64?.let { base64 ->
+                try {
+                    val bytes = Base64.decode(base64, Base64.DEFAULT)
+                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                } catch (_: Exception) {
+                    null
+                }
             }
         }
-    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (bitmap != null) {
-            val bgColor = when (state.nextAlliance.ifBlank { state.lastAlliance }) {
-                "red" -> AllianceRedBg
-                "blue" -> AllianceBlueBg
-                else -> AllianceBlueBg
-            }
+            val bgColor =
+                when (state.nextAlliance.ifBlank { state.lastAlliance }) {
+                    "red" -> AllianceRedBg
+                    "blue" -> AllianceBlueBg
+                    else -> AllianceBlueBg
+                }
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(bgColor),
+                modifier =
+                    Modifier
+                        .size(36.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(bgColor),
                 contentAlignment = Alignment.Center,
             ) {
                 Image(
@@ -316,7 +339,7 @@ private fun TeamHeader(state: TeamTrackerState) {
         }
         Text(
             text = state.teamNumber,
-            style = MaterialTheme.typography.title1,
+            style = MaterialTheme.typography.titleLarge,
         )
     }
 }
@@ -324,16 +347,17 @@ private fun TeamHeader(state: TeamTrackerState) {
 @Composable
 private fun EventSubtitle(state: TeamTrackerState) {
     if (state.hasActiveEvent) {
-        val text = if (state.record.isNotBlank()) {
-            "${state.record} at ${state.eventName}"
-        } else {
-            state.eventName
-        }
+        val text =
+            if (state.record.isNotBlank()) {
+                "${state.record} at ${state.eventName}"
+            } else {
+                state.eventName
+            }
         Text(
             text = text,
-            style = MaterialTheme.typography.caption2,
+            style = MaterialTheme.typography.labelSmall,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(vertical = 2.dp),
@@ -346,14 +370,22 @@ private fun EventSubtitle(state: TeamTrackerState) {
             for (event in state.upcomingEvents) {
                 Text(
                     text = event,
-                    style = MaterialTheme.typography.caption2,
+                    style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
         }
+    } else {
+        Text(
+            text = stringResource(R.string.no_upcoming_events),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(vertical = 2.dp),
+        )
     }
 }
 
@@ -372,14 +404,14 @@ private fun MatchSection(
     timeText: String? = null,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 6.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 6.dp),
     ) {
         Text(
             text = "$title \u2014 $matchLabel",
-            style = MaterialTheme.typography.caption1,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(bottom = 2.dp),
         )
         Row(
@@ -407,7 +439,7 @@ private fun MatchSection(
             if (timeText != null) {
                 Text(
                     text = timeText,
-                    style = MaterialTheme.typography.caption2,
+                    style = MaterialTheme.typography.labelSmall,
                 )
             }
         }
@@ -424,42 +456,45 @@ private fun AllianceRow(
     bonusRp: Int = 0,
 ) {
     val teamList = teams.split(", ")
-    val styledTeams = buildAnnotatedString {
-        teamList.forEachIndexed { index, team ->
-            if (team == trackedTeam) {
-                withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+    val styledTeams =
+        buildAnnotatedString {
+            teamList.forEachIndexed { index, team ->
+                if (team == trackedTeam) {
+                    withStyle(SpanStyle(textDecoration = TextDecoration.Underline)) {
+                        append(team)
+                    }
+                } else {
                     append(team)
                 }
-            } else {
-                append(team)
+                if (index < teamList.lastIndex) append(", ")
             }
-            if (index < teamList.lastIndex) append(", ")
         }
-    }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 1.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 1.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = styledTeams,
-            style = MaterialTheme.typography.caption2,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
             color = color,
             modifier = Modifier.weight(1f),
         )
         if (bonusRp > 0) {
             Text(
                 text = "\u25CF".repeat(bonusRp) + " ",
-                style = MaterialTheme.typography.caption2,
+                style = MaterialTheme.typography.labelSmall,
                 color = color,
             )
         }
         if (score != null) {
             Text(
                 text = score.toString(),
-                style = MaterialTheme.typography.caption2,
+                style = MaterialTheme.typography.labelSmall,
                 fontWeight = if (isWinner) FontWeight.Bold else FontWeight.Normal,
                 color = color,
             )

@@ -9,4 +9,15 @@ plugins {
     alias(libs.plugins.aboutlibraries) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.play.publisher) apply false
+    alias(libs.plugins.ktlint) apply false
+}
+
+subprojects {
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+
+    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
+        android.set(true)
+        outputToConsole.set(true)
+        ignoreFailures.set(false)
+    }
 }

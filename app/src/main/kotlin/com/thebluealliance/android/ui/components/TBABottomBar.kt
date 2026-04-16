@@ -25,16 +25,18 @@ fun TBABottomBar(
         modifier = modifier,
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { dest ->
-            val selected = currentRoute == dest.key || (dest.key == Screen.More && isOnMoreSubScreen)
+            val selected =
+                currentRoute == dest.key || (dest.key == Screen.More && isOnMoreSubScreen)
             NavigationBarItem(
                 selected = selected,
-                onClick = dropUnlessResumed {
-                    if (currentRoute == dest.key) {
-                        onReselect()
-                    } else {
-                        onNavigate(dest.key)
-                    }
-                },
+                onClick =
+                    dropUnlessResumed {
+                        if (currentRoute == dest.key) {
+                            onReselect()
+                        } else {
+                            onNavigate(dest.key)
+                        }
+                    },
                 icon = {
                     Icon(
                         imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,

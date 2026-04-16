@@ -25,14 +25,21 @@ enum class NotificationType(
     companion object {
         fun fromServerKey(key: String): NotificationType? = entries.find { it.serverKey == key }
 
-        fun forModelType(modelType: Int): List<NotificationType> = when (modelType) {
-            ModelType.EVENT -> listOf(
-                UPCOMING_MATCH, MATCH_SCORE, LEVEL_STARTING, ALLIANCE_SELECTION,
-                AWARDS, SCHEDULE_UPDATED, FINAL_RESULTS,
-            )
-            ModelType.TEAM -> listOf(UPCOMING_MATCH, MATCH_SCORE, AWARDS)
-            ModelType.MATCH -> listOf(UPCOMING_MATCH, MATCH_SCORE, MATCH_VIDEO)
-            else -> emptyList()
-        }
+        fun forModelType(modelType: Int): List<NotificationType> =
+            when (modelType) {
+                ModelType.EVENT ->
+                    listOf(
+                        UPCOMING_MATCH,
+                        MATCH_SCORE,
+                        LEVEL_STARTING,
+                        ALLIANCE_SELECTION,
+                        AWARDS,
+                        SCHEDULE_UPDATED,
+                        FINAL_RESULTS,
+                    )
+                ModelType.TEAM -> listOf(UPCOMING_MATCH, MATCH_SCORE, AWARDS)
+                ModelType.MATCH -> listOf(UPCOMING_MATCH, MATCH_SCORE, MATCH_VIDEO)
+                else -> emptyList()
+            }
     }
 }

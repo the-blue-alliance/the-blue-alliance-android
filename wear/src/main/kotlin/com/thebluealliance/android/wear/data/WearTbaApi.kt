@@ -8,7 +8,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface WearTbaApi {
-
     @GET("api/v3/team/{team_key}/events/{year}")
     suspend fun getTeamEvents(
         @Path("team_key") teamKey: String,
