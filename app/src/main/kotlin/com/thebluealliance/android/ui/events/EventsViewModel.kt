@@ -111,16 +111,6 @@ class EventsViewModel
         fun selectYear(year: Int) {
             _selectedYear.value = year
             refreshEvents()
-            refreshDistricts()
-        }
-
-        private fun refreshDistricts() {
-            viewModelScope.launch {
-                try {
-                    districtRepository.refreshDistrictsForYear(_selectedYear.value)
-                } catch (_: Exception) {
-                }
-            }
         }
 
         fun refreshEvents() {

@@ -95,14 +95,7 @@ fun EventsScreen(
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,
-                        years =
-                            if (selectedYear >
-                                0
-                            ) {
-                                (maxYear downTo 1992).toList()
-                            } else {
-                                emptyList()
-                            },
+                        years = (maxYear downTo 1992).toList(),
                         onYearSelected = viewModel::selectYear,
                         title = { Text("Events") },
                     )
