@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.navigation.isSameTab
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 
 @Composable
@@ -26,12 +27,12 @@ fun TBABottomBar(
     ) {
         TOP_LEVEL_DESTINATIONS.forEach { dest ->
             val selected =
-                currentRoute == dest.key || (dest.key == Screen.More && isOnMoreSubScreen)
+                dest.key.isSameTab(currentRoute) || (dest.key == Screen.More && isOnMoreSubScreen)
             NavigationBarItem(
                 selected = selected,
                 onClick =
                     dropUnlessResumed {
-                        if (currentRoute == dest.key) {
+                        if (dest.key.isSameTab(currentRoute)) {
                             onReselect()
                         } else {
                             onNavigate(dest.key)
