@@ -33,7 +33,8 @@ for arg in "$@"; do
   esac
 done
 
-EMU="$(dirname "$0")/emu"
+SERIAL="${ANDROID_SERIAL:-}"
+EMU="$(dirname "$0")/emu${SERIAL:+ -s $SERIAL}"
 PKG="com.thebluealliance.androidclient"
 DEV_PKG="com.thebluealliance.androidclient.development"
 MAIN_ACTIVITY="com.thebluealliance.android.MainActivity"
