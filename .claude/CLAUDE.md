@@ -34,6 +34,10 @@ scripts/emu launch <package/activity>            # force-stop and start activity
 
 Use `find` before `tap` to verify unique matching; use `list` to explore the UI hierarchy.
 
+## Android Documentation
+
+When researching Android APIs, libraries, or best practices, use `android docs search "<query>"` and `android docs fetch "<url>"` instead of web search. This is an offline curated knowledge base that has up-to-date, authoritative Android documentation.
+
 ## Architecture
 
 - **UI:** Jetpack Compose with Material 3, MVVM via `@HiltViewModel`
