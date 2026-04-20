@@ -60,7 +60,7 @@ android {
     defaultConfig {
         applicationId = "com.thebluealliance.androidclient"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 36
         versionCode = computedVersionCode
         versionName = computedVersionName
 
