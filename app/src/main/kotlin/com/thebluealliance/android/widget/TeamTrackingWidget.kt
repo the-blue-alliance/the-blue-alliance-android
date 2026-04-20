@@ -231,7 +231,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 return "Last: $lastMatchLabel $lastRedScore-$lastBlueScore"
             }
 
-        /** Subtitle line: "record at event", "record", "event", or "Upcoming events". */
+        /** Subtitle line: "record at event", "record", "event", or "Upcoming/No events". */
         val subtitle: String
             get() =
                 when {
@@ -239,7 +239,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     record.isNotEmpty() -> record
                     eventName.isNotEmpty() && eventName != "No event" -> eventName
                     upcomingEvents != null -> "Upcoming events"
-                    else -> ""
+                    else -> "No upcoming events"
                 }
 
         /** Fallback text when no match data. */
@@ -548,6 +548,16 @@ class TeamTrackingWidget : GlanceAppWidget() {
                                     ),
                                 maxLines = 1,
                             )
+                        } else {
+                            Text(
+                                text = "No upcoming events",
+                                style =
+                                    TextStyle(
+                                        color = GlanceTheme.colors.onSurfaceVariant,
+                                        fontSize = 11.sp,
+                                    ),
+                                maxLines = 1,
+                            )
                         }
                     }
                     Spacer(modifier = GlanceModifier.defaultWeight())
@@ -695,6 +705,15 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     Spacer(modifier = GlanceModifier.defaultWeight())
                     UpcomingEventRow(event.name, event.city, event.date)
                 }
+            } else {
+                Text(
+                    text = "No upcoming events",
+                    style =
+                        TextStyle(
+                            color = GlanceTheme.colors.onSurfaceVariant,
+                            fontSize = 12.sp,
+                        ),
+                )
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
 
@@ -765,6 +784,15 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 data.upcomingEventsList.take(2).forEach { event ->
                     UpcomingEventRowCompact(event.name, event.date)
                 }
+            } else {
+                Text(
+                    text = "No upcoming events",
+                    style =
+                        TextStyle(
+                            color = GlanceTheme.colors.onSurfaceVariant,
+                            fontSize = 12.sp,
+                        ),
+                )
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
         }
@@ -831,14 +859,25 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 }
 
                 // Upcoming events (when no current event)
-                if (data.upcomingEvents != null && !data.hasLastMatch && !data.hasNextMatch) {
-                    val events = data.upcomingEventsList.take(3)
-                    events.firstOrNull()?.let { event ->
-                        UpcomingEventRow(event.name, event.city, event.date)
-                    }
-                    events.drop(1).forEach { event ->
-                        Spacer(modifier = GlanceModifier.defaultWeight())
-                        UpcomingEventRow(event.name, event.city, event.date)
+                if (!data.hasLastMatch && !data.hasNextMatch) {
+                    if (data.upcomingEvents != null) {
+                        val events = data.upcomingEventsList.take(3)
+                        events.firstOrNull()?.let { event ->
+                            UpcomingEventRow(event.name, event.city, event.date)
+                        }
+                        events.drop(1).forEach { event ->
+                            Spacer(modifier = GlanceModifier.defaultWeight())
+                            UpcomingEventRow(event.name, event.city, event.date)
+                        }
+                    } else if (data.teamNumber.isNotEmpty()) {
+                        Text(
+                            text = "No upcoming events",
+                            style =
+                                TextStyle(
+                                    color = GlanceTheme.colors.onSurfaceVariant,
+                                    fontSize = 12.sp,
+                                ),
+                        )
                     }
                 }
 
