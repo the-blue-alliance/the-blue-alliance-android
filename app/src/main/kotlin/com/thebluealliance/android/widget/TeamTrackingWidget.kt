@@ -831,16 +831,14 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 }
 
                 // Upcoming events (when no current event)
-                if (!data.hasLastMatch && !data.hasNextMatch) {
-                    if (data.upcomingEvents != null) {
-                        val events = data.upcomingEventsList.take(3)
-                        events.firstOrNull()?.let { event ->
-                            UpcomingEventRow(event.name, event.city, event.date)
-                        }
-                        events.drop(1).forEach { event ->
-                            Spacer(modifier = GlanceModifier.defaultWeight())
-                            UpcomingEventRow(event.name, event.city, event.date)
-                        }
+                if (data.upcomingEvents != null && !data.hasLastMatch && !data.hasNextMatch) {
+                    val events = data.upcomingEventsList.take(3)
+                    events.firstOrNull()?.let { event ->
+                        UpcomingEventRow(event.name, event.city, event.date)
+                    }
+                    events.drop(1).forEach { event ->
+                        Spacer(modifier = GlanceModifier.defaultWeight())
+                        UpcomingEventRow(event.name, event.city, event.date)
                     }
                 }
 
