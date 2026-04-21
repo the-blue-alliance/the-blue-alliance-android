@@ -231,7 +231,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 return "Last: $lastMatchLabel $lastRedScore-$lastBlueScore"
             }
 
-        /** Subtitle line: "record at event", "record", "event", or "Upcoming events". */
+        /** Subtitle line: "record at event", "record", "event", or "Upcoming/No events". */
         val subtitle: String
             get() =
                 when {
@@ -239,7 +239,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     record.isNotEmpty() -> record
                     eventName.isNotEmpty() && eventName != "No event" -> eventName
                     upcomingEvents != null -> "Upcoming events"
-                    else -> ""
+                    else -> "No upcoming events"
                 }
 
         /** Fallback text when no match data. */
