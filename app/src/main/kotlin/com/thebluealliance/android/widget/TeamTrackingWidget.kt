@@ -548,16 +548,6 @@ class TeamTrackingWidget : GlanceAppWidget() {
                                     ),
                                 maxLines = 1,
                             )
-                        } else {
-                            Text(
-                                text = "No upcoming events",
-                                style =
-                                    TextStyle(
-                                        color = GlanceTheme.colors.onSurfaceVariant,
-                                        fontSize = 11.sp,
-                                    ),
-                                maxLines = 1,
-                            )
                         }
                     }
                     Spacer(modifier = GlanceModifier.defaultWeight())
@@ -705,15 +695,6 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     Spacer(modifier = GlanceModifier.defaultWeight())
                     UpcomingEventRow(event.name, event.city, event.date)
                 }
-            } else {
-                Text(
-                    text = "No upcoming events",
-                    style =
-                        TextStyle(
-                            color = GlanceTheme.colors.onSurfaceVariant,
-                            fontSize = 12.sp,
-                        ),
-                )
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
 
@@ -784,15 +765,6 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 data.upcomingEventsList.take(2).forEach { event ->
                     UpcomingEventRowCompact(event.name, event.date)
                 }
-            } else {
-                Text(
-                    text = "No upcoming events",
-                    style =
-                        TextStyle(
-                            color = GlanceTheme.colors.onSurfaceVariant,
-                            fontSize = 12.sp,
-                        ),
-                )
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
         }
@@ -869,15 +841,6 @@ class TeamTrackingWidget : GlanceAppWidget() {
                             Spacer(modifier = GlanceModifier.defaultWeight())
                             UpcomingEventRow(event.name, event.city, event.date)
                         }
-                    } else if (data.teamNumber.isNotEmpty()) {
-                        Text(
-                            text = "No upcoming events",
-                            style =
-                                TextStyle(
-                                    color = GlanceTheme.colors.onSurfaceVariant,
-                                    fontSize = 12.sp,
-                                ),
-                        )
                     }
                 }
 
