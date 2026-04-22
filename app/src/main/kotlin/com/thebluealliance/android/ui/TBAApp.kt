@@ -65,7 +65,7 @@ private fun FirebaseAnalyticsEffect(navState: NavigationState) {
             .collectLatest { currentRoute ->
                 val screenName =
                     when (currentRoute) {
-                        Screen.Events -> "Events"
+                        is Screen.Events -> "Events"
                         Screen.Teams -> "Teams"
                         Screen.Districts -> "Districts"
                         Screen.RegionalAdvancement -> "RegionalAdvancement"

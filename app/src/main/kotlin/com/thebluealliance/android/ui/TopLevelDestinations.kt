@@ -23,7 +23,7 @@ data class TopLevelDestination(
 val TOP_LEVEL_DESTINATIONS =
     listOf(
         TopLevelDestination(
-            Screen.Events,
+            Screen.Events(),
             "Events",
             Icons.Filled.CalendarMonth,
             Icons.Outlined.CalendarMonth,

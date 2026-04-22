@@ -55,12 +55,12 @@ val computedVersionName =
 
 android {
     namespace = "com.thebluealliance.android.wear"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.thebluealliance.androidclient"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 36
         versionCode = computedVersionCode
         versionName = computedVersionName
 

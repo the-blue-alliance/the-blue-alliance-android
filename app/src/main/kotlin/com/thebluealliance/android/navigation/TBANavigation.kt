@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
@@ -25,6 +26,7 @@ import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.events.EventsScreen
+import com.thebluealliance.android.ui.events.EventsViewModel
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailViewModel
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
@@ -46,6 +48,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 
+/** Looks up the reselect flow for the tab [route] belongs to, tolerating parameterized keys. */
+private fun Map<NavKey, MutableSharedFlow<Unit>>.reselectFlowFor(route: NavKey) =
+    entries.firstOrNull { it.key.isSameTab(route) }?.value
+
 @Composable
 fun TBANavigation(
     navState: NavigationState,
@@ -55,7 +61,7 @@ fun TBANavigation(
     val navigator = remember { Navigator(navState, activity) }
 
     val showBottomBar =
-        navState.currentRoute in TOP_LEVEL_DESTINATIONS.map { it.key }.toSet() ||
+        TOP_LEVEL_DESTINATIONS.any { it.key.isSameTab(navState.currentRoute) } ||
             navState.currentRoute in
             setOf(
                 Screen.MyTBA,
@@ -122,13 +128,19 @@ fun TBANavigation(
                         entryProvider {
                             entry<Screen.Events>(
                                 metadata = Transitions.topLevelTransitionSpec,
-                            ) {
+                            ) { events ->
+                                val viewModel =
+                                    hiltViewModel<EventsViewModel, EventsViewModel.Factory>(
+                                        creationCallback = { factory -> factory.create(events) },
+                                    )
                                 EventsScreen(
+                                    viewModel = viewModel,
                                     onNavigateToEvent = { eventKey ->
                                         navigator.navigate(Screen.EventDetail(eventKey))
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow = tabReselectFlows[Screen.Events] ?: emptyFlow(),
+                                    reselectFlow =
+                                        tabReselectFlows.reselectFlowFor(events) ?: emptyFlow(),
                                 )
                             }
                             entry<Screen.Teams>(
@@ -372,7 +384,7 @@ fun TBANavigation(
                 onNavigate = { navigator.navigate(it) },
                 onReselect = {
                     coroutineScope.launch {
-                        tabReselectFlows[navState.currentRoute]?.emit(Unit)
+                        tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
                     }
                 },
             )

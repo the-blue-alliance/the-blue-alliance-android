@@ -13,14 +13,18 @@ class Navigator(
     val activity: Activity,
 ) {
     fun navigate(route: NavKey) {
-        if (route in state.topLevelRoutes) {
-            if (route == state.topLevelRoute) {
+        // Resolve parameterized top-level routes (e.g. Events(year)) to their canonical tab key,
+        // so navigating to Events(2024) switches to the Events tab instead of nesting inside the
+        // current stack.
+        val topLevelKey = state.topLevelRoutes.firstOrNull { it.isSameTab(route) }
+        if (topLevelKey != null) {
+            if (topLevelKey == state.topLevelRoute) {
                 // Already on this tab — pop back to root
                 while (state.currentStack.size > 1) {
                     state.currentStack.removeLastOrNull()
                 }
             }
-            state.topLevelRoute = route
+            state.topLevelRoute = topLevelKey
         } else {
             state.backStacks[state.topLevelRoute]?.add(route)
         }
@@ -79,7 +83,7 @@ class Navigator(
          */
         if (size == 1) {
             // All deeplinks currently use Screen.Events as their parent
-            val deeplinkKey = Screen.Events
+            val deeplinkKey = Screen.Events()
 
             /**
              * create a [androidx.core.app.TaskStackBuilder] that will restart the
