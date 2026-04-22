@@ -14,7 +14,7 @@ import javax.inject.Singleton
 class ApiKeyProvider
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val remoteConfig: FirebaseRemoteConfig,
     ) {
         private val prefs: SharedPreferences =

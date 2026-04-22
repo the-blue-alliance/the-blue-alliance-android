@@ -1040,7 +1040,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
             if (isPlayed) {
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text = redScore!!,
+                        text = redScore,
                         style =
                             TextStyle(
                                 color = redColor,
@@ -1056,7 +1056,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                             ),
                     )
                     Text(
-                        text = blueScore!!,
+                        text = blueScore,
                         style =
                             TextStyle(
                                 color = blueColor,

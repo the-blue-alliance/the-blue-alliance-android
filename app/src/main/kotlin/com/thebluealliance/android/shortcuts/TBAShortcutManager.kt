@@ -42,7 +42,7 @@ import javax.inject.Singleton
 class TBAShortcutManager
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
         private val tbaRepository: MyTBARepository,
         private val eventRepository: EventRepository,
         private val teamRepository: TeamRepository,
