@@ -17,7 +17,7 @@ import javax.inject.Singleton
 class NotificationBuilder
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) {
         fun buildFromRemoteMessage(message: RemoteMessage): Notification? {
             val data = message.data

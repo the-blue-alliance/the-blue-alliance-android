@@ -380,7 +380,11 @@ cmd_alpha() {
     echo -e "  Wear:    ${wear_version_code}"
     echo -e "  Track:   alpha"
 
-    create_github_release
+    if [[ "$VERSION_NAME" != *"-dev."* ]]; then
+        create_github_release
+    else
+        info "Skipping GitHub release for dev version"
+    fi
     announce_release_action "Published to alpha"
 }
 

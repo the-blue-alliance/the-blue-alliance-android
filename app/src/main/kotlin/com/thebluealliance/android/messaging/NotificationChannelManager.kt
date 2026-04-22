@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class NotificationChannelManager
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
+        @param:ApplicationContext private val context: Context,
     ) {
         companion object {
             const val CHANNEL_MATCH = "match_alerts"
