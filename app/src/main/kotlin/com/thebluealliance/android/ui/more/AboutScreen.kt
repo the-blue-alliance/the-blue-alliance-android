@@ -18,7 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.thebluealliance.android.ui.components.TBATopAppBar
 
@@ -46,6 +48,7 @@ fun AboutScreen(
             )
         },
     ) { innerPadding ->
+        val libs by produceLibraries()
         Column(
             modifier =
                 Modifier
@@ -53,7 +56,7 @@ fun AboutScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
         ) {
-            LibrariesContainer(modifier = Modifier.fillMaxSize())
+            LibrariesContainer(libraries = libs, modifier = Modifier.fillMaxSize())
         }
     }
 }
