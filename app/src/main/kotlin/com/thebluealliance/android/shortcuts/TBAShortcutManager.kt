@@ -186,14 +186,20 @@ class TBAShortcutManager
                 return
             }
 
-            val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
-            if (!success) {
-                Toast
-                    .makeText(
-                        context,
-                        "Failed to add shortcut to home screen",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+            try {
+                val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
+                if (!success) {
+                    Toast
+                        .makeText(
+                            context,
+                            "Failed to add shortcut to home screen",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            } catch (e: IllegalStateException) {
+                // requestPinShortcut throws if the app is no longer in the foreground
+                // (e.g. user switched away during the network fetch for shortcut info)
+                Log.w("TBAShortcutManager", "Cannot pin shortcut while in background", e)
             }
         }
     }
