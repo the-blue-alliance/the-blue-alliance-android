@@ -2,7 +2,6 @@ package com.thebluealliance.android.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -20,12 +19,7 @@ class AuthRepository
             callbackFlow {
                 val listener =
                     FirebaseAuth.AuthStateListener { auth ->
-                        val user = auth.currentUser
-                        try {
-                            FirebaseCrashlytics.getInstance().setUserId(user?.uid.orEmpty())
-                        } catch (_: Exception) {
-                        }
-                        trySend(user)
+                        trySend(auth.currentUser)
                     }
                 firebaseAuth.addAuthStateListener(listener)
                 awaitClose { firebaseAuth.removeAuthStateListener(listener) }
