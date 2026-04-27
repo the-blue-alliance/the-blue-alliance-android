@@ -276,7 +276,7 @@ preflight() {
 
 get_version_info() {
     local desc
-    desc=$(git describe --tags --long --match 'v[0-9]*' 2>/dev/null || echo "")
+    desc=$(git describe --tags --long --match 'v[0-9]*' --exclude '*-dev*' 2>/dev/null || echo "")
     if [[ -z "$desc" ]]; then
         die "No version tags found. Create one first: git tag v1.0.0"
     fi
