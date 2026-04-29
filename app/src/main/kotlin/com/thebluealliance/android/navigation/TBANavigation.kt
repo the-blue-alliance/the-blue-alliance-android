@@ -29,6 +29,8 @@ import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.events.EventsViewModel
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailViewModel
+import com.thebluealliance.android.ui.events.detail.PitMapScreen
+import com.thebluealliance.android.ui.events.detail.PitMapViewModel
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.matches.MatchDetailViewModel
 import com.thebluealliance.android.ui.more.AboutScreen
@@ -43,8 +45,6 @@ import com.thebluealliance.android.ui.teamevent.TeamEventDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
-import com.thebluealliance.android.ui.events.detail.PitMapScreen
-import com.thebluealliance.android.ui.events.detail.PitMapViewModel
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -277,7 +277,9 @@ fun TBANavigation(
                                         navigator.navigate(Screen.DistrictDetail(districtKey))
                                     },
                                     onNavigateToPitMap = { eventKey, highlightedTeamKeys ->
-                                        navigator.navigate(Screen.PitMap(eventKey, highlightedTeamKeys))
+                                        navigator.navigate(
+                                            Screen.PitMap(eventKey, highlightedTeamKeys),
+                                        )
                                     },
                                     initialTab = eventDetail.initialTab,
                                 )
@@ -366,7 +368,9 @@ fun TBANavigation(
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
                                     onNavigateToPitMap = { eventKey, highlightedTeamKeys ->
-                                        navigator.navigate(Screen.PitMap(eventKey, highlightedTeamKeys))
+                                        navigator.navigate(
+                                            Screen.PitMap(eventKey, highlightedTeamKeys),
+                                        )
                                     },
                                 )
                             }
@@ -383,13 +387,15 @@ fun TBANavigation(
                                 )
                             }
                             entry<Screen.EventPitMap> { eventPitMap ->
-                                val pitMapKey = Screen.PitMap(
-                                    eventKey = eventPitMap.eventKey,
-                                    highlightedTeamKeys = eventPitMap.teamsCsv
-                                        .split(",")
-                                        .map { it.trim() }
-                                        .filter { it.isNotEmpty() },
-                                )
+                                val pitMapKey =
+                                    Screen.PitMap(
+                                        eventKey = eventPitMap.eventKey,
+                                        highlightedTeamKeys =
+                                            eventPitMap.teamsCsv
+                                                .split(",")
+                                                .map { it.trim() }
+                                                .filter { it.isNotEmpty() },
+                                    )
                                 val viewModel: PitMapViewModel =
                                     hiltViewModel(
                                         creationCallback = { f: PitMapViewModel.Factory ->

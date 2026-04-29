@@ -58,7 +58,12 @@ class PitMapViewModel
                     } else {
                         PitMapUiState(
                             eventTitle = "${event.year} ${event.shortName ?: event.name}",
-                            nexusEventCode = buildNexusEventCode(eventKey, event.year, event.firstEventCode),
+                            nexusEventCode =
+                                buildNexusEventCode(
+                                    eventKey,
+                                    event.year,
+                                    event.firstEventCode,
+                                ),
                             isLoaded = true,
                         )
                     }
@@ -71,9 +76,10 @@ class PitMapViewModel
         init {
             // Run the availability HEAD check on IO so the UI layer stays free of network calls.
             viewModelScope.launch(Dispatchers.IO) {
-                _tbaMapAvailable.value = checkTbaPitMapAvailable(
-                    buildTbaPitMapUrl(eventKey, highlightedTeamKeys),
-                )
+                _tbaMapAvailable.value =
+                    checkTbaPitMapAvailable(
+                        buildTbaPitMapUrl(eventKey, highlightedTeamKeys),
+                    )
             }
         }
 

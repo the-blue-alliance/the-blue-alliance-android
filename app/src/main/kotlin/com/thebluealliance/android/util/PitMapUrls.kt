@@ -36,7 +36,11 @@ fun buildNexusPitMapUrl(
  * divisions have a different FIRST API code (e.g. TBA key `2026cmptxcur` uses FIRST code `CUR`),
  * which the API returns as [firstEventCode] and must be preferred when present.
  */
-fun buildNexusEventCode(eventKey: String, year: Int, firstEventCode: String?): String =
+fun buildNexusEventCode(
+    eventKey: String,
+    year: Int,
+    firstEventCode: String?,
+): String =
     if (!firstEventCode.isNullOrBlank()) {
         "$year${firstEventCode.uppercase()}"
     } else {

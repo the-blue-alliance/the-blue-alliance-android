@@ -35,4 +35,3 @@ class DeeplinkMatcherTest {
         assertEquals(Screen.EventDetail("2026miket"), result)
     }
 }
-

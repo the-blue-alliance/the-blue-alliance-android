@@ -35,27 +35,30 @@ fun PitMapScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val tbaMapAvailable by viewModel.tbaMapAvailable.collectAsStateWithLifecycle()
 
-    val pitMapUrl = remember(viewModel.eventKey, viewModel.highlightedTeamKeys) {
-        buildTbaPitMapUrl(viewModel.eventKey, viewModel.highlightedTeamKeys)
-    }
+    val pitMapUrl =
+        remember(viewModel.eventKey, viewModel.highlightedTeamKeys) {
+            buildTbaPitMapUrl(viewModel.eventKey, viewModel.highlightedTeamKeys)
+        }
 
     // When TBA has no pit map, fall back to the Nexus map. Nexus event codes are case-insensitive.
     // We defer until the event has loaded so we have the correct code — especially important for
     // CMP divisions whose TBA key differs from the FIRST API code (e.g. "2026cmptxcur" → "CUR").
-    val nexusPitMapUrl = remember(uiState.nexusEventCode, viewModel.highlightedTeamKeys) {
-        buildNexusPitMapUrl(uiState.nexusEventCode, viewModel.highlightedTeamKeys.firstOrNull())
-    }
+    val nexusPitMapUrl =
+        remember(uiState.nexusEventCode, viewModel.highlightedTeamKeys) {
+            buildNexusPitMapUrl(uiState.nexusEventCode, viewModel.highlightedTeamKeys.firstOrNull())
+        }
 
     // CSS selector for the SVG element to center on after load.
     // TBA SVG uses data-team-key on pit <g> elements and data-label-key on division labels.
     // Nexus is a JS SPA — onPageFinished fires before content renders, so skip centering there.
-    val tbaCenterSelector = remember(viewModel.eventKey, viewModel.highlightedTeamKeys) {
-        if (viewModel.highlightedTeamKeys.isNotEmpty()) {
-            "[data-team-key=\"${viewModel.highlightedTeamKeys.first()}\"]"
-        } else {
-            "[data-label-key=\"${viewModel.eventKey}\"]"
+    val tbaCenterSelector =
+        remember(viewModel.eventKey, viewModel.highlightedTeamKeys) {
+            if (viewModel.highlightedTeamKeys.isNotEmpty()) {
+                "[data-team-key=\"${viewModel.highlightedTeamKeys.first()}\"]"
+            } else {
+                "[data-label-key=\"${viewModel.eventKey}\"]"
+            }
         }
-    }
 
     // Show a spinner while:
     //  - the HEAD check is still running (tbaMapAvailable == null), OR
@@ -68,8 +71,11 @@ fun PitMapScreen(
             TBATopAppBar(
                 title = {
                     Text(
-                        if (uiState.eventTitle.isNotEmpty()) "${uiState.eventTitle} Pit Map"
-                        else "Pit Map",
+                        if (uiState.eventTitle.isNotEmpty()) {
+                            "${uiState.eventTitle} Pit Map"
+                        } else {
+                            "Pit Map"
+                        },
                     )
                 },
                 navigationIcon = {
@@ -86,9 +92,10 @@ fun PitMapScreen(
         when {
             showSpinner -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
@@ -97,9 +104,10 @@ fun PitMapScreen(
             showNexusFallback -> {
                 PitMapWebView(
                     pitMapUrl = nexusPitMapUrl,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                     // Nexus is a JS SPA — onPageFinished fires before content renders.
                     centerSelector = null,
                 )
@@ -107,9 +115,10 @@ fun PitMapScreen(
             else -> {
                 PitMapWebView(
                     pitMapUrl = pitMapUrl,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                     centerSelector = tbaCenterSelector,
                 )
             }
@@ -146,66 +155,89 @@ private fun PitMapWebView(
                 // Hide until centering is done to avoid showing the map at the wrong position.
                 alpha = 0f
 
-                webViewClient = object : WebViewClient() {
-                    override fun onScaleChanged(view: WebView?, oldScale: Float, newScale: Float) {
-                        currentScale[0] = newScale
-                    }
+                webViewClient =
+                    object : WebViewClient() {
+                        override fun onScaleChanged(
+                            view: WebView?,
+                            oldScale: Float,
+                            newScale: Float,
+                        ) {
+                            currentScale[0] = newScale
+                        }
 
-                    override fun onPageFinished(view: WebView?, url: String?) {
-                        val wv = webViewRef[0] ?: run { showWebView(view); return }
-                        val selector = latestSelector[0] ?: run { showWebView(wv); return }
-
-                        // Wait 400 ms for layout to settle (same delay as the iOS implementation),
-                        // then ask JS for element's document-space centre, scale by current zoom,
-                        // and scroll natively.
-                        wv.postDelayed({
-                            // Single-quoted JS string so the selector's double-quotes are safe.
-                            val js = """
-                                (() => {
-                                  const el = document.querySelector('$selector');
-                                  if (!el) return null;
-                                  const rect = el.getBoundingClientRect();
-                                  return [
-                                    rect.left + window.scrollX + rect.width  / 2,
-                                    rect.top  + window.scrollY + rect.height / 2,
-                                  ];
-                                })()
-                            """.trimIndent()
-                            wv.evaluateJavascript(js) { result ->
-                                try {
-                                    if (result != null && result != "null") {
-                                        // result is a JSON array string, e.g. "[1234.5,678.9]"
-                                        val coords = result.trim('[', ']')
-                                            .split(',')
-                                            .map { it.trim().toDouble() }
-                                        if (coords.size >= 2) {
-                                            val zoom = currentScale[0]
-                                            val targetX = (coords[0] * zoom - wv.width  / 2)
-                                                .toInt().coerceAtLeast(0)
-                                            val targetY = (coords[1] * zoom - wv.height / 2)
-                                                .toInt().coerceAtLeast(0)
-                                            wv.scrollTo(targetX, targetY)
-                                        }
-                                    }
-                                } catch (_: Exception) {
-                                    // Ignore parse errors; the map is still usable without centering.
-                                } finally {
-                                    showWebView(wv)
+                        override fun onPageFinished(
+                            view: WebView?,
+                            url: String?,
+                        ) {
+                            val wv =
+                                webViewRef[0] ?: run {
+                                    showWebView(view)
+                                    return
                                 }
-                            }
-                        }, 400L)
-                    }
+                            val selector =
+                                latestSelector[0] ?: run {
+                                    showWebView(wv)
+                                    return
+                                }
 
-                    override fun onReceivedError(
-                        view: WebView?,
-                        request: WebResourceRequest?,
-                        error: WebResourceError?,
-                    ) {
-                        // Only act on main-frame errors. Sub-resource errors (images, fonts, etc.)
-                        // are common in SVG maps and should not trigger a visibility change.
-                        if (request?.isForMainFrame == true) showWebView(view)
+                            // Wait 400 ms for layout to settle (same delay as the iOS implementation),
+                            // then ask JS for element's document-space centre, scale by current zoom,
+                            // and scroll natively.
+                            wv.postDelayed({
+                                // Single-quoted JS string so the selector's double-quotes are safe.
+                                val js =
+                                    """
+                                    (() => {
+                                      const el = document.querySelector('$selector');
+                                      if (!el) return null;
+                                      const rect = el.getBoundingClientRect();
+                                      return [
+                                        rect.left + window.scrollX + rect.width  / 2,
+                                        rect.top  + window.scrollY + rect.height / 2,
+                                      ];
+                                    })()
+                                    """.trimIndent()
+                                wv.evaluateJavascript(js) { result ->
+                                    try {
+                                        if (result != null && result != "null") {
+                                            // result is a JSON array string, e.g. "[1234.5,678.9]"
+                                            val coords =
+                                                result
+                                                    .trim('[', ']')
+                                                    .split(',')
+                                                    .map { it.trim().toDouble() }
+                                            if (coords.size >= 2) {
+                                                val zoom = currentScale[0]
+                                                val targetX =
+                                                    (coords[0] * zoom - wv.width / 2)
+                                                        .toInt()
+                                                        .coerceAtLeast(0)
+                                                val targetY =
+                                                    (coords[1] * zoom - wv.height / 2)
+                                                        .toInt()
+                                                        .coerceAtLeast(0)
+                                                wv.scrollTo(targetX, targetY)
+                                            }
+                                        }
+                                    } catch (_: Exception) {
+                                        // Ignore parse errors; the map is still usable without centering.
+                                    } finally {
+                                        showWebView(wv)
+                                    }
+                                }
+                            }, 400L)
+                        }
+
+                        override fun onReceivedError(
+                            view: WebView?,
+                            request: WebResourceRequest?,
+                            error: WebResourceError?,
+                        ) {
+                            // Only act on main-frame errors. Sub-resource errors (images, fonts, etc.)
+                            // are common in SVG maps and should not trigger a visibility change.
+                            if (request?.isForMainFrame == true) showWebView(view)
+                        }
                     }
-                }
                 settings.apply {
                     // JavaScript is required for evaluateJavascript centering injection.
                     // This WebView only ever loads trusted TBA and Nexus URLs.
@@ -233,5 +265,9 @@ private fun PitMapWebView(
 
 /** Fades the WebView in over 150 ms, matching the iOS fade in the same PR. */
 private fun showWebView(view: WebView?) {
-    view?.animate()?.alpha(1f)?.setDuration(150)?.start()
+    view
+        ?.animate()
+        ?.alpha(1f)
+        ?.setDuration(150)
+        ?.start()
 }

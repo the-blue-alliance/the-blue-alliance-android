@@ -166,9 +166,11 @@ class EventDetailViewModel
                         myTBARepository.observeFavorites(),
                     ) { insights, district, pitLocations, favorites ->
                         val eventTeamKeys = baseState.teams?.map { it.key }?.toSet() ?: emptySet()
-                        val favTeamKeys = favorites
-                            .filter { it.modelType == ModelType.TEAM && it.modelKey in eventTeamKeys }
-                            .map { it.modelKey }
+                        val favTeamKeys =
+                            favorites
+                                .filter {
+                                    it.modelType == ModelType.TEAM && it.modelKey in eventTeamKeys
+                                }.map { it.modelKey }
                         baseState.copy(
                             insights = insights,
                             districtDisplayName = district?.displayName,
