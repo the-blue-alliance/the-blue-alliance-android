@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -35,9 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.CmpAdvancement
@@ -81,6 +85,7 @@ fun TeamEventDetailScreen(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToSearch: () -> Unit,
+    onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
     viewModel: TeamEventDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -213,6 +218,7 @@ fun TeamEventDetailScreen(
                             onNavigateToEvent = onNavigateToEvent,
                             onNavigateToTeam = onNavigateToTeam,
                             onNavigateToMatch = onNavigateToMatch,
+                            onNavigateToPitMap = onNavigateToPitMap,
                             innerPadding = bottomPadding,
                         )
                     TeamEventDetailTabs.MATCHES -> {
@@ -303,6 +309,7 @@ private fun SummaryTab(
     onNavigateToEvent: (eventKey: String, initialTab: EventDetailTab) -> Unit,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
+    onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     LazyColumn(
@@ -403,14 +410,19 @@ private fun SummaryTab(
                 item(key = "summary_pit_location_divider") { HorizontalDivider() }
             }
             item(key = "summary_pit_location") {
-                val context = LocalContext.current
-                val teamNumber = teamKey.removePrefix("frc")
                 InfoRow(
                     label = "Pit Location",
-                    labelSuffix = "(via FRC Nexus)",
+                    labelLeadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_nexus_logo),
+                            contentDescription = "FRC Nexus",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(16.dp),
+                        )
+                    },
                     value = pitLocation,
                     onClick = {
-                        context.openUrl("https://frc.nexus/en/event/$eventKey/team/$teamNumber/map")
+                        onNavigateToPitMap(eventKey, listOf(teamKey))
                     },
                 )
             }
@@ -546,7 +558,7 @@ private fun SummarySection(
 @Composable
 private fun InfoRow(
     label: String,
-    labelSuffix: String? = null,
+    labelLeadingIcon: (@Composable () -> Unit)? = null,
     value: String,
     onClick: () -> Unit,
 ) {
@@ -558,17 +570,18 @@ private fun InfoRow(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(modifier = Modifier.weight(1f)) {
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (labelLeadingIcon != null) {
+                labelLeadingIcon()
+                Spacer(Modifier.width(6.dp))
+            }
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleMedium,
             )
-            if (labelSuffix != null) {
-                Text(
-                    text = " $labelSuffix",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
         }
         Text(
             text = value,

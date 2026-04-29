@@ -25,4 +25,5 @@ data class EventEntity(
     val address: String?,
     val gmapsUrl: String?,
     val playoffType: Int,
+    val firstEventCode: String? = null,
 )

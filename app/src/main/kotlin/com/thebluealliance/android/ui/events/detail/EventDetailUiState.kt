@@ -29,4 +29,5 @@ data class EventDetailUiState(
     val regionalCmpAdvancementByTeam: Map<String, CmpAdvancement> = emptyMap(),
     val districtDisplayName: String? = null,
     val pitLocations: Map<String, String> = emptyMap(),
+    val favoriteTeamKeysAtEvent: List<String> = emptyList(),
 )

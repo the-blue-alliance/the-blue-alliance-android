@@ -163,11 +163,17 @@ class EventDetailViewModel
                         baseState.event?.district?.let { districtRepository.observeDistrict(it) }
                             ?: flowOf(null),
                         eventRepository.observeEventPitLocations(eventKey),
-                    ) { insights, district, pitLocations ->
+                        myTBARepository.observeFavorites(),
+                    ) { insights, district, pitLocations, favorites ->
+                        val eventTeamKeys = baseState.teams?.map { it.key }?.toSet() ?: emptySet()
+                        val favTeamKeys = favorites
+                            .filter { it.modelType == ModelType.TEAM && it.modelKey in eventTeamKeys }
+                            .map { it.modelKey }
                         baseState.copy(
                             insights = insights,
                             districtDisplayName = district?.displayName,
                             pitLocations = pitLocations,
+                            favoriteTeamKeysAtEvent = favTeamKeys,
                         )
                     }
                 }.stateIn(

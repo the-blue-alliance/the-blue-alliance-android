@@ -7,6 +7,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.updateAll
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.thebluealliance.android.config.ApiKeyProvider
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
@@ -20,7 +23,8 @@ import javax.inject.Inject
 @HiltAndroidApp
 class TBAApplication :
     Application(),
-    Configuration.Provider {
+    Configuration.Provider,
+    SingletonImageLoader.Factory {
     @Inject lateinit var apiKeyProvider: ApiKeyProvider
 
     @Inject lateinit var notificationChannelManager: NotificationChannelManager
@@ -35,6 +39,11 @@ class TBAApplication :
                 .Builder()
                 .setWorkerFactory(workerFactory)
                 .build()
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader =
+        ImageLoader
+            .Builder(context)
+            .build()
 
     override fun onCreate() {
         super.onCreate()

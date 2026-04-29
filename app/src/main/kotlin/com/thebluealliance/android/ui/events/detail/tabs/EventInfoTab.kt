@@ -22,8 +22,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -34,8 +37,11 @@ import com.thebluealliance.android.util.openUrl
 fun EventInfoTab(
     event: Event?,
     districtDisplayName: String? = null,
+    pitLocations: Map<String, String> = emptyMap(),
+    favoriteTeamKeys: List<String> = emptyList(),
     innerPadding: PaddingValues = PaddingValues.Zero,
     onNavigateToDistrict: (String) -> Unit = {},
+    onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
 ) {
     if (event == null) {
         LoadingBox(
@@ -159,6 +165,34 @@ fun EventInfoTab(
                     Spacer(Modifier.width(8.dp))
                     Text(
                         text = event.website,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+
+        // Pit Map link (shown when any team has a pit location)
+        if (pitLocations.isNotEmpty()) {
+            item {
+                Row(
+                    modifier =
+                        Modifier
+                            .padding(top = 8.dp)
+                            .clickable {
+                                onNavigateToPitMap(event.key, favoriteTeamKeys)
+                            },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_nexus_logo),
+                        contentDescription = "FRC Nexus",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "Pit Map",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.primary,
                     )
