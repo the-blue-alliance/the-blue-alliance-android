@@ -91,6 +91,7 @@ fun EventDetailScreen(
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToDistrict: (districtKey: String) -> Unit = {},
+    onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
     initialTab: EventDetailTab = EventDetailTab.INFO,
     viewModel: EventDetailViewModel,
 ) {
@@ -340,7 +341,10 @@ fun EventDetailScreen(
                         EventInfoTab(
                             event = uiState.event,
                             districtDisplayName = uiState.districtDisplayName,
+                            pitLocations = uiState.pitLocations,
+                            favoriteTeamKeys = uiState.favoriteTeamKeysAtEvent,
                             onNavigateToDistrict = onNavigateToDistrict,
+                            onNavigateToPitMap = onNavigateToPitMap,
                             innerPadding = bottomPadding,
                         )
                     EventDetailTab.TEAMS ->

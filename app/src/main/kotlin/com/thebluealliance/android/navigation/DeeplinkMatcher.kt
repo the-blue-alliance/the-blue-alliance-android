@@ -8,6 +8,12 @@ class DeeplinkMatcher {
         val segments = uri.pathSegments
         if (segments.isEmpty()) return null
 
+        // https://www.thebluealliance.com/event/{eventKey}/pitmap
+        if (segments[0] == "event" && segments.size >= 3 && segments[2] == "pitmap") {
+            val teamsCsv = uri.getQueryParameter("teams") ?: ""
+            return Screen.EventPitMap(segments[1], teamsCsv)
+        }
+
         // https://www.thebluealliance.com/event/{eventKey}
         if (segments[0] == "event" && segments.size >= 2) {
             return Screen.EventDetail(segments[1])

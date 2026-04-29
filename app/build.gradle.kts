@@ -150,6 +150,9 @@ android {
         // Advisory rule that fires whenever a newer (beta) SDK exists. We
         // bump targetSdk deliberately, not on every API release.
         disable += "OldTargetApi"
+        // False positive for adaptive-icon XML in mipmap-anydpi alongside
+        // legacy PNG fallbacks in density buckets — this is intentional.
+        disable += "IconXmlAndPng"
     }
 
     @Suppress("UnstableApiUsage")

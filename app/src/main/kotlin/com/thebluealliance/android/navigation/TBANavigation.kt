@@ -29,6 +29,8 @@ import com.thebluealliance.android.ui.events.EventsScreen
 import com.thebluealliance.android.ui.events.EventsViewModel
 import com.thebluealliance.android.ui.events.detail.EventDetailScreen
 import com.thebluealliance.android.ui.events.detail.EventDetailViewModel
+import com.thebluealliance.android.ui.events.detail.PitMapScreen
+import com.thebluealliance.android.ui.events.detail.PitMapViewModel
 import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.matches.MatchDetailViewModel
 import com.thebluealliance.android.ui.more.AboutScreen
@@ -274,6 +276,11 @@ fun TBANavigation(
                                     onNavigateToDistrict = { districtKey ->
                                         navigator.navigate(Screen.DistrictDetail(districtKey))
                                     },
+                                    onNavigateToPitMap = { eventKey, highlightedTeamKeys ->
+                                        navigator.navigate(
+                                            Screen.PitMap(eventKey, highlightedTeamKeys),
+                                        )
+                                    },
                                     initialTab = eventDetail.initialTab,
                                 )
                             }
@@ -360,6 +367,44 @@ fun TBANavigation(
                                         navigator.navigate(Screen.EventDetail(eventKey, initialTab))
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                                    onNavigateToPitMap = { eventKey, highlightedTeamKeys ->
+                                        navigator.navigate(
+                                            Screen.PitMap(eventKey, highlightedTeamKeys),
+                                        )
+                                    },
+                                )
+                            }
+                            entry<Screen.PitMap> { pitMap ->
+                                val viewModel: PitMapViewModel =
+                                    hiltViewModel(
+                                        creationCallback = { f: PitMapViewModel.Factory ->
+                                            f.create(pitMap)
+                                        },
+                                    )
+                                PitMapScreen(
+                                    viewModel = viewModel,
+                                    onNavigateUp = { navigator.navigateUp() },
+                                )
+                            }
+                            entry<Screen.EventPitMap> { eventPitMap ->
+                                val pitMapKey =
+                                    Screen.PitMap(
+                                        eventKey = eventPitMap.eventKey,
+                                        highlightedTeamKeys =
+                                            eventPitMap.teamsCsv
+                                                .split(",")
+                                                .map { it.trim() }
+                                                .filter { it.isNotEmpty() },
+                                    )
+                                val viewModel: PitMapViewModel =
+                                    hiltViewModel(
+                                        creationCallback = { f: PitMapViewModel.Factory ->
+                                            f.create(pitMapKey)
+                                        },
+                                    )
+                                PitMapScreen(
+                                    viewModel = viewModel,
+                                    onNavigateUp = { navigator.navigateUp() },
                                 )
                             }
                         },

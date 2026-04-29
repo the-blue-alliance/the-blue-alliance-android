@@ -21,6 +21,7 @@ data class Event(
     val gmapsUrl: String?,
     val webcasts: List<Webcast>,
     val playoffType: PlayoffType,
+    val firstEventCode: String? = null,
 )
 
 data class Webcast(

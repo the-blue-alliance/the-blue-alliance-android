@@ -56,6 +56,17 @@ sealed interface Screen : NavKey {
     @Serializable data object About : Screen
 
     @Serializable data object Thanks : Screen
+
+    @Serializable data class PitMap(
+        val eventKey: String,
+        val highlightedTeamKeys: List<String> = emptyList(),
+    ) : Screen
+
+    /** Used when navigating via a TBA web deeplink (carries raw CSV team string from the URL). */
+    @Serializable data class EventPitMap(
+        val eventKey: String,
+        val teamsCsv: String = "",
+    ) : Screen
 }
 
 /**

@@ -106,6 +106,7 @@ fun EventDto.toEntity() =
         address = address,
         gmapsUrl = gmapsUrl,
         playoffType = playoffType ?: PlayoffType.OTHER.typeInt,
+        firstEventCode = firstEventCode,
     )
 
 fun EventEntity.toDomain() =
@@ -129,6 +130,7 @@ fun EventEntity.toDomain() =
         address = address,
         gmapsUrl = gmapsUrl,
         playoffType = PlayoffType.fromInt(playoffType),
+        firstEventCode = firstEventCode,
         webcasts =
             webcasts?.let { raw ->
                 try {
