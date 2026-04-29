@@ -152,6 +152,45 @@ def cmd_track_version(args):
         print("\t")
 
 
+def upload_internal_app_share(access_token: str, apk_path: str) -> str:
+    """Upload an APK to Internal App Sharing and return the download URL."""
+    url = (
+        "https://internalappsharing.googleapis.com/upload/googleplay/v1/packages"
+        f"?packageName={PACKAGE}&uploadType=media"
+    )
+    # Read fully into memory — urllib streaming via file objects breaks when
+    # the server sends an early response (BrokenPipeError).
+    with open(apk_path, "rb") as f:
+        apk_data = f.read()
+
+    req = urllib.request.Request(
+        url,
+        data=apk_data,
+        headers={
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/vnd.android.package-archive",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req) as resp:
+            result = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        body = e.read().decode(errors="replace")
+        raise RuntimeError(f"HTTP {e.code} from Internal App Sharing API: {body}") from e
+    return result["downloadUrl"]
+
+
+def cmd_internal_share(args):
+    access_token = get_access_token(args.sa_path)
+    download_url = upload_internal_app_share(access_token, args.apk)
+    print(download_url)
+
+
+def cmd_get_token(args):
+    print(get_access_token(args.sa_path))
+
+
 def cmd_status(args):
     access_token = get_access_token(args.sa_path)
     edit_id = create_edit(access_token)
@@ -255,6 +294,11 @@ def main():
 
     sub.add_parser("status", help="Show all track statuses")
 
+    ias = sub.add_parser("internal-share", help="Upload APK to Internal App Sharing")
+    ias.add_argument("apk", help="Path to the APK file to upload")
+
+    sub.add_parser("get-token", help="Print a short-lived OAuth access token")
+
     args = parser.parse_args()
     args.sa_path = resolve_sa_path(args.sa_path)
 
@@ -262,6 +306,10 @@ def main():
         cmd_track_version(args)
     elif args.command == "status":
         cmd_status(args)
+    elif args.command == "internal-share":
+        cmd_internal_share(args)
+    elif args.command == "get-token":
+        cmd_get_token(args)
     else:
         parser.print_help()
         sys.exit(1)

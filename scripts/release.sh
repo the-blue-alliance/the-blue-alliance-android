@@ -7,6 +7,7 @@
 #   ./scripts/release.sh beta [--dry-run]     Promote alpha → beta
 #   ./scripts/release.sh production [--dry-run] Promote beta → production
 #   ./scripts/release.sh listing [--dry-run]  Publish store listing only
+#   ./scripts/release.sh test [--dry-run]     Build APK + upload to Internal App Sharing
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -311,6 +312,8 @@ print_version() {
 }
 
 maybe_create_tag() {
+    local push_tag="${1:-true}"
+
     if [[ "$COMMIT_DISTANCE" -eq 0 ]]; then
         info "HEAD is already tagged v${V_MAJOR}.${V_MINOR}.${V_PATCH}"
         return
@@ -335,8 +338,12 @@ maybe_create_tag() {
     fi
 
     run git tag "$new_tag"
-    run git push "$GIT_REMOTE" "$new_tag"
-    info "Created and pushed tag ${new_tag}"
+    if [[ "$push_tag" == "true" ]]; then
+        run git push "$GIT_REMOTE" "$new_tag"
+        info "Created and pushed tag ${new_tag}"
+    else
+        info "Created local tag ${new_tag} (not yet pushed — alpha/publish will push it)"
+    fi
 
     # Re-read version info with new tag
     if ! $DRY_RUN; then
@@ -346,56 +353,100 @@ maybe_create_tag() {
 
 # ── Device install ───────────────────────────────────────────────────────
 
-maybe_install_on_device() {
+maybe_test_on_device() {
     local apk_path="app/build/outputs/apk/release/app-release.apk"
-
-    if ! command -v adb &>/dev/null; then
-        return 0
-    fi
-
-    # Collect connected devices (skip the header line and empty lines)
-    local devices
-    devices=$(adb devices 2>/dev/null | tail -n +2 | grep -v '^\s*$' | grep 'device$' || true)
-
-    if [[ -z "$devices" ]]; then
-        return 0
-    fi
-
-    local device_count
-    device_count=$(echo "$devices" | wc -l | tr -d ' ')
-
-    echo ""
-    info "Found ${device_count} connected device(s):"
-    echo "$devices" | while IFS= read -r line; do
-        echo "    $line"
-    done
-    echo ""
-
-    read -rp "Install the release APK on connected device(s) before publishing? [y/N] " install_answer
-    if [[ "$install_answer" != [yY] ]]; then
-        info "Skipping device install"
-        return 0
-    fi
+    local sa_path
+    sa_path=$(resolve_sa_path)
 
     if [[ ! -f "$apk_path" ]]; then
-        warn "APK not found at ${apk_path}, skipping device install"
+        warn "APK not found at ${apk_path}, skipping device test"
         return 0
     fi
 
     if $DRY_RUN; then
-        echo -e "${YELLOW}[dry-run]${NC} adb install -r \"${apk_path}\""
+        echo -e "${YELLOW}[dry-run]${NC} Would upload ${apk_path} to Play Internal App Sharing"
         return 0
     fi
 
-    info "Installing ${apk_path} on connected device(s)..."
-    if ! adb install -r "$apk_path"; then
-        warn "adb install failed — continuing with publish anyway"
-    else
-        info "APK installed successfully"
+    echo ""
+    info "Uploading APK to Play Internal App Sharing..."
+
+    local access_token
+    if ! access_token=$(python3 "$SCRIPT_DIR/play_api.py" --sa-path "$sa_path" get-token 2>&1); then
+        warn "Failed to obtain access token: ${access_token}"
+        warn "Skipping device test"
+        return 0
+    fi
+
+    local ias_response
+    ias_response=$(curl -sS \
+        -X POST \
+        -H "Authorization: Bearer ${access_token}" \
+        -H "Content-Type: application/vnd.android.package-archive" \
+        --data-binary "@${apk_path}" \
+        "https://androidpublisher.googleapis.com/upload/androidpublisher/v3/applications/internalappsharing/com.thebluealliance.androidclient/artifacts/apk?uploadType=media" \
+        2>&1)
+
+    local ias_url
+    ias_url=$(echo "$ias_response" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['downloadUrl'])" 2>/dev/null || true)
+
+    if [[ -z "$ias_url" ]]; then
+        warn "Internal App Sharing upload failed:"
+        echo "$ias_response" | while IFS= read -r line; do echo "    $line"; done
+        echo ""
+        read -rp "Continue anyway? [y/N] " continue_answer
+        if [[ "$continue_answer" != [yY] ]]; then
+            die "Aborted by user after Internal App Sharing failure."
+        fi
+        return 0
+    fi
+
+    echo ""
+    echo -e "  ${BOLD}Internal App Sharing URL:${NC}"
+    echo -e "  ${GREEN}${ias_url}${NC}"
+    echo ""
+
+    # If a device is connected, offer to open the URL on it directly
+    if command -v adb &>/dev/null; then
+        local devices
+        devices=$(adb devices 2>/dev/null | tail -n +2 | grep -v '^\s*$' | grep 'device$' || true)
+        if [[ -n "$devices" ]]; then
+            read -rp "Open Internal App Sharing URL on connected device? [Y/n] " open_answer
+            if [[ "$open_answer" != [nN] ]]; then
+                adb shell am start -a android.intent.action.VIEW -d "$ias_url" \
+                    || warn "Failed to open URL on device — open it manually"
+            fi
+        fi
+    fi
+
+    echo ""
+    read -rp "Press Enter once you've verified the app, or type 'skip' to proceed without testing: " verify_answer
+    if [[ "$verify_answer" == "skip" ]]; then
+        warn "Skipping verification — continuing with publish"
     fi
 }
 
 # ── Subcommands ──────────────────────────────────────────────────────────
+
+cmd_test() {
+    info "Building release APK and uploading to Play Internal App Sharing"
+    echo ""
+
+    get_version_info
+    print_version
+    maybe_create_tag false
+    # Refresh after potential tag creation
+    get_version_info
+    print_version
+
+    info "Building release APK..."
+    run ./gradlew :app:assembleRelease
+
+    maybe_test_on_device
+
+    echo ""
+    echo -e "${GREEN}✓ Test flow complete${NC}"
+}
 
 cmd_alpha() {
     info "Publishing to alpha track"
@@ -410,7 +461,7 @@ cmd_alpha() {
 
     get_version_info
     print_version
-    maybe_create_tag
+    maybe_create_tag true
     # Refresh after potential tag creation
     get_version_info
     print_version
@@ -418,7 +469,6 @@ cmd_alpha() {
     info "Building release bundles..."
     run ./gradlew :app:bundleRelease :app:assembleRelease :wear:bundleRelease :wear:assembleRelease
 
-    maybe_install_on_device
 
     info "Publishing phone app to alpha..."
     run ./gradlew :app:publishReleaseBundle
@@ -568,6 +618,7 @@ usage() {
     echo "  beta        Promote current alpha to beta"
     echo "  production  Promote current beta to production"
     echo "  listing     Publish store listing (screenshots, descriptions) only"
+    echo "  test        Build release APK and upload to Play Internal App Sharing for device testing"
     echo ""
     echo "Options:"
     echo "  --dry-run   Show what would happen without executing"
@@ -578,7 +629,7 @@ COMMAND=""
 for arg in "$@"; do
     case "$arg" in
         --dry-run) DRY_RUN=true ;;
-        status|alpha|beta|production|listing) COMMAND="$arg" ;;
+        status|alpha|beta|production|listing|test) COMMAND="$arg" ;;
         -h|--help) usage; exit 0 ;;
         *) die "Unknown argument: $arg" ;;
     esac
@@ -596,6 +647,7 @@ fi
 
 case "$COMMAND" in
     alpha|production) preflight full ;;
+    test)            preflight full ;;
     *)               preflight light ;;
 esac
 
@@ -605,4 +657,5 @@ case "$COMMAND" in
     beta)       cmd_beta ;;
     production) cmd_production ;;
     listing)    cmd_listing ;;
+    test)       cmd_test ;;
 esac
