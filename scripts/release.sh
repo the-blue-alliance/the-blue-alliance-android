@@ -344,6 +344,57 @@ maybe_create_tag() {
     fi
 }
 
+# ── Device install ───────────────────────────────────────────────────────
+
+maybe_install_on_device() {
+    local apk_path="app/build/outputs/apk/release/app-release.apk"
+
+    if ! command -v adb &>/dev/null; then
+        return 0
+    fi
+
+    # Collect connected devices (skip the header line and empty lines)
+    local devices
+    devices=$(adb devices 2>/dev/null | tail -n +2 | grep -v '^\s*$' | grep 'device$' || true)
+
+    if [[ -z "$devices" ]]; then
+        return 0
+    fi
+
+    local device_count
+    device_count=$(echo "$devices" | wc -l | tr -d ' ')
+
+    echo ""
+    info "Found ${device_count} connected device(s):"
+    echo "$devices" | while IFS= read -r line; do
+        echo "    $line"
+    done
+    echo ""
+
+    read -rp "Install the release APK on connected device(s) before publishing? [y/N] " install_answer
+    if [[ "$install_answer" != [yY] ]]; then
+        info "Skipping device install"
+        return 0
+    fi
+
+    if [[ ! -f "$apk_path" ]]; then
+        warn "APK not found at ${apk_path}, skipping device install"
+        return 0
+    fi
+
+    if $DRY_RUN; then
+        echo -e "${YELLOW}[dry-run]${NC} adb install -r \"${apk_path}\""
+        return 0
+    fi
+
+    info "Installing ${apk_path} on connected device(s)..."
+    if ! adb install -r "$apk_path"; then
+        warn "adb install failed — continuing with publish anyway"
+    else
+        info "APK installed successfully"
+    fi
+}
+
 # ── Subcommands ──────────────────────────────────────────────────────────
 
 cmd_alpha() {
@@ -366,6 +417,8 @@ cmd_alpha() {
 
     info "Building release bundles..."
     run ./gradlew :app:bundleRelease :app:assembleRelease :wear:bundleRelease :wear:assembleRelease
+
+    maybe_install_on_device
 
     info "Publishing phone app to alpha..."
     run ./gradlew :app:publishReleaseBundle
