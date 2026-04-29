@@ -29,3 +29,16 @@ fun buildNexusPitMapUrl(
     }
 }
 
+/**
+ * Builds the Nexus event code (e.g. `"2026MIKET"`) from TBA event data.
+ *
+ * For most events the code is just the year prepended to the event-key suffix. Championship
+ * divisions have a different FIRST API code (e.g. TBA key `2026cmptxcur` uses FIRST code `CUR`),
+ * which the API returns as [firstEventCode] and must be preferred when present.
+ */
+fun buildNexusEventCode(eventKey: String, year: Int, firstEventCode: String?): String =
+    if (!firstEventCode.isNullOrBlank()) {
+        "$year${firstEventCode.uppercase()}"
+    } else {
+        "$year${eventKey.drop(4).uppercase()}"
+    }
