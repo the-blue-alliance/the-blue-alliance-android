@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -534,7 +535,7 @@ private fun currentWeekChipLabel(
     // Check for active championship events (types 3/4 have week == null)
     val championshipActive =
         allEvents.any { event ->
-            event.type in listOf(3, 4) &&
+            event.type in EventType.CHAMPIONSHIP_TYPES &&
                 event.startDate?.let { !today.isBefore(LocalDate.parse(it)) } == true &&
                 event.endDate?.let { !today.isAfter(LocalDate.parse(it)) } == true
         }

@@ -1,5 +1,20 @@
 package com.thebluealliance.android.domain.model
 
+/** TBA API event type constants. */
+object EventType {
+    const val REGIONAL = 0
+    const val DISTRICT = 1
+    const val DISTRICT_CHAMPIONSHIP = 2
+    const val CHAMPIONSHIP_DIVISION = 3
+    const val CHAMPIONSHIP_FINALS = 4
+    const val DISTRICT_CHAMPIONSHIP_DIVISION = 5
+    const val OFFSEASON = 99
+    const val PRESEASON = 100
+
+    /** Championship division or finals. */
+    val CHAMPIONSHIP_TYPES = listOf(CHAMPIONSHIP_DIVISION, CHAMPIONSHIP_FINALS)
+}
+
 data class Event(
     val key: String,
     val name: String,

@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events
 
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.domain.model.PlayoffType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -13,7 +14,7 @@ class EventsUiStateTest {
         key: String = "2026test",
         name: String = "Test Event",
         year: Int = 2026,
-        type: Int? = 0,
+        type: Int? = EventType.REGIONAL,
         week: Int? = null,
         startDate: String? = null,
         endDate: String? = null,
@@ -171,7 +172,7 @@ class EventsUiStateTest {
     fun `regional events have Regional Events sub-section label`() {
         val events =
             listOf(
-                makeEvent(name = "Regional 1", type = 0, week = 0),
+                makeEvent(name = "Regional 1", type = EventType.REGIONAL, week = 0),
             )
         val sections = buildEventSections(events)
         val week1 = sections.first { it.label == "Week 1" }
@@ -184,7 +185,7 @@ class EventsUiStateTest {
     fun `championship events have empty sub-section label`() {
         val events =
             listOf(
-                makeEvent(name = "CMP", type = 3, week = null),
+                makeEvent(name = "CMP", type = EventType.CHAMPIONSHIP_DIVISION, week = null),
             )
         val sections = buildEventSections(events)
         val cmp = sections.first { it.label == "Championship" }
@@ -197,7 +198,12 @@ class EventsUiStateTest {
     fun `district events use district name or fallback`() {
         val events =
             listOf(
-                makeEvent(name = "District Event", type = 1, week = 0, district = "2026ne"),
+                makeEvent(
+                    name = "District Event",
+                    type = EventType.DISTRICT,
+                    week = 0,
+                    district = "2026ne",
+                ),
             )
         val sections = buildEventSections(events, districtNames = mapOf("2026ne" to "New England"))
         val week1 = sections.first { it.label == "Week 1" }
@@ -215,20 +221,20 @@ class EventsUiStateTest {
             listOf(
                 makeEvent(
                     key = "2026pre1",
-                    type = 100,
+                    type = EventType.PRESEASON,
                     startDate = "2026-02-14",
                     endDate = "2026-02-21",
                 ),
                 makeEvent(
                     key = "2026wk1",
-                    type = 0,
+                    type = EventType.REGIONAL,
                     week = 0,
                     startDate = "2026-03-04",
                     endDate = "2026-03-07",
                 ),
                 makeEvent(
                     key = "2026cmp",
-                    type = 3,
+                    type = EventType.CHAMPIONSHIP_DIVISION,
                     startDate = "2026-04-15",
                     endDate = "2026-04-18",
                 ),
@@ -247,26 +253,26 @@ class EventsUiStateTest {
             listOf(
                 makeEvent(
                     key = "2026pre1",
-                    type = 100,
+                    type = EventType.PRESEASON,
                     startDate = "2026-02-14",
                     endDate = "2026-02-21",
                 ),
                 makeEvent(
                     key = "2026wk1",
-                    type = 0,
+                    type = EventType.REGIONAL,
                     week = 0,
                     startDate = "2026-03-04",
                     endDate = "2026-03-07",
                 ),
                 makeEvent(
                     key = "2026cmp",
-                    type = 3,
+                    type = EventType.CHAMPIONSHIP_DIVISION,
                     startDate = "2026-04-15",
                     endDate = "2026-04-18",
                 ),
                 makeEvent(
                     key = "2026off1",
-                    type = 99,
+                    type = EventType.OFFSEASON,
                     startDate = "2026-07-15",
                     endDate = "2026-07-17",
                 ),
