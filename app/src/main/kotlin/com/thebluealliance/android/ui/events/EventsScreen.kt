@@ -521,13 +521,24 @@ private fun SubSectionHeader(label: String) {
     }
 }
 
-/** Returns the chip label for the current competition week, or null. */
+/** Returns the chip label for the current competition week or championship, or null. */
 private fun currentWeekChipLabel(
     allEvents: List<Event>,
     today: LocalDate,
     selectedYear: Int,
 ): String? {
     if (selectedYear != today.year) return null
-    val week = findCurrentCompetitionWeek(allEvents, today) ?: return null
-    return "Week ${week + 1}"
+    val week = findCurrentCompetitionWeek(allEvents, today)
+    if (week != null) return "Week ${week + 1}"
+
+    // Check for active championship events (types 3/4 have week == null)
+    val championshipActive =
+        allEvents.any { event ->
+            event.type in listOf(3, 4) &&
+                event.startDate?.let { !today.isBefore(LocalDate.parse(it)) } == true &&
+                event.endDate?.let { !today.isAfter(LocalDate.parse(it)) } == true
+        }
+    if (championshipActive) return "Championship"
+
+    return null
 }
