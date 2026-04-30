@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.events
 
 import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -42,13 +43,17 @@ private fun eventSectionKey(
     preseasonOver: Boolean,
 ): SectionKey {
     return when (event.type) {
-        100 -> if (preseasonOver) SectionKey(1500, "Preseason") else SectionKey(-1, "Preseason")
-        0, 1, 2, 5 -> {
+        EventType.PRESEASON ->
+            if (preseasonOver) SectionKey(1500, "Preseason") else SectionKey(-1, "Preseason")
+        EventType.REGIONAL, EventType.DISTRICT, EventType.DISTRICT_CHAMPIONSHIP,
+        EventType.DISTRICT_CHAMPIONSHIP_DIVISION,
+        -> {
             val week = event.week ?: return SectionKey(9999, "Other events")
             SectionKey(week, "Week ${week + 1}")
         }
-        3, 4 -> SectionKey(1000, "Championship")
-        99 -> SectionKey(2000, "Offseason")
+        EventType.CHAMPIONSHIP_DIVISION, EventType.CHAMPIONSHIP_FINALS ->
+            SectionKey(1000, "Championship")
+        EventType.OFFSEASON -> SectionKey(2000, "Offseason")
         else -> {
             // Unknown type but has a week — group with regular weeks
             if (event.week != null) {
@@ -70,7 +75,7 @@ fun buildEventSections(
 ): List<EventSection> {
     val lastPreseasonEnd =
         events
-            .filter { it.type == 100 }
+            .filter { it.type == EventType.PRESEASON }
             .mapNotNull { it.endDate?.let { d -> runCatching { LocalDate.parse(d) }.getOrNull() } }
             .maxOrNull()
     val preseasonOver = lastPreseasonEnd != null && today.isAfter(lastPreseasonEnd)
@@ -93,16 +98,16 @@ private fun buildSubSections(
     buildList {
         val regionals =
             events
-                .filter { it.district == null && it.type == 0 }
+                .filter { it.district == null && it.type == EventType.REGIONAL }
                 .sortedBy { it.name }
         if (regionals.isNotEmpty()) {
             add(EventSubSection("Regional Events", regionals))
         }
 
-        val others = events.filter { it.district == null && it.type != 0 }
+        val others = events.filter { it.district == null && it.type != EventType.REGIONAL }
         if (others.isNotEmpty()) {
-            val offseasons = others.filter { it.type == 99 }
-            val nonOffseasonOthers = others.filter { it.type != 99 }
+            val offseasons = others.filter { it.type == EventType.OFFSEASON }
+            val nonOffseasonOthers = others.filter { it.type != EventType.OFFSEASON }
 
             if (offseasons.isNotEmpty()) {
                 offseasons
@@ -225,7 +230,7 @@ fun computeThisWeekEvents(
         val championshipEvents =
             if (weekStartDate != null && weekEndDate != null) {
                 allEvents.filter { event ->
-                    event.type in listOf(3, 4) &&
+                    event.type in EventType.CHAMPIONSHIP_TYPES &&
                         event.week == null &&
                         datesOverlap(event, weekStartDate, weekEndDate)
                 }
