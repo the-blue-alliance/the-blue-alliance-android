@@ -13,6 +13,17 @@ object EventType {
 
     /** Championship division or finals. */
     val CHAMPIONSHIP_TYPES = listOf(CHAMPIONSHIP_DIVISION, CHAMPIONSHIP_FINALS)
+
+    /** Official-season event types — excludes preseason and offseason. */
+    val OFFICIAL_TYPES =
+        listOf(
+            REGIONAL,
+            DISTRICT,
+            DISTRICT_CHAMPIONSHIP,
+            CHAMPIONSHIP_DIVISION,
+            CHAMPIONSHIP_FINALS,
+            DISTRICT_CHAMPIONSHIP_DIVISION,
+        )
 }
 
 data class Event(

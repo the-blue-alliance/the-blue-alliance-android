@@ -53,8 +53,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.domain.model.Event
-import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -520,26 +518,4 @@ private fun SubSectionHeader(label: String) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
-}
-
-/** Returns the chip label for the current competition week or championship, or null. */
-private fun currentWeekChipLabel(
-    allEvents: List<Event>,
-    today: LocalDate,
-    selectedYear: Int,
-): String? {
-    if (selectedYear != today.year) return null
-    val week = findCurrentCompetitionWeek(allEvents, today)
-    if (week != null) return "Week ${week + 1}"
-
-    // Check for active championship events (types 3/4 have week == null)
-    val championshipActive =
-        allEvents.any { event ->
-            event.type in EventType.CHAMPIONSHIP_TYPES &&
-                event.startDate?.let { !today.isBefore(LocalDate.parse(it)) } == true &&
-                event.endDate?.let { !today.isAfter(LocalDate.parse(it)) } == true
-        }
-    if (championshipActive) return "Championship"
-
-    return null
 }

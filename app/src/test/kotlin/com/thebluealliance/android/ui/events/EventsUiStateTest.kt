@@ -386,4 +386,129 @@ class EventsUiStateTest {
 
         assertNull(week)
     }
+
+    // --- currentWeekChipLabel ---
+
+    @Test
+    fun `currentWeekChipLabel returns Week label during regular season`() {
+        val today = LocalDate.of(2026, 3, 11) // Wednesday of week 2
+        val events =
+            listOf(
+                makeEvent(
+                    type = EventType.REGIONAL,
+                    week = 1,
+                    startDate = "2026-03-09",
+                    endDate = "2026-03-14",
+                ),
+            )
+        assertEquals("Week 2", currentWeekChipLabel(events, today, selectedYear = 2026))
+    }
+
+    @Test
+    fun `currentWeekChipLabel returns Championship when championship is active`() {
+        val today = LocalDate.of(2026, 4, 16)
+        val events =
+            listOf(
+                makeEvent(
+                    type = EventType.REGIONAL,
+                    week = 1,
+                    startDate = "2026-03-09",
+                    endDate = "2026-03-14",
+                ),
+                makeEvent(
+                    key = "2026cmp",
+                    type = EventType.CHAMPIONSHIP_DIVISION,
+                    startDate = "2026-04-15",
+                    endDate = "2026-04-18",
+                ),
+            )
+        assertEquals("Championship", currentWeekChipLabel(events, today, selectedYear = 2026))
+    }
+
+    @Test
+    fun `currentWeekChipLabel returns Offseason after every official event has ended`() {
+        val today = LocalDate.of(2026, 5, 4)
+        val events =
+            listOf(
+                makeEvent(
+                    type = EventType.REGIONAL,
+                    week = 1,
+                    startDate = "2026-03-09",
+                    endDate = "2026-03-14",
+                ),
+                makeEvent(
+                    key = "2026cmp",
+                    type = EventType.CHAMPIONSHIP_DIVISION,
+                    startDate = "2026-04-15",
+                    endDate = "2026-04-18",
+                ),
+                makeEvent(
+                    key = "2026off1",
+                    type = EventType.OFFSEASON,
+                    startDate = "2026-07-15",
+                    endDate = "2026-07-17",
+                ),
+            )
+        assertEquals("Offseason", currentWeekChipLabel(events, today, selectedYear = 2026))
+    }
+
+    @Test
+    fun `currentWeekChipLabel returns null before season has ended`() {
+        val today = LocalDate.of(2026, 4, 1) // Between regionals and championship
+        val events =
+            listOf(
+                makeEvent(
+                    type = EventType.REGIONAL,
+                    week = 1,
+                    startDate = "2026-03-09",
+                    endDate = "2026-03-14",
+                ),
+                makeEvent(
+                    key = "2026cmp",
+                    type = EventType.CHAMPIONSHIP_DIVISION,
+                    startDate = "2026-04-15",
+                    endDate = "2026-04-18",
+                ),
+            )
+        assertNull(currentWeekChipLabel(events, today, selectedYear = 2026))
+    }
+
+    @Test
+    fun `currentWeekChipLabel ignores offseason events when checking season-end`() {
+        // Today falls between the championship end and the offseason event — but the championship
+        // is the latest official event, so we should still surface Offseason.
+        val today = LocalDate.of(2026, 6, 1)
+        val events =
+            listOf(
+                makeEvent(
+                    key = "2026cmp",
+                    type = EventType.CHAMPIONSHIP_DIVISION,
+                    startDate = "2026-04-15",
+                    endDate = "2026-04-18",
+                ),
+                makeEvent(
+                    key = "2026off1",
+                    type = EventType.OFFSEASON,
+                    startDate = "2026-07-15",
+                    endDate = "2026-07-17",
+                ),
+            )
+        assertEquals("Offseason", currentWeekChipLabel(events, today, selectedYear = 2026))
+    }
+
+    @Test
+    fun `currentWeekChipLabel returns null when viewing a non-current year`() {
+        val today = LocalDate.of(2026, 5, 4)
+        val events =
+            listOf(
+                makeEvent(
+                    year = 2025,
+                    type = EventType.REGIONAL,
+                    week = 1,
+                    startDate = "2025-03-09",
+                    endDate = "2025-03-14",
+                ),
+            )
+        assertNull(currentWeekChipLabel(events, today, selectedYear = 2025))
+    }
 }
