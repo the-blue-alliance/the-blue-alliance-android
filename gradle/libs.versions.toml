@@ -23,7 +23,7 @@ room = "2.8.4"
 datastore = "1.2.1"
 
 coil = "3.4.0"
-aboutlibraries = "14.1.0"
+aboutlibraries = "14.2.0"
 
 firebase-bom = "34.12.0"
 google-services = "4.4.4"
