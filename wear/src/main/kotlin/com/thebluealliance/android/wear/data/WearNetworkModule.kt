@@ -1,13 +1,16 @@
 package com.thebluealliance.android.wear.data
 
+import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.thebluealliance.android.wear.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -19,6 +22,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object WearNetworkModule {
+    private const val HTTP_CACHE_SIZE_BYTES = 5L * 1024 * 1024
+
     @Provides
     @Singleton
     fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
@@ -32,9 +37,13 @@ object WearNetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(apiKeyProvider: ApiKeyProvider): OkHttpClient =
+    fun provideOkHttpClient(
+        @ApplicationContext context: Context,
+        apiKeyProvider: ApiKeyProvider,
+    ): OkHttpClient =
         OkHttpClient
             .Builder()
+            .cache(Cache(context.cacheDir.resolve("http_cache"), HTTP_CACHE_SIZE_BYTES))
             .addInterceptor(
                 Interceptor { chain ->
                     val request =
