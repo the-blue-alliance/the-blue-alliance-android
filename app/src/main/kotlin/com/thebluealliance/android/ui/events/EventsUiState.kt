@@ -263,6 +263,37 @@ fun computeThisWeekEvents(
     return ThisWeekResult(label, subSections)
 }
 
+/** Returns the chip label for the current competition week, championship, or offseason. */
+internal fun currentWeekChipLabel(
+    allEvents: List<Event>,
+    today: LocalDate,
+    selectedYear: Int,
+): String? {
+    if (selectedYear != today.year) return null
+
+    val week = findCurrentCompetitionWeek(allEvents, today)
+    if (week != null) return "Week ${week + 1}"
+
+    // Championship events (types 3/4) have week == null, so check by date overlap.
+    val championshipActive =
+        allEvents.any { event ->
+            event.type in EventType.CHAMPIONSHIP_TYPES &&
+                parseDate(event.startDate)?.let { !today.isBefore(it) } == true &&
+                parseDate(event.endDate)?.let { !today.isAfter(it) } == true
+        }
+    if (championshipActive) return "Championship"
+
+    // Past the end of every official event → time for offseason.
+    val latestOfficialEnd =
+        allEvents
+            .filter { it.type in EventType.OFFICIAL_TYPES }
+            .mapNotNull { parseDate(it.endDate) }
+            .maxOrNull()
+    if (latestOfficialEnd != null && today.isAfter(latestOfficialEnd)) return "Offseason"
+
+    return null
+}
+
 internal fun findCurrentCompetitionWeek(
     allEvents: List<Event>,
     today: LocalDate,
