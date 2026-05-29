@@ -83,6 +83,7 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
             }
 
             TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
+            TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
 
             ComplicationDataSourceUpdateRequester
                 .create(

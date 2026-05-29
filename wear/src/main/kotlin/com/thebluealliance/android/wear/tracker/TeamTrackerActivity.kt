@@ -75,6 +75,9 @@ class TeamTrackerActivity : ComponentActivity() {
 
         // Trigger refresh to get latest data
         TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
+        if (trackerPrefs.teamNumber.isNotBlank()) {
+            TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
+        }
 
         setContent {
             MaterialTheme {
