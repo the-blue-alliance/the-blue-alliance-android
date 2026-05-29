@@ -1,9 +1,10 @@
 package com.thebluealliance.android.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "matches")
+@Entity(tableName = "matches", indices = [Index("eventKey")])
 data class MatchEntity(
     @PrimaryKey val key: String,
     val eventKey: String,
