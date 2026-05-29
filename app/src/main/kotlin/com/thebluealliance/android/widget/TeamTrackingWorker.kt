@@ -8,9 +8,11 @@ import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.hilt.work.HiltWorker
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -55,12 +57,19 @@ class TeamTrackingWorker
                 wm.cancelUniqueWork(FAST_WORK_NAME)
             }
 
+            private val networkConstraints =
+                Constraints
+                    .Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+
             fun enqueuePeriodicRefresh(context: Context) {
                 val request =
                     PeriodicWorkRequestBuilder<TeamTrackingWorker>(
                         6,
                         TimeUnit.HOURS,
-                    ).build()
+                    ).setConstraints(networkConstraints)
+                        .build()
                 WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                     WORK_NAME,
                     ExistingPeriodicWorkPolicy.KEEP,
@@ -72,6 +81,7 @@ class TeamTrackingWorker
                 val request =
                     OneTimeWorkRequestBuilder<TeamTrackingWorker>()
                         .setInitialDelay(15, TimeUnit.MINUTES)
+                        .setConstraints(networkConstraints)
                         .build()
                 WorkManager.getInstance(context).enqueueUniqueWork(
                     FAST_WORK_NAME,
