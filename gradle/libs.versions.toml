@@ -39,7 +39,7 @@ core-splashscreen = "1.2.0"
 
 junit = "6.1.0"
 turbine = "1.2.1"
-mockk = "1.14.9"
+mockk = "1.14.11"
 play-publisher = "4.0.0"
 lifecycle-process = "2.10.0"
 ktlint-gradle = "14.2.0"
