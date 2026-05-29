@@ -32,7 +32,7 @@ class DistrictDetailViewModel
     ) : ViewModel() {
         private val initialDistrictKey: String = navKey.districtKey
         private val districtAbbreviation: String = initialDistrictKey.drop(4)
-        private val initialYear: Int = initialDistrictKey.take(4).toInt()
+        private val initialYear: Int = initialDistrictKey.take(4).toIntOrNull() ?: 0
 
         private val _selectedYear = MutableStateFlow(initialYear)
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
