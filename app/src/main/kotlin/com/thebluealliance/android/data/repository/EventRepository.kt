@@ -355,7 +355,10 @@ class EventRepository
                     statuses.map { (teamKey, status) ->
                         TeamEventStatusEntity(teamKey, eventKey, status?.pitLocation)
                     }
-                teamEventStatusDao.insertAll(entities)
+                db.withTransaction {
+                    teamEventStatusDao.deleteByEvent(eventKey)
+                    teamEventStatusDao.insertAll(entities)
+                }
             } catch (_: Exception) {
             }
         }

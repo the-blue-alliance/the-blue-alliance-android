@@ -23,4 +23,7 @@ interface TeamEventStatusDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(statuses: List<TeamEventStatusEntity>)
+
+    @Query("DELETE FROM team_event_status WHERE eventKey = :eventKey")
+    suspend fun deleteByEvent(eventKey: String)
 }
