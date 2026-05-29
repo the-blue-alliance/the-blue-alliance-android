@@ -1,5 +1,6 @@
 package com.thebluealliance.android.di
 
+import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.data.remote.AuthTokenInterceptor
@@ -10,8 +11,10 @@ import com.thebluealliance.android.data.remote.TbaApiKeyInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -23,6 +26,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
+    private const val HTTP_CACHE_SIZE_BYTES = 20L * 1024 * 1024
+
     @Provides
     @Singleton
     fun provideJson(): Json =
@@ -33,9 +38,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(apiKeyInterceptor: TbaApiKeyInterceptor): OkHttpClient =
+    fun provideOkHttpClient(
+        @ApplicationContext context: Context,
+        apiKeyInterceptor: TbaApiKeyInterceptor,
+    ): OkHttpClient =
         OkHttpClient
             .Builder()
+            .cache(Cache(context.cacheDir.resolve("http_cache"), HTTP_CACHE_SIZE_BYTES))
             .addInterceptor(apiKeyInterceptor)
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
@@ -87,14 +96,19 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideGitHubApi(json: Json): GitHubApi =
+    fun provideGitHubApi(
+        @ApplicationContext context: Context,
+        json: Json,
+    ): GitHubApi =
         Retrofit
             .Builder()
             .baseUrl("https://api.github.com/")
             .client(
                 OkHttpClient
                     .Builder()
-                    .addInterceptor(
+                    .cache(
+                        Cache(context.cacheDir.resolve("github_http_cache"), HTTP_CACHE_SIZE_BYTES),
+                    ).addInterceptor(
                         HttpLoggingInterceptor().apply {
                             level =
                                 if (BuildConfig.DEBUG) {
