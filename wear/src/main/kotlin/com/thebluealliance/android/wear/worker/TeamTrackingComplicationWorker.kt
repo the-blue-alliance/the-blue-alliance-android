@@ -129,6 +129,11 @@ class TeamTrackingComplicationWorker
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to update app tracker", e)
                     }
+                } else {
+                    // No team is tracked anymore — cancel the periodic refresh so the
+                    // worker stops waking every 6h to do nothing. It gets re-enqueued
+                    // when a team is set again.
+                    cancelPeriodicRefresh(applicationContext)
                 }
 
                 if (anyActiveEvent) {
