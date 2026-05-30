@@ -52,6 +52,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.model.recordString
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
@@ -369,7 +370,7 @@ private fun SummaryTab(
             item(key = "summary_ranking") {
                 InfoRow(
                     label = "Rank ${ranking.rank}",
-                    value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                    value = ranking.recordString,
                     onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTab.RANKINGS) } },
                 )
             }

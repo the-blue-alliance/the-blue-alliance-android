@@ -13,3 +13,7 @@ data class Ranking(
     val sortOrders: List<Double> = emptyList(),
     val extraStats: List<Double> = emptyList(),
 )
+
+/** Win-loss-tie record formatted as "W-L-T", e.g. "10-2-0". */
+val Ranking.recordString: String
+    get() = "$wins-$losses-$ties"
