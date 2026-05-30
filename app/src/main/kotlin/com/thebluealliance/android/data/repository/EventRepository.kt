@@ -43,6 +43,9 @@ import javax.inject.Singleton
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @Singleton
+private const val POINTS_SOURCE_DISTRICT = "district"
+private const val POINTS_SOURCE_REGIONAL = "regional"
+
 class EventRepository
     @Inject
     constructor(
@@ -192,7 +195,7 @@ class EventRepository
         }
 
         fun observeEventDistrictPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
-            eventDistrictPointsDao.observeByEvent(eventKey).map { list ->
+            eventDistrictPointsDao.observeByEvent(eventKey, POINTS_SOURCE_DISTRICT).map { list ->
                 list.map { it.toDomain() }
             }
 
@@ -201,10 +204,10 @@ class EventRepository
                 val response = api.getEventDistrictPoints(eventKey)
                 val entities =
                     response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey)
+                        entry.toEntity(eventKey, teamKey, POINTS_SOURCE_DISTRICT)
                     }
                 db.withTransaction {
-                    eventDistrictPointsDao.deleteByEvent(eventKey)
+                    eventDistrictPointsDao.deleteByEvent(eventKey, POINTS_SOURCE_DISTRICT)
                     eventDistrictPointsDao.insertAll(entities)
                 }
             } catch (_: Exception) {
@@ -212,7 +215,7 @@ class EventRepository
         }
 
         fun observeEventRegionalPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
-            eventDistrictPointsDao.observeByEvent(eventKey).map { list ->
+            eventDistrictPointsDao.observeByEvent(eventKey, POINTS_SOURCE_REGIONAL).map { list ->
                 list.map { it.toDomain() }
             }
 
@@ -221,10 +224,10 @@ class EventRepository
                 val response = api.getEventRegionalPoints(eventKey)
                 val entities =
                     response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey)
+                        entry.toEntity(eventKey, teamKey, POINTS_SOURCE_REGIONAL)
                     }
                 db.withTransaction {
-                    eventDistrictPointsDao.deleteByEvent(eventKey)
+                    eventDistrictPointsDao.deleteByEvent(eventKey, POINTS_SOURCE_REGIONAL)
                     eventDistrictPointsDao.insertAll(entities)
                 }
             } catch (_: Exception) {

@@ -411,9 +411,11 @@ fun RegionalRankingDto.toDomain(
 fun EventDistrictPointsEntryDto.toEntity(
     eventKey: String,
     teamKey: String,
+    source: String,
 ) = EventDistrictPointsEntity(
     eventKey = eventKey,
     teamKey = teamKey,
+    source = source,
     qualPoints = qualPoints,
     elimPoints = elimPoints,
     alliancePoints = alliancePoints,

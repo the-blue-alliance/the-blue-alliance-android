@@ -13,9 +13,12 @@ import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
+import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.remote.dto.EventDistrictPointsEntryDto
+import com.thebluealliance.android.data.remote.dto.EventDistrictPointsResponseDto
 import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.data.remote.dto.RankingItemDto
 import com.thebluealliance.android.data.remote.dto.RankingResponseDto
@@ -186,5 +189,41 @@ class EventRepositoryTest {
             assertEquals(eventKey, entity.eventKey)
             assertEquals(true, entity.sortOrderInfo.contains("Ranking Score"))
             assertEquals(true, entity.extraStatsInfo?.contains("Cargo Scored") == true)
+        }
+
+    @Test
+    fun `refreshEventRegionalPoints deletes only the regional source, never district`() =
+        runTest {
+            val eventKey = "2024onwat"
+            coEvery { api.getEventRegionalPoints(eventKey) } returns
+                EventDistrictPointsResponseDto(points = emptyMap())
+
+            repo.refreshEventRegionalPoints(eventKey)
+
+            // Regression: an empty regional response must not wipe district rows.
+            // Both refreshes used to share deleteByEvent(eventKey) on one table, so
+            // whichever ran last (with an empty response) blanked the other's data.
+            coVerify(exactly = 1) { eventDistrictPointsDao.deleteByEvent(eventKey, "regional") }
+            coVerify(exactly = 0) { eventDistrictPointsDao.deleteByEvent(eventKey, "district") }
+        }
+
+    @Test
+    fun `refreshEventDistrictPoints tags rows with the district source`() =
+        runTest {
+            val eventKey = "2024onwat"
+            coEvery { api.getEventDistrictPoints(eventKey) } returns
+                EventDistrictPointsResponseDto(
+                    points = mapOf("frc1114" to EventDistrictPointsEntryDto(total = 22)),
+                )
+
+            val insertedSlot = slot<List<EventDistrictPointsEntity>>()
+            coEvery { eventDistrictPointsDao.insertAll(capture(insertedSlot)) } returns Unit
+
+            repo.refreshEventDistrictPoints(eventKey)
+
+            coVerify(exactly = 1) { eventDistrictPointsDao.deleteByEvent(eventKey, "district") }
+            coVerify(exactly = 0) { eventDistrictPointsDao.deleteByEvent(eventKey, "regional") }
+            assertEquals("district", insertedSlot.captured.single().source)
+            assertEquals("frc1114", insertedSlot.captured.single().teamKey)
         }
 }
