@@ -2,8 +2,8 @@ package com.thebluealliance.android.data.local.entity
 
 import androidx.room.Entity
 
-@Entity(tableName = "event_district_points", primaryKeys = ["eventKey", "teamKey", "source"])
-data class EventDistrictPointsEntity(
+@Entity(tableName = "event_advancement_points", primaryKeys = ["eventKey", "teamKey", "source"])
+data class EventAdvancementPointsEntity(
     val eventKey: String,
     val teamKey: String,
     val source: PointsSource,

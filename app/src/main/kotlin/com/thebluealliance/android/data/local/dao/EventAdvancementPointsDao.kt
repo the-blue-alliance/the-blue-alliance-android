@@ -4,24 +4,24 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
+import com.thebluealliance.android.data.local.entity.EventAdvancementPointsEntity
 import com.thebluealliance.android.data.local.entity.PointsSource
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface EventDistrictPointsDao {
+interface EventAdvancementPointsDao {
     @Query(
-        "SELECT * FROM event_district_points WHERE eventKey = :eventKey AND source = :source ORDER BY total DESC",
+        "SELECT * FROM event_advancement_points WHERE eventKey = :eventKey AND source = :source ORDER BY total DESC",
     )
     fun observeByEvent(
         eventKey: String,
         source: PointsSource,
-    ): Flow<List<EventDistrictPointsEntity>>
+    ): Flow<List<EventAdvancementPointsEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(points: List<EventDistrictPointsEntity>)
+    suspend fun insertAll(points: List<EventAdvancementPointsEntity>)
 
-    @Query("DELETE FROM event_district_points WHERE eventKey = :eventKey AND source = :source")
+    @Query("DELETE FROM event_advancement_points WHERE eventKey = :eventKey AND source = :source")
     suspend fun deleteByEvent(
         eventKey: String,
         source: PointsSource,

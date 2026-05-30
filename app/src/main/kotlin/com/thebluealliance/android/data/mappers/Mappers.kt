@@ -4,8 +4,8 @@ import com.thebluealliance.android.data.local.entity.AllianceEntity
 import com.thebluealliance.android.data.local.entity.AwardEntity
 import com.thebluealliance.android.data.local.entity.DistrictEntity
 import com.thebluealliance.android.data.local.entity.DistrictRankingEntity
+import com.thebluealliance.android.data.local.entity.EventAdvancementPointsEntity
 import com.thebluealliance.android.data.local.entity.EventCOPRsEntity
-import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventInsightsEntity
 import com.thebluealliance.android.data.local.entity.EventOPRsEntity
@@ -413,7 +413,7 @@ fun EventDistrictPointsEntryDto.toEntity(
     eventKey: String,
     teamKey: String,
     source: PointsSource,
-) = EventDistrictPointsEntity(
+) = EventAdvancementPointsEntity(
     eventKey = eventKey,
     teamKey = teamKey,
     source = source,
@@ -425,7 +425,7 @@ fun EventDistrictPointsEntryDto.toEntity(
     total = total,
 )
 
-fun EventDistrictPointsEntity.toDomain() =
+fun EventAdvancementPointsEntity.toDomain() =
     EventAdvancementPoints(
         teamKey = teamKey,
         qualPoints = qualPoints,
