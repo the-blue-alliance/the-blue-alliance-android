@@ -102,9 +102,6 @@ class EventRepository
         fun observeEventAlliances(eventKey: String): Flow<List<Alliance>> =
             allianceDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
 
-        fun observeTeamEventKeys(teamKey: String): Flow<List<String>> =
-            eventTeamDao.observeByTeam(teamKey).map { list -> list.map { it.eventKey } }
-
         fun observeTeamEvents(
             teamKey: String,
             year: Int,
