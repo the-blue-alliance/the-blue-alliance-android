@@ -16,6 +16,7 @@ import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
+import com.thebluealliance.android.data.local.entity.PointsSource
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.EventDistrictPointsEntryDto
 import com.thebluealliance.android.data.remote.dto.EventDistrictPointsResponseDto
@@ -203,8 +204,12 @@ class EventRepositoryTest {
             // Regression: an empty regional response must not wipe district rows.
             // Both refreshes used to share deleteByEvent(eventKey) on one table, so
             // whichever ran last (with an empty response) blanked the other's data.
-            coVerify(exactly = 1) { eventDistrictPointsDao.deleteByEvent(eventKey, "regional") }
-            coVerify(exactly = 0) { eventDistrictPointsDao.deleteByEvent(eventKey, "district") }
+            coVerify(exactly = 1) {
+                eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
+            }
+            coVerify(exactly = 0) {
+                eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
+            }
         }
 
     @Test
@@ -221,9 +226,13 @@ class EventRepositoryTest {
 
             repo.refreshEventDistrictPoints(eventKey)
 
-            coVerify(exactly = 1) { eventDistrictPointsDao.deleteByEvent(eventKey, "district") }
-            coVerify(exactly = 0) { eventDistrictPointsDao.deleteByEvent(eventKey, "regional") }
-            assertEquals("district", insertedSlot.captured.single().source)
+            coVerify(exactly = 1) {
+                eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
+            }
+            coVerify(exactly = 0) {
+                eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
+            }
+            assertEquals(PointsSource.DISTRICT, insertedSlot.captured.single().source)
             assertEquals("frc1114", insertedSlot.captured.single().teamKey)
         }
 }

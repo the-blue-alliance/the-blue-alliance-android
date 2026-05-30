@@ -12,6 +12,7 @@ import com.thebluealliance.android.data.local.entity.EventOPRsEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
 import com.thebluealliance.android.data.local.entity.MatchEntity
 import com.thebluealliance.android.data.local.entity.MediaEntity
+import com.thebluealliance.android.data.local.entity.PointsSource
 import com.thebluealliance.android.data.local.entity.RankingEntity
 import com.thebluealliance.android.data.local.entity.TeamEntity
 import com.thebluealliance.android.data.remote.dto.AwardDto
@@ -411,7 +412,7 @@ fun RegionalRankingDto.toDomain(
 fun EventDistrictPointsEntryDto.toEntity(
     eventKey: String,
     teamKey: String,
-    source: String,
+    source: PointsSource,
 ) = EventDistrictPointsEntity(
     eventKey = eventKey,
     teamKey = teamKey,

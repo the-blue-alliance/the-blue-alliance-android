@@ -6,7 +6,7 @@ import androidx.room.Entity
 data class EventDistrictPointsEntity(
     val eventKey: String,
     val teamKey: String,
-    val source: String,
+    val source: PointsSource,
     val qualPoints: Int,
     val elimPoints: Int,
     val alliancePoints: Int,
@@ -14,3 +14,9 @@ data class EventDistrictPointsEntity(
     val rookieBonus: Int,
     val total: Int,
 )
+
+/** Discriminates the two distinct TBA datasets that share this table. */
+enum class PointsSource {
+    DISTRICT,
+    REGIONAL,
+}

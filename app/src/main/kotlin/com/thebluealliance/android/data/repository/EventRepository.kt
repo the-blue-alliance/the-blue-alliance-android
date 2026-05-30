@@ -14,6 +14,7 @@ import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
 import com.thebluealliance.android.data.local.entity.EventTeamEntity
+import com.thebluealliance.android.data.local.entity.PointsSource
 import com.thebluealliance.android.data.local.entity.TeamEventStatusEntity
 import com.thebluealliance.android.data.mappers.getExtraStatsInfo
 import com.thebluealliance.android.data.mappers.getSortOrderInfo
@@ -43,9 +44,6 @@ import javax.inject.Singleton
 
 @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
 @Singleton
-private const val POINTS_SOURCE_DISTRICT = "district"
-private const val POINTS_SOURCE_REGIONAL = "regional"
-
 class EventRepository
     @Inject
     constructor(
@@ -195,7 +193,7 @@ class EventRepository
         }
 
         fun observeEventDistrictPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
-            eventDistrictPointsDao.observeByEvent(eventKey, POINTS_SOURCE_DISTRICT).map { list ->
+            eventDistrictPointsDao.observeByEvent(eventKey, PointsSource.DISTRICT).map { list ->
                 list.map { it.toDomain() }
             }
 
@@ -204,10 +202,10 @@ class EventRepository
                 val response = api.getEventDistrictPoints(eventKey)
                 val entities =
                     response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey, POINTS_SOURCE_DISTRICT)
+                        entry.toEntity(eventKey, teamKey, PointsSource.DISTRICT)
                     }
                 db.withTransaction {
-                    eventDistrictPointsDao.deleteByEvent(eventKey, POINTS_SOURCE_DISTRICT)
+                    eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
                     eventDistrictPointsDao.insertAll(entities)
                 }
             } catch (_: Exception) {
@@ -215,7 +213,7 @@ class EventRepository
         }
 
         fun observeEventRegionalPoints(eventKey: String): Flow<List<EventAdvancementPoints>> =
-            eventDistrictPointsDao.observeByEvent(eventKey, POINTS_SOURCE_REGIONAL).map { list ->
+            eventDistrictPointsDao.observeByEvent(eventKey, PointsSource.REGIONAL).map { list ->
                 list.map { it.toDomain() }
             }
 
@@ -224,10 +222,10 @@ class EventRepository
                 val response = api.getEventRegionalPoints(eventKey)
                 val entities =
                     response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey, POINTS_SOURCE_REGIONAL)
+                        entry.toEntity(eventKey, teamKey, PointsSource.REGIONAL)
                     }
                 db.withTransaction {
-                    eventDistrictPointsDao.deleteByEvent(eventKey, POINTS_SOURCE_REGIONAL)
+                    eventDistrictPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
                     eventDistrictPointsDao.insertAll(entities)
                 }
             } catch (_: Exception) {
