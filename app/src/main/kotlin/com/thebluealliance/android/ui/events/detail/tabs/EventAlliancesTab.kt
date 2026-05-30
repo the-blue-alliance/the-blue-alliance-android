@@ -24,6 +24,7 @@ import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.model.playoffSummary
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -86,7 +87,7 @@ fun EventAlliancesTab(
                     alliance.picks.forEachIndexed { index, teamKey ->
                         Text(
                             text =
-                                teamKey.removePrefix("frc") +
+                                teamKey.teamNumber +
                                     if (index < alliance.picks.lastIndex) "," else "",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.primary,

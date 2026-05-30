@@ -40,10 +40,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
+import com.thebluealliance.android.domain.model.recordString
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
+import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
 
 enum class RankingSortColumn {
@@ -87,8 +89,8 @@ internal fun sortRankings(
         val result =
             when (sortState.column) {
                 RankingSortColumn.TEAM -> {
-                    val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-                    val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+                    val teamA = a.teamKey.teamNumber.toIntOrNull() ?: 0
+                    val teamB = b.teamKey.teamNumber.toIntOrNull() ?: 0
                     teamA.compareTo(teamB)
                 }
                 RankingSortColumn.PRIMARY -> {
@@ -280,7 +282,7 @@ private fun RankingItem(
                 modifier = Modifier.weight(0.12f),
             )
             Text(
-                text = ranking.teamKey.removePrefix("frc"),
+                text = ranking.teamKey.teamNumber,
                 style = MaterialTheme.typography.titleMedium,
                 modifier =
                     Modifier
@@ -289,7 +291,7 @@ private fun RankingItem(
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
-                text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                text = ranking.recordString,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(0.22f),
             )
@@ -299,7 +301,7 @@ private fun RankingItem(
                 ranking.sortOrders.getOrNull(0)?.let { value ->
                     val precision = sortOrders?.getOrNull(0)?.precision ?: 2
                     String.format(Locale.US, "%.${precision}f", value)
-                } ?: "--"
+                } ?: ranking.recordString
 
             Text(
                 text = primarySortValue,
@@ -311,7 +313,7 @@ private fun RankingItem(
                 ranking.sortOrders.getOrNull(1)?.let { value ->
                     val precision = sortOrders?.getOrNull(1)?.precision ?: 2
                     String.format(Locale.US, "%.${precision}f", value)
-                } ?: "--"
+                } ?: ranking.recordString
 
             Text(
                 text = secondarySortValue,

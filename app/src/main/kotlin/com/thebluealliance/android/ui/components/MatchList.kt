@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.components
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,8 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.getGroup
@@ -39,6 +36,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -223,7 +221,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    text = match.redTeamKeys.joinToString(", ") { it.teamNumber },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==
@@ -269,7 +267,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    text = match.blueTeamKeys.joinToString(", ") { it.teamNumber },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==
@@ -289,8 +287,16 @@ fun MatchItem(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.spacedBy(3.dp),
                 ) {
-                    RpDots(rpBonuses.red, MaterialTheme.colorScheme.error)
-                    RpDots(rpBonuses.blue, MaterialTheme.colorScheme.primary)
+                    RpDots(
+                        rpBonuses.red,
+                        MaterialTheme.colorScheme.error,
+                        Modifier.padding(end = 3.dp),
+                    )
+                    RpDots(
+                        rpBonuses.blue,
+                        MaterialTheme.colorScheme.primary,
+                        Modifier.padding(end = 3.dp),
+                    )
                 }
             }
             Column(
@@ -364,33 +370,4 @@ fun formatMatchTime(epochSeconds: Long?): String {
         .format(instant.atZone(java.time.ZoneId.systemDefault()))
         .replace("AM", "a")
         .replace("PM", "p")
-}
-
-@Composable
-private fun RpDots(
-    bonuses: List<Boolean>,
-    achievedColor: Color,
-) {
-    Row(
-        modifier = Modifier.padding(end = 3.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        bonuses.forEach { achieved ->
-            Canvas(modifier = Modifier.size(6.dp)) {
-                if (achieved) {
-                    drawCircle(
-                        color = achievedColor,
-                        radius = size.minDimension / 2,
-                    )
-                } else {
-                    drawCircle(
-                        color = Color(0xFF9CA3AF),
-                        radius = size.minDimension / 2 - 1.dp.toPx(),
-                        style = Stroke(width = 1.dp.toPx()),
-                    )
-                }
-            }
-        }
-    }
 }
