@@ -1,9 +1,7 @@
 package com.thebluealliance.android.ui.matches
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -33,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +50,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
+import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.mediaUrl
 
@@ -311,7 +308,7 @@ private fun RowScope.AllianceScoreSummaryCol(
             color = mainColor,
         )
         rpBonus?.let {
-            RpDots(it, mainColor)
+            RpDots(it, mainColor, Modifier.padding(top = 4.dp), dotSize = 8.dp, gap = 4.dp)
         }
         advancementMsg?.let {
             Box(
@@ -466,35 +463,6 @@ private fun BreakdownRow(
             modifier = Modifier.weight(0.2f),
             textAlign = TextAlign.Center,
         )
-    }
-}
-
-@Composable
-private fun RpDots(
-    bonuses: List<Boolean>,
-    achievedColor: Color,
-) {
-    Row(
-        modifier = Modifier.padding(top = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        bonuses.forEach { achieved ->
-            Canvas(modifier = Modifier.size(8.dp)) {
-                if (achieved) {
-                    drawCircle(
-                        color = achievedColor,
-                        radius = size.minDimension / 2,
-                    )
-                } else {
-                    drawCircle(
-                        color = Color(0xFF9CA3AF),
-                        radius = size.minDimension / 2 - 1.dp.toPx(),
-                        style = Stroke(width = 1.dp.toPx()),
-                    )
-                }
-            }
-        }
     }
 }
 
