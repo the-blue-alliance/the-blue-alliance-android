@@ -300,7 +300,7 @@ private fun RankingItem(
                 ranking.sortOrders.getOrNull(0)?.let { value ->
                     val precision = sortOrders?.getOrNull(0)?.precision ?: 2
                     String.format(Locale.US, "%.${precision}f", value)
-                } ?: ranking.recordString
+                } ?: "--"
 
             Text(
                 text = primarySortValue,
@@ -312,7 +312,7 @@ private fun RankingItem(
                 ranking.sortOrders.getOrNull(1)?.let { value ->
                     val precision = sortOrders?.getOrNull(1)?.precision ?: 2
                     String.format(Locale.US, "%.${precision}f", value)
-                } ?: ranking.recordString
+                } ?: "--"
 
             Text(
                 text = secondarySortValue,
