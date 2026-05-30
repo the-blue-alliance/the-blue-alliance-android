@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ErrorBox(
+    modifier: Modifier = Modifier,
     message: String? = null,
     onRetry: (() -> Unit)? = null,
-    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()),

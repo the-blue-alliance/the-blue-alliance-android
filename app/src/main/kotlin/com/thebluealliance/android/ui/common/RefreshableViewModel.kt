@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.common
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,8 +25,13 @@ abstract class RefreshableViewModel : ViewModel() {
                 coroutineScope {
                     tasks.forEach { task ->
                         launch {
-                            runCatching { task() }
-                                .onFailure { Log.w(TAG, "refresh failed", it) }
+                            try {
+                                task()
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (e: Exception) {
+                                Log.w(TAG, "refresh failed", e)
+                            }
                         }
                     }
                 }

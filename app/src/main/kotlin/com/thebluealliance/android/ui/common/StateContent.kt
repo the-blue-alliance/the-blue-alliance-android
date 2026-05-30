@@ -21,14 +21,15 @@ fun <T> StateContent(
     content: @Composable (T) -> Unit,
 ) {
     PullToRefreshBox(
-        isRefreshing = isRefreshing,
+        // Suppress the pull spinner during the initial load; LoadingBox already shows one.
+        isRefreshing = isRefreshing && state !is UiState.Loading,
         onRefresh = onRefresh,
         modifier = modifier,
     ) {
         when (state) {
             UiState.Loading -> LoadingBox()
             UiState.Empty -> empty()
-            is UiState.Error -> ErrorBox(state.message, onRetry = onRefresh)
+            is UiState.Error -> ErrorBox(message = state.message, onRetry = onRefresh)
             is UiState.Success -> content(state.data)
         }
     }

@@ -40,7 +40,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
-import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.flow.Flow
@@ -110,7 +109,7 @@ fun RegionalAdvancementScreen(
     ) { innerPadding ->
         StateContent(
             state = uiState,
-            isRefreshing = isRefreshing && uiState !is UiState.Loading,
+            isRefreshing = isRefreshing,
             onRefresh = viewModel::refreshRankings,
             modifier = Modifier.padding(innerPadding).fillMaxSize(),
             empty = {

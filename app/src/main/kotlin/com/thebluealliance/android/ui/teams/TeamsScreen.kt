@@ -29,7 +29,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
-import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
@@ -73,7 +72,7 @@ fun TeamsScreen(
     ) { innerPadding ->
         StateContent(
             state = uiState,
-            isRefreshing = isRefreshing && uiState !is UiState.Loading,
+            isRefreshing = isRefreshing,
             onRefresh = viewModel::refreshTeams,
             modifier =
                 Modifier

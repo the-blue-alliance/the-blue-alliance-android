@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
-import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -110,7 +109,7 @@ fun EventsScreen(
     ) { innerPadding ->
         StateContent(
             state = uiState,
-            isRefreshing = isRefreshing && uiState !is UiState.Loading,
+            isRefreshing = isRefreshing,
             onRefresh = viewModel::refreshEvents,
             modifier =
                 Modifier
