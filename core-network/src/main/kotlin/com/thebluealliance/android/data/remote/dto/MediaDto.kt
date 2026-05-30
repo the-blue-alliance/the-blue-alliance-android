@@ -3,7 +3,8 @@ package com.thebluealliance.android.data.remote.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
 
 @Serializable
 data class MediaDto(
@@ -18,5 +19,5 @@ data class MediaDto(
      * [details] on others; expose one flat accessor so callers don't reach into raw JSON.
      */
     val base64Image: String?
-        get() = rawBase64Image ?: details?.get("base64Image")?.jsonPrimitive?.content
+        get() = rawBase64Image ?: (details?.get("base64Image") as? JsonPrimitive)?.contentOrNull
 }
