@@ -1,9 +1,9 @@
 package com.thebluealliance.android.wear.data
 
-import com.thebluealliance.android.wear.data.dto.EventDto
-import com.thebluealliance.android.wear.data.dto.MatchDto
-import com.thebluealliance.android.wear.data.dto.MediaDto
-import com.thebluealliance.android.wear.data.dto.TeamDto
+import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.data.remote.dto.MatchDto
+import com.thebluealliance.android.data.remote.dto.MediaDto
+import com.thebluealliance.android.data.remote.dto.TeamDto
 import retrofit2.http.GET
 import retrofit2.http.Path
 

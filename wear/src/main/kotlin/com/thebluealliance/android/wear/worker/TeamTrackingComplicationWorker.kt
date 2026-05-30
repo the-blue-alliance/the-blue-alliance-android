@@ -14,11 +14,11 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.data.remote.dto.MatchDto
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationPreferences
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationService
 import com.thebluealliance.android.wear.data.WearTbaApi
-import com.thebluealliance.android.wear.data.dto.EventDto
-import com.thebluealliance.android.wear.data.dto.MatchDto
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject

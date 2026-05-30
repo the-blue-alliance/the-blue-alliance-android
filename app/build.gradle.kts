@@ -195,6 +195,9 @@ configurations.configureEach {
 }
 
 dependencies {
+    // Modules
+    implementation(project(":core-network"))
+
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)

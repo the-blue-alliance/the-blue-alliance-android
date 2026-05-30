@@ -157,6 +157,9 @@ configurations.configureEach {
 }
 
 dependencies {
+    // Modules
+    implementation(project(":core-network"))
+
     // Wear OS Compose
     implementation(libs.wear.compose.material3)
     implementation(libs.wear.compose.foundation)
