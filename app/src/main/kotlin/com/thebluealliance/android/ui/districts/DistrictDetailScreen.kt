@@ -50,6 +50,7 @@ import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
 import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -401,7 +402,7 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.10f),
                 )
                 Text(
-                    text = ranking.teamKey.removePrefix("frc"),
+                    text = ranking.teamKey.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),

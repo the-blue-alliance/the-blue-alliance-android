@@ -21,7 +21,7 @@ fun buildNexusPitMapUrl(
     eventKey: String,
     highlightedTeamKey: String? = null,
 ): String {
-    val teamNumber = highlightedTeamKey?.removePrefix("frc")?.takeIf { it.isNotBlank() }
+    val teamNumber = highlightedTeamKey?.teamNumber?.takeIf { it.isNotBlank() }
     return if (teamNumber == null) {
         "$NEXUS_EVENT_BASE_URL/$eventKey/map"
     } else {

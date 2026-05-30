@@ -47,6 +47,7 @@ import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.thebluealliance.android.R
+import com.thebluealliance.android.util.teamNumber
 
 /**
  * Glance Compose widget for team tracking.
@@ -510,13 +511,13 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     // Alliance team rows in color
                     TeamNumbersRow(
                         data.nextRedTeams!!,
-                        data.teamKey.removePrefix("frc"),
+                        data.teamKey.teamNumber,
                         redColor,
                         false,
                     )
                     TeamNumbersRow(
                         data.nextBlueTeams!!,
-                        data.teamKey.removePrefix("frc"),
+                        data.teamKey.teamNumber,
                         blueColor,
                         false,
                     )
@@ -650,13 +651,13 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 }
                 TeamNumbersRow(
                     data.nextRedTeams!!,
-                    data.teamKey.removePrefix("frc"),
+                    data.teamKey.teamNumber,
                     redColor,
                     false,
                 )
                 TeamNumbersRow(
                     data.nextBlueTeams!!,
-                    data.teamKey.removePrefix("frc"),
+                    data.teamKey.teamNumber,
                     blueColor,
                     false,
                 )
@@ -1000,7 +1001,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         val blueColor = ColorProvider(R.color.widget_blue_text)
         val rpInactiveColor = ColorProvider(R.color.widget_rp_inactive)
 
-        val teamNumber = teamKey.removePrefix("frc")
+        val teamNumber = teamKey.teamNumber
         val isPlayed = redScore != null && blueScore != null
 
         Row(

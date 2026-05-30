@@ -56,6 +56,7 @@ import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.mediaUrl
+import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -395,7 +396,7 @@ private fun AllianceTeams(
         ) {
             redTeamKeys.forEach { key ->
                 Text(
-                    text = key.removePrefix("frc"),
+                    text = key.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.error,
                     modifier =
@@ -420,7 +421,7 @@ private fun AllianceTeams(
         ) {
             blueTeamKeys.forEach { key ->
                 Text(
-                    text = key.removePrefix("frc"),
+                    text = key.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier =

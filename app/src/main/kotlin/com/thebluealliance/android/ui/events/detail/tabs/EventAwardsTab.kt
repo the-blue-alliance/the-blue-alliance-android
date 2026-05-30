@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.util.teamNumber
 
 @Composable
 fun EventAwardsTab(
@@ -64,9 +65,9 @@ fun EventAwardsTab(
                         if (award.awardee != null) append(award.awardee)
                         if (award.teamKey.isNotEmpty()) {
                             if (isNotEmpty()) {
-                                append(" (${award.teamKey.removePrefix("frc")})")
+                                append(" (${award.teamKey.teamNumber})")
                             } else {
-                                append(award.teamKey.removePrefix("frc"))
+                                append(award.teamKey.teamNumber)
                             }
                         }
                     }
