@@ -19,19 +19,11 @@ data class EventSection(
     val events: List<Event> get() = subSections.flatMap { it.events }
 }
 
-sealed interface EventsUiState {
-    data object Loading : EventsUiState
-
-    data class Success(
-        val sections: List<EventSection>,
-        val favoriteEventKeys: Set<String> = emptySet(),
-        val districtNames: Map<String, String> = emptyMap(),
-    ) : EventsUiState
-
-    data class Error(
-        val message: String,
-    ) : EventsUiState
-}
+data class EventsData(
+    val sections: List<EventSection>,
+    val favoriteEventKeys: Set<String> = emptySet(),
+    val districtNames: Map<String, String> = emptyMap(),
+)
 
 private data class SectionKey(
     val sortOrder: Int,

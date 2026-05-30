@@ -18,14 +18,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +38,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.flow.Flow
@@ -107,51 +108,29 @@ fun RegionalAdvancementScreen(
             )
         },
     ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = isRefreshing && uiState !is RegionalAdvancementUiState.Loading,
+        StateContent(
+            state = uiState,
+            isRefreshing = isRefreshing && uiState !is UiState.Loading,
             onRefresh = viewModel::refreshRankings,
             modifier = Modifier.padding(innerPadding).fillMaxSize(),
-        ) {
-            when (val state = uiState) {
-                RegionalAdvancementUiState.Loading -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-                is RegionalAdvancementUiState.Error -> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = state.message,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
-                is RegionalAdvancementUiState.Success -> {
-                    if (state.rankings.isEmpty()) {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(
-                                text = "No regional advancement rankings for $selectedYear",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            state = listState,
-                            modifier =
-                                Modifier.fillMaxSize().background(
-                                    MaterialTheme.colorScheme.background,
-                                ),
-                        ) {
-                            item(key = "header") { RankingsTableHeader() }
-                            items(state.rankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
-                                RegionalRankingRow(
-                                    ranking = ranking,
-                                    onNavigateToTeam = onNavigateToTeam,
-                                    onNavigateToEvent = onNavigateToEvent,
-                                )
-                            }
-                        }
-                    }
+            empty = {
+                EmptyBox("No regional advancement rankings for $selectedYear")
+            },
+        ) { rankings ->
+            LazyColumn(
+                state = listState,
+                modifier =
+                    Modifier.fillMaxSize().background(
+                        MaterialTheme.colorScheme.background,
+                    ),
+            ) {
+                item(key = "header") { RankingsTableHeader() }
+                items(rankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
+                    RegionalRankingRow(
+                        ranking = ranking,
+                        onNavigateToTeam = onNavigateToTeam,
+                        onNavigateToEvent = onNavigateToEvent,
+                    )
                 }
             }
         }

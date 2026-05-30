@@ -1,18 +1,15 @@
 package com.thebluealliance.android.ui.mytba
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -28,10 +25,7 @@ class MyTBAViewModel
         private val myTBARepository: MyTBARepository,
         private val deviceRegistrationManager: DeviceRegistrationManager,
         private val shortcutManager: TBAShortcutManager,
-    ) : ViewModel() {
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
+    ) : RefreshableViewModel() {
         val uiState: StateFlow<MyTBAUiState> =
             combine(
                 authRepository.currentUser,
@@ -112,49 +106,19 @@ class MyTBAViewModel
         fun refresh() {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
-                _isRefreshing.value = true
-                try {
-                    coroutineScope {
-                        launch {
-                            try {
-                                myTBARepository.refreshFavorites()
-                            } catch (_: Exception) {
-                            }
-                        }
-                        launch {
-                            try {
-                                myTBARepository.refreshSubscriptions()
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
+                refreshing(
+                    { myTBARepository.refreshFavorites() },
+                    { myTBARepository.refreshSubscriptions() },
+                )
             }
         }
 
         fun refreshTab(tab: Int) {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
-                _isRefreshing.value = true
-                try {
-                    when (tab) {
-                        0 ->
-                            try {
-                                myTBARepository.refreshFavorites()
-                            } catch (_: Exception) {
-                            }
-                        1 ->
-                            try {
-                                myTBARepository.refreshSubscriptions()
-                            } catch (_: Exception) {
-                            }
-                    }
-                } finally {
-                    _isRefreshing.value = false
+                when (tab) {
+                    0 -> refreshing({ myTBARepository.refreshFavorites() })
+                    1 -> refreshing({ myTBARepository.refreshSubscriptions() })
                 }
             }
         }
