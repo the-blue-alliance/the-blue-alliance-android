@@ -5,6 +5,7 @@
     android:description="@string/widget_description"
     android:minWidth="40dp"
     android:minHeight="40dp"
+    android:previewImage="@drawable/widget_team_tracking_preview"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:initialLayout="@layout/widget_loading"
