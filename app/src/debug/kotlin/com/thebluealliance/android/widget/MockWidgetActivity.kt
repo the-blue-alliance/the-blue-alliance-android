@@ -33,6 +33,10 @@ import java.time.LocalDate
  * Presets:
  *   "at-event"  — Team 177 at NE District Event with last/next match (matches sampleData())
  *   "upcoming"  — Team 254 with 3 upcoming events, no current event
+ *   "empty"     — No team configured; widget shows the "Tap to set up" CTA
+ *
+ * Optionally force a responsive layout tier regardless of physical size:
+ *   --es size <1x1|2x1|2x2|4x1|4x2>
  */
 class MockWidgetActivity : ComponentActivity() {
     companion object {
@@ -44,9 +48,13 @@ class MockWidgetActivity : ComponentActivity() {
 
         val index = intent?.getIntExtra("index", -1) ?: -1
         val preset = intent?.getStringExtra("mock")
+        val forcedSize = intent?.getStringExtra("size")
 
         if (index < 0 || preset == null) {
-            Log.e(TAG, "Usage: --ei index <N> --es mock <at-event|upcoming>")
+            Log.e(
+                TAG,
+                "Usage: --ei index <N> --es mock <at-event|upcoming|empty> [--es size <1x1|2x1|2x2|4x1|4x2>]",
+            )
             finish()
             return
         }
@@ -73,13 +81,19 @@ class MockWidgetActivity : ComponentActivity() {
                     when (preset) {
                         "at-event" -> writeAtEventPreset(prefs)
                         "upcoming" -> writeUpcomingPreset(prefs)
+                        "empty" -> writeEmptyPreset(prefs)
                         else -> {
                             Log.e(
                                 TAG,
-                                "Unknown preset: $preset (expected 'at-event' or 'upcoming')",
+                                "Unknown preset: $preset (expected 'at-event', 'upcoming', or 'empty')",
                             )
                             return@updateAppWidgetState
                         }
+                    }
+                    if (forcedSize != null) {
+                        prefs[TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE] = forcedSize
+                    } else {
+                        prefs.remove(TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE)
                     }
                 }
 
@@ -159,6 +173,11 @@ class MockWidgetActivity : ComponentActivity() {
 
         // No upcoming events when at an event
         prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
+    }
+
+    /** Clears all configured data so the widget renders its "Tap to set up" zero state. */
+    private fun writeEmptyPreset(prefs: androidx.datastore.preferences.core.MutablePreferences) {
+        prefs.clear()
     }
 
     private suspend fun writeUpcomingPreset(
