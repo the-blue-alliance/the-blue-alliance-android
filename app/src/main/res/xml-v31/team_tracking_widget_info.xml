@@ -7,8 +7,11 @@
     android:minHeight="40dp"
     android:targetCellWidth="4"
     android:targetCellHeight="2"
+    android:maxResizeWidth="250dp"
+    android:maxResizeHeight="110dp"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable"
     android:initialLayout="@layout/widget_loading"
     android:previewLayout="@layout/widget_preview"
     android:updatePeriodMillis="0" />
