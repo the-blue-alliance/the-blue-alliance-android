@@ -48,3 +48,6 @@ firebase-debug.log
 
 # Screenshots
 screenshots/
+
+# Generated compliance reports / audit artifacts
+artifacts/
