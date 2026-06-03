@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Production TBA is HTTPS. Allow cleartext ONLY to the emulator host loopback
+         so a debug build can hit a locally-running TBA dev server
+         (e.g. http://10.0.2.2:8080/api/v3/). -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

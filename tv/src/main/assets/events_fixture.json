@@ -1,0 +1,133 @@
+[
+  {
+    "key": "2026mibatb",
+    "name": "Battle at the Border (Off-Season)",
+    "short_name": "Battle at the Border",
+    "city": "Detroit",
+    "state_prov": "MI",
+    "country": "USA",
+    "start_date": "2026-05-30",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "frc-batb-26" },
+      { "type": "twitch", "channel": "firstupdatesnow" }
+    ]
+  },
+  {
+    "key": "2026flbb",
+    "name": "Beach Blitz (Off-Season)",
+    "short_name": "Beach Blitz",
+    "city": "Cape Coral",
+    "state_prov": "FL",
+    "country": "USA",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "frc-bb26-day1", "date": "2026-05-29" },
+      { "type": "youtube", "channel": "frc-bb26-day2", "date": "2026-05-30" }
+    ]
+  },
+  {
+    "key": "2026moctt",
+    "name": "Cow Town Throwdown (Off-Season)",
+    "short_name": "Cow Town Throwdown",
+    "city": "Kansas City",
+    "state_prov": "MO",
+    "country": "USA",
+    "start_date": "2026-05-30",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "frc-kc-2026" }
+    ]
+  },
+  {
+    "key": "2026onss",
+    "name": "Ontario Summer Showdown (Off-Season)",
+    "short_name": "Ontario Summer Showdown",
+    "city": "Toronto",
+    "state_prov": "ON",
+    "country": "Canada",
+    "start_date": "2026-05-30",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "livestream", "channel": "https://livestream.firstinspires.org/on-summer" }
+    ]
+  },
+  {
+    "key": "2026azheat",
+    "name": "Summer Heat (Off-Season)",
+    "short_name": "Summer Heat",
+    "city": "Phoenix",
+    "state_prov": "AZ",
+    "country": "USA",
+    "start_date": "2026-06-20",
+    "end_date": "2026-06-21",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstinspires" }
+    ]
+  },
+  {
+    "key": "2026iniri",
+    "name": "Indiana Robotics Invitational (Off-Season)",
+    "short_name": "Indiana Robotics Invitational",
+    "city": "Indianapolis",
+    "state_prov": "IN",
+    "country": "USA",
+    "start_date": "2026-07-11",
+    "end_date": "2026-07-12",
+    "webcasts": [
+      { "type": "youtube", "channel": "frc-iri-026" }
+    ]
+  },
+  {
+    "key": "2026cmptx",
+    "name": "FIRST Championship — Houston",
+    "short_name": "Houston Championship",
+    "city": "Houston",
+    "state_prov": "TX",
+    "country": "USA",
+    "start_date": "2026-04-15",
+    "end_date": "2026-04-18",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstinspires" },
+      { "type": "youtube", "channel": "frc-cmp-026" }
+    ]
+  },
+  {
+    "key": "2026micmp",
+    "name": "FIRST in Michigan State Championship",
+    "short_name": "Michigan State Championship",
+    "city": "Saginaw",
+    "state_prov": "MI",
+    "country": "USA",
+    "start_date": "2026-04-01",
+    "end_date": "2026-04-04",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstinspires" }
+    ]
+  },
+  {
+    "key": "2026necmp",
+    "name": "New England District Championship",
+    "short_name": "New England Championship",
+    "city": "Springfield",
+    "state_prov": "MA",
+    "country": "USA",
+    "start_date": "2026-04-08",
+    "end_date": "2026-04-11",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstupdatesnow" }
+    ]
+  },
+  {
+    "key": "2026nyny",
+    "name": "New York City Regional",
+    "short_name": "NYC Regional",
+    "city": "New York",
+    "state_prov": "NY",
+    "country": "USA",
+    "start_date": "2026-03-20",
+    "end_date": "2026-03-22",
+    "webcasts": []
+  }
+]

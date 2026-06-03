@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug-only overlay: permits cleartext to the local TBA dev server.
+     Release builds never see this, so they stay HTTPS-only. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- networkSecurityConfig is API 24+; minSdk is 23 where it is simply ignored (and cleartext
+         is already allowed pre-28), so UnusedAttribute is expected here. -->
+    <application
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="UnusedAttribute" />
+</manifest>
