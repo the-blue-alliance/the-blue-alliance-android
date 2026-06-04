@@ -31,7 +31,7 @@ object TbaApiFactory {
     fun create(
         context: Context,
         baseUrl: String,
-        apiKey: String,
+        apiKey: () -> String,
     ): TbaApi {
         val client =
             OkHttpClient
@@ -45,7 +45,7 @@ object TbaApiFactory {
                         chain
                             .request()
                             .newBuilder()
-                            .addHeader("X-TBA-Auth-Key", apiKey)
+                            .addHeader("X-TBA-Auth-Key", apiKey())
                             .addHeader("Accept", "application/json")
                             .build()
                     chain.proceed(request)

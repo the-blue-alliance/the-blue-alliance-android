@@ -1,6 +1,7 @@
 package com.thebluealliance.android.tv.data
 
 import android.content.Context
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.thebluealliance.android.tv.BuildConfig
 import com.thebluealliance.android.tv.data.api.GitHubApiFactory
 import com.thebluealliance.android.tv.data.api.TbaApiFactory
@@ -14,6 +15,7 @@ import com.thebluealliance.android.tv.data.repository.NetworkEventRepository
 interface AppContainer {
     val eventRepository: EventRepository
     val contributorRepository: ContributorRepository
+    val apiKeyProvider: ApiKeyProvider
     val usingMockData: Boolean
 }
 
@@ -24,6 +26,10 @@ class DefaultAppContainer(
 
     override val usingMockData: Boolean = BuildConfig.USE_MOCK_DATA
 
+    override val apiKeyProvider: ApiKeyProvider by lazy {
+        ApiKeyProvider(appContext, FirebaseRemoteConfig.getInstance())
+    }
+
     override val eventRepository: EventRepository by lazy {
         if (usingMockData) {
             AssetEventRepository(appContext)
@@ -32,7 +38,7 @@ class DefaultAppContainer(
                 TbaApiFactory.create(
                     context = appContext,
                     baseUrl = BuildConfig.TBA_BASE_URL,
-                    apiKey = BuildConfig.TBA_API_KEY,
+                    apiKey = { apiKeyProvider.apiKey },
                 ),
             )
         }

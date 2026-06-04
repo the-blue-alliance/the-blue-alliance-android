@@ -70,11 +70,12 @@ android {
         versionCode = computedVersionCode
         versionName = computedVersionName
 
-        // Production defaults; the debug buildType overrides these below. The release
-        // build ships with no embedded key, so it serves the bundled sample events.
+        // Production defaults; the debug buildType overrides these below. Release builds
+        // ship with no embedded TBA key — ApiKeyProvider fetches the live key from
+        // Firebase Remote Config (apiv3_auth_key), mirroring :app and :wear.
         buildConfigField("String", "TBA_API_KEY", "\"\"")
         buildConfigField("String", "TBA_BASE_URL", "\"$tbaProdUrl\"")
-        buildConfigField("boolean", "USE_MOCK_DATA", "true")
+        buildConfigField("boolean", "USE_MOCK_DATA", "false")
     }
 
     signingConfigs {
@@ -187,11 +188,13 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
-    // Firebase — Crashlytics + Analytics, matching :app and :wear. Auto-initialized
-    // via the google-services plugin and the bundled google-services.json.
+    // Firebase — Crashlytics + Analytics auto-initialize via the google-services
+    // plugin and the bundled google-services.json. Remote Config fetches the TBA
+    // API key from apiv3_auth_key on release builds. All matching :app and :wear.
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
 
     // Core library desugaring (java.time on minSdk 23)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
