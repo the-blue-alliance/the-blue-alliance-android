@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">The Blue Alliance</string>
+
+    <!-- Events feed -->
+    <string name="section_happening_now">Happening Now</string>
+    <string name="section_upcoming">Upcoming</string>
+    <string name="section_recent">Recent</string>
+    <string name="sample_data">SAMPLE DATA</string>
+    <string name="about">About</string>
+    <string name="empty_title">No webcasts right now</string>
+    <string name="empty_message">Check back when events are live or scheduled.</string>
+    <string name="events_error_title">Couldn\'t load events</string>
+    <string name="retry">Retry</string>
+
+    <!-- Webcast picker -->
+    <string name="choose_webcast">Choose a webcast</string>
+    <!-- %1$s is a platform name, e.g. YouTube. -->
+    <string name="watch_on">Watch on %1$s</string>
+    <!-- %1$s platform name, %2$s the cast\'s day (e.g. Sat, May 30) when a webcast is split per day. -->
+    <string name="watch_on_dated">Watch on %1$s (%2$s)</string>
+
+    <!-- Webcast launch failures (Toast) -->
+    <string name="webcast_unsupported">This webcast type isn\'t supported on Android TV</string>
+    <!-- %1$s is a platform name, e.g. Twitch. -->
+    <string name="webcast_no_app">No app available to open this %1$s webcast</string>
+
+    <!-- Events load errors -->
+    <string name="error_events_offline">Can\'t reach The Blue Alliance. Check this TV\'s internet connection and try again.</string>
+    <string name="error_events_timeout">The Blue Alliance took too long to respond. Try again in a moment.</string>
+    <string name="error_events_network">Network trouble loading events. Check your connection and try again.</string>
+    <string name="error_events_generic">Something went wrong loading events. Try again.</string>
+
+    <!-- About screen -->
+    <!-- %1$s is the app version name, e.g. 1.2.3. -->
+    <string name="about_version">The Blue Alliance for Android TV · Version %1$s</string>
+    <string name="thanks_header">Thanks</string>
+    <string name="thanks_blurb">The Blue Alliance is open source. Thank you to everyone who has contributed.</string>
+    <string name="thanks_loading">Loading contributors…</string>
+    <string name="thanks_empty">No contributors to show yet.</string>
+    <plurals name="contribution_count">
+        <item quantity="one">%1$d contribution</item>
+        <item quantity="other">%1$d contributions</item>
+    </plurals>
+    <string name="licenses_header">Open-source licenses</string>
+    <string name="licenses_note">Distributed under the Apache License 2.0 unless noted. Full license texts are available from each project.</string>
+
+    <!-- Contributor (GitHub) load errors -->
+    <string name="error_contributors_offline">Can\'t reach GitHub. Check this TV\'s internet connection and try again.</string>
+    <string name="error_contributors_timeout">GitHub took too long to respond. Try again in a moment.</string>
+    <string name="error_contributors_network">Network trouble loading contributors. Check your connection and try again.</string>
+    <string name="error_contributors_generic">Couldn\'t load contributors right now. Try again.</string>
+</resources>

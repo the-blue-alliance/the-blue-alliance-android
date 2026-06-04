@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bare dark, no-action-bar theme; Compose draws the UI. Dark window background avoids a white flash. -->
+    <style name="Theme.TbaTv" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/tba_background</item>
+        <item name="android:colorBackground">@color/tba_background</item>
+        <item name="android:statusBarColor">@color/tba_background</item>
+        <item name="android:navigationBarColor">@color/tba_background</item>
+    </style>
+</resources>
