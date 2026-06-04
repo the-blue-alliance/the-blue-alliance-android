@@ -73,6 +73,11 @@ navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", vers
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 hilt-lifecycle-viewmodel-compose = { group = "androidx.hilt", name = "hilt-lifecycle-viewmodel-compose", version.ref = "hilt-androidx" }
+# TODO(kotlin-2.4): Hilt 2.59.2 bundles kotlin-metadata-jvm 2.2.20 which cannot read
+# Kotlin 2.4.0 class metadata. Force the matching version onto Hilt's processor
+# classpath. Drop once Hilt ships a release that bundles kotlin-metadata-jvm >= 2.4.0
+# (tracking: https://github.com/google/dagger/issues/5001).
+kotlin-metadata-jvm = { group = "org.jetbrains.kotlin", name = "kotlin-metadata-jvm", version.ref = "kotlin" }
 
 # Coroutines
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
