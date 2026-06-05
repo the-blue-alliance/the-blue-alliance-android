@@ -36,12 +36,14 @@ jobs:
           cache: gradle
       - name: Create CI google-services.json
         run: |
-          mkdir -p app/src/debug app/src/release wear/src/debug wear/src/release
+          mkdir -p app/src/debug app/src/release wear/src/debug wear/src/release tv/src/debug tv/src/release
           for pkg in \
             "com.thebluealliance.androidclient.development:app/src/debug" \
             "com.thebluealliance.androidclient:app/src/release" \
             "com.thebluealliance.androidclient.development:wear/src/debug" \
-            "com.thebluealliance.androidclient:wear/src/release"; do
+            "com.thebluealliance.androidclient:wear/src/release" \
+            "com.thebluealliance.androidclient.development:tv/src/debug" \
+            "com.thebluealliance.androidclient:tv/src/release"; do
             IFS=: read -r package dir <<< "$pkg"
             cat > "$dir/google-services.json" << EOF
           {

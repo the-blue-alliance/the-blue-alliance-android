@@ -19,6 +19,30 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
+      - name: Create CI google-services.json
+        run: |
+          mkdir -p tv/src/debug tv/src/release
+          for pkg in "com.thebluealliance.androidclient.development:tv/src/debug" "com.thebluealliance.androidclient:tv/src/release"; do
+            IFS=: read -r package dir <<< "$pkg"
+            cat > "$dir/google-services.json" << EOF
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "$package" }
+              },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+          done
       - name: Build debug APK
         run: ./gradlew :tv:assembleDebug --stacktrace
       - name: Run unit tests
@@ -36,6 +60,27 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: gradle
+      - name: Create CI google-services.json
+        run: |
+          mkdir -p tv/src/release
+          cat > tv/src/release/google-services.json << 'EOF'
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "com.thebluealliance.androidclient" }
+              },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
       - name: Create CI signing config
         run: |
           keytool -genkey -v -keystore release.keystore -keyalg RSA -keysize 2048 -validity 1 -storepass android -alias ci -keypass android -dname "CN=CI,O=CI,C=US"
