@@ -4,14 +4,15 @@ import com.thebluealliance.android.data.local.entity.AllianceEntity
 import com.thebluealliance.android.data.local.entity.AwardEntity
 import com.thebluealliance.android.data.local.entity.DistrictEntity
 import com.thebluealliance.android.data.local.entity.DistrictRankingEntity
+import com.thebluealliance.android.data.local.entity.EventAdvancementPointsEntity
 import com.thebluealliance.android.data.local.entity.EventCOPRsEntity
-import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventInsightsEntity
 import com.thebluealliance.android.data.local.entity.EventOPRsEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
 import com.thebluealliance.android.data.local.entity.MatchEntity
 import com.thebluealliance.android.data.local.entity.MediaEntity
+import com.thebluealliance.android.data.local.entity.PointsSource
 import com.thebluealliance.android.data.local.entity.RankingEntity
 import com.thebluealliance.android.data.local.entity.TeamEntity
 import com.thebluealliance.android.data.remote.dto.AwardDto
@@ -411,9 +412,11 @@ fun RegionalRankingDto.toDomain(
 fun EventDistrictPointsEntryDto.toEntity(
     eventKey: String,
     teamKey: String,
-) = EventDistrictPointsEntity(
+    source: PointsSource,
+) = EventAdvancementPointsEntity(
     eventKey = eventKey,
     teamKey = teamKey,
+    source = source,
     qualPoints = qualPoints,
     elimPoints = elimPoints,
     alliancePoints = alliancePoints,
@@ -422,7 +425,7 @@ fun EventDistrictPointsEntryDto.toEntity(
     total = total,
 )
 
-fun EventDistrictPointsEntity.toDomain() =
+fun EventAdvancementPointsEntity.toDomain() =
     EventAdvancementPoints(
         teamKey = teamKey,
         qualPoints = qualPoints,

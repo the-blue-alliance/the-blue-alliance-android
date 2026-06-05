@@ -6,9 +6,9 @@ import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.DistrictDao
 import com.thebluealliance.android.data.local.dao.DistrictRankingDao
+import com.thebluealliance.android.data.local.dao.EventAdvancementPointsDao
 import com.thebluealliance.android.data.local.dao.EventCOPRsDao
 import com.thebluealliance.android.data.local.dao.EventDao
-import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
@@ -24,8 +24,8 @@ import com.thebluealliance.android.data.local.entity.AllianceEntity
 import com.thebluealliance.android.data.local.entity.AwardEntity
 import com.thebluealliance.android.data.local.entity.DistrictEntity
 import com.thebluealliance.android.data.local.entity.DistrictRankingEntity
+import com.thebluealliance.android.data.local.entity.EventAdvancementPointsEntity
 import com.thebluealliance.android.data.local.entity.EventCOPRsEntity
-import com.thebluealliance.android.data.local.entity.EventDistrictPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventInsightsEntity
 import com.thebluealliance.android.data.local.entity.EventOPRsEntity
@@ -53,14 +53,14 @@ import com.thebluealliance.android.data.local.entity.TeamEventStatusEntity
         EventTeamEntity::class,
         FavoriteEntity::class,
         SubscriptionEntity::class,
-        EventDistrictPointsEntity::class,
+        EventAdvancementPointsEntity::class,
         EventOPRsEntity::class,
         EventCOPRsEntity::class,
         EventInsightsEntity::class,
         EventRankingSortOrderEntity::class,
         TeamEventStatusEntity::class,
     ],
-    version = 16,
+    version = 18,
     exportSchema = false,
 )
 abstract class TBADatabase : RoomDatabase() {
@@ -88,7 +88,7 @@ abstract class TBADatabase : RoomDatabase() {
 
     abstract fun subscriptionDao(): SubscriptionDao
 
-    abstract fun eventDistrictPointsDao(): EventDistrictPointsDao
+    abstract fun eventAdvancementPointsDao(): EventAdvancementPointsDao
 
     abstract fun eventOPRsDao(): EventOPRsDao
 

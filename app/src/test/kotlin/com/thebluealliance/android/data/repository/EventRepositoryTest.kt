@@ -4,18 +4,22 @@ import app.cash.turbine.test
 import com.thebluealliance.android.data.local.TBADatabase
 import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
+import com.thebluealliance.android.data.local.dao.EventAdvancementPointsDao
 import com.thebluealliance.android.data.local.dao.EventCOPRsDao
 import com.thebluealliance.android.data.local.dao.EventDao
-import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
 import com.thebluealliance.android.data.local.dao.EventTeamDao
 import com.thebluealliance.android.data.local.dao.RankingDao
 import com.thebluealliance.android.data.local.dao.TeamEventStatusDao
+import com.thebluealliance.android.data.local.entity.EventAdvancementPointsEntity
 import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.local.entity.EventRankingSortOrderEntity
+import com.thebluealliance.android.data.local.entity.PointsSource
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.remote.dto.EventDistrictPointsEntryDto
+import com.thebluealliance.android.data.remote.dto.EventDistrictPointsResponseDto
 import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.data.remote.dto.RankingItemDto
 import com.thebluealliance.android.data.remote.dto.RankingResponseDto
@@ -46,7 +50,7 @@ class EventRepositoryTest {
     private val rankingDao: RankingDao = mockk(relaxUnitFun = true)
     private val allianceDao: AllianceDao = mockk(relaxUnitFun = true)
     private val eventTeamDao: EventTeamDao = mockk(relaxUnitFun = true)
-    private val eventDistrictPointsDao: EventDistrictPointsDao = mockk(relaxUnitFun = true)
+    private val eventAdvancementPointsDao: EventAdvancementPointsDao = mockk(relaxUnitFun = true)
     private val eventOPRsDao: EventOPRsDao = mockk(relaxUnitFun = true)
     private val eventCOPRsDao: EventCOPRsDao = mockk(relaxUnitFun = true)
     private val eventInsightsDao: EventInsightsDao = mockk(relaxUnitFun = true)
@@ -62,7 +66,7 @@ class EventRepositoryTest {
             rankingDao,
             allianceDao,
             eventTeamDao,
-            eventDistrictPointsDao,
+            eventAdvancementPointsDao,
             eventOPRsDao,
             eventCOPRsDao,
             eventInsightsDao,
@@ -186,5 +190,49 @@ class EventRepositoryTest {
             assertEquals(eventKey, entity.eventKey)
             assertEquals(true, entity.sortOrderInfo.contains("Ranking Score"))
             assertEquals(true, entity.extraStatsInfo?.contains("Cargo Scored") == true)
+        }
+
+    @Test
+    fun `refreshEventRegionalPoints deletes only the regional source, never district`() =
+        runTest {
+            val eventKey = "2024onwat"
+            coEvery { api.getEventRegionalPoints(eventKey) } returns
+                EventDistrictPointsResponseDto(points = emptyMap())
+
+            repo.refreshEventRegionalPoints(eventKey)
+
+            // Regression: an empty regional response must not wipe district rows.
+            // Both refreshes used to share deleteByEvent(eventKey) on one table, so
+            // whichever ran last (with an empty response) blanked the other's data.
+            coVerify(exactly = 1) {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
+            }
+            coVerify(exactly = 0) {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
+            }
+        }
+
+    @Test
+    fun `refreshEventDistrictPoints tags rows with the district source`() =
+        runTest {
+            val eventKey = "2024onwat"
+            coEvery { api.getEventDistrictPoints(eventKey) } returns
+                EventDistrictPointsResponseDto(
+                    points = mapOf("frc1114" to EventDistrictPointsEntryDto(total = 22)),
+                )
+
+            val insertedSlot = slot<List<EventAdvancementPointsEntity>>()
+            coEvery { eventAdvancementPointsDao.insertAll(capture(insertedSlot)) } returns Unit
+
+            repo.refreshEventDistrictPoints(eventKey)
+
+            coVerify(exactly = 1) {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
+            }
+            coVerify(exactly = 0) {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
+            }
+            assertEquals(PointsSource.DISTRICT, insertedSlot.captured.single().source)
+            assertEquals("frc1114", insertedSlot.captured.single().teamKey)
         }
 }

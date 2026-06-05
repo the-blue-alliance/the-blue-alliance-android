@@ -7,9 +7,9 @@ import com.thebluealliance.android.data.local.dao.AllianceDao
 import com.thebluealliance.android.data.local.dao.AwardDao
 import com.thebluealliance.android.data.local.dao.DistrictDao
 import com.thebluealliance.android.data.local.dao.DistrictRankingDao
+import com.thebluealliance.android.data.local.dao.EventAdvancementPointsDao
 import com.thebluealliance.android.data.local.dao.EventCOPRsDao
 import com.thebluealliance.android.data.local.dao.EventDao
-import com.thebluealliance.android.data.local.dao.EventDistrictPointsDao
 import com.thebluealliance.android.data.local.dao.EventInsightsDao
 import com.thebluealliance.android.data.local.dao.EventOPRsDao
 import com.thebluealliance.android.data.local.dao.EventRankingSortOrderDao
@@ -70,8 +70,8 @@ object DatabaseModule {
 
     @Provides fun provideSubscriptionDao(db: TBADatabase): SubscriptionDao = db.subscriptionDao()
 
-    @Provides fun provideEventDistrictPointsDao(db: TBADatabase): EventDistrictPointsDao =
-        db.eventDistrictPointsDao()
+    @Provides fun provideEventAdvancementPointsDao(db: TBADatabase): EventAdvancementPointsDao =
+        db.eventAdvancementPointsDao()
 
     @Provides fun provideEventOPRsDao(db: TBADatabase): EventOPRsDao = db.eventOPRsDao()
 
