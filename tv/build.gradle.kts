@@ -131,6 +131,12 @@ android {
         // Advisory rule that fires whenever a newer (beta) SDK exists. We bump
         // targetSdk deliberately, not on every API release.
         disable += "OldTargetApi"
+        // Advisory rules that fire whenever a newer dependency version exists.
+        // Dependabot already handles upgrades; otherwise every release of any
+        // dep would turn every open PR red. (AGP exposes this as two issue IDs
+        // depending on version — disable both.)
+        disable += "GradleDependency"
+        disable += "NewerVersionAvailable"
     }
 
     @Suppress("UnstableApiUsage")
