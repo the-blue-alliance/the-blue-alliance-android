@@ -1,9 +1,11 @@
 package com.thebluealliance.android.ui.regional
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
+import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +20,7 @@ class RegionalAdvancementViewModel
     constructor(
         private val repository: RegionalAdvancementRepository,
         private val tbaApi: TbaApi,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val fallbackYear = Calendar.getInstance().get(Calendar.YEAR)
 
         private val _maxYear = MutableStateFlow(fallbackYear)
@@ -27,12 +29,8 @@ class RegionalAdvancementViewModel
         private val _selectedYear = MutableStateFlow(fallbackYear)
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
-        private val _uiState =
-            MutableStateFlow<RegionalAdvancementUiState>(RegionalAdvancementUiState.Loading)
-        val uiState: StateFlow<RegionalAdvancementUiState> = _uiState.asStateFlow()
+        private val _uiState = MutableStateFlow<UiState<List<RegionalRanking>>>(UiState.Loading)
+        val uiState: StateFlow<UiState<List<RegionalRanking>>> = _uiState.asStateFlow()
 
         init {
             fetchMaxYear()
@@ -60,19 +58,20 @@ class RegionalAdvancementViewModel
         }
 
         fun refreshRankings() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    val rankings = repository.getRegionalRankings(_selectedYear.value)
-                    _uiState.value = RegionalAdvancementUiState.Success(rankings)
-                } catch (e: Exception) {
-                    _uiState.value =
-                        RegionalAdvancementUiState.Error(
+            refreshing({
+                _uiState.value =
+                    try {
+                        val rankings = repository.getRegionalRankings(_selectedYear.value)
+                        if (rankings.isEmpty()) {
+                            UiState.Empty
+                        } else {
+                            UiState.Success(rankings)
+                        }
+                    } catch (e: Exception) {
+                        UiState.Error(
                             e.message ?: "Unable to load regional advancement rankings",
                         )
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
+                    }
+            })
         }
     }

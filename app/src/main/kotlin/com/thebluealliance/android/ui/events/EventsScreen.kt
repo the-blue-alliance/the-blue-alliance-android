@@ -24,8 +24,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -34,7 +32,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -53,6 +50,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -108,59 +107,25 @@ fun EventsScreen(
             )
         },
     ) { innerPadding ->
-        Column(
+        StateContent(
+            state = uiState,
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refreshEvents,
             modifier =
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
-        ) {
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState !is EventsUiState.Loading,
-                onRefresh = viewModel::refreshEvents,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                when (val state = uiState) {
-                    is EventsUiState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is EventsUiState.Error -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(state.message, style = MaterialTheme.typography.bodyLarge)
-                                Button(onClick = viewModel::refreshEvents) {
-                                    Text("Retry")
-                                }
-                            }
-                        }
-                    }
-
-                    is EventsUiState.Success -> {
-                        if (state.sections.isEmpty()) {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("No events found for $selectedYear")
-                                    Button(onClick = viewModel::refreshEvents) {
-                                        Text("Retry")
-                                    }
-                                }
-                            }
-                        } else {
-                            EventsList(
-                                sections = state.sections,
-                                favoriteEventKeys = state.favoriteEventKeys,
-                                selectedYear = selectedYear,
-                                onNavigateToEvent = onNavigateToEvent,
-                                listState = listState,
-                                reselectFlow = reselectFlow,
-                            )
-                        }
-                    }
-                }
-            }
+            empty = { EmptyBox("No events found for $selectedYear") },
+        ) { data ->
+            EventsList(
+                sections = data.sections,
+                favoriteEventKeys = data.favoriteEventKeys,
+                selectedYear = selectedYear,
+                onNavigateToEvent = onNavigateToEvent,
+                listState = listState,
+                reselectFlow = reselectFlow,
+            )
         }
     }
 }

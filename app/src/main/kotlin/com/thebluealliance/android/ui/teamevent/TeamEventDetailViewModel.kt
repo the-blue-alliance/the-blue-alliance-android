@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.teamevent
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
@@ -14,19 +13,17 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 private data class TeamEventExtras(
     val awards: List<Award>,
@@ -47,13 +44,10 @@ class TeamEventDetailViewModel
         private val teamRepository: TeamRepository,
         private val eventRepository: EventRepository,
         private val matchRepository: MatchRepository,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         val teamKey: String = navKey.teamKey
         val eventKey: String = navKey.eventKey
         private val year: Int = eventKey.substring(0, 4).toIntOrNull() ?: 0
-
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
         private val regionalCmpAdvancementByTeam =
             MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
@@ -149,245 +143,52 @@ class TeamEventDetailViewModel
         }
 
         fun refreshAll() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    coroutineScope {
-                        launch {
-                            try {
-                                teamRepository.refreshTeam(teamKey)
-                            } catch (_: Exception) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEvent(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                matchRepository.refreshEventMatches(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventRankings(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventAwards(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventOPRs(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventAlliances(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventDistrictPoints(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                eventRepository.refreshEventRegionalPoints(eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                regionalCmpAdvancementByTeam.value =
-                                    eventRepository.fetchRegionalCmpAdvancementByTeam(year)
-                            } catch (_: Exception) {
-                            }
-                        }
-                        launch {
-                            try {
-                                teamRepository.refreshTeamMedia(teamKey, year)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                        launch {
-                            try {
-                                teamRepository.refreshTeamEventPitLocation(teamKey, eventKey)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                        }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
+            refreshing(
+                { teamRepository.refreshTeam(teamKey) },
+                { eventRepository.refreshEvent(eventKey) },
+                { matchRepository.refreshEventMatches(eventKey) },
+                { eventRepository.refreshEventRankings(eventKey) },
+                { eventRepository.refreshEventAwards(eventKey) },
+                { eventRepository.refreshEventOPRs(eventKey) },
+                { eventRepository.refreshEventAlliances(eventKey) },
+                { eventRepository.refreshEventDistrictPoints(eventKey) },
+                { eventRepository.refreshEventRegionalPoints(eventKey) },
+                {
+                    regionalCmpAdvancementByTeam.value =
+                        eventRepository.fetchRegionalCmpAdvancementByTeam(year)
+                },
+                { teamRepository.refreshTeamMedia(teamKey, year) },
+                { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
+            )
         }
 
         fun refreshTab(tab: Int) {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    coroutineScope {
-                        when (tab) {
-                            0 -> { // Summary — needs most data for the overview
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeam(teamKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEvent(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        matchRepository.refreshEventMatches(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventRankings(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventAlliances(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventAwards(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventDistrictPoints(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventRegionalPoints(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        regionalCmpAdvancementByTeam.value =
-                                            eventRepository.fetchRegionalCmpAdvancementByTeam(year)
-                                    } catch (_: Exception) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeamEventPitLocation(
-                                            teamKey,
-                                            eventKey,
-                                        )
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            1 -> { // Matches
-                                launch {
-                                    try {
-                                        matchRepository.refreshEventMatches(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            2 -> { // Media
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeamMedia(teamKey, year)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            3 -> { // Stats
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventOPRs(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            4 -> { // Awards
-                                launch {
-                                    try {
-                                        eventRepository.refreshEventAwards(eventKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
+            when (tab) {
+                // Summary — needs most data for the overview
+                0 ->
+                    refreshing(
+                        { teamRepository.refreshTeam(teamKey) },
+                        { eventRepository.refreshEvent(eventKey) },
+                        { matchRepository.refreshEventMatches(eventKey) },
+                        { eventRepository.refreshEventRankings(eventKey) },
+                        { eventRepository.refreshEventAlliances(eventKey) },
+                        { eventRepository.refreshEventAwards(eventKey) },
+                        { eventRepository.refreshEventDistrictPoints(eventKey) },
+                        { eventRepository.refreshEventRegionalPoints(eventKey) },
+                        {
+                            regionalCmpAdvancementByTeam.value =
+                                eventRepository.fetchRegionalCmpAdvancementByTeam(year)
+                        },
+                        { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
+                    )
+                // Matches
+                1 -> refreshing({ matchRepository.refreshEventMatches(eventKey) })
+                // Media
+                2 -> refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                // Stats
+                3 -> refreshing({ eventRepository.refreshEventOPRs(eventKey) })
+                // Awards
+                4 -> refreshing({ eventRepository.refreshEventAwards(eventKey) })
             }
         }
 

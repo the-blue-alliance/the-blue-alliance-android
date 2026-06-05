@@ -1,20 +1,18 @@
 package com.thebluealliance.android.ui.matches
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -36,13 +34,10 @@ class MatchDetailViewModel
         @Assisted val navKey: Screen.MatchDetail,
         private val matchRepository: MatchRepository,
         private val eventRepository: EventRepository,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val matchKey: String = navKey.matchKey
         private val eventKey: String = matchKey.substringBeforeLast("_")
         private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
-
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
         private val json = Json { ignoreUnknownKeys = true }
 
@@ -97,15 +92,7 @@ class MatchDetailViewModel
         }
 
         fun refresh() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    matchRepository.refreshMatch(matchKey)
-                } catch (_: Exception) {
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
+            refreshing({ matchRepository.refreshMatch(matchKey) })
         }
 
         private fun formatMatchTime(epochSeconds: Long?): String? {

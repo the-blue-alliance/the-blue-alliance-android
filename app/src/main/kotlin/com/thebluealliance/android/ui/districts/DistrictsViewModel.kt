@@ -1,9 +1,11 @@
 package com.thebluealliance.android.ui.districts
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.DistrictRepository
+import com.thebluealliance.android.domain.model.District
+import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,30 +25,29 @@ class DistrictsViewModel
     constructor(
         private val districtRepository: DistrictRepository,
         private val tbaApi: TbaApi,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
         private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
-        val uiState: StateFlow<DistrictsUiState> =
+        val uiState: StateFlow<UiState<List<District>>> =
             _selectedYear
                 .flatMapLatest { year ->
                     districtRepository.observeDistrictsForYear(year).map { districts ->
-                        if (districts.isEmpty()) {
-                            DistrictsUiState.Loading
-                        } else {
-                            DistrictsUiState.Success(districts)
-                        }
+                        val state: UiState<List<District>> =
+                            if (districts.isEmpty()) {
+                                UiState.Loading
+                            } else {
+                                UiState.Success(districts)
+                            }
+                        state
                     }
                 }.stateIn(
                     viewModelScope,
                     SharingStarted.WhileSubscribed(5000),
-                    DistrictsUiState.Loading,
+                    UiState.Loading,
                 )
 
         init {
@@ -74,14 +75,6 @@ class DistrictsViewModel
         }
 
         fun refreshDistricts() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    districtRepository.refreshDistrictsForYear(_selectedYear.value)
-                } catch (_: Exception) {
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
+            refreshing({ districtRepository.refreshDistrictsForYear(_selectedYear.value) })
         }
     }

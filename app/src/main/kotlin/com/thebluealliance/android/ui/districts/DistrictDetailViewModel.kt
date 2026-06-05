@@ -1,17 +1,16 @@
 package com.thebluealliance.android.ui.districts
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.events.buildEventSections
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +28,7 @@ class DistrictDetailViewModel
         @Assisted val navKey: Screen.DistrictDetail,
         private val districtRepository: DistrictRepository,
         private val eventRepository: EventRepository,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val initialDistrictKey: String = navKey.districtKey
         private val districtAbbreviation: String = initialDistrictKey.drop(4)
         private val initialYear: Int = initialDistrictKey.take(4).toIntOrNull() ?: 0
@@ -39,9 +38,6 @@ class DistrictDetailViewModel
 
         private val _availableYears = MutableStateFlow<List<Int>>(emptyList())
         val availableYears: StateFlow<List<Int>> = _availableYears.asStateFlow()
-
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
         val uiState: StateFlow<DistrictDetailUiState> =
             combine(
@@ -80,62 +76,22 @@ class DistrictDetailViewModel
         fun selectYear(year: Int) {
             if (_selectedYear.value == year) return
             _selectedYear.value = year
-            viewModelScope.launch { refreshYearData() }
+            refreshAll()
         }
 
         fun refreshAll() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    refreshYearData()
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
-        }
-
-        private suspend fun refreshYearData() {
             val key = "${_selectedYear.value}$districtAbbreviation"
-            coroutineScope {
-                launch {
-                    try {
-                        eventRepository.refreshDistrictEvents(key)
-                    } catch (_: Exception) {
-                    }
-                }
-                launch {
-                    try {
-                        districtRepository.refreshDistrictRankings(key)
-                    } catch (
-                        _: Exception,
-                    ) {
-                    }
-                }
-            }
+            refreshing(
+                { eventRepository.refreshDistrictEvents(key) },
+                { districtRepository.refreshDistrictRankings(key) },
+            )
         }
 
         fun refreshTab(tab: Int) {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    val key = "${_selectedYear.value}$districtAbbreviation"
-                    when (tab) {
-                        0 ->
-                            try {
-                                eventRepository.refreshDistrictEvents(key)
-                            } catch (_: Exception) {
-                            }
-                        1 ->
-                            try {
-                                districtRepository.refreshDistrictRankings(key)
-                            } catch (
-                                _: Exception,
-                            ) {
-                            }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
+            val key = "${_selectedYear.value}$districtAbbreviation"
+            when (tab) {
+                0 -> refreshing({ eventRepository.refreshDistrictEvents(key) })
+                1 -> refreshing({ districtRepository.refreshDistrictRankings(key) })
             }
         }
 

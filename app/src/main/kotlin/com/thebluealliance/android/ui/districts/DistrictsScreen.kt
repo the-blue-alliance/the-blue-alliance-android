@@ -2,8 +2,6 @@ package com.thebluealliance.android.ui.districts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,26 +14,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.District
+import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.flow.Flow
@@ -97,41 +94,23 @@ fun DistrictsScreen(
             )
         },
     ) { innerPadding ->
-        Column(
+        StateContent(
+            state = uiState,
+            isRefreshing = isRefreshing,
+            onRefresh = viewModel::refreshDistricts,
             modifier =
                 Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
-        ) {
-            PullToRefreshBox(
-                isRefreshing = isRefreshing && uiState !is DistrictsUiState.Loading,
-                onRefresh = viewModel::refreshDistricts,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                when (val state = uiState) {
-                    is DistrictsUiState.Loading -> {
-                        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            CircularProgressIndicator()
-                        }
-                    }
-
-                    is DistrictsUiState.Success -> {
-                        if (state.districts.isEmpty()) {
-                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                Text("No districts found for $selectedYear")
-                            }
-                        } else {
-                            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                                items(state.districts, key = { it.key }) { district ->
-                                    DistrictItem(
-                                        district = district,
-                                        onClick = { onNavigateToDistrict(district.key) },
-                                    )
-                                }
-                            }
-                        }
-                    }
+            empty = { EmptyBox("No districts found for $selectedYear") },
+        ) { districts ->
+            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+                items(districts, key = { it.key }) { district ->
+                    DistrictItem(
+                        district = district,
+                        onClick = { onNavigateToDistrict(district.key) },
+                    )
                 }
             }
         }

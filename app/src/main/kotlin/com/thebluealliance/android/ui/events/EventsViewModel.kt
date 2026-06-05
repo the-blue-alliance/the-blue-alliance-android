@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
@@ -9,6 +8,8 @@ import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UiState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -34,19 +35,16 @@ class EventsViewModel
         private val tbaApi: TbaApi,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Year.now().value)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
         private val _selectedYear = MutableStateFlow(navKey.year)
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
-
         private val hasLoaded = MutableStateFlow(false)
 
-        val uiState: StateFlow<EventsUiState> =
+        val uiState: StateFlow<UiState<EventsData>> =
             _selectedYear
                 .flatMapLatest { year ->
                     hasLoaded.value = false
@@ -56,29 +54,36 @@ class EventsViewModel
                         hasLoaded,
                         myTBARepository.observeFavorites(),
                     ) { events, districts, hasLoaded, favorites ->
-                        if (events.isEmpty() && !hasLoaded) {
-                            EventsUiState.Loading
-                        } else {
-                            val districtNames =
-                                buildMap {
-                                    districts.forEach {
-                                        put(it.key.lowercase(), it.displayName)
-                                        put(it.abbreviation.lowercase(), it.displayName)
-                                    }
+                        val state: UiState<EventsData> =
+                            when {
+                                events.isEmpty() && !hasLoaded -> UiState.Loading
+                                events.isEmpty() -> UiState.Empty
+                                else -> {
+                                    val districtNames =
+                                        buildMap {
+                                            districts.forEach {
+                                                put(it.key.lowercase(), it.displayName)
+                                                put(it.abbreviation.lowercase(), it.displayName)
+                                            }
+                                        }
+                                    val sections =
+                                        buildEventSections(events, districtNames = districtNames)
+                                    val favoriteEventKeys =
+                                        favorites
+                                            .filter { it.modelType == ModelType.EVENT }
+                                            .map { it.modelKey }
+                                            .toSet()
+                                    UiState.Success(
+                                        EventsData(sections, favoriteEventKeys, districtNames),
+                                    )
                                 }
-                            val sections = buildEventSections(events, districtNames = districtNames)
-                            val favoriteEventKeys =
-                                favorites
-                                    .filter { it.modelType == ModelType.EVENT }
-                                    .map { it.modelKey }
-                                    .toSet()
-                            EventsUiState.Success(sections, favoriteEventKeys, districtNames)
-                        }
+                            }
+                        state
                     }
                 }.stateIn(
                     viewModelScope,
                     SharingStarted.WhileSubscribed(5000),
-                    EventsUiState.Loading,
+                    UiState.Loading,
                 )
 
         init {
@@ -114,18 +119,14 @@ class EventsViewModel
         }
 
         fun refreshEvents() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
+            refreshing({
                 try {
                     eventRepository.refreshEventsForYear(_selectedYear.value)
                     districtRepository.refreshDistrictsForYear(_selectedYear.value)
-                } catch (e: Exception) {
-                    // Data will come from Room cache if available
                 } finally {
                     hasLoaded.value = true
-                    _isRefreshing.value = false
                 }
-            }
+            })
         }
 
         @AssistedFactory

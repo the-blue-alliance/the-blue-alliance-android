@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.teams
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
@@ -12,12 +11,12 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,7 +42,7 @@ class TeamDetailViewModel
         private val authRepository: AuthRepository,
         private val tbaApi: TbaApi,
         private val shortcutManager: TBAShortcutManager,
-    ) : ViewModel() {
+    ) : RefreshableViewModel() {
         private val teamKey: String =
             navKey.teamKey.let { key ->
                 // Deep links from thebluealliance.com use /team/177 (number only),
@@ -56,9 +55,6 @@ class TeamDetailViewModel
 
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
-
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
         val uiState: StateFlow<TeamDetailUiState> =
             combine(
@@ -131,7 +127,7 @@ class TeamDetailViewModel
 
         fun selectYear(year: Int) {
             _selectedYear.value = year
-            viewModelScope.launch { refreshYearData() }
+            refreshYearData()
         }
 
         fun toggleFavorite() {
@@ -182,97 +178,36 @@ class TeamDetailViewModel
         fun isSignedIn(): Boolean = authRepository.isSignedIn()
 
         fun refreshAll() {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    coroutineScope {
-                        launch {
-                            try {
-                                teamRepository.refreshTeam(teamKey)
-                            } catch (_: Exception) {
-                            }
-                        }
-                        launch { refreshYearData() }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
-            }
+            val year = _selectedYear.value
+            refreshing(
+                { teamRepository.refreshTeam(teamKey) },
+                { eventRepository.refreshTeamEvents(teamKey, year) },
+                { teamRepository.refreshTeamMedia(teamKey, year) },
+            )
         }
 
         fun refreshTab(tab: Int) {
-            viewModelScope.launch {
-                _isRefreshing.value = true
-                try {
-                    val year = _selectedYear.value
-                    coroutineScope {
-                        when (tab) {
-                            0 -> { // Info
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeam(teamKey)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeamMedia(teamKey, year)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            1 -> { // Events
-                                launch {
-                                    try {
-                                        eventRepository.refreshTeamEvents(teamKey, year)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                            2 -> { // Media
-                                launch {
-                                    try {
-                                        teamRepository.refreshTeamMedia(teamKey, year)
-                                    } catch (
-                                        _: Exception,
-                                    ) {
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } finally {
-                    _isRefreshing.value = false
-                }
+            val year = _selectedYear.value
+            when (tab) {
+                // Info
+                0 ->
+                    refreshing(
+                        { teamRepository.refreshTeam(teamKey) },
+                        { teamRepository.refreshTeamMedia(teamKey, year) },
+                    )
+                // Events
+                1 -> refreshing({ eventRepository.refreshTeamEvents(teamKey, year) })
+                // Media
+                2 -> refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
             }
         }
 
-        private suspend fun refreshYearData() {
+        private fun refreshYearData() {
             val year = _selectedYear.value
-            coroutineScope {
-                launch {
-                    try {
-                        eventRepository.refreshTeamEvents(teamKey, year)
-                    } catch (
-                        _: Exception,
-                    ) {
-                    }
-                }
-                launch {
-                    try {
-                        teamRepository.refreshTeamMedia(teamKey, year)
-                    } catch (
-                        _: Exception,
-                    ) {
-                    }
-                }
-            }
+            refreshing(
+                { eventRepository.refreshTeamEvents(teamKey, year) },
+                { teamRepository.refreshTeamMedia(teamKey, year) },
+            )
         }
 
         @AssistedFactory
