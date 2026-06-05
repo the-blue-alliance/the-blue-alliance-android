@@ -21,21 +21,19 @@ import java.time.temporal.ChronoUnit
 class EventLogicTest {
     private val today = LocalDate.of(2026, 5, 30)
 
-    /** Mirrors [event] for the canonical DTO — hides fields the toDomainOrNull tests don't care about. */
-    private fun dto(
-        key: String = "x",
-        startDate: String? = "2026-05-30",
-        endDate: String? = null,
-        webcasts: List<WebcastDto>? = null,
-    ) = EventDto(
-        key = key,
-        name = key,
-        eventCode = key,
-        year = 2026,
-        startDate = startDate,
-        endDate = endDate,
-        webcasts = webcasts,
-    )
+    /**
+     * A realistic event row from the bundled fixture. Tests `.copy(...)` the one field they
+     * exercise so name/eventCode/year carry real values, not mocked placeholders.
+     */
+    private val battleAtTheBorder =
+        EventDto(
+            key = "2026mibatb",
+            name = "Battle at the Border (Off-Season)",
+            eventCode = "mibatb",
+            year = 2026,
+            startDate = "2026-05-30",
+            endDate = "2026-05-30",
+        )
 
     private fun event(
         key: String,
@@ -125,36 +123,45 @@ class EventLogicTest {
     // --- EventDto.toDomainOrNull -------------------------------------------------------------
 
     @Test fun dto_nullStartDateIsDropped() {
-        assertNull(dto(startDate = null, endDate = "2026-05-30").toDomainOrNull())
+        assertNull(battleAtTheBorder.copy(startDate = null).toDomainOrNull())
     }
 
     @Test fun dto_missingEndDefaultsToStart() {
-        val e = dto(startDate = "2026-05-30", endDate = null).toDomainOrNull()!!
+        val e = battleAtTheBorder.copy(endDate = null).toDomainOrNull()!!
         assertEquals(LocalDate.of(2026, 5, 30), e.startDate)
         assertEquals(LocalDate.of(2026, 5, 30), e.endDate)
     }
 
     @Test fun dto_dropsBlankChannelWebcastsAndResolvesRest() {
-        val e =
-            dto(
+        val withMixedWebcasts =
+            battleAtTheBorder.copy(
                 webcasts =
                     listOf(
                         WebcastDto(type = "twitch", channel = ""),
-                        WebcastDto(type = "livestream", channel = "https://youtu.be/dQw4w9WgXcQ"),
+                        WebcastDto(
+                            type = "livestream",
+                            channel = "https://youtu.be/dQw4w9WgXcQ",
+                        ),
                     ),
-            ).toDomainOrNull()!!
+            )
+        val e = withMixedWebcasts.toDomainOrNull()!!
         assertEquals(1, e.webcasts.size)
         assertEquals(WebcastType.YOUTUBE, e.webcasts.first().type)
     }
 
     @Test fun dto_parsesPerDayWebcastDate() {
-        val e =
-            dto(
+        val withDatedCast =
+            battleAtTheBorder.copy(
                 webcasts =
                     listOf(
-                        WebcastDto(type = "youtube", channel = "day1", date = "2026-05-30"),
+                        WebcastDto(
+                            type = "youtube",
+                            channel = "day1",
+                            date = "2026-05-30",
+                        ),
                     ),
-            ).toDomainOrNull()!!
+            )
+        val e = withDatedCast.toDomainOrNull()!!
         assertEquals(LocalDate.of(2026, 5, 30), e.webcasts.first().date)
     }
 
