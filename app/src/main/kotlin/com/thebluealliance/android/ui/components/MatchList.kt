@@ -36,6 +36,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -220,7 +221,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.redTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    text = match.redTeamKeys.joinToString(", ") { it.teamNumber },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==
@@ -266,7 +267,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.blueTeamKeys.joinToString(", ") { it.removePrefix("frc") },
+                    text = match.blueTeamKeys.joinToString(", ") { it.teamNumber },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==

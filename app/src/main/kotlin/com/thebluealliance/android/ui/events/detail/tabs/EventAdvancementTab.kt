@@ -43,6 +43,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
+import com.thebluealliance.android.util.teamNumber
 
 internal fun advancementBreakdownRows(
     points: EventAdvancementPoints,
@@ -138,7 +139,7 @@ private fun AdvancementPointsItem(
             )
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = points.teamKey.removePrefix("frc"),
+                    text = points.teamKey.teamNumber,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { onTeamClick(points.teamKey) },

@@ -42,6 +42,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,7 +208,7 @@ private fun RegionalRankingRow(
                 modifier = Modifier.weight(0.12f),
             )
             Text(
-                text = ranking.teamKey.removePrefix("frc"),
+                text = ranking.teamKey.teamNumber,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(0.18f),
             )

@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
+import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
 
 enum class RankingSortColumn {
@@ -87,8 +88,8 @@ internal fun sortRankings(
         val result =
             when (sortState.column) {
                 RankingSortColumn.TEAM -> {
-                    val teamA = a.teamKey.removePrefix("frc").toIntOrNull() ?: 0
-                    val teamB = b.teamKey.removePrefix("frc").toIntOrNull() ?: 0
+                    val teamA = a.teamKey.teamNumber.toIntOrNull() ?: 0
+                    val teamB = b.teamKey.teamNumber.toIntOrNull() ?: 0
                     teamA.compareTo(teamB)
                 }
                 RankingSortColumn.PRIMARY -> {
@@ -280,7 +281,7 @@ private fun RankingItem(
                 modifier = Modifier.weight(0.12f),
             )
             Text(
-                text = ranking.teamKey.removePrefix("frc"),
+                text = ranking.teamKey.teamNumber,
                 style = MaterialTheme.typography.titleMedium,
                 modifier =
                     Modifier

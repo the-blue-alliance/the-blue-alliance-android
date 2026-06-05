@@ -26,6 +26,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.util.teamNumber
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
@@ -109,7 +110,7 @@ class TeamTrackingWorker
                                 glanceId,
                             )
                         val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY] ?: continue
-                        val teamNumber = teamKey.removePrefix("frc")
+                        val teamNumber = teamKey.teamNumber
 
                         val hasActiveEvent = updateWidgetForTeam(teamKey, teamNumber, glanceId)
                         if (hasActiveEvent) anyActiveEvent = true
@@ -280,9 +281,9 @@ class TeamTrackingWorker
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL] =
                         lastMatch.getShortLabel(playoffType)
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_TEAMS] =
-                        lastMatch.redTeamKeys.joinToString(",") { it.removePrefix("frc") }
+                        lastMatch.redTeamKeys.joinToString(",") { it.teamNumber }
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_TEAMS] =
-                        lastMatch.blueTeamKeys.joinToString(",") { it.removePrefix("frc") }
+                        lastMatch.blueTeamKeys.joinToString(",") { it.teamNumber }
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_SCORE] =
                         lastMatch.redScore.toString()
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_SCORE] =
@@ -305,9 +306,9 @@ class TeamTrackingWorker
                     prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL] =
                         nextMatch.getShortLabel(playoffType)
                     prefs[TeamTrackingWidgetKeys.NEXT_MATCH_RED_TEAMS] =
-                        nextMatch.redTeamKeys.joinToString(",") { it.removePrefix("frc") }
+                        nextMatch.redTeamKeys.joinToString(",") { it.teamNumber }
                     prefs[TeamTrackingWidgetKeys.NEXT_MATCH_BLUE_TEAMS] =
-                        nextMatch.blueTeamKeys.joinToString(",") { it.removePrefix("frc") }
+                        nextMatch.blueTeamKeys.joinToString(",") { it.teamNumber }
                     prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME] = formatMatchTime(nextMatch)
                     prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] =
                         isUsingPredictedTime(nextMatch).toString()

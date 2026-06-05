@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.util.openUrl
+import com.thebluealliance.android.util.teamNumber
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -538,8 +539,8 @@ private fun StandardOPRsView(
                 val result =
                     when (sortColumn) {
                         OprSortColumn.TEAM -> {
-                            val teamA = a.substring(3).toIntOrNull() ?: 0
-                            val teamB = b.substring(3).toIntOrNull() ?: 0
+                            val teamA = a.teamNumber.toIntOrNull() ?: 0
+                            val teamB = b.teamNumber.toIntOrNull() ?: 0
                             teamA.compareTo(teamB)
                         }
                         OprSortColumn.OPR -> (oprs.oprs[a] ?: 0.0).compareTo(oprs.oprs[b] ?: 0.0)
@@ -642,7 +643,7 @@ private fun StandardOPRsView(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = teamKey.substring(3),
+                        text = teamKey.teamNumber,
                         modifier = Modifier.weight(1.2f),
                         style = MaterialTheme.typography.bodyLarge,
                     )
@@ -701,8 +702,8 @@ private fun COPRView(
                 val result =
                     when (sortColumn) {
                         CoprSortColumn.TEAM -> {
-                            val teamA = a.substring(3).toIntOrNull() ?: 0
-                            val teamB = b.substring(3).toIntOrNull() ?: 0
+                            val teamA = a.teamNumber.toIntOrNull() ?: 0
+                            val teamB = b.teamNumber.toIntOrNull() ?: 0
                             teamA.compareTo(teamB)
                         }
                         CoprSortColumn.VALUE -> (coprData[a] ?: 0.0).compareTo(coprData[b] ?: 0.0)
@@ -775,7 +776,7 @@ private fun COPRView(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = teamKey.substring(3),
+                        text = teamKey.teamNumber,
                         modifier = Modifier.weight(1.2f),
                         style = MaterialTheme.typography.bodyLarge,
                     )
