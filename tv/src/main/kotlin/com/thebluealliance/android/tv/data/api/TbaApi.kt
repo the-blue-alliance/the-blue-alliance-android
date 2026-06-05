@@ -2,6 +2,7 @@ package com.thebluealliance.android.tv.data.api
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.thebluealliance.android.data.remote.dto.EventDto
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType

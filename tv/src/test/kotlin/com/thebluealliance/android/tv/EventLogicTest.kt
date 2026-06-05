@@ -1,7 +1,7 @@
 package com.thebluealliance.android.tv
 
-import com.thebluealliance.android.tv.data.api.EventDto
-import com.thebluealliance.android.tv.data.api.WebcastDto
+import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.data.remote.dto.WebcastDto
 import com.thebluealliance.android.tv.data.api.toDomainOrNull
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
@@ -20,6 +20,22 @@ import java.time.temporal.ChronoUnit
 
 class EventLogicTest {
     private val today = LocalDate.of(2026, 5, 30)
+
+    /** Mirrors [event] for the canonical DTO — hides fields the toDomainOrNull tests don't care about. */
+    private fun dto(
+        key: String = "x",
+        startDate: String? = "2026-05-30",
+        endDate: String? = null,
+        webcasts: List<WebcastDto>? = null,
+    ) = EventDto(
+        key = key,
+        name = key,
+        eventCode = key,
+        year = 2026,
+        startDate = startDate,
+        endDate = endDate,
+        webcasts = webcasts,
+    )
 
     private fun event(
         key: String,
@@ -109,44 +125,36 @@ class EventLogicTest {
     // --- EventDto.toDomainOrNull -------------------------------------------------------------
 
     @Test fun dto_nullStartDateIsDropped() {
-        val dto = EventDto(key = "x", startDate = null, endDate = "2026-05-30")
-        assertNull(dto.toDomainOrNull())
+        assertNull(dto(startDate = null, endDate = "2026-05-30").toDomainOrNull())
     }
 
     @Test fun dto_missingEndDefaultsToStart() {
-        val dto = EventDto(key = "x", startDate = "2026-05-30", endDate = null)
-        val e = dto.toDomainOrNull()!!
+        val e = dto(startDate = "2026-05-30", endDate = null).toDomainOrNull()!!
         assertEquals(LocalDate.of(2026, 5, 30), e.startDate)
         assertEquals(LocalDate.of(2026, 5, 30), e.endDate)
     }
 
     @Test fun dto_dropsBlankChannelWebcastsAndResolvesRest() {
-        val dto =
-            EventDto(
-                key = "x",
-                startDate = "2026-05-30",
+        val e =
+            dto(
                 webcasts =
                     listOf(
                         WebcastDto(type = "twitch", channel = ""),
                         WebcastDto(type = "livestream", channel = "https://youtu.be/dQw4w9WgXcQ"),
                     ),
-            )
-        val e = dto.toDomainOrNull()!!
+            ).toDomainOrNull()!!
         assertEquals(1, e.webcasts.size)
         assertEquals(WebcastType.YOUTUBE, e.webcasts.first().type)
     }
 
     @Test fun dto_parsesPerDayWebcastDate() {
-        val dto =
-            EventDto(
-                key = "x",
-                startDate = "2026-05-30",
+        val e =
+            dto(
                 webcasts =
                     listOf(
                         WebcastDto(type = "youtube", channel = "day1", date = "2026-05-30"),
                     ),
-            )
-        val e = dto.toDomainOrNull()!!
+            ).toDomainOrNull()!!
         assertEquals(LocalDate.of(2026, 5, 30), e.webcasts.first().date)
     }
 
