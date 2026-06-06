@@ -154,8 +154,11 @@ play {
             localProperties.getProperty("play.service.account.key", "play-service-account.json"),
         ),
     )
-    // "tv:" is Google Play's Android TV form-factor track prefix (mirrors wear:alpha).
-    track.set("tv:alpha")
+    // Piggyback on :app's "alpha" track. Play routes the AAB to TV devices via the
+    // <uses-feature android:name="android.software.leanback" android:required="true"/>
+    // declaration + LEANBACK_LAUNCHER intent, so phone testers get :app and TV testers
+    // get :tv from a single release.
+    track.set("alpha")
     defaultToAppBundles.set(true)
 }
 

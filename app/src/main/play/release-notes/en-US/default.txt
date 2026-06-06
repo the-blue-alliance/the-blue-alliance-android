@@ -1,5 +1,4 @@
-Version 11.6:
- - Bug fixes.
+Bug fixes and performance improvements.
 
 View the full changelog on GitHub:
 https://github.com/the-blue-alliance/the-blue-alliance-android/releases
