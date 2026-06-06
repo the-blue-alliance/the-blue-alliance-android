@@ -158,9 +158,10 @@ announce_release_action() {
     fi
 
     local wear_version_code=$(( VERSION_CODE + 100000000 ))
+    local tv_version_code=$(( VERSION_CODE + 200000000 ))
     local message_body
     message_body=$(cat <<EOF
-${action} android v${VERSION_NAME} (phone: ${VERSION_CODE}, wear: ${wear_version_code}).
+${action} android v${VERSION_NAME} (phone: ${VERSION_CODE}, wear: ${wear_version_code}, tv: ${tv_version_code}).
 \`\`\`
 ${commitlog}
 \`\`\`
@@ -198,12 +199,17 @@ create_github_release() {
         gh_args+=(--prerelease)
     fi
 
+    local tv_apk_path="tv/build/outputs/apk/release/tv-release.apk"
+
     # Attach APKs that exist
     if [[ -f "$apk_path" ]]; then
         gh_args+=("${apk_path}#the-blue-alliance-android-v${VERSION_NAME}.apk")
     fi
     if [[ -f "$wear_apk_path" ]]; then
         gh_args+=("${wear_apk_path}#the-blue-alliance-wear-v${VERSION_NAME}.apk")
+    fi
+    if [[ -f "$tv_apk_path" ]]; then
+        gh_args+=("${tv_apk_path}#the-blue-alliance-tv-v${VERSION_NAME}.apk")
     fi
 
     if $DRY_RUN; then
@@ -244,6 +250,10 @@ preflight() {
         fi
         if [[ ! -f wear/src/release/google-services.json ]]; then
             echo -e "${RED}✗${NC} wear/src/release/google-services.json missing"
+            ok=false
+        fi
+        if [[ ! -f tv/src/release/google-services.json ]]; then
+            echo -e "${RED}✗${NC} tv/src/release/google-services.json missing"
             ok=false
         fi
     fi
@@ -303,10 +313,12 @@ get_version_info() {
 
 print_version() {
     local wear_version_code=$(( VERSION_CODE + 100000000 ))
+    local tv_version_code=$(( VERSION_CODE + 200000000 ))
     echo ""
     echo -e "  ${BOLD}Version name:${NC}       $VERSION_NAME"
     echo -e "  ${BOLD}Phone version code:${NC} $VERSION_CODE"
     echo -e "  ${BOLD}Wear version code:${NC}  $wear_version_code"
+    echo -e "  ${BOLD}TV version code:${NC}    $tv_version_code"
     echo -e "  ${BOLD}Git describe:${NC}       v${V_MAJOR}.${V_MINOR}.${V_PATCH}-${COMMIT_DISTANCE}-g${COMMIT_HASH}"
     echo ""
 }
@@ -467,21 +479,30 @@ cmd_alpha() {
     print_version
 
     info "Building release bundles..."
-    run ./gradlew :app:bundleRelease :app:assembleRelease :wear:bundleRelease :wear:assembleRelease
+    run ./gradlew \
+        :app:bundleRelease :app:assembleRelease \
+        :wear:bundleRelease :wear:assembleRelease \
+        :tv:bundleRelease :tv:assembleRelease
 
 
-    info "Publishing phone app to alpha..."
-    run ./gradlew :app:publishReleaseBundle
-    info "Publishing wear app to alpha..."
+    # :app and :tv must publish in the same gradlew invocation so they share one Play
+    # edit on the alpha track. They piggyback (Play routes the right AAB to each device
+    # via the leanback uses-feature declaration), and a separate invocation would start
+    # a new edit that overwrites the prior AAB on the track.
+    info "Publishing phone + TV apps to alpha..."
+    run ./gradlew :app:publishReleaseBundle :tv:publishReleaseBundle
+    info "Publishing wear app to wear:alpha..."
     run ./gradlew :wear:publishReleaseBundle
 
     local wear_version_code=$(( VERSION_CODE + 100000000 ))
+    local tv_version_code=$(( VERSION_CODE + 200000000 ))
     echo ""
     echo -e "${GREEN}✓ Published to alpha${NC}"
     echo -e "  Version: ${VERSION_NAME}"
     echo -e "  Phone:   ${VERSION_CODE}"
     echo -e "  Wear:    ${wear_version_code}"
-    echo -e "  Track:   alpha"
+    echo -e "  TV:      ${tv_version_code}"
+    echo -e "  Tracks:  alpha (phone + TV), wear:alpha"
 
     if [[ "$VERSION_NAME" != *"-dev."* ]]; then
         create_github_release
@@ -522,16 +543,20 @@ cmd_beta() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    info "Promoting phone app alpha → beta..."
-    run ./gradlew :app:promoteReleaseArtifact --from-track alpha --promote-track beta
-    info "Promoting wear app alpha → beta..."
+    # :app and :tv promote together in one invocation (shared alpha → beta Play edit).
+    info "Promoting phone + TV apps alpha → beta..."
+    run ./gradlew \
+        :app:promoteReleaseArtifact \
+        :tv:promoteReleaseArtifact \
+        --from-track alpha --promote-track beta
+    info "Promoting wear app wear:alpha → wear:beta..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:alpha" --promote-track "wear:beta"
 
     info "Returning to ${original_ref}..."
     run git checkout "$original_ref"
 
     echo ""
-    echo -e "${GREEN}✓ Promoted alpha → beta (phone + wear)${NC}"
+    echo -e "${GREEN}✓ Promoted alpha → beta (phone + wear + TV)${NC}"
 
     # Get the actual version from the beta track (now that it's been promoted)
     get_track_version beta
@@ -588,9 +613,13 @@ cmd_production() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    info "Promoting phone app beta → production..."
-    run ./gradlew :app:promoteReleaseArtifact --from-track beta --promote-track production
-    info "Promoting wear app beta → production..."
+    # :app and :tv promote together in one invocation (shared beta → production Play edit).
+    info "Promoting phone + TV apps beta → production..."
+    run ./gradlew \
+        :app:promoteReleaseArtifact \
+        :tv:promoteReleaseArtifact \
+        --from-track beta --promote-track production
+    info "Promoting wear app wear:beta → wear:production..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:beta" --promote-track "wear:production"
 
     info "Publishing store listing..."
@@ -600,7 +629,7 @@ cmd_production() {
     run git checkout "$original_ref"
 
     echo ""
-    echo -e "${GREEN}✓ Promoted beta → production (phone + wear)${NC}"
+    echo -e "${GREEN}✓ Promoted beta → production (phone + wear + TV)${NC}"
 
     # Get the actual version from the production track (now that it's been promoted)
     get_track_version production
