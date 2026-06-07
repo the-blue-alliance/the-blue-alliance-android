@@ -177,6 +177,10 @@ play {
     )
     track.set("alpha")
     defaultToAppBundles.set(true)
+    // Phone + TV publish into one shared Play edit on alpha so the release
+    // contains both AABs (Play routes by leanback uses-feature). Neither module
+    // commits its own edit; release.sh invokes :commitEditFor… last to flush it.
+    commit.set(false)
 }
 
 room {

@@ -485,12 +485,14 @@ cmd_alpha() {
         :tv:bundleRelease :tv:assembleRelease
 
 
-    # :app and :tv must publish in the same gradlew invocation so they share one Play
-    # edit on the alpha track. They piggyback (Play routes the right AAB to each device
-    # via the leanback uses-feature declaration), and a separate invocation would start
-    # a new edit that overwrites the prior AAB on the track.
+    # :app and :tv share one Play edit on the alpha track so the release contains both
+    # AABs (Play routes to each device via the leanback uses-feature declaration). Both
+    # modules set commit.set(false); the :commitEditFor… task explicitly commits the
+    # shared edit at the end. Without that final task neither AAB ends up in a release.
+    # Without commit=false on both, the first publish closes the edit and the second
+    # opens a new one, replacing the prior AAB. All three must run in one invocation.
     info "Publishing phone + TV apps to alpha..."
-    run ./gradlew :app:publishReleaseBundle :tv:publishReleaseBundle
+    run ./gradlew :app:publishReleaseBundle :tv:publishReleaseBundle :commitEditForComDotTheblueallianceDotAndroidclient
     info "Publishing wear app to wear:alpha..."
     run ./gradlew :wear:publishReleaseBundle
 
@@ -543,11 +545,13 @@ cmd_beta() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    # :app and :tv promote together in one invocation (shared alpha → beta Play edit).
+    # :app and :tv promote together in one invocation; commit.set(false) on both
+    # modules means the explicit :commitEditFor… task is what flushes the edit.
     info "Promoting phone + TV apps alpha → beta..."
     run ./gradlew \
         :app:promoteReleaseArtifact \
         :tv:promoteReleaseArtifact \
+        :commitEditForComDotTheblueallianceDotAndroidclient \
         --from-track alpha --promote-track beta
     info "Promoting wear app wear:alpha → wear:beta..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:alpha" --promote-track "wear:beta"
@@ -613,11 +617,13 @@ cmd_production() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    # :app and :tv promote together in one invocation (shared beta → production Play edit).
+    # :app and :tv promote together in one invocation; commit.set(false) on both
+    # modules means the explicit :commitEditFor… task is what flushes the edit.
     info "Promoting phone + TV apps beta → production..."
     run ./gradlew \
         :app:promoteReleaseArtifact \
         :tv:promoteReleaseArtifact \
+        :commitEditForComDotTheblueallianceDotAndroidclient \
         --from-track beta --promote-track production
     info "Promoting wear app wear:beta → wear:production..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:beta" --promote-track "wear:production"
