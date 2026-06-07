@@ -8,7 +8,9 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        minSdk = 26
+        // 23 is the floor across consumers (:tv minSdk = 23, :app = 26, :wear = 30). This module
+        // is pure kotlinx-serialization data classes with no version-dependent Android APIs.
+        minSdk = 23
     }
 
     compileOptions {

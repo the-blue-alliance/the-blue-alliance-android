@@ -1,6 +1,8 @@
 [
   {
     "key": "2026mibatb",
+    "event_code": "mibatb",
+    "year": 2026,
     "name": "Battle at the Border (Off-Season)",
     "short_name": "Battle at the Border",
     "city": "Detroit",
@@ -15,6 +17,8 @@
   },
   {
     "key": "2026flbb",
+    "event_code": "flbb",
+    "year": 2026,
     "name": "Beach Blitz (Off-Season)",
     "short_name": "Beach Blitz",
     "city": "Cape Coral",
@@ -29,6 +33,8 @@
   },
   {
     "key": "2026moctt",
+    "event_code": "moctt",
+    "year": 2026,
     "name": "Cow Town Throwdown (Off-Season)",
     "short_name": "Cow Town Throwdown",
     "city": "Kansas City",
@@ -42,6 +48,8 @@
   },
   {
     "key": "2026onss",
+    "event_code": "onss",
+    "year": 2026,
     "name": "Ontario Summer Showdown (Off-Season)",
     "short_name": "Ontario Summer Showdown",
     "city": "Toronto",
@@ -55,6 +63,8 @@
   },
   {
     "key": "2026azheat",
+    "event_code": "azheat",
+    "year": 2026,
     "name": "Summer Heat (Off-Season)",
     "short_name": "Summer Heat",
     "city": "Phoenix",
@@ -68,6 +78,8 @@
   },
   {
     "key": "2026iniri",
+    "event_code": "iniri",
+    "year": 2026,
     "name": "Indiana Robotics Invitational (Off-Season)",
     "short_name": "Indiana Robotics Invitational",
     "city": "Indianapolis",
@@ -81,6 +93,8 @@
   },
   {
     "key": "2026cmptx",
+    "event_code": "cmptx",
+    "year": 2026,
     "name": "FIRST Championship — Houston",
     "short_name": "Houston Championship",
     "city": "Houston",
@@ -95,6 +109,8 @@
   },
   {
     "key": "2026micmp",
+    "event_code": "micmp",
+    "year": 2026,
     "name": "FIRST in Michigan State Championship",
     "short_name": "Michigan State Championship",
     "city": "Saginaw",
@@ -108,6 +124,8 @@
   },
   {
     "key": "2026necmp",
+    "event_code": "necmp",
+    "year": 2026,
     "name": "New England District Championship",
     "short_name": "New England Championship",
     "city": "Springfield",
@@ -121,6 +139,8 @@
   },
   {
     "key": "2026nyny",
+    "event_code": "nyny",
+    "year": 2026,
     "name": "New York City Regional",
     "short_name": "NYC Regional",
     "city": "New York",

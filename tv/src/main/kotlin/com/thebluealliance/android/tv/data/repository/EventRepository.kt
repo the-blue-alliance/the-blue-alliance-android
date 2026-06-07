@@ -1,7 +1,7 @@
 package com.thebluealliance.android.tv.data.repository
 
 import android.content.Context
-import com.thebluealliance.android.tv.data.api.EventDto
+import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.tv.data.api.TbaApi
 import com.thebluealliance.android.tv.data.api.TbaJson
 import com.thebluealliance.android.tv.data.api.toDomainOrNull
