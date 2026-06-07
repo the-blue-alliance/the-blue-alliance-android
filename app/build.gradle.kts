@@ -177,10 +177,20 @@ play {
     )
     track.set("alpha")
     defaultToAppBundles.set(true)
-    // Phone + TV publish into one shared Play edit on alpha so the release
-    // contains both AABs (Play routes by leanback uses-feature). Neither module
-    // commits its own edit; release.sh invokes :commitEditFor… last to flush it.
-    commit.set(false)
+    // :app is the COMMITTER of the shared alpha Play edit (default commit=true).
+    // :tv sets commit.set(false) so its publish task only stages — :app's commit
+    // marker is what actually flushes the edit. Order is enforced below: :app's
+    // publishReleaseBundle must run AFTER :tv's, else :tv's getOrCreateEditId
+    // discards :app's already-uploaded edit and starts a fresh one.
+}
+
+afterEvaluate {
+    tasks.named("publishReleaseBundle").configure {
+        mustRunAfter(":tv:publishReleaseBundle")
+    }
+    tasks.named("promoteReleaseArtifact").configure {
+        mustRunAfter(":tv:promoteReleaseArtifact")
+    }
 }
 
 room {

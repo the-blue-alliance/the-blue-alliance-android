@@ -485,14 +485,13 @@ cmd_alpha() {
         :tv:bundleRelease :tv:assembleRelease
 
 
-    # :app and :tv share one Play edit on the alpha track so the release contains both
-    # AABs (Play routes to each device via the leanback uses-feature declaration). Both
-    # modules set commit.set(false); the :commitEditFor… task explicitly commits the
-    # shared edit at the end. Without that final task neither AAB ends up in a release.
-    # Without commit=false on both, the first publish closes the edit and the second
-    # opens a new one, replacing the prior AAB. All three must run in one invocation.
+    # :app and :tv share one Play edit on alpha. :tv has commit.set(false) so its
+    # publish task only stages; :app keeps default commit=true so its publish task
+    # flushes the shared edit (containing both AABs). :app:publishReleaseBundle
+    # mustRunAfter :tv:publishReleaseBundle so the committer goes last. The auto-
+    # wired commitEditFor… finalizer (per-applicationId) does the actual commit.
     info "Publishing phone + TV apps to alpha..."
-    run ./gradlew :app:publishReleaseBundle :tv:publishReleaseBundle :commitEditForComDotTheblueallianceDotAndroidclient
+    run ./gradlew :tv:publishReleaseBundle :app:publishReleaseBundle
     info "Publishing wear app to wear:alpha..."
     run ./gradlew :wear:publishReleaseBundle
 
@@ -545,13 +544,12 @@ cmd_beta() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    # :app and :tv promote together in one invocation; commit.set(false) on both
-    # modules means the explicit :commitEditFor… task is what flushes the edit.
+    # :app and :tv promote together in one invocation. :tv has commit.set(false)
+    # so :app is the committer; mustRunAfter ordering keeps :app last.
     info "Promoting phone + TV apps alpha → beta..."
     run ./gradlew \
-        :app:promoteReleaseArtifact \
         :tv:promoteReleaseArtifact \
-        :commitEditForComDotTheblueallianceDotAndroidclient \
+        :app:promoteReleaseArtifact \
         --from-track alpha --promote-track beta
     info "Promoting wear app wear:alpha → wear:beta..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:alpha" --promote-track "wear:beta"
@@ -617,13 +615,12 @@ cmd_production() {
     info "Checking out ${tag}..."
     run git checkout "$tag"
 
-    # :app and :tv promote together in one invocation; commit.set(false) on both
-    # modules means the explicit :commitEditFor… task is what flushes the edit.
+    # :app and :tv promote together in one invocation. :tv has commit.set(false)
+    # so :app is the committer; mustRunAfter ordering keeps :app last.
     info "Promoting phone + TV apps beta → production..."
     run ./gradlew \
-        :app:promoteReleaseArtifact \
         :tv:promoteReleaseArtifact \
-        :commitEditForComDotTheblueallianceDotAndroidclient \
+        :app:promoteReleaseArtifact \
         --from-track beta --promote-track production
     info "Promoting wear app wear:beta → wear:production..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:beta" --promote-track "wear:production"
