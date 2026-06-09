@@ -25,7 +25,7 @@ datastore = "1.2.1"
 coil = "3.4.0"
 aboutlibraries = "14.2.1"
 
-firebase-bom = "34.14.0"
+firebase-bom = "34.14.1"
 google-services = "4.4.4"
 firebase-crashlytics-plugin = "3.0.7"
 credentials = "1.6.0"
