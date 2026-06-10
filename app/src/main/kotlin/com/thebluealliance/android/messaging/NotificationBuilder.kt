@@ -4,8 +4,8 @@ import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.google.firebase.messaging.RemoteMessage
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.R
@@ -60,9 +60,7 @@ class NotificationBuilder
                     // compare filterEquals-equal (extras don't count), which previously
                     // let FLAG_UPDATE_CURRENT rewrite an older notification's target.
                     data =
-                        Uri.parse(
-                            "tba://notification/$notificationType/$eventKey/$matchKey/$teamKey",
-                        )
+                        "tba://notification/$notificationType/$eventKey/$matchKey/$teamKey".toUri()
                     notificationType?.let { putExtra(EXTRA_NOTIFICATION_TYPE, it) }
                     eventKey?.let { putExtra(EXTRA_EVENT_KEY, it) }
                     matchKey?.let { putExtra(EXTRA_MATCH_KEY, it) }
