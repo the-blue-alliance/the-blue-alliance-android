@@ -64,8 +64,6 @@ class TeamsViewModel
         }
 
         fun refreshTeams() {
-            val pages: List<suspend () -> Unit> =
-                (0..19).map { page -> { teamRepository.refreshTeamsPage(page) } }
-            refreshing(*pages.toTypedArray())
+            refreshing({ teamRepository.refreshAllTeams() })
         }
     }

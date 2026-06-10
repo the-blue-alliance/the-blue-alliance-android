@@ -53,6 +53,17 @@ class TeamRepository
             return dtos.size
         }
 
+        /**
+         * Pages through the full teams list until an empty page. The API pages by 500
+         * team numbers, so a fixed page range goes stale as rookie numbers grow.
+         */
+        suspend fun refreshAllTeams() {
+            var page = 0
+            while (page < MAX_TEAM_PAGES && refreshTeamsPage(page) > 0) {
+                page++
+            }
+        }
+
         fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
             eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
 
@@ -100,5 +111,10 @@ class TeamRepository
                 teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
             } catch (_: Exception) {
             }
+        }
+
+        private companion object {
+            // 40 pages x 500 team numbers covers keys up to frc19999.
+            const val MAX_TEAM_PAGES = 40
         }
     }
