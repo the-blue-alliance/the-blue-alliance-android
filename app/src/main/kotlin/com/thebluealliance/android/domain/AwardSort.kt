@@ -1,19 +1,30 @@
 package com.thebluealliance.android.domain
 
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.AwardType
 import com.thebluealliance.android.util.teamNumber
 
-// TBA web's AWARD_SORT_ORDER (consts/award_type.py): Chairman's/Impact, Founders,
-// Engineering Inspiration, Rookie All Star, Woodie Flowers, Volunteer, Dean's List,
-// Winner, Finalist. The web sorts everything else after these in API order; we use
-// award type as a deterministic tiebreak instead.
-private val awardTypePriority: Map<Int, Int> =
-    listOf(0, 6, 9, 10, 3, 5, 4, 1, 2)
-        .withIndex()
-        .associate { (index, awardType) -> awardType to index }
+// TBA web's AWARD_SORT_ORDER (consts/award_type.py). The web sorts everything
+// else after these in API order; we use the award-type code as a deterministic
+// tiebreak instead.
+private val displayOrder =
+    listOf(
+        AwardType.CHAIRMANS,
+        AwardType.FOUNDERS,
+        AwardType.ENGINEERING_INSPIRATION,
+        AwardType.ROOKIE_ALL_STAR,
+        AwardType.WOODIE_FLOWERS,
+        AwardType.VOLUNTEER,
+        AwardType.DEANS_LIST,
+        AwardType.WINNER,
+        AwardType.FINALIST,
+    )
+
+private val priorityByCode: Map<Int, Int> =
+    displayOrder.withIndex().associate { (index, type) -> type.code to index }
 
 private val Award.displayPriority: Int
-    get() = awardTypePriority[awardType] ?: (awardTypePriority.size + awardType)
+    get() = priorityByCode[awardType] ?: (displayOrder.size + awardType)
 
 fun List<Award>.sortedForDisplay(): List<Award> =
     sortedWith(
