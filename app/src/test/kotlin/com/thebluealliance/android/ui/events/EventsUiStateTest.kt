@@ -42,6 +42,14 @@ class EventsUiStateTest {
         playoffType = PlayoffType.BRACKET_8_TEAM,
     )
 
+    // --- weekLabel ---
+
+    @Test
+    fun `weekLabel converts the zero-indexed api week to the one-indexed display label`() {
+        assertEquals("Week 1", weekLabel(0))
+        assertEquals("Week 6", weekLabel(5))
+    }
+
     // --- buildHeaderInfos: index calculation ---
 
     @Test

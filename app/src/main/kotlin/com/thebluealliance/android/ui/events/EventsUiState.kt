@@ -30,6 +30,9 @@ private data class SectionKey(
     val label: String,
 )
 
+/** The API's week field is 0-indexed; humans say "Week 1". */
+fun weekLabel(week: Int): String = "Week ${week + 1}"
+
 private fun eventSectionKey(
     event: Event,
     preseasonOver: Boolean,
@@ -41,7 +44,7 @@ private fun eventSectionKey(
         EventType.DISTRICT_CHAMPIONSHIP_DIVISION,
         -> {
             val week = event.week ?: return SectionKey(9999, "Other events")
-            SectionKey(week, "Week ${week + 1}")
+            SectionKey(week, weekLabel(week))
         }
         EventType.CHAMPIONSHIP_DIVISION, EventType.CHAMPIONSHIP_FINALS ->
             SectionKey(1000, "Championship")
@@ -49,7 +52,7 @@ private fun eventSectionKey(
         else -> {
             // Unknown type but has a week — group with regular weeks
             if (event.week != null) {
-                SectionKey(event.week, "Week ${event.week + 1}")
+                SectionKey(event.week, weekLabel(event.week))
             } else {
                 SectionKey(9999, "Other events")
             }
@@ -231,7 +234,7 @@ fun computeThisWeekEvents(
             }
 
         rawEvents = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "Upcoming This Week \u2014 Week ${currentWeek + 1}"
+        label = "Upcoming This Week \u2014 ${weekLabel(currentWeek)}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
@@ -264,7 +267,7 @@ internal fun currentWeekChipLabel(
     if (selectedYear != today.year) return null
 
     val week = findCurrentCompetitionWeek(allEvents, today)
-    if (week != null) return "Week ${week + 1}"
+    if (week != null) return weekLabel(week)
 
     // Championship events (types 3/4) have week == null, so check by date overlap.
     val championshipActive =

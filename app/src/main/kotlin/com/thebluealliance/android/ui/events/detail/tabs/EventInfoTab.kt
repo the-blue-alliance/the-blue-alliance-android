@@ -31,6 +31,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
+import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.util.openUrl
 
 @Composable
@@ -80,10 +81,11 @@ fun EventInfoTab(
                 )
             }
         }
-        if (event.week != null) {
+        val week = event.week
+        if (week != null) {
             item {
                 Text(
-                    text = "Week ${event.week}",
+                    text = weekLabel(week),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp),
                 )
