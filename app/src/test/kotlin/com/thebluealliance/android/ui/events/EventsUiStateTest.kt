@@ -46,8 +46,24 @@ class EventsUiStateTest {
 
     @Test
     fun `weekLabel converts the zero-indexed api week to the one-indexed display label`() {
-        assertEquals("Week 1", weekLabel(0))
-        assertEquals("Week 6", weekLabel(5))
+        assertEquals("Week 1", weekLabel(2026, 0))
+        assertEquals("Week 6", weekLabel(2026, 5))
+    }
+
+    @Test
+    fun `weekLabel formats 2016 week 0 as week zero point five`() {
+        assertEquals("Week 0.5", weekLabel(2016, 0))
+        assertEquals("Week 1", weekLabel(2016, 1))
+        assertEquals("Week 6", weekLabel(2016, 6))
+    }
+
+    @Test
+    fun `weekLabel uses custom labels for 2021 events`() {
+        assertEquals("Participation", weekLabel(2021, 0))
+        assertEquals("Awards", weekLabel(2021, 1))
+        assertEquals("FIRST Innovation Challenge", weekLabel(2021, 6))
+        assertEquals("INFINITE RECHARGE At Home Challenge", weekLabel(2021, 7))
+        assertEquals("Game Design Challenge", weekLabel(2021, 8))
     }
 
     // --- buildHeaderInfos: index calculation ---

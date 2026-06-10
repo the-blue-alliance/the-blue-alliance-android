@@ -30,8 +30,23 @@ private data class SectionKey(
     val label: String,
 )
 
-/** The API's week field is 0-indexed; humans say "Week 1". */
-fun weekLabel(week: Int): String = "Week ${week + 1}"
+/** The API's week field is 0-indexed; humans say "Week 1", except for special years. */
+fun weekLabel(
+    year: Int,
+    week: Int,
+): String =
+    when (year) {
+        2016 -> "Week ${if (week == 0) "0.5" else week.toString()}"
+        2021 ->
+            when (week) {
+                0 -> "Participation"
+                6 -> "FIRST Innovation Challenge"
+                7 -> "INFINITE RECHARGE At Home Challenge"
+                8 -> "Game Design Challenge"
+                else -> "Awards"
+            }
+        else -> "Week ${week + 1}"
+    }
 
 private fun eventSectionKey(
     event: Event,
@@ -44,7 +59,7 @@ private fun eventSectionKey(
         EventType.DISTRICT_CHAMPIONSHIP_DIVISION,
         -> {
             val week = event.week ?: return SectionKey(9999, "Other events")
-            SectionKey(week, weekLabel(week))
+            SectionKey(week, weekLabel(event.year, week))
         }
         EventType.CHAMPIONSHIP_DIVISION, EventType.CHAMPIONSHIP_FINALS ->
             SectionKey(1000, "Championship")
@@ -52,7 +67,7 @@ private fun eventSectionKey(
         else -> {
             // Unknown type but has a week — group with regular weeks
             if (event.week != null) {
-                SectionKey(event.week, weekLabel(event.week))
+                SectionKey(event.week, weekLabel(event.year, event.week))
             } else {
                 SectionKey(9999, "Other events")
             }
@@ -234,7 +249,7 @@ fun computeThisWeekEvents(
             }
 
         rawEvents = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "Upcoming This Week \u2014 ${weekLabel(currentWeek)}"
+        label = "Upcoming This Week \u2014 ${weekLabel(selectedYear, currentWeek)}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
@@ -267,7 +282,7 @@ internal fun currentWeekChipLabel(
     if (selectedYear != today.year) return null
 
     val week = findCurrentCompetitionWeek(allEvents, today)
-    if (week != null) return weekLabel(week)
+    if (week != null) return weekLabel(selectedYear, week)
 
     // Championship events (types 3/4) have week == null, so check by date overlap.
     val championshipActive =

@@ -85,7 +85,7 @@ fun EventInfoTab(
         if (week != null) {
             item {
                 Text(
-                    text = weekLabel(week),
+                    text = weekLabel(event.year, week),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp),
                 )
