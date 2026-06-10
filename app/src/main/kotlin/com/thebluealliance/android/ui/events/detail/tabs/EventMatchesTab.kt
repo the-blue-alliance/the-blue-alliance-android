@@ -11,12 +11,14 @@ fun EventMatchesTab(
     matches: List<Match>?,
     playoffType: PlayoffType,
     onNavigateToMatch: (String) -> Unit,
+    eventTimezone: String? = null,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     MatchList(
         matches = matches,
         playoffType = playoffType,
         onNavigateToMatch = onNavigateToMatch,
+        eventTimezone = eventTimezone,
         innerPadding = innerPadding,
     )
 }

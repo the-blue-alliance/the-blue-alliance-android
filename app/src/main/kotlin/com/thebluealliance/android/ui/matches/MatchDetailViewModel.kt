@@ -62,7 +62,7 @@ class MatchDetailViewModel
                         match.time != null &&
                         kotlin.math.abs(match.predictedTime - match.time) > 60
                 val formattedTime =
-                    formatMatchTime(timeToDisplay)?.let {
+                    formatMatchTime(timeToDisplay, event?.timezone)?.let {
                         if (isEstimate) "$it (est.)" else it
                     }
                 MatchDetailUiState(
@@ -95,10 +95,16 @@ class MatchDetailViewModel
             refreshing({ matchRepository.refreshMatch(matchKey) })
         }
 
-        private fun formatMatchTime(epochSeconds: Long?): String? {
+        private fun formatMatchTime(
+            epochSeconds: Long?,
+            eventTimezone: String?,
+        ): String? {
             if (epochSeconds == null) return null
+            val zone =
+                eventTimezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
+                    ?: ZoneId.systemDefault()
             val instant = Instant.ofEpochSecond(epochSeconds)
-            return timeFormatter.format(instant.atZone(ZoneId.systemDefault()))
+            return timeFormatter.format(instant.atZone(zone))
         }
 
         private fun parseVideos(jsonString: String): List<MatchVideo> {

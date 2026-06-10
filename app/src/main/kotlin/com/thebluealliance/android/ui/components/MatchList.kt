@@ -45,6 +45,7 @@ fun MatchList(
     matches: List<Match>?,
     playoffType: PlayoffType,
     onNavigateToMatch: (String) -> Unit,
+    eventTimezone: String? = null,
     headerContent: (LazyListScope.() -> Unit)? = null,
     headerItemCount: Int = 0,
     innerPadding: PaddingValues = PaddingValues.Zero,
@@ -157,6 +158,7 @@ fun MatchList(
                 MatchItem(
                     match = match,
                     playoffType = playoffType,
+                    eventTimezone = eventTimezone,
                     onClick = { onNavigateToMatch(match.key) },
                 )
                 HorizontalDivider()
@@ -170,6 +172,7 @@ fun MatchItem(
     match: Match,
     playoffType: PlayoffType,
     onClick: () -> Unit,
+    eventTimezone: String? = null,
 ) {
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
@@ -341,7 +344,7 @@ fun MatchItem(
                         match.time != null &&
                         kotlin.math.abs(match.predictedTime - match.time) > 60
                 Text(
-                    text = formatMatchTime(displayTime),
+                    text = formatMatchTime(displayTime, eventTimezone),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -363,11 +366,18 @@ private val matchTimeFormat =
         java.util.Locale.US,
     )
 
-fun formatMatchTime(epochSeconds: Long?): String {
+/** Formats in the event's local time when [eventTimezone] is a valid zone ID, else device time. */
+fun formatMatchTime(
+    epochSeconds: Long?,
+    eventTimezone: String? = null,
+): String {
     if (epochSeconds == null) return "\u2014"
+    val zone =
+        eventTimezone?.let { runCatching { java.time.ZoneId.of(it) }.getOrNull() }
+            ?: java.time.ZoneId.systemDefault()
     val instant = java.time.Instant.ofEpochSecond(epochSeconds)
     return matchTimeFormat
-        .format(instant.atZone(java.time.ZoneId.systemDefault()))
+        .format(instant.atZone(zone))
         .replace("AM", "a")
         .replace("PM", "p")
 }

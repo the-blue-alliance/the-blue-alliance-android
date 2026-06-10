@@ -231,6 +231,7 @@ fun TeamEventDetailScreen(
                             matches = uiState.matches,
                             playoffType = evt?.playoffType ?: PlayoffType.OTHER,
                             onNavigateToMatch = onNavigateToMatch,
+                            eventTimezone = evt?.timezone,
                             headerItemCount = headerCount,
                             headerContent = {
                                 if (evt != null) {
@@ -503,6 +504,7 @@ private fun SummaryTab(
                         MatchItem(
                             match = lastPlayed,
                             playoffType = playoffType,
+                            eventTimezone = event?.timezone,
                             onClick = { onNavigateToMatch(lastPlayed.key) },
                         )
                     }
@@ -515,6 +517,7 @@ private fun SummaryTab(
                         MatchItem(
                             match = nextUnplayed,
                             playoffType = playoffType,
+                            eventTimezone = event?.timezone,
                             onClick = { onNavigateToMatch(nextUnplayed.key) },
                         )
                     }

@@ -377,6 +377,7 @@ fun EventDetailScreen(
                             matches = uiState.matches,
                             playoffType = uiState.event?.playoffType ?: PlayoffType.OTHER,
                             onNavigateToMatch = onNavigateToMatch,
+                            eventTimezone = uiState.event?.timezone,
                             innerPadding = bottomPadding,
                         )
                     EventDetailTab.ALLIANCES ->
