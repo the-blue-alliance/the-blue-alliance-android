@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.google.firebase.messaging.RemoteMessage
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.R
@@ -50,14 +51,24 @@ class NotificationBuilder
         ): Notification {
             val intent =
                 Intent(context, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    // NEW_TASK + CLEAR_TASK routes the tap through onCreate (with the
+                    // synthetic back stack) even when the app is already running —
+                    // SINGLE_TOP landed in onNewIntent, which dropped the tap. Same
+                    // pattern as TeamTrackingWidgetOpenAction.
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    // Unique data URI so PendingIntents for different notifications never
+                    // compare filterEquals-equal (extras don't count), which previously
+                    // let FLAG_UPDATE_CURRENT rewrite an older notification's target.
+                    data =
+                        "tba://notification/$notificationType/$eventKey/$matchKey/$teamKey".toUri()
                     notificationType?.let { putExtra(EXTRA_NOTIFICATION_TYPE, it) }
                     eventKey?.let { putExtra(EXTRA_EVENT_KEY, it) }
                     matchKey?.let { putExtra(EXTRA_MATCH_KEY, it) }
                     teamKey?.let { putExtra(EXTRA_TEAM_KEY, it) }
                 }
 
-            val requestCode = (eventKey ?: matchKey ?: teamKey ?: "").hashCode()
+            val requestCode =
+                listOf(notificationType, eventKey, matchKey, teamKey).joinToString("|").hashCode()
             val pendingIntent =
                 PendingIntent.getActivity(
                     context,
