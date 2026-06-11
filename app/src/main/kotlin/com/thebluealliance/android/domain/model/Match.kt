@@ -87,7 +87,7 @@ sealed interface MatchGroup {
         override val label =
             when (compLevel) {
                 CompLevel.QUAL -> "Qualifications"
-                CompLevel.OCTOFINAL -> "Eighths"
+                CompLevel.OCTOFINAL -> "Octofinals"
                 CompLevel.QUARTERFINAL -> "Quarterfinals"
                 CompLevel.SEMIFINAL -> "Semifinals"
                 CompLevel.FINAL -> "Finals"
