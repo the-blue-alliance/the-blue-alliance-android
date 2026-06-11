@@ -1,7 +1,13 @@
 package com.thebluealliance.android.ui
 
+import android.graphics.Color
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +55,18 @@ fun TBAApp(
             ThemeMode.LIGHT -> false
             ThemeMode.DARK -> true
         }
+
+    val activity = LocalActivity.current as? ComponentActivity
+    DisposableEffect(darkTheme) {
+        // Keep system bars in sync with the in-app theme override, not just the system
+        // night mode; the status bar stays dark-style because the top bar is always TBABlue.
+        activity?.enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle =
+                SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme },
+        )
+        onDispose {}
+    }
 
     TBATheme(darkTheme = darkTheme) {
         TBANavigation(
