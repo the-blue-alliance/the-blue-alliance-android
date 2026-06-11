@@ -58,12 +58,12 @@ import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
+import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
-import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
@@ -347,19 +347,7 @@ private fun SummaryTab(
             }
         if (ranking != null || teamAlliance != null || pitLocation != null) {
             item(key = "summary_info_header") {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(TBAIndigo400)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(
-                        text = "Info",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                    )
-                }
+                SectionHeader(label = "Info")
             }
         }
 
@@ -445,19 +433,7 @@ private fun SummaryTab(
 
         if (cmpAdvancement != null) {
             item(key = "summary_cmp_header") {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(TBAIndigo400)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(
-                        text = "Championship Qualification",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                    )
-                }
+                SectionHeader(label = "Championship Qualification")
             }
             item(key = "summary_cmp_detail") {
                 SummarySection(label = "Status") {
@@ -481,19 +457,7 @@ private fun SummaryTab(
 
             if (lastPlayed != null || nextUnplayed != null) {
                 item(key = "summary_match_header") {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(TBAIndigo400)
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        Text(
-                            text = "Recent Matches",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White,
-                        )
-                    }
+                    SectionHeader(label = "Recent Matches")
                 }
             }
 
