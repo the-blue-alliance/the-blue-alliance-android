@@ -67,14 +67,14 @@ import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
-
-object TeamEventDetailTabs {
-    const val SUMMARY = 0
-    const val MATCHES = 1
-    const val MEDIA = 2
-    const val STATS = 3
-    const val AWARDS = 4
+enum class TeamEventDetailTab(
+    val readableName: String,
+) {
+    SUMMARY("Summary"),
+    MATCHES("Matches"),
+    MEDIA("Media"),
+    STATS("Stats"),
+    AWARDS("Awards"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +90,7 @@ fun TeamEventDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(pageCount = { TeamEventDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
     val team = uiState.team
@@ -158,22 +158,22 @@ fun TeamEventDetailScreen(
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TABS.forEachIndexed { index, title ->
+                    TeamEventDetailTab.entries.forEach { tab ->
                         Tab(
-                            selected = pagerState.currentPage == index,
+                            selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(
-                                        index,
+                                        tab.ordinal,
                                     )
                                 }
                             },
                             text = {
                                 Text(
-                                    text = title,
+                                    text = tab.readableName,
                                     color =
                                         if (pagerState.currentPage ==
-                                            index
+                                            tab.ordinal
                                         ) {
                                             Color.White
                                         } else {
@@ -198,12 +198,12 @@ fun TeamEventDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-                onRefresh = { viewModel.refreshTab(page) },
+                onRefresh = { viewModel.refreshTab(TeamEventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 val evt = uiState.event
-                when (page) {
-                    TeamEventDetailTabs.SUMMARY ->
+                when (TeamEventDetailTab.entries[page]) {
+                    TeamEventDetailTab.SUMMARY ->
                         SummaryTab(
                             teamKey = viewModel.teamKey,
                             eventKey = viewModel.eventKey,
@@ -221,7 +221,7 @@ fun TeamEventDetailScreen(
                             onNavigateToPitMap = onNavigateToPitMap,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.MATCHES -> {
+                    TeamEventDetailTab.MATCHES -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
                         val headerCount =
@@ -264,12 +264,12 @@ fun TeamEventDetailScreen(
                             innerPadding = bottomPadding,
                         )
                     }
-                    TeamEventDetailTabs.MEDIA ->
+                    TeamEventDetailTab.MEDIA ->
                         MediaTab(
                             media = uiState.media,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.STATS ->
+                    TeamEventDetailTab.STATS ->
                         StatsTab(
                             teamKey = viewModel.teamKey,
                             event = evt,
@@ -277,7 +277,7 @@ fun TeamEventDetailScreen(
                             advancementPoints = uiState.advancementPoints,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.AWARDS -> {
+                    TeamEventDetailTab.AWARDS -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
