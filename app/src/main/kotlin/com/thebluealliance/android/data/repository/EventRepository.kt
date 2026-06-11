@@ -69,6 +69,9 @@ class EventRepository
 
         fun observeEvent(key: String): Flow<Event?> = eventDao.observe(key).map { it?.toDomain() }
 
+        fun observeEvents(keys: List<String>): Flow<List<Event>> =
+            eventDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
+
         fun observeEventAwards(eventKey: String): Flow<List<Award>> =
             awardDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
 
