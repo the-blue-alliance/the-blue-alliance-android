@@ -25,6 +25,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.domain.model.isSurrogateFor
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.util.teamNumber
 import dagger.assisted.Assisted
@@ -93,6 +94,28 @@ class TeamTrackingWorker
 
             private val timeFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
             private val timeWithDayFormat = DateTimeFormatter.ofPattern("EEE h:mm a", Locale.US)
+
+            internal fun computeRecord(
+                matches: List<Match>,
+                teamKey: String,
+            ): String {
+                var wins = 0
+                var losses = 0
+                var ties = 0
+                for (match in matches) {
+                    if (match.redScore < 0) continue
+                    // Surrogate appearances don't count toward a team's official record
+                    if (match.isSurrogateFor(teamKey)) continue
+                    val isOnRed = teamKey in match.redTeamKeys
+                    when {
+                        match.winningAlliance == "red" && isOnRed -> wins++
+                        match.winningAlliance == "blue" && !isOnRed -> wins++
+                        match.winningAlliance == "" || match.winningAlliance == null -> ties++
+                        else -> losses++
+                    }
+                }
+                return "$wins-$losses-$ties"
+            }
         }
 
         override suspend fun doWork(): Result =
@@ -393,26 +416,6 @@ class TeamTrackingWorker
                 remove(TeamTrackingWidgetKeys.AVATAR_BASE64)
             }
             this[TeamTrackingWidgetKeys.LAST_UPDATED] = now
-        }
-
-        private fun computeRecord(
-            matches: List<Match>,
-            teamKey: String,
-        ): String {
-            var wins = 0
-            var losses = 0
-            var ties = 0
-            for (match in matches) {
-                if (match.redScore < 0) continue
-                val isOnRed = teamKey in match.redTeamKeys
-                when {
-                    match.winningAlliance == "red" && isOnRed -> wins++
-                    match.winningAlliance == "blue" && !isOnRed -> wins++
-                    match.winningAlliance == "" || match.winningAlliance == null -> ties++
-                    else -> losses++
-                }
-            }
-            return "$wins-$losses-$ties"
         }
 
         private fun formatMatchTime(match: Match): String {
