@@ -1,19 +1,25 @@
 package com.thebluealliance.android.data.repository
 
+import com.thebluealliance.android.data.local.dao.EventDao
+import com.thebluealliance.android.data.local.entity.EventEntity
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.RegionalAdvancementDto
 import com.thebluealliance.android.data.remote.dto.RegionalEventPointsDto
 import com.thebluealliance.android.data.remote.dto.RegionalRankingDto
+import com.thebluealliance.android.domain.model.CmpAdvancement
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class RegionalAdvancementRepositoryTest {
     private val api: TbaApi = mockk()
-    private val repository = RegionalAdvancementRepository(api)
+    private val eventDao: EventDao = mockk()
+    private val repository = RegionalAdvancementRepository(api, eventDao)
 
     @Test
     fun `getRegionalRankings maps and sorts rankings`() =
@@ -196,4 +202,119 @@ class RegionalAdvancementRepositoryTest {
             assertEquals(4, rankings[3].rank)
             assertEquals(5, rankings[4].rank)
         }
+
+    @Test
+    fun `getCmpAdvancementByTeam maps statuses and skips non-qualified teams`() =
+        runTest {
+            coEvery { api.getRegionalAdvancement(2026) } returns
+                mapOf(
+                    "frc254" to
+                        RegionalAdvancementDto(
+                            cmp = true,
+                            cmpStatus = "EventQualified",
+                            qualifyingEvent = "2026casj",
+                        ),
+                    "frc1114" to
+                        RegionalAdvancementDto(
+                            cmp = true,
+                            cmpStatus = "EventQualified",
+                            qualifyingEvent = "2026mike",
+                        ),
+                    "frc1816" to
+                        RegionalAdvancementDto(
+                            cmp = true,
+                            cmpStatus = "PoolQualified",
+                            qualifyingPoolWeek = 3,
+                        ),
+                    "frc971" to RegionalAdvancementDto(cmp = true, cmpStatus = "PreQualified"),
+                    "frc118" to RegionalAdvancementDto(cmp = false),
+                )
+            coEvery { eventDao.getByKeys(any()) } returns
+                listOf(eventEntity(key = "2026casj", shortName = "Silicon Valley"))
+
+            val advancement = repository.getCmpAdvancementByTeam(2026)
+
+            assertEquals(4, advancement.size)
+            assertEquals(
+                CmpAdvancement.EventQualified("2026casj", "Silicon Valley"),
+                advancement["frc254"],
+            )
+            assertEquals(
+                CmpAdvancement.EventQualified("2026mike", "2026mike"),
+                advancement["frc1114"],
+            )
+            assertEquals(CmpAdvancement.PoolQualified(week = 3), advancement["frc1816"])
+            assertEquals(CmpAdvancement.Qualified, advancement["frc971"])
+            assertNull(advancement["frc118"])
+        }
+
+    @Test
+    fun `getCmpAdvancementByTeam fetches once per year and shares the cached result`() =
+        runTest {
+            coEvery { api.getRegionalAdvancement(2026) } returns
+                mapOf("frc1816" to RegionalAdvancementDto(cmp = true, cmpStatus = "Qualified"))
+
+            val first = repository.getCmpAdvancementByTeam(2026)
+            val second = repository.getCmpAdvancementByTeam(2026)
+
+            assertEquals(first, second)
+            coVerify(exactly = 1) { api.getRegionalAdvancement(2026) }
+        }
+
+    @Test
+    fun `getCmpAdvancementByTeam refetches when forceRefresh is set`() =
+        runTest {
+            coEvery { api.getRegionalAdvancement(2026) } returns
+                mapOf("frc1816" to RegionalAdvancementDto(cmp = true, cmpStatus = "Qualified"))
+
+            repository.getCmpAdvancementByTeam(2026)
+            repository.getCmpAdvancementByTeam(2026, forceRefresh = true)
+
+            coVerify(exactly = 2) { api.getRegionalAdvancement(2026) }
+        }
+
+    @Test
+    fun `getCmpAdvancementByTeam skips years before regional advancement existed`() =
+        runTest {
+            val advancement = repository.getCmpAdvancementByTeam(2024)
+
+            assertTrue(advancement.isEmpty())
+            coVerify(exactly = 0) { api.getRegionalAdvancement(any()) }
+        }
+
+    @Test
+    fun `getCmpAdvancementByTeam handles null API response`() =
+        runTest {
+            coEvery { api.getRegionalAdvancement(2026) } returns null
+
+            val advancement = repository.getCmpAdvancementByTeam(2026)
+
+            assertTrue(advancement.isEmpty())
+        }
+
+    private fun eventEntity(
+        key: String,
+        shortName: String?,
+    ) = EventEntity(
+        key = key,
+        name = "Event $key",
+        eventCode = key.drop(4),
+        year = key.take(4).toInt(),
+        type = null,
+        district = null,
+        city = null,
+        state = null,
+        country = null,
+        startDate = null,
+        endDate = null,
+        week = null,
+        shortName = shortName,
+        website = null,
+        timezone = null,
+        webcasts = null,
+        locationName = null,
+        address = null,
+        gmapsUrl = null,
+        playoffType = 0,
+    )
 }
