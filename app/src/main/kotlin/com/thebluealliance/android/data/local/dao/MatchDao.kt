@@ -17,6 +17,9 @@ interface MatchDao {
     @Query("SELECT * FROM matches WHERE key = :key")
     fun observe(key: String): Flow<MatchEntity?>
 
+    @Query("SELECT * FROM matches WHERE key IN (:keys)")
+    fun observeByKeys(keys: List<String>): Flow<List<MatchEntity>>
+
     @Query("DELETE FROM matches WHERE eventKey = :eventKey")
     suspend fun deleteByEvent(eventKey: String)
 
