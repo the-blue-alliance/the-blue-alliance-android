@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MatchDao {
     @Query(
-        "SELECT * FROM matches WHERE eventKey = :eventKey ORDER BY compLevel, setNumber, matchNumber ASC",
+        // CASE mirrors CompLevel.order; sorting the TEXT codes alphabetically puts finals first
+        "SELECT * FROM matches WHERE eventKey = :eventKey ORDER BY CASE compLevel WHEN 'qm' THEN 0 WHEN 'ef' THEN 1 WHEN 'qf' THEN 2 WHEN 'sf' THEN 3 WHEN 'f' THEN 4 ELSE 5 END, setNumber, matchNumber ASC",
     )
     fun observeByEvent(eventKey: String): Flow<List<MatchEntity>>
 
