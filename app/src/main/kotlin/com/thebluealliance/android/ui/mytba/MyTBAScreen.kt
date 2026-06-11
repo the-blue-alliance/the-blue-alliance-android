@@ -71,11 +71,11 @@ import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Favorites", "Notifications")
-
-object MyTBATabs {
-    const val FAVORITES = 0
-    const val NOTIFICATIONS = 1
+enum class MyTBATab(
+    val readableName: String,
+) {
+    FAVORITES("Favorites"),
+    NOTIFICATIONS("Notifications"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,15 +92,15 @@ fun MyTBAScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(pageCount = { MyTBATab.entries.size })
     val coroutineScope = rememberCoroutineScope()
     val favoritesListState = rememberLazyListState()
     val notificationsListState = rememberLazyListState()
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
-            when (pagerState.currentPage) {
-                MyTBATabs.FAVORITES -> favoritesListState.animateScrollToItem(0)
-                MyTBATabs.NOTIFICATIONS -> notificationsListState.animateScrollToItem(0)
+            when (MyTBATab.entries[pagerState.currentPage]) {
+                MyTBATab.FAVORITES -> favoritesListState.animateScrollToItem(0)
+                MyTBATab.NOTIFICATIONS -> notificationsListState.animateScrollToItem(0)
             }
         }
     }
@@ -243,19 +243,19 @@ fun MyTBAScreen(
                     )
                 },
             ) {
-                TABS.forEachIndexed { index, title ->
+                MyTBATab.entries.forEach { tab ->
                     Tab(
-                        selected = pagerState.currentPage == index,
+                        selected = pagerState.currentPage == tab.ordinal,
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
-                                    index,
+                                    tab.ordinal,
                                 )
                             }
                         },
                         text = {
                             Text(
-                                text = title,
+                                text = tab.readableName,
                                 style = MaterialTheme.typography.labelLarge,
                                 color = Color.White,
                             )
@@ -270,11 +270,11 @@ fun MyTBAScreen(
             ) { page ->
                 PullToRefreshBox(
                     isRefreshing = isRefreshing,
-                    onRefresh = { viewModel.refreshTab(page) },
+                    onRefresh = { viewModel.refreshTab(MyTBATab.entries[page]) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    when (page) {
-                        MyTBATabs.FAVORITES ->
+                    when (MyTBATab.entries[page]) {
+                        MyTBATab.FAVORITES ->
                             FavoritesTab(
                                 favorites = uiState.favorites,
                                 onNavigateToTeam = onNavigateToTeam,
@@ -285,7 +285,7 @@ fun MyTBAScreen(
                                 onRemoveFavorite = viewModel::removeFavorite,
                             )
 
-                        MyTBATabs.NOTIFICATIONS ->
+                        MyTBATab.NOTIFICATIONS ->
                             NotificationsTab(
                                 subscriptions = uiState.subscriptions,
                                 onNavigateToTeam = onNavigateToTeam,
