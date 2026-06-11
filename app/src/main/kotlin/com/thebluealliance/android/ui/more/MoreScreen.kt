@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -29,9 +30,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.util.openUrl
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -78,6 +81,13 @@ fun MoreScreen(
                 onClick = onNavigateToSettings,
             )
             HorizontalDivider()
+            val context = LocalContext.current
+            MoreItem(
+                icon = Icons.Filled.BugReport,
+                label = "Report a bug",
+                onClick = { context.openUrl(ISSUES_URL) },
+            )
+            HorizontalDivider()
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -112,6 +122,9 @@ fun MoreScreen(
         }
     }
 }
+
+private const val ISSUES_URL =
+    "https://github.com/the-blue-alliance/the-blue-alliance-android/issues"
 
 @Composable
 private fun MoreItem(
