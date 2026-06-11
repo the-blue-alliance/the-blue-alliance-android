@@ -212,6 +212,7 @@ class EventDetailViewModel
                         myTBARepository.addFavorite(eventKey, ModelType.EVENT)
                     }
                 } catch (_: Exception) {
+                    _userMessage.emit("Couldn't update favorite")
                 }
             }
         }
