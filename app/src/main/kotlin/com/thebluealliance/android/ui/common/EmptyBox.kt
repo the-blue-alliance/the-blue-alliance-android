@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun EmptyBox(
@@ -19,6 +20,10 @@ fun EmptyBox(
         modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center,
     ) {
-        Text(message, style = MaterialTheme.typography.bodyLarge)
+        Text(
+            message,
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+        )
     }
 }
