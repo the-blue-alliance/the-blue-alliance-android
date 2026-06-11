@@ -14,7 +14,8 @@ val rpBonusFieldsByYear =
     mapOf(
         2026 to listOf("energizedAchieved", "superchargedAchieved", "traversalAchieved"),
         2025 to listOf("autoBonusAchieved", "coralBonusAchieved", "bargeBonusAchieved"),
-        2024 to listOf("coopertitionBonusAchieved", "melodyBonusAchieved", "ensembleBonusAchieved"),
+        // Crescendo's coopertition lowered the Melody threshold but awarded no RP.
+        2024 to listOf("melodyBonusAchieved", "ensembleBonusAchieved"),
         2023 to listOf("activationBonusAchieved", "sustainabilityBonusAchieved"),
     )
 
@@ -23,7 +24,7 @@ val rpBonusFields: Set<String> = rpBonusFieldsByYear.values.flatten().toSet()
 
 /** Boolean fields that should display as ✓/✗ (RP bonuses + other booleans). */
 val booleanDisplayFields: Set<String> =
-    rpBonusFields + setOf("coopertitionCriteriaMet", "g206Penalty")
+    rpBonusFields + setOf("coopertitionBonusAchieved", "coopertitionCriteriaMet", "g206Penalty")
 
 data class AllianceRpBonuses(
     val red: List<Boolean>,
