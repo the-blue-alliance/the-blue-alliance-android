@@ -31,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +59,17 @@ internal data class RankingSortState(
     val column: RankingSortColumn = RankingSortColumn.PRIMARY,
     val ascending: Boolean = false,
 )
+
+private val RankingSortStateSaver =
+    listSaver<RankingSortState, Any>(
+        save = { listOf(it.column.name, it.ascending) },
+        restore = {
+            RankingSortState(
+                column = RankingSortColumn.valueOf(it[0] as String),
+                ascending = it[1] as Boolean,
+            )
+        },
+    )
 
 internal fun rankingHeaderLabels(rankingSortOrders: List<RankingSortOrder>?): Pair<String, String> {
     val primaryLabel = rankingSortOrders?.getOrNull(0)?.name?.takeIf { it.isNotBlank() } ?: "RS"
@@ -130,7 +143,9 @@ fun EventRankingsTab(
 
     val (primaryLabel, secondaryLabel) = rankingHeaderLabels(rankingSortOrders)
 
-    var sortState by remember { mutableStateOf(RankingSortState()) }
+    var sortState by rememberSaveable(stateSaver = RankingSortStateSaver) {
+        mutableStateOf(RankingSortState())
+    }
 
     val sortedRankings =
         remember(rankings, sortState) {
