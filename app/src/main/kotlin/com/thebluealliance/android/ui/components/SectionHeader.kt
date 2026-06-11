@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,19 @@ data class SectionHeaderInfo(
 @Composable
 fun SectionHeader(
     label: String,
+    modifier: Modifier = Modifier,
+    trailingContent: (@Composable RowScope.() -> Unit)? = null,
+) {
+    SectionHeaderRow(
+        label = label,
+        modifier = modifier.background(TBAIndigo400),
+        trailingContent = trailingContent,
+    )
+}
+
+@Composable
+fun SectionHeader(
+    label: String,
     isStuck: Boolean,
     allHeaders: List<SectionHeaderInfo>,
     onHeaderSelected: (SectionHeaderInfo) -> Unit,
@@ -50,49 +64,38 @@ fun SectionHeader(
                 .background(TBAIndigo400)
                 .clickable(enabled = isStuck) { menuExpanded = true },
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.White,
-            )
-            if (isStuck) {
-                Spacer(modifier = Modifier.width(4.dp))
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Jump to section",
-                    tint = Color.White,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-        }
+        SectionHeaderRow(
+            label = label,
+            trailingContent =
+                if (isStuck) {
+                    {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Jump to section",
+                            tint = Color.White,
+                            modifier = Modifier.size(20.dp),
+                        )
+                    }
+                } else {
+                    null
+                },
+        )
 
         DropdownMenu(
             expanded = menuExpanded,
             onDismissRequest = { menuExpanded = false },
         ) {
             allHeaders.forEach { info ->
+                val isSelected = info.label == label
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = info.label,
-                            fontWeight =
-                                if (info.label ==
-                                    label
-                                ) {
-                                    FontWeight.Bold
-                                } else {
-                                    FontWeight.Normal
-                                },
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                             color =
-                                if (info.label == label) {
-                                    TBAIndigo400
+                                if (isSelected) {
+                                    MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.onSurface
                                 },
@@ -105,5 +108,29 @@ fun SectionHeader(
                 )
             }
         }
+    }
+}
+
+// Background lives on the clickable container in the interactive overload, so the
+// ripple indication draws above the fill instead of being painted over by it.
+@Composable
+private fun SectionHeaderRow(
+    label: String,
+    modifier: Modifier = Modifier,
+    trailingContent: (@Composable RowScope.() -> Unit)? = null,
+) {
+    Row(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall,
+            color = Color.White,
+        )
+        trailingContent?.invoke(this)
     }
 }
