@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
@@ -122,10 +124,10 @@ fun EventInfoTab(
                     modifier =
                         Modifier
                             .padding(top = 8.dp)
-                            .clickable {
+                            .clickable(role = Role.Button) {
                                 val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
                                 context.openUrl(url)
-                            },
+                            }.heightIn(min = 48.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -151,9 +153,9 @@ fun EventInfoTab(
                     modifier =
                         Modifier
                             .padding(top = 8.dp)
-                            .clickable {
+                            .clickable(role = Role.Button) {
                                 context.openUrl(event.website)
-                            },
+                            }.heightIn(min = 48.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -179,9 +181,9 @@ fun EventInfoTab(
                     modifier =
                         Modifier
                             .padding(top = 8.dp)
-                            .clickable {
+                            .clickable(role = Role.Button) {
                                 onNavigateToPitMap(event.key, favoriteTeamKeys)
-                            },
+                            }.heightIn(min = 48.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
@@ -221,10 +223,9 @@ fun EventInfoTab(
                     Row(
                         modifier =
                             Modifier
-                                .padding(top = 4.dp)
-                                .clickable {
+                                .clickable(role = Role.Button) {
                                     context.openUrl(url)
-                                },
+                                }.heightIn(min = 48.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(

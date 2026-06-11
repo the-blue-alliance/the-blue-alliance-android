@@ -25,10 +25,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -81,12 +83,18 @@ fun MoreScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     text = "About",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onNavigateToAbout),
+                    modifier =
+                        Modifier
+                            .clickable(role = Role.Button, onClick = onNavigateToAbout)
+                            .minimumInteractiveComponentSize(),
                 )
                 Text(
                     text = " · ",
@@ -97,7 +105,10 @@ fun MoreScreen(
                     text = "Thanks",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onNavigateToThanks),
+                    modifier =
+                        Modifier
+                            .clickable(role = Role.Button, onClick = onNavigateToThanks)
+                            .minimumInteractiveComponentSize(),
                 )
             }
 
