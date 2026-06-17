@@ -6,13 +6,16 @@ When asked to commit a checkpoint, write a short summary line and a brief descri
 
 ## Verifying changes on an emulator
 
-After a substantive UI change, build and run the app to confirm it.
+After a substantive UI change, build and run the app to confirm it. Run all
+commands **from the worktree root**. A base AVD named `Medium_Phone` must exist
+(`"$ANDROID_HOME/emulator/emulator" -list-avds`) or override it with `TBA_BASE_AVD`.
 
 Single emulator:
 
 ```bash
-scripts/run-emulator.sh Medium_Phone        # boot (idempotent)
-scripts/install-and-launch.sh               # build :app debug, install, launch
+scripts/run-emulator.sh Medium_Phone        # boot (idempotent — no-op if already running)
+scripts/install-and-launch.sh               # build :app debug, install, AND launch
+mkdir -p artifacts
 scripts/emu screenshot artifacts/<name>.png
 ```
 
@@ -33,11 +36,19 @@ scripts/worktree-emu.sh bless               # 2. save its state as the 'verify-b
 **Per worktree, given a slot `0..2`:**
 
 ```bash
-export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"   # boot read-only instance
-./gradlew :app:installDebug                                     # adb + Gradle honor ANDROID_SERIAL
-scripts/emu screenshot artifacts/<name>.png                     # scripts/emu honors it too
+mkdir -p artifacts
+export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"   # boot read-only instance; prints its serial
+./gradlew :app:installDebug                                     # installs only — adb + Gradle read $ANDROID_SERIAL
+# MUST launch — installDebug does NOT start the app; screenshotting without this captures the launcher:
+scripts/emu -s "$ANDROID_SERIAL" launch \
+  com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+scripts/emu -s "$ANDROID_SERIAL" screenshot artifacts/<name>.png
 scripts/worktree-emu.sh down "$SLOT"                            # tear down when done
 ```
+
+If `up` errors with `snapshot 'verify-base' not found` or `base AVD … running
+read-write`, the orchestrator hasn't finished the one-time setup (bless + close
+the base) — stop and surface it; don't try to work around it.
 
 **Tear it all down** (the fleet is headless — `-no-window` — so nothing shows on screen):
 
@@ -49,9 +60,12 @@ adb devices                         # confirm only your base/interactive emulato
 
 Notes:
 
+- Pass `-s "$ANDROID_SERIAL"` to `scripts/emu` — it reads only the `-s` flag, not the
+  environment. `adb` and Gradle pick up `$ANDROID_SERIAL` from the environment on their own.
+- Debug package is `com.thebluealliance.androidclient.development`, activity
+  `com.thebluealliance.android.MainActivity`.
 - Max **3** concurrent instances on a 32 GB host (`TBA_WT_CAP`). Slots use console
   ports `5580+`, leaving `5554–5578` free for interactive use.
-- `scripts/worktree-emu.sh list` shows slot status; see the script header for env overrides.
 - Gitignored configs (`google-services.json`, `local.properties`) must be present in each
   worktree for `:app:installDebug` to build — the orchestrator copies them in.
 - **Emulators parallelize cheaply; builds don't.** Idle read-only instances are light, but

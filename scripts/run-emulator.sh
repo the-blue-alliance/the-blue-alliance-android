@@ -7,6 +7,14 @@ EMULATOR="$SDK/emulator/emulator"
 ADB="$SDK/platform-tools/adb"
 AVD="${1:-Medium_Phone}"
 
+# Idempotent: if this AVD is already running, report its serial and stop.
+for s in $("$ADB" devices | awk '/^emulator-/{print $1}'); do
+    if [[ "$("$ADB" -s "$s" emu avd name 2>/dev/null | head -1 | tr -d '\r')" == "$AVD" ]]; then
+        echo "Emulator already running: $s ($AVD)"
+        exit 0
+    fi
+done
+
 # Snapshot the set of running emulators so we can identify the one we launch,
 # rather than `adb wait-for-device` (which is ambiguous with multiple devices).
 before="$("$ADB" devices | awk '/^emulator-/{print $1}' | sort)"
