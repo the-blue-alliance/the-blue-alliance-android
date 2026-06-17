@@ -39,6 +39,14 @@ scripts/emu screenshot artifacts/<name>.png                     # scripts/emu ho
 scripts/worktree-emu.sh down "$SLOT"                            # tear down when done
 ```
 
+**Tear it all down** (the fleet is headless — `-no-window` — so nothing shows on screen):
+
+```bash
+scripts/worktree-emu.sh list        # see what's running
+scripts/worktree-emu.sh down-all    # kill the ENTIRE fleet at once (ports 5580+ only; never the base/interactive emulators)
+adb devices                         # confirm only your base/interactive emulators remain
+```
+
 Notes:
 
 - Max **3** concurrent instances on a 32 GB host (`TBA_WT_CAP`). Slots use console

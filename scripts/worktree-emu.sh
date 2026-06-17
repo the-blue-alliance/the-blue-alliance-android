@@ -11,6 +11,7 @@
 #   worktree-emu.sh up    <slot>     # boot a read-only verify instance for <slot>; prints its serial
 #   worktree-emu.sh serial <slot>    # print the serial for <slot> (no boot)
 #   worktree-emu.sh down  <slot>     # shut down the instance for <slot>
+#   worktree-emu.sh down-all         # shut down the ENTIRE fleet (safe; never touches the base)
 #   worktree-emu.sh list             # show all slots and their status
 #
 # Orchestrator usage:
@@ -109,6 +110,22 @@ cmd_down() {
   echo "stopped $serial" >&2
 }
 
+# Tear down the WHOLE fleet: every running emulator on a fleet-range console
+# port (>= PORT_BASE). Never touches base / interactive emulators (ports below
+# PORT_BASE), so it's always safe to run.
+cmd_down_all() {
+  local s port killed=0
+  for s in $("$ADB" devices | awk '/^emulator-/{print $1}'); do
+    port="${s#emulator-}"
+    if (( port >= PORT_BASE )); then
+      "$ADB" -s "$s" emu kill >/dev/null 2>&1 || true
+      echo "stopped $s" >&2
+      killed=$(( killed + 1 ))
+    fi
+  done
+  echo "stopped $killed fleet instance(s); emulators on ports < $PORT_BASE left untouched" >&2
+}
+
 cmd_list() {
   printf '%-5s %-18s %s\n' SLOT SERIAL STATUS
   local i serial
@@ -126,7 +143,8 @@ case "${1:-}" in
   bless)  cmd_bless ;;
   up)     cmd_up "${2:-}" ;;
   serial) require_slot "${2:-}"; serial_for "$2" ;;
-  down)   cmd_down "${2:-}" ;;
-  list)   cmd_list ;;
-  *) echo "usage: $0 {bless | up <slot> | serial <slot> | down <slot> | list}" >&2; exit 2 ;;
+  down)     cmd_down "${2:-}" ;;
+  down-all) cmd_down_all ;;
+  list)     cmd_list ;;
+  *) echo "usage: $0 {bless | up <slot> | serial <slot> | down <slot> | down-all | list}" >&2; exit 2 ;;
 esac
