@@ -46,3 +46,7 @@ Notes:
 - `scripts/worktree-emu.sh list` shows slot status; see the script header for env overrides.
 - Gitignored configs (`google-services.json`, `local.properties`) must be present in each
   worktree for `:app:installDebug` to build — the orchestrator copies them in.
+- **Emulators parallelize cheaply; builds don't.** Idle read-only instances are light, but
+  three simultaneous `:app:installDebug` builds will thrash a 32 GB host (especially under
+  other load) — serialize or throttle them (`nice -n 10`, `--max-workers`) even while the
+  emulators run in parallel.
