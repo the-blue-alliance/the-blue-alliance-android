@@ -43,7 +43,7 @@ junit = "6.1.0"
 turbine = "1.2.1"
 mockk = "1.14.11"
 play-publisher = "4.0.0"
-lifecycle-process = "2.10.0"
+lifecycle-process = "2.11.0"
 ktlint-gradle = "14.2.0"
 
 [libraries]
