@@ -40,9 +40,9 @@ mkdir -p artifacts
 export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"   # boot read-only instance; prints its serial
 ./gradlew :app:installDebug                                     # installs only — adb + Gradle read $ANDROID_SERIAL
 # MUST launch — installDebug does NOT start the app; screenshotting without this captures the launcher:
-scripts/emu -s "$ANDROID_SERIAL" launch \
+scripts/emu launch \
   com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
-scripts/emu -s "$ANDROID_SERIAL" screenshot artifacts/<name>.png
+scripts/emu screenshot artifacts/<name>.png
 scripts/worktree-emu.sh down "$SLOT"                            # tear down when done
 ```
 
@@ -60,8 +60,8 @@ adb devices                         # confirm only your base/interactive emulato
 
 Notes:
 
-- Pass `-s "$ANDROID_SERIAL"` to `scripts/emu` — it reads only the `-s` flag, not the
-  environment. `adb` and Gradle pick up `$ANDROID_SERIAL` from the environment on their own.
+- `scripts/emu`, `adb`, and Gradle all honor `$ANDROID_SERIAL`, so exporting it once points
+  every command at the right device. Pass `-s <serial>` to `scripts/emu` to override it.
 - Debug package is `com.thebluealliance.androidclient.development`, activity
   `com.thebluealliance.android.MainActivity`.
 - Max **3** concurrent instances on a 32 GB host (`TBA_WT_CAP`). Slots use console

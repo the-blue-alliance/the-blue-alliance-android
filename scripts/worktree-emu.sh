@@ -16,8 +16,9 @@
 #
 # Orchestrator usage:
 #   export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"
-#   ./gradlew :app:installDebug          # adb + AGP both honor ANDROID_SERIAL
-#   scripts/emu screenshot out.png       # scripts/emu reads ANDROID_SERIAL too
+#   ./gradlew :app:installDebug          # installs only (adb + AGP honor ANDROID_SERIAL)
+#   scripts/emu launch <pkg>/<activity>  # installDebug only installs — launch before screenshotting
+#   scripts/emu screenshot out.png       # scripts/emu honors ANDROID_SERIAL too
 #
 # Env overrides:
 #   TBA_BASE_AVD         (default: Medium_Phone)  the shared base AVD
