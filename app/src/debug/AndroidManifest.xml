@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--
+        Debug builds talk to the local dev backend (http://10.0.2.2:8080) and the
+        Firebase Auth emulator (10.0.2.2:9099). 10.0.0.0/8 is a local network, which
+        targetSdk 37 (Android 17) blocks by default. Declare the runtime permission
+        here so a debug build can be granted LAN access; release builds (public TBA
+        API over the internet) never need it. Grant it on the device/emulator with:
+            adb shell pm grant <debug-package> android.permission.ACCESS_LOCAL_NETWORK
+    -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+
     <application
         android:networkSecurityConfig="@xml/network_security_config"
         tools:replace="android:networkSecurityConfig">
