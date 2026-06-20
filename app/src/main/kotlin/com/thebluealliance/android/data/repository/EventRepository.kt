@@ -35,6 +35,7 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.EventRankings
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
+import com.thebluealliance.android.domain.sortedForDisplay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -70,7 +71,9 @@ class EventRepository
         fun observeEvent(key: String): Flow<Event?> = eventDao.observe(key).map { it?.toDomain() }
 
         fun observeEventAwards(eventKey: String): Flow<List<Award>> =
-            awardDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
+            awardDao.observeByEvent(eventKey).map { list ->
+                list.map { it.toDomain() }.sortedForDisplay()
+            }
 
         fun observeEventRankings(eventKey: String): Flow<List<Ranking>> =
             rankingDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
