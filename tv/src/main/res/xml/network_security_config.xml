@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Debug builds shadow this file (src/debug/res/xml) to permit cleartext to the
+     local dev server. -->
 <network-security-config>
     <!-- Certificate transparency is opt-in on API 36, default-on once we target 37,
          and ignored below 36. Opting in early per the Android 17 migration guidance. -->
