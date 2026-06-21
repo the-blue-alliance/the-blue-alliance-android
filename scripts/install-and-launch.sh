@@ -8,4 +8,4 @@ export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Con
 
 ./gradlew :app:installDebug
 
-adb shell am start -n com.thebluealliance.android.dev/com.thebluealliance.android.MainActivity
+adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity

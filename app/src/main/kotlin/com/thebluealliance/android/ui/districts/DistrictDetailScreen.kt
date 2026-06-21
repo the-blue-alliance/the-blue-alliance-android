@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.model.DistrictEventPoints
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -368,12 +369,7 @@ private fun RankingsTab(
                     ?.toInt()
                     ?.toString()
                     ?: "-"
-            val dcmpPoints =
-                ranking.eventPoints
-                    .find { it.districtCmp }
-                    ?.total
-                    ?.toInt()
-                    ?.toString() ?: "-"
+            val dcmpPoints = dcmpPointsLabel(ranking.eventPoints)
 
             Row(
                 modifier =
@@ -429,4 +425,11 @@ private fun RankingsTab(
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
         }
     }
+}
+
+/** DCMPs with divisions report division + finals as separate districtCmp entries; sum them. */
+internal fun dcmpPointsLabel(eventPoints: List<DistrictEventPoints>): String {
+    val dcmpEntries = eventPoints.filter { it.districtCmp }
+    if (dcmpEntries.isEmpty()) return "-"
+    return dcmpEntries.sumOf { it.total }.toInt().toString()
 }

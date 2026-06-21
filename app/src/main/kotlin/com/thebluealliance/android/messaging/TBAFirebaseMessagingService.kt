@@ -60,6 +60,11 @@ class TBAFirebaseMessagingService : FirebaseMessagingService() {
         // Build and show display notification
         val notification = notificationBuilder.buildFromRemoteMessage(message) ?: return
         val manager = getSystemService(NotificationManager::class.java)
+        if (!manager.areNotificationsEnabled()) {
+            // notify() would silently no-op; make the drop diagnosable.
+            Log.w(TAG, "Dropping notification (type=$typeKey): POST_NOTIFICATIONS not granted")
+            return
+        }
         val notificationId = message.data.hashCode()
         manager.notify(notificationId, notification)
     }

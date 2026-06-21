@@ -221,7 +221,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.redTeamKeys.joinToString(", ") { it.teamNumber },
+                    text = formatAllianceTeams(match.redTeamKeys, match.redSurrogateTeamKeys),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==
@@ -267,7 +267,7 @@ fun MatchItem(
                     }
                 }
                 Text(
-                    text = match.blueTeamKeys.joinToString(", ") { it.teamNumber },
+                    text = formatAllianceTeams(match.blueTeamKeys, match.blueSurrogateTeamKeys),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight =
                         if (match.winningAlliance ==
@@ -356,6 +356,14 @@ fun MatchItem(
         }
     }
 }
+
+private fun formatAllianceTeams(
+    teamKeys: List<String>,
+    surrogateTeamKeys: List<String>,
+): String =
+    teamKeys.joinToString(", ") { key ->
+        if (key in surrogateTeamKeys) "${key.teamNumber}*" else key.teamNumber
+    }
 
 private val matchTimeFormat =
     java.time.format.DateTimeFormatter.ofPattern(
