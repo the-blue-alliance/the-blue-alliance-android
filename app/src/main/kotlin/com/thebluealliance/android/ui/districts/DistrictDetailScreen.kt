@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -45,6 +44,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
+import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
@@ -113,7 +113,8 @@ fun DistrictDetailScreen(
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
                     TABS.forEachIndexed { index, title ->
-                        Tab(
+                        TBATab(
+                            label = title,
                             selected = pagerState.currentPage == index,
                             onClick = {
                                 coroutineScope.launch {
@@ -121,19 +122,6 @@ fun DistrictDetailScreen(
                                         index,
                                     )
                                 }
-                            },
-                            text = {
-                                Text(
-                                    text = title,
-                                    color =
-                                        if (pagerState.currentPage ==
-                                            index
-                                        ) {
-                                            Color.White
-                                        } else {
-                                            Color.White.copy(alpha = 0.7f)
-                                        },
-                                )
                             },
                         )
                     }
