@@ -12,15 +12,20 @@ data class Match(
     val predictedTime: Long?,
     val actualTime: Long?,
     val redTeamKeys: List<String>,
+    val redSurrogateTeamKeys: List<String> = emptyList(),
     val redScore: Int,
     val redPlayoffAlliance: Alliance? = null,
     val blueTeamKeys: List<String>,
+    val blueSurrogateTeamKeys: List<String> = emptyList(),
     val blueScore: Int,
     val bluePlayoffAlliance: Alliance? = null,
     val winningAlliance: String?,
     val scoreBreakdown: String? = null,
     val videos: String? = null,
 )
+
+fun Match.isSurrogateFor(teamKey: String): Boolean =
+    teamKey in redSurrogateTeamKeys || teamKey in blueSurrogateTeamKeys
 
 /**
  * Helper function to calculates which Playoff Alliance on a side in a Match
