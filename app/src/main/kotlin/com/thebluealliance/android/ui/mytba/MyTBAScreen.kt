@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,6 +61,7 @@ import coil3.compose.AsyncImage
 import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.NotificationType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -80,6 +82,7 @@ fun MyTBAScreen(
     onSignIn: () -> Unit = {},
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
+    onNavigateToMatch: (String) -> Unit = {},
     onNavigateUp: (() -> Unit)? = null,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
@@ -252,8 +255,10 @@ fun MyTBAScreen(
                         MyTBATabs.FAVORITES ->
                             FavoritesTab(
                                 favorites = uiState.favorites,
+                                displayNames = uiState.displayNames,
                                 onNavigateToTeam = onNavigateToTeam,
                                 onNavigateToEvent = onNavigateToEvent,
+                                onNavigateToMatch = onNavigateToMatch,
                                 listState = favoritesListState,
                                 canPinShortcuts = uiState.canPinShortcuts,
                                 onAddShortcut = viewModel::requestPinShortcut,
@@ -263,8 +268,10 @@ fun MyTBAScreen(
                         MyTBATabs.NOTIFICATIONS ->
                             NotificationsTab(
                                 subscriptions = uiState.subscriptions,
+                                displayNames = uiState.displayNames,
                                 onNavigateToTeam = onNavigateToTeam,
                                 onNavigateToEvent = onNavigateToEvent,
+                                onNavigateToMatch = onNavigateToMatch,
                                 listState = notificationsListState,
                                 onRemoveSubscription = { sub ->
                                     viewModel.removeSubscription(sub.modelKey, sub.modelType)
@@ -306,27 +313,29 @@ private fun SignInPrompt(onSignIn: () -> Unit) {
 @Composable
 private fun FavoritesTab(
     favorites: List<Favorite>,
+    displayNames: Map<String, String>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateToMatch: (String) -> Unit,
     listState: LazyListState,
     canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
     onRemoveFavorite: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No favorites yet", style = MaterialTheme.typography.bodyLarge)
-        }
+        EmptyTabMessage(title = "No favorites yet")
         return
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
             FavoriteItem(
                 favorite = favorite,
+                displayName = displayNames[favorite.modelKey] ?: favorite.modelKey,
                 onClick = {
                     when (favorite.modelType) {
                         ModelType.TEAM -> onNavigateToTeam(favorite.modelKey)
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
+                        ModelType.MATCH -> onNavigateToMatch(favorite.modelKey)
                     }
                 },
                 canPinShortcuts = canPinShortcuts,
@@ -338,8 +347,28 @@ private fun FavoritesTab(
 }
 
 @Composable
+private fun EmptyTabMessage(title: String) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(horizontal = 32.dp),
+        ) {
+            Text(title, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = "Tap the star on any team or event to add it here.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
 private fun FavoriteItem(
     favorite: Favorite,
+    displayName: String,
     onClick: () -> Unit,
     canPinShortcuts: Boolean,
     onAddShortcut: () -> Unit,
@@ -366,7 +395,7 @@ private fun FavoriteItem(
             modifier = Modifier.weight(1f),
         ) {
             Text(
-                text = favorite.modelKey,
+                text = displayName,
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
@@ -422,25 +451,27 @@ private fun FavoriteItem(
 @Composable
 private fun NotificationsTab(
     subscriptions: List<Subscription>,
+    displayNames: Map<String, String>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    onNavigateToMatch: (String) -> Unit,
     listState: LazyListState,
     onRemoveSubscription: (Subscription) -> Unit,
 ) {
     if (subscriptions.isEmpty()) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No notifications yet", style = MaterialTheme.typography.bodyLarge)
-        }
+        EmptyTabMessage(title = "No notifications yet")
         return
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
         items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
             SubscriptionItem(
                 subscription = subscription,
+                displayName = displayNames[subscription.modelKey] ?: subscription.modelKey,
                 onClick = {
                     when (subscription.modelType) {
                         ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
                         ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
+                        ModelType.MATCH -> onNavigateToMatch(subscription.modelKey)
                     }
                 },
                 onRemove = { onRemoveSubscription(subscription) },
@@ -452,6 +483,7 @@ private fun NotificationsTab(
 @Composable
 private fun SubscriptionItem(
     subscription: Subscription,
+    displayName: String,
     onClick: () -> Unit,
     onRemove: () -> Unit,
 ) {
@@ -475,12 +507,20 @@ private fun SubscriptionItem(
         Column(
             modifier = Modifier.weight(1f),
         ) {
+            val notificationNames =
+                subscription.notifications.joinToString(", ") { serverKey ->
+                    NotificationType
+                        .fromServerKey(serverKey)
+                        ?.displayName
+                        ?.takeIf { it.isNotBlank() }
+                        ?: serverKey
+                }
             Text(
-                text = subscription.modelKey,
+                text = displayName,
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = "$typeLabel · ${subscription.notifications.joinToString(", ")}",
+                text = "$typeLabel · $notificationNames",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
