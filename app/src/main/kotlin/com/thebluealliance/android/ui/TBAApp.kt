@@ -7,7 +7,6 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,15 +56,15 @@ fun TBAApp(
         }
 
     val activity = LocalActivity.current as? ComponentActivity
-    DisposableEffect(darkTheme) {
+    LaunchedEffect(darkTheme) {
         // Keep system bars in sync with the in-app theme override, not just the system
         // night mode; the status bar stays dark-style because the top bar is always TBABlue.
+        // enableEdgeToEdge is a one-shot call with no teardown, so there's nothing to dispose.
         activity?.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle =
                 SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme },
         )
-        onDispose {}
     }
 
     TBATheme(darkTheme = darkTheme) {
