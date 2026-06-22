@@ -143,6 +143,7 @@ class TeamDetailViewModel
                         myTBARepository.addFavorite(teamKey, ModelType.TEAM)
                     }
                 } catch (_: Exception) {
+                    _userMessage.emit("Couldn't update favorite")
                 }
             }
         }

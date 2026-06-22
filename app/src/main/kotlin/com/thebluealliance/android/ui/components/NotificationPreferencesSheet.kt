@@ -1,5 +1,10 @@
 package com.thebluealliance.android.ui.components
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +22,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.thebluealliance.android.domain.model.NotificationType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +44,9 @@ fun NotificationPreferencesSheet(
             mutableStateListOf<String>().apply { addAll(currentNotifications) }
         }
     val favoriteState = remember { androidx.compose.runtime.mutableStateOf(isFavorite) }
+    val context = LocalContext.current
+    val permissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -97,7 +107,21 @@ fun NotificationPreferencesSheet(
             }
 
             TextButton(
-                onClick = { onSave(favoriteState.value, selectedNotifications.toList()) },
+                onClick = {
+                    // Ask for POST_NOTIFICATIONS at the moment the user enables
+                    // notification-bearing preferences — the sign-in prompt is the only
+                    // other ask, and pushes are silently dropped without the grant.
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        selectedNotifications.isNotEmpty() &&
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS,
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                    onSave(favoriteState.value, selectedNotifications.toList())
+                },
                 modifier =
                     Modifier
                         .fillMaxWidth()

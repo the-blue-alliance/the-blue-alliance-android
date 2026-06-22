@@ -36,7 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -70,6 +69,7 @@ import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
@@ -280,7 +280,8 @@ fun TeamDetailScreen(
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
                     TABS.forEachIndexed { index, title ->
-                        Tab(
+                        TBATab(
+                            label = title,
                             selected = pagerState.currentPage == index,
                             onClick = {
                                 coroutineScope.launch {
@@ -288,19 +289,6 @@ fun TeamDetailScreen(
                                         index,
                                     )
                                 }
-                            },
-                            text = {
-                                Text(
-                                    text = title,
-                                    color =
-                                        if (pagerState.currentPage ==
-                                            index
-                                        ) {
-                                            Color.White
-                                        } else {
-                                            Color.White.copy(alpha = 0.7f)
-                                        },
-                                )
                             },
                         )
                     }

@@ -34,6 +34,53 @@ scripts/emu launch <package/activity>            # force-stop and start activity
 
 Use `find` before `tap` to verify unique matching; use `list` to explore the UI hierarchy.
 
+## PR Screenshots (before/after in PR descriptions)
+
+This is the standard way to put before/after screenshots in a PR — WITHOUT committing
+image files. Images live on an orphan `screenshot-assets` branch (its own history, never
+merged) and serve from `raw.githubusercontent.com`, so they render inline in the PR body.
+Release assets do NOT work here — the org has immutable releases enabled.
+
+```bash
+# Uploads images, then rewrites the PR body's screenshot block in place.
+scripts/pr-screenshots.sh --pr <N> \
+  --row "Label" before.png after.png \   # a before/after table row (repeatable)
+  --shot "Label" single.png              # a single image (repeatable)
+```
+
+Omit `--pr` to just print the markdown. Re-runs cleanly replace the
+`<!-- screenshots:start/end -->` block. Works on fork PRs too (run as a maintainer).
+The script never touches your working tree, index, or current branch (pure git plumbing
+into the asset branch). Each filename is content-hashed so GitHub's image proxy can't
+serve a stale cached copy.
+
+**Getting real data for the shots.** The local backend has no competition data, so point
+the *debug* build at prod with a personal read key (thebluealliance.com/account) in
+`local.properties`, then rebuild:
+```
+tba.url.debug=https://www.thebluealliance.com/
+tba.api.key.debug=<your-read-key>
+```
+Drive navigation with deep links — more reliable than tapping, and in-app search only
+matches teams/events you've already browsed:
+```bash
+adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity \
+  -a android.intent.action.VIEW -d "https://www.thebluealliance.com/event/2024micmp4"
+```
+
+**Flushing the asset branch when it gets too full.** Assets accumulate on the branch
+forever. To reset it (the script recreates it on the next run):
+```bash
+git push origin --delete screenshot-assets
+```
+This breaks image links in any *already-merged/closed* PRs that referenced old assets, so
+only flush when those are done. Open PRs you still care about should be re-screenshotted
+after a flush.
+
+**Heads-up:** the Docker backend + a Gradle build + the emulator running together can OOM
+the machine (containers exit 137). Build with Docker stopped, then start it (or hit prod)
+only when capturing.
+
 ## Android Documentation
 
 When researching Android APIs, libraries, or best practices, use `android docs search "<query>"` and `android docs fetch "<url>"` instead of web search. This is an offline curated knowledge base that has up-to-date, authoritative Android documentation.
