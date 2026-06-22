@@ -69,7 +69,7 @@ private fun String.toAllianceStatusLabel(): String =
 private fun String.toAllianceCompLevelLabel(): String =
     when (lowercase()) {
         CompLevel.QUAL.code -> "Qualifications"
-        CompLevel.OCTOFINAL.code -> "Eighths"
+        CompLevel.OCTOFINAL.code -> "Octofinals"
         CompLevel.QUARTERFINAL.code -> "Quarterfinals"
         CompLevel.SEMIFINAL.code -> "Semifinals"
         CompLevel.FINAL.code -> "Finals"

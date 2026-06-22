@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
+
 /**
  * Base for screens that pull-to-refresh. Owns the shared [isRefreshing] flag and runs
  * refresh tasks concurrently, logging (instead of swallowing) any failure.
@@ -17,6 +19,45 @@ import kotlinx.coroutines.launch
 abstract class RefreshableViewModel : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    /**
+     * Like [refreshing], but records completion into [outcome] — an empty cache only
+     * means Empty/Error once a refresh has actually finished.
+     */
+    protected fun refreshingTracked(
+        outcome: MutableStateFlow<RefreshOutcome>,
+        vararg tasks: suspend () -> Unit,
+    ) {
+        val remaining =
+            java.util.concurrent.atomic
+                .AtomicInteger(tasks.size)
+        val anyFailed =
+            java.util.concurrent.atomic
+                .AtomicBoolean(false)
+        val tracked =
+            tasks.map { task ->
+                suspend {
+                    try {
+                        task()
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: Exception) {
+                        anyFailed.set(true)
+                        throw e
+                    } finally {
+                        if (remaining.decrementAndGet() == 0) {
+                            outcome.value =
+                                if (anyFailed.get()) {
+                                    RefreshOutcome.FAILED
+                                } else {
+                                    RefreshOutcome.SUCCEEDED
+                                }
+                        }
+                    }
+                }
+            }
+        refreshing(*tracked.toTypedArray())
+    }
 
     protected fun refreshing(vararg tasks: suspend () -> Unit) {
         viewModelScope.launch {

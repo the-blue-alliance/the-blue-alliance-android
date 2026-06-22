@@ -25,6 +25,9 @@ class MatchRepository
 
         fun observeMatch(key: String): Flow<Match?> = matchDao.observe(key).map { it?.toDomain() }
 
+        fun observeMatches(keys: List<String>): Flow<List<Match>> =
+            matchDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
+
         suspend fun refreshMatch(matchKey: String) {
             try {
                 val dto = api.getMatch(matchKey)
