@@ -2,11 +2,9 @@ package com.thebluealliance.android.ui.events.detail
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
@@ -23,15 +21,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -42,9 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,6 +49,8 @@ import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.TBATab
+import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
@@ -66,7 +60,6 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventRankingsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
-import com.thebluealliance.android.ui.theme.TBABlue
 import kotlinx.coroutines.launch
 
 enum class EventDetailTab(
@@ -259,24 +252,11 @@ fun EventDetailScreen(
                     },
                 )
 
-                PrimaryScrollableTabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    edgePadding = 0.dp,
-                    containerColor = TBABlue,
-                    contentColor = Color.White,
-                    divider = {
-                        HorizontalDivider(color = Color.White.copy(alpha = 0.12f))
-                    },
-                    indicator = {
-                        SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(pagerState.currentPage),
-                            height = 3.dp,
-                            color = Color.White,
-                        )
-                    },
-                ) {
+                TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                    val teamCount = uiState.teams?.size
                     EventDetailTab.entries.forEach { tab ->
-                        Tab(
+                        TBATab(
+                            label = tab.readableName(uiState.event),
                             selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
@@ -285,18 +265,9 @@ fun EventDetailScreen(
                                     )
                                 }
                             },
-                            text = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                ) {
-                                    Text(
-                                        text = tab.readableName(uiState.event),
-                                        color = Color.White,
-                                    )
-
-                                    // Show number of teams as a badge
-                                    if (tab == EventDetailTab.TEAMS && uiState.teams != null) {
+                            trailing =
+                                if (tab == EventDetailTab.TEAMS && teamCount != null) {
+                                    {
                                         Surface(
                                             shape = MaterialTheme.shapes.small,
                                             color = MaterialTheme.colorScheme.surfaceVariant,
@@ -304,7 +275,7 @@ fun EventDetailScreen(
                                                 MaterialTheme.colorScheme.onSurfaceVariant,
                                         ) {
                                             Text(
-                                                text = "${uiState.teams?.size}",
+                                                text = "$teamCount",
                                                 style = MaterialTheme.typography.labelMedium,
                                                 modifier =
                                                     Modifier.padding(
@@ -314,8 +285,9 @@ fun EventDetailScreen(
                                             )
                                         }
                                     }
-                                }
-                            },
+                                } else {
+                                    null
+                                },
                         )
                     }
                 }

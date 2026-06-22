@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.domain.model.District
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,8 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -32,15 +33,22 @@ class DistrictsViewModel
         private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
+        private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
+
         val uiState: StateFlow<UiState<List<District>>> =
             _selectedYear
                 .flatMapLatest { year ->
-                    districtRepository.observeDistrictsForYear(year).map { districts ->
+                    combine(
+                        districtRepository.observeDistrictsForYear(year),
+                        refreshOutcome,
+                    ) { districts, outcome ->
                         val state: UiState<List<District>> =
-                            if (districts.isEmpty()) {
-                                UiState.Loading
-                            } else {
-                                UiState.Success(districts)
+                            when {
+                                districts.isNotEmpty() -> UiState.Success(districts)
+                                outcome == RefreshOutcome.PENDING -> UiState.Loading
+                                outcome == RefreshOutcome.FAILED ->
+                                    UiState.Error("Couldn't load districts")
+                                else -> UiState.Empty
                             }
                         state
                     }
@@ -70,11 +78,15 @@ class DistrictsViewModel
         }
 
         fun selectYear(year: Int) {
+            refreshOutcome.value = RefreshOutcome.PENDING
             _selectedYear.value = year
             refreshDistricts()
         }
 
         fun refreshDistricts() {
-            refreshing({ districtRepository.refreshDistrictsForYear(_selectedYear.value) })
+            refreshingTracked(
+                refreshOutcome,
+                { districtRepository.refreshDistrictsForYear(_selectedYear.value) },
+            )
         }
     }

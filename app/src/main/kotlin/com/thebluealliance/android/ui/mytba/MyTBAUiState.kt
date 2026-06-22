@@ -10,5 +10,6 @@ data class MyTBAUiState(
     val userPhotoUrl: String? = null,
     val favorites: List<Favorite> = emptyList(),
     val subscriptions: List<Subscription> = emptyList(),
+    val displayNames: Map<String, String> = emptyMap(),
     val canPinShortcuts: Boolean = false,
 )
