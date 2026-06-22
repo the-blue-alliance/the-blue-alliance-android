@@ -147,7 +147,7 @@ private fun Match.getCompLevelShortLabel(): String =
 private fun Match.getCompLevelFullLabel(): String =
     when (compLevel) {
         CompLevel.QUAL -> "Qual $matchNumber"
-        CompLevel.OCTOFINAL -> "Eights $setNumber-$matchNumber"
+        CompLevel.OCTOFINAL -> "Octos $setNumber-$matchNumber"
         CompLevel.QUARTERFINAL -> "Quarters $setNumber-$matchNumber"
         CompLevel.SEMIFINAL -> "Semis $setNumber-$matchNumber"
         CompLevel.FINAL -> "Final $setNumber-$matchNumber"
