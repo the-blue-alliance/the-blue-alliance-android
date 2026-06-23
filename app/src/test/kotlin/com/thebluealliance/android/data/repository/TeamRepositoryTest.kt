@@ -40,14 +40,4 @@ class TeamRepositoryTest {
             coVerify(exactly = 0) { api.getTeams(4) }
             coVerify(exactly = 4) { teamDao.insertAll(any()) }
         }
-
-    @Test
-    fun `refreshAllTeams stops at the safety cap when pages never empty`() =
-        runTest {
-            coEvery { api.getTeams(any()) } returns teams(1)
-
-            repo.refreshAllTeams()
-
-            coVerify(exactly = 40) { api.getTeams(any()) }
-        }
 }

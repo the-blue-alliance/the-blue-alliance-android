@@ -59,7 +59,7 @@ class TeamRepository
          */
         suspend fun refreshAllTeams() {
             var page = 0
-            while (page < MAX_TEAM_PAGES && refreshTeamsPage(page) > 0) {
+            while (refreshTeamsPage(page) > 0) {
                 page++
             }
         }
@@ -111,10 +111,5 @@ class TeamRepository
                 teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
             } catch (_: Exception) {
             }
-        }
-
-        private companion object {
-            // 40 pages x 500 team numbers covers keys up to frc19999.
-            const val MAX_TEAM_PAGES = 40
         }
     }
