@@ -13,8 +13,16 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Subscription
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.net.HttpURLConnection
 import javax.inject.Inject
 import javax.inject.Singleton
+
+private val HTTP_SUCCESS = 200..299
+
+// The setPreferences endpoint reports success as code 0 with per-model results
+// nested in the message JSON; the list endpoints use HTTP-style body codes
+// (see backend src/backend/api/handlers/client_api.py).
+private const val SET_PREFERENCES_SUCCESS = 0
 
 @Singleton
 class MyTBARepository
@@ -68,9 +76,7 @@ class MyTBARepository
                 "MyTBARepository",
                 "refreshFavorites: code=${response.code} message=${response.message} favorites=${response.favorites.size}",
             )
-            if (response.code == 401) {
-                throw MyTBAServerException(response.code, response.message)
-            }
+            ensureListSuccess(response.code, response.message)
             db.withTransaction {
                 favoriteDao.deleteAll()
                 favoriteDao.insertAll(
@@ -83,9 +89,7 @@ class MyTBARepository
 
         suspend fun refreshSubscriptions() {
             val response = clientApi.listSubscriptions()
-            if (response.code == 401) {
-                throw MyTBAServerException(response.code, response.message)
-            }
+            ensureListSuccess(response.code, response.message)
             db.withTransaction {
                 subscriptionDao.deleteAll()
                 subscriptionDao.insertAll(
@@ -117,13 +121,14 @@ class MyTBARepository
                 "MyTBARepository",
                 "addFavorite: code=${response.code} message=${response.message}",
             )
-            if (response.code == 401) {
+            if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 try {
                     refreshFavorites()
                 } catch (_: Exception) {
                 }
                 throw MyTBAServerException(response.code, response.message)
             }
+            ensureUpdateSuccess(response.code, response.message)
             favoriteDao.insertAll(
                 listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)),
             )
@@ -142,13 +147,14 @@ class MyTBARepository
                         favorite = false,
                     ),
                 )
-            if (response.code == 401) {
+            if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 try {
                     refreshFavorites()
                 } catch (_: Exception) {
                 }
                 throw MyTBAServerException(response.code, response.message)
             }
+            ensureUpdateSuccess(response.code, response.message)
             favoriteDao.delete(modelKey, modelType)
         }
 
@@ -172,9 +178,7 @@ class MyTBARepository
                 "MyTBARepository",
                 "updatePreferences: code=${response.code} message=${response.message}",
             )
-            if (response.code == 401) {
-                throw MyTBAServerException(response.code, response.message)
-            }
+            ensureUpdateSuccess(response.code, response.message)
             // Refresh both to sync local state with server
             try {
                 refreshFavorites()
@@ -189,6 +193,24 @@ class MyTBARepository
         suspend fun clearLocal() {
             favoriteDao.deleteAll()
             subscriptionDao.deleteAll()
+        }
+
+        private fun ensureListSuccess(
+            code: Int,
+            message: String,
+        ) {
+            if (code !in HTTP_SUCCESS) {
+                throw MyTBAServerException(code, message)
+            }
+        }
+
+        private fun ensureUpdateSuccess(
+            code: Int,
+            message: String,
+        ) {
+            if (code != SET_PREFERENCES_SUCCESS && code !in HTTP_SUCCESS) {
+                throw MyTBAServerException(code, message)
+            }
         }
     }
 
