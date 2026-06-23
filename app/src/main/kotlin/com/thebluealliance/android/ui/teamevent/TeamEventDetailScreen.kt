@@ -57,24 +57,24 @@ import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
+import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
-import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Summary", "Matches", "Media", "Stats", "Awards")
-
-object TeamEventDetailTabs {
-    const val SUMMARY = 0
-    const val MATCHES = 1
-    const val MEDIA = 2
-    const val STATS = 3
-    const val AWARDS = 4
+enum class TeamEventDetailTab(
+    val readableName: String,
+) {
+    SUMMARY("Summary"),
+    MATCHES("Matches"),
+    MEDIA("Media"),
+    STATS("Stats"),
+    AWARDS("Awards"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,7 +90,7 @@ fun TeamEventDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(pageCount = { TeamEventDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
     val team = uiState.team
@@ -158,14 +158,14 @@ fun TeamEventDetailScreen(
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TABS.forEachIndexed { index, title ->
+                    TeamEventDetailTab.entries.forEach { tab ->
                         TBATab(
-                            label = title,
-                            selected = pagerState.currentPage == index,
+                            label = tab.readableName,
+                            selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(
-                                        index,
+                                        tab.ordinal,
                                     )
                                 }
                             },
@@ -186,12 +186,12 @@ fun TeamEventDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-                onRefresh = { viewModel.refreshTab(page) },
+                onRefresh = { viewModel.refreshTab(TeamEventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {
                 val evt = uiState.event
-                when (page) {
-                    TeamEventDetailTabs.SUMMARY ->
+                when (TeamEventDetailTab.entries[page]) {
+                    TeamEventDetailTab.SUMMARY ->
                         SummaryTab(
                             teamKey = viewModel.teamKey,
                             eventKey = viewModel.eventKey,
@@ -209,7 +209,7 @@ fun TeamEventDetailScreen(
                             onNavigateToPitMap = onNavigateToPitMap,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.MATCHES -> {
+                    TeamEventDetailTab.MATCHES -> {
                         val tm = uiState.team
                         val hasBoth = evt != null && tm != null
                         val headerCount =
@@ -252,12 +252,12 @@ fun TeamEventDetailScreen(
                             innerPadding = bottomPadding,
                         )
                     }
-                    TeamEventDetailTabs.MEDIA ->
+                    TeamEventDetailTab.MEDIA ->
                         MediaTab(
                             media = uiState.media,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.STATS ->
+                    TeamEventDetailTab.STATS ->
                         StatsTab(
                             teamKey = viewModel.teamKey,
                             event = evt,
@@ -265,7 +265,7 @@ fun TeamEventDetailScreen(
                             advancementPoints = uiState.advancementPoints,
                             innerPadding = bottomPadding,
                         )
-                    TeamEventDetailTabs.AWARDS -> {
+                    TeamEventDetailTab.AWARDS -> {
                         val tm = uiState.team
                         AwardsTab(
                             awards = uiState.awards,
@@ -335,19 +335,7 @@ private fun SummaryTab(
             }
         if (ranking != null || teamAlliance != null || pitLocation != null) {
             item(key = "summary_info_header") {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(TBAIndigo400)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(
-                        text = "Info",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                    )
-                }
+                SectionHeader(label = "Info")
             }
         }
 
@@ -433,19 +421,7 @@ private fun SummaryTab(
 
         if (cmpAdvancement != null) {
             item(key = "summary_cmp_header") {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(TBAIndigo400)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(
-                        text = "Championship Qualification",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White,
-                    )
-                }
+                SectionHeader(label = "Championship Qualification")
             }
             item(key = "summary_cmp_detail") {
                 SummarySection(label = "Status") {
@@ -469,19 +445,7 @@ private fun SummaryTab(
 
             if (lastPlayed != null || nextUnplayed != null) {
                 item(key = "summary_match_header") {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(TBAIndigo400)
-                                .padding(horizontal = 16.dp, vertical = 8.dp),
-                    ) {
-                        Text(
-                            text = "Recent Matches",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White,
-                        )
-                    }
+                    SectionHeader(label = "Recent Matches")
                 }
             }
 

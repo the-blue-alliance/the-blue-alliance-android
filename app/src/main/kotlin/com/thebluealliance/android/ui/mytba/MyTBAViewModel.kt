@@ -151,12 +151,13 @@ class MyTBAViewModel
             }
         }
 
-        fun refreshTab(tab: Int) {
+        fun refreshTab(tab: MyTBATab) {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
                 when (tab) {
-                    0 -> refreshing({ myTBARepository.refreshFavorites() })
-                    1 -> refreshing({ myTBARepository.refreshSubscriptions() })
+                    MyTBATab.FAVORITES -> refreshing({ myTBARepository.refreshFavorites() })
+                    MyTBATab.NOTIFICATIONS ->
+                        refreshing({ myTBARepository.refreshSubscriptions() })
                 }
             }
         }

@@ -54,10 +54,10 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.theme.TBABlue
-import com.thebluealliance.android.ui.theme.TBAIndigo400
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -277,7 +277,7 @@ private fun EventsList(
                 // Top-level Favorites section
                 if (favoriteEvents.isNotEmpty()) {
                     item(key = "favorites_header") {
-                        SimpleSectionHeader(label = "Favorites")
+                        SectionHeader(label = "Favorites")
                     }
                     items(favoriteEvents, key = { "fav_top_${it.key}" }) { event ->
                         EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
@@ -287,7 +287,7 @@ private fun EventsList(
                 sections.forEach { section ->
                     val headerKey = "header_${section.label}"
                     item(key = headerKey) {
-                        SimpleSectionHeader(label = section.label)
+                        SectionHeader(label = section.label)
                     }
                     // Per-week favorites sub-section
                     val sectionFavorites = section.events.filter { it.key in favoriteEventKeys }
@@ -448,23 +448,6 @@ private fun WeekFilterChips(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun SimpleSectionHeader(label: String) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(TBAIndigo400)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.White,
-        )
     }
 }
 

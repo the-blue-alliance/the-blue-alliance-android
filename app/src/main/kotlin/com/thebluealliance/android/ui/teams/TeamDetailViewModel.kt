@@ -187,19 +187,18 @@ class TeamDetailViewModel
             )
         }
 
-        fun refreshTab(tab: Int) {
+        fun refreshTab(tab: TeamDetailTab) {
             val year = _selectedYear.value
             when (tab) {
-                // Info
-                0 ->
+                TeamDetailTab.INFO ->
                     refreshing(
                         { teamRepository.refreshTeam(teamKey) },
                         { teamRepository.refreshTeamMedia(teamKey, year) },
                     )
-                // Events
-                1 -> refreshing({ eventRepository.refreshTeamEvents(teamKey, year) })
-                // Media
-                2 -> refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                TeamDetailTab.EVENTS ->
+                    refreshing({ eventRepository.refreshTeamEvents(teamKey, year) })
+                TeamDetailTab.MEDIA ->
+                    refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
             }
         }
 

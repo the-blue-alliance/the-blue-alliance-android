@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,11 +70,11 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Favorites", "Notifications")
-
-object MyTBATabs {
-    const val FAVORITES = 0
-    const val NOTIFICATIONS = 1
+enum class MyTBATab(
+    val readableName: String,
+) {
+    FAVORITES("Favorites"),
+    NOTIFICATIONS("Notifications"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,20 +92,20 @@ fun MyTBAScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(pageCount = { MyTBATab.entries.size })
     val coroutineScope = rememberCoroutineScope()
     val favoritesListState = rememberLazyListState()
     val notificationsListState = rememberLazyListState()
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
-            when (pagerState.currentPage) {
-                MyTBATabs.FAVORITES -> favoritesListState.animateScrollToItem(0)
-                MyTBATabs.NOTIFICATIONS -> notificationsListState.animateScrollToItem(0)
+            when (MyTBATab.entries[pagerState.currentPage]) {
+                MyTBATab.FAVORITES -> favoritesListState.animateScrollToItem(0)
+                MyTBATab.NOTIFICATIONS -> notificationsListState.animateScrollToItem(0)
             }
         }
     }
 
-    var showSignOutDialog by remember { mutableStateOf(false) }
+    var showSignOutDialog by rememberSaveable { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
 
     if (showSignOutDialog) {
@@ -227,14 +228,14 @@ fun MyTBAScreen(
             }
 
             TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                TABS.forEachIndexed { index, title ->
+                MyTBATab.entries.forEach { tab ->
                     TBATab(
-                        label = title,
-                        selected = pagerState.currentPage == index,
+                        label = tab.readableName,
+                        selected = pagerState.currentPage == tab.ordinal,
                         onClick = {
                             coroutineScope.launch {
                                 pagerState.animateScrollToPage(
-                                    index,
+                                    tab.ordinal,
                                 )
                             }
                         },
@@ -248,11 +249,11 @@ fun MyTBAScreen(
             ) { page ->
                 PullToRefreshBox(
                     isRefreshing = isRefreshing,
-                    onRefresh = { viewModel.refreshTab(page) },
+                    onRefresh = { viewModel.refreshTab(MyTBATab.entries[page]) },
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    when (page) {
-                        MyTBATabs.FAVORITES ->
+                    when (MyTBATab.entries[page]) {
+                        MyTBATab.FAVORITES ->
                             FavoritesTab(
                                 favorites = uiState.favorites,
                                 displayNames = uiState.displayNames,
@@ -265,7 +266,7 @@ fun MyTBAScreen(
                                 onRemoveFavorite = viewModel::removeFavorite,
                             )
 
-                        MyTBATabs.NOTIFICATIONS ->
+                        MyTBATab.NOTIFICATIONS ->
                             NotificationsTab(
                                 subscriptions = uiState.subscriptions,
                                 displayNames = uiState.displayNames,

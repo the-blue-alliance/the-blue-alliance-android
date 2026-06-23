@@ -53,20 +53,28 @@ class TeamRepository
             return dtos.size
         }
 
+        /**
+         * Pages through the full teams list until an empty page. The API pages by 500
+         * team numbers, so a fixed page range goes stale as rookie numbers grow.
+         */
+        suspend fun refreshAllTeams() {
+            var page = 0
+            while (refreshTeamsPage(page) > 0) {
+                page++
+            }
+        }
+
         fun observeEventTeamKeys(eventKey: String): Flow<List<String>> =
             eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
 
         suspend fun refreshEventTeams(eventKey: String) {
-            try {
-                val dtos = api.getEventTeams(eventKey)
-                db.withTransaction {
-                    teamDao.insertAll(dtos.map { it.toEntity() })
-                    eventTeamDao.deleteByEvent(eventKey)
-                    eventTeamDao.insertAll(
-                        dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) },
-                    )
-                }
-            } catch (_: Exception) {
+            val dtos = api.getEventTeams(eventKey)
+            db.withTransaction {
+                teamDao.insertAll(dtos.map { it.toEntity() })
+                eventTeamDao.deleteByEvent(eventKey)
+                eventTeamDao.insertAll(
+                    dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) },
+                )
             }
         }
 
@@ -95,10 +103,7 @@ class TeamRepository
             teamKey: String,
             eventKey: String,
         ) {
-            try {
-                val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
-                teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
-            } catch (_: Exception) {
-            }
+            val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
+            teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
         }
     }

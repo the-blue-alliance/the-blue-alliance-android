@@ -64,17 +64,11 @@ class DataSyncManager
             }
 
             Log.d(TAG, "Syncing teams ($teamCount below threshold)")
-            var page = 0
-            while (true) {
-                try {
-                    val count = teamRepository.refreshTeamsPage(page)
-                    Log.d(TAG, "Synced teams page $page ($count teams)")
-                    if (count == 0) break
-                    page++
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to sync teams page $page", e)
-                    break
-                }
+            try {
+                teamRepository.refreshAllTeams()
+                Log.d(TAG, "Teams sync complete")
+            } catch (e: Exception) {
+                Log.w(TAG, "Failed to sync teams", e)
             }
         }
     }

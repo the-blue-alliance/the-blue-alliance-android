@@ -55,11 +55,11 @@ import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-private val TABS = listOf("Events", "Rankings")
-
-object DistrictDetailTabs {
-    const val EVENTS = 0
-    const val RANKINGS = 1
+enum class DistrictDetailTab(
+    val readableName: String,
+) {
+    EVENTS("Events"),
+    RANKINGS("Rankings"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +75,7 @@ fun DistrictDetailScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val availableYears by viewModel.availableYears.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { TABS.size })
+    val pagerState = rememberPagerState(pageCount = { DistrictDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
@@ -112,14 +112,14 @@ fun DistrictDetailScreen(
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TABS.forEachIndexed { index, title ->
+                    DistrictDetailTab.entries.forEach { tab ->
                         TBATab(
-                            label = title,
-                            selected = pagerState.currentPage == index,
+                            label = tab.readableName,
+                            selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(
-                                        index,
+                                        tab.ordinal,
                                     )
                                 }
                             },
@@ -141,17 +141,17 @@ fun DistrictDetailScreen(
             PullToRefreshBox(
                 isRefreshing =
                     isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-                onRefresh = { viewModel.refreshTab(page) },
+                onRefresh = { viewModel.refreshTab(DistrictDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {
-                when (page) {
-                    DistrictDetailTabs.EVENTS ->
+                when (DistrictDetailTab.entries[page]) {
+                    DistrictDetailTab.EVENTS ->
                         EventsTab(
                             sections = uiState.eventSections,
                             onNavigateToEvent = onNavigateToEvent,
                             innerPadding = bottomPadding,
                         )
-                    DistrictDetailTabs.RANKINGS ->
+                    DistrictDetailTab.RANKINGS ->
                         RankingsTab(
                             rankings = uiState.rankings,
                             onNavigateToTeam = onNavigateToTeam,
@@ -295,54 +295,54 @@ private fun RankingsTab(
                     Modifier
                         .fillMaxWidth()
                         .background(TBAIndigo400)
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "Rank",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
                 Text(
                     text = "Team",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n1",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n2",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "DCMP",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Rookie\nBonus",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Total\nPoints",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),

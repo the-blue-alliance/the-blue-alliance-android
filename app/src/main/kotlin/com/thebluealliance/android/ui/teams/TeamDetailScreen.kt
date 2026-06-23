@@ -45,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,12 +76,12 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import kotlinx.coroutines.launch
 
-private val TABS = listOf("Info", "Events", "Media")
-
-object TeamDetailTabs {
-    const val INFO = 0
-    const val EVENTS = 1
-    const val MEDIA = 2
+enum class TeamDetailTab(
+    val readableName: String,
+) {
+    INFO("Info"),
+    EVENTS("Events"),
+    MEDIA("Media"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,11 +101,12 @@ fun TeamDetailScreen(
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(initialPage = initialTab, pageCount = { TABS.size })
+    val pagerState =
+        rememberPagerState(initialPage = initialTab, pageCount = { TeamDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
-    var showSignInDialog by remember { mutableStateOf(false) }
-    var showNotificationSheet by remember { mutableStateOf(false) }
+    var showSignInDialog by rememberSaveable { mutableStateOf(false) }
+    var showNotificationSheet by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
@@ -279,14 +281,14 @@ fun TeamDetailScreen(
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TABS.forEachIndexed { index, title ->
+                    TeamDetailTab.entries.forEach { tab ->
                         TBATab(
-                            label = title,
-                            selected = pagerState.currentPage == index,
+                            label = tab.readableName,
+                            selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
                                     pagerState.animateScrollToPage(
-                                        index,
+                                        tab.ordinal,
                                     )
                                 }
                             },
@@ -306,17 +308,17 @@ fun TeamDetailScreen(
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
-                onRefresh = { viewModel.refreshTab(page) },
+                onRefresh = { viewModel.refreshTab(TeamDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {
-                when (page) {
-                    TeamDetailTabs.INFO ->
+                when (TeamDetailTab.entries[page]) {
+                    TeamDetailTab.INFO ->
                         InfoTab(
                             team = uiState.team,
                             media = uiState.media,
                             innerPadding = bottomPadding,
                         )
-                    TeamDetailTabs.EVENTS ->
+                    TeamDetailTab.EVENTS ->
                         EventsTab(
                             events = uiState.events,
                             selectedYear = selectedYear,
@@ -330,7 +332,7 @@ fun TeamDetailScreen(
                             },
                             innerPadding = bottomPadding,
                         )
-                    TeamDetailTabs.MEDIA ->
+                    TeamDetailTab.MEDIA ->
                         MediaTab(
                             media = uiState.media,
                             innerPadding = bottomPadding,

@@ -164,10 +164,10 @@ class TeamEventDetailViewModel
             )
         }
 
-        fun refreshTab(tab: Int) {
+        fun refreshTab(tab: TeamEventDetailTab) {
             when (tab) {
-                // Summary — needs most data for the overview
-                0 ->
+                // The summary overview needs most of the event data
+                TeamEventDetailTab.SUMMARY ->
                     refreshing(
                         { teamRepository.refreshTeam(teamKey) },
                         {
@@ -182,14 +182,14 @@ class TeamEventDetailViewModel
                         { eventRepository.refreshEventRegionalPoints(eventKey) },
                         { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
                     )
-                // Matches
-                1 -> refreshing({ matchRepository.refreshEventMatches(eventKey) })
-                // Media
-                2 -> refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
-                // Stats
-                3 -> refreshing({ eventRepository.refreshEventOPRs(eventKey) })
-                // Awards
-                4 -> refreshing({ eventRepository.refreshEventAwards(eventKey) })
+                TeamEventDetailTab.MATCHES ->
+                    refreshing({ matchRepository.refreshEventMatches(eventKey) })
+                TeamEventDetailTab.MEDIA ->
+                    refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                TeamEventDetailTab.STATS ->
+                    refreshing({ eventRepository.refreshEventOPRs(eventKey) })
+                TeamEventDetailTab.AWARDS ->
+                    refreshing({ eventRepository.refreshEventAwards(eventKey) })
             }
         }
 
