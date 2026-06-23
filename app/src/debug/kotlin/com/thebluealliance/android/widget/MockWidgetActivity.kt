@@ -3,6 +3,7 @@ package com.thebluealliance.android.widget
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -14,6 +15,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * Debug-only activity that injects mock data into a widget's DataStore preferences,
@@ -168,7 +172,16 @@ class MockWidgetActivity : ComponentActivity() {
         prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL] = "Q18"
         prefs[TeamTrackingWidgetKeys.NEXT_MATCH_RED_TEAMS] = "177, 3467, 5112"
         prefs[TeamTrackingWidgetKeys.NEXT_MATCH_BLUE_TEAMS] = "1073, 2791, 3958"
-        prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME] = "2:30 PM"
+        // Format the sample time with the same device-clock logic the worker uses, so
+        // the preview honors 12h/24h just like a real widget does (see TeamTrackingWorker).
+        val use24Hour = DateFormat.is24HourFormat(this@MockWidgetActivity)
+        prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME] =
+            LocalTime.of(14, 30).format(
+                DateTimeFormatter.ofPattern(
+                    if (use24Hour) "HH:mm" else "h:mm a",
+                    Locale.getDefault(),
+                ),
+            )
         prefs[TeamTrackingWidgetKeys.NEXT_MATCH_TIME_IS_ESTIMATE] = "true"
 
         // No upcoming events when at an event

@@ -1,6 +1,7 @@
 package com.thebluealliance.android.widget
 
 import android.content.Context
+import android.text.format.DateFormat
 import android.util.Log
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -92,9 +93,6 @@ class TeamTrackingWorker
                 )
             }
 
-            private val timeFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.US)
-            private val timeWithDayFormat = DateTimeFormatter.ofPattern("EEE h:mm a", Locale.US)
-
             internal fun computeRecord(
                 matches: List<Match>,
                 teamKey: String,
@@ -117,6 +115,18 @@ class TeamTrackingWorker
                 return "$wins-$losses-$ties"
             }
         }
+
+        private val use24Hour = DateFormat.is24HourFormat(appContext)
+        private val timeFormat =
+            DateTimeFormatter.ofPattern(
+                if (use24Hour) "HH:mm" else "h:mm a",
+                Locale.getDefault(),
+            )
+        private val timeWithDayFormat =
+            DateTimeFormatter.ofPattern(
+                if (use24Hour) "EEE HH:mm" else "EEE h:mm a",
+                Locale.getDefault(),
+            )
 
         override suspend fun doWork(): Result =
             try {
@@ -227,7 +237,9 @@ class TeamTrackingWorker
                                 LocalDate
                                     .parse(
                                         it,
-                                    ).format(DateTimeFormatter.ofPattern("MMM d", Locale.US))
+                                    ).format(
+                                        DateTimeFormatter.ofPattern("MMM d", Locale.getDefault()),
+                                    )
                             } ?: ""
                         "$name\t$city\t$date"
                     }
