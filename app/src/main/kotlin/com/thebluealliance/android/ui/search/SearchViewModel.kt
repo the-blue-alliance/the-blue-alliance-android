@@ -49,10 +49,16 @@ class SearchViewModel
         val uiState: StateFlow<SearchUiState> =
             combine(
                 query,
+                debouncedQuery,
                 teamsFlow,
                 eventsFlow,
-            ) { query, teams, events ->
-                SearchUiState(query = query, teams = teams, events = events)
+            ) { query, searchedQuery, teams, events ->
+                SearchUiState(
+                    query = query,
+                    searchedQuery = searchedQuery,
+                    teams = teams,
+                    events = events,
+                )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
 
         fun onQueryChanged(newQuery: String) {
