@@ -30,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,6 +79,32 @@ enum class CoprSortColumn {
     VALUE,
 }
 
+private val StatTypeSaver =
+    listSaver<StatType, String>(
+        save = {
+            when (it) {
+                StatType.StandardOPRs -> listOf("StandardOPRs")
+                StatType.QualInsights -> listOf("QualInsights")
+                StatType.PlayoffInsights -> listOf("PlayoffInsights")
+                is StatType.COPR -> listOf("COPR", it.statName)
+            }
+        },
+        restore = {
+            when (it[0]) {
+                "QualInsights" -> StatType.QualInsights
+                "PlayoffInsights" -> StatType.PlayoffInsights
+                "COPR" -> StatType.COPR(it[1])
+                else -> StatType.StandardOPRs
+            }
+        },
+    )
+
+private inline fun <reified T : Enum<T>> enumSaver(): Saver<T, String> =
+    Saver(
+        save = { it.name },
+        restore = { enumValueOf<T>(it) },
+    )
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventInsightsTab(
@@ -100,11 +129,15 @@ fun EventInsightsTab(
     }
 
     val context = LocalContext.current
-    var oprSortColumn by remember { mutableStateOf(OprSortColumn.OPR) }
-    var oprSortAscending by remember { mutableStateOf(false) }
-    var coprSortColumn by remember { mutableStateOf(CoprSortColumn.VALUE) }
-    var coprSortAscending by remember { mutableStateOf(false) }
-    var showStatSelector by remember { mutableStateOf(false) }
+    var oprSortColumn by rememberSaveable(stateSaver = enumSaver<OprSortColumn>()) {
+        mutableStateOf(OprSortColumn.OPR)
+    }
+    var oprSortAscending by rememberSaveable { mutableStateOf(false) }
+    var coprSortColumn by rememberSaveable(stateSaver = enumSaver<CoprSortColumn>()) {
+        mutableStateOf(CoprSortColumn.VALUE)
+    }
+    var coprSortAscending by rememberSaveable { mutableStateOf(false) }
+    var showStatSelector by rememberSaveable { mutableStateOf(false) }
     val defaultStatType =
         when {
             hasOprData -> StatType.StandardOPRs
@@ -113,7 +146,9 @@ fun EventInsightsTab(
             hasCoprData -> StatType.COPR(coprs.coprs.keys.first())
             else -> StatType.StandardOPRs
         }
-    var selectedStatType by remember { mutableStateOf(defaultStatType) }
+    var selectedStatType by rememberSaveable(stateSaver = StatTypeSaver) {
+        mutableStateOf(defaultStatType)
+    }
 
     // Get available COPR stat names
     val coprStatNames =
