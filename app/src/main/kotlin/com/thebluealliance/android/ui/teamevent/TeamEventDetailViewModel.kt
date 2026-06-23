@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.teamevent
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
@@ -44,6 +46,7 @@ class TeamEventDetailViewModel
         private val teamRepository: TeamRepository,
         private val eventRepository: EventRepository,
         private val matchRepository: MatchRepository,
+        private val regionalAdvancementRepository: RegionalAdvancementRepository,
     ) : RefreshableViewModel() {
         val teamKey: String = navKey.teamKey
         val eventKey: String = navKey.eventKey
@@ -145,7 +148,10 @@ class TeamEventDetailViewModel
         fun refreshAll() {
             refreshing(
                 { teamRepository.refreshTeam(teamKey) },
-                { eventRepository.refreshEvent(eventKey) },
+                {
+                    eventRepository.refreshEvent(eventKey)
+                    refreshRegionalCmpAdvancement()
+                },
                 { matchRepository.refreshEventMatches(eventKey) },
                 { eventRepository.refreshEventRankings(eventKey) },
                 { eventRepository.refreshEventAwards(eventKey) },
@@ -153,10 +159,6 @@ class TeamEventDetailViewModel
                 { eventRepository.refreshEventAlliances(eventKey) },
                 { eventRepository.refreshEventDistrictPoints(eventKey) },
                 { eventRepository.refreshEventRegionalPoints(eventKey) },
-                {
-                    regionalCmpAdvancementByTeam.value =
-                        eventRepository.fetchRegionalCmpAdvancementByTeam(year)
-                },
                 { teamRepository.refreshTeamMedia(teamKey, year) },
                 { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
             )
@@ -168,17 +170,16 @@ class TeamEventDetailViewModel
                 TeamEventDetailTab.SUMMARY ->
                     refreshing(
                         { teamRepository.refreshTeam(teamKey) },
-                        { eventRepository.refreshEvent(eventKey) },
+                        {
+                            eventRepository.refreshEvent(eventKey)
+                            refreshRegionalCmpAdvancement(forceRefresh = true)
+                        },
                         { matchRepository.refreshEventMatches(eventKey) },
                         { eventRepository.refreshEventRankings(eventKey) },
                         { eventRepository.refreshEventAlliances(eventKey) },
                         { eventRepository.refreshEventAwards(eventKey) },
                         { eventRepository.refreshEventDistrictPoints(eventKey) },
                         { eventRepository.refreshEventRegionalPoints(eventKey) },
-                        {
-                            regionalCmpAdvancementByTeam.value =
-                                eventRepository.fetchRegionalCmpAdvancementByTeam(year)
-                        },
                         { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
                     )
                 TeamEventDetailTab.MATCHES ->
@@ -190,6 +191,15 @@ class TeamEventDetailViewModel
                 TeamEventDetailTab.AWARDS ->
                     refreshing({ eventRepository.refreshEventAwards(eventKey) })
             }
+        }
+
+        // Regional advancement is a whole-season payload that only applies to non-district
+        // events, so skip it entirely when the event belongs to a district.
+        private suspend fun refreshRegionalCmpAdvancement(forceRefresh: Boolean = false) {
+            val event = eventRepository.observeEvent(eventKey).first() ?: return
+            if (event.district != null) return
+            regionalCmpAdvancementByTeam.value =
+                regionalAdvancementRepository.getCmpAdvancementByTeam(year, forceRefresh)
         }
 
         @AssistedFactory

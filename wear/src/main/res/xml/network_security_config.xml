@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
+    <!-- Certificate transparency is opt-in on API 36, default-on once we target 37,
+         and ignored below 36. Opting in early per the Android 17 migration guidance. -->
+    <base-config cleartextTrafficPermitted="false">
+        <certificateTransparency enabled="true" />
+    </base-config>
 </network-security-config>

@@ -6,6 +6,7 @@ import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Favorite
@@ -27,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -42,6 +44,7 @@ class EventDetailViewModel
         private val teamRepository: TeamRepository,
         private val matchRepository: MatchRepository,
         private val districtRepository: DistrictRepository,
+        private val regionalAdvancementRepository: RegionalAdvancementRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
         private val shortcutManager: TBAShortcutManager,
@@ -212,6 +215,7 @@ class EventDetailViewModel
                         myTBARepository.addFavorite(eventKey, ModelType.EVENT)
                     }
                 } catch (_: Exception) {
+                    _userMessage.emit("Couldn't update favorite")
                 }
             }
         }
@@ -248,7 +252,10 @@ class EventDetailViewModel
 
         fun refreshAll() {
             refreshing(
-                { eventRepository.refreshEvent(eventKey) },
+                {
+                    eventRepository.refreshEvent(eventKey)
+                    refreshRegionalCmpAdvancement()
+                },
                 { teamRepository.refreshEventTeams(eventKey) },
                 { matchRepository.refreshEventMatches(eventKey) },
                 { eventRepository.refreshEventRankings(eventKey) },
@@ -256,10 +263,6 @@ class EventDetailViewModel
                 { eventRepository.refreshEventAwards(eventKey) },
                 { eventRepository.refreshEventDistrictPoints(eventKey) },
                 { eventRepository.refreshEventRegionalPoints(eventKey) },
-                {
-                    regionalCmpAdvancementByTeam.value =
-                        eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
-                },
                 { eventRepository.refreshEventOPRs(eventKey) },
                 { eventRepository.refreshEventCOPRs(eventKey) },
                 { eventRepository.refreshEventInsights(eventKey) },
@@ -296,14 +299,20 @@ class EventDetailViewModel
                     refreshing(
                         { eventRepository.refreshEventDistrictPoints(eventKey) },
                         { eventRepository.refreshEventRegionalPoints(eventKey) },
-                        {
-                            regionalCmpAdvancementByTeam.value =
-                                eventRepository.fetchRegionalCmpAdvancementByTeam(eventYear)
-                        },
+                        { refreshRegionalCmpAdvancement(forceRefresh = true) },
                     )
                 EventDetailTab.AWARDS ->
                     refreshing({ eventRepository.refreshEventAwards(eventKey) })
             }
+        }
+
+        // Regional advancement is a whole-season payload that only applies to non-district
+        // events, so skip it entirely when the event belongs to a district.
+        private suspend fun refreshRegionalCmpAdvancement(forceRefresh: Boolean = false) {
+            val event = eventRepository.observeEvent(eventKey).first() ?: return
+            if (event.district != null) return
+            regionalCmpAdvancementByTeam.value =
+                regionalAdvancementRepository.getCmpAdvancementByTeam(eventYear, forceRefresh)
         }
 
         @AssistedFactory

@@ -244,7 +244,7 @@ def cmd_list(args):
 def main():
     global _serial
     parser = argparse.ArgumentParser(prog="emu", description="Android emulator automation CLI")
-    parser.add_argument("-s", "--serial", help="Target device serial (passed to adb -s)")
+    parser.add_argument("-s", "--serial", help="Target device serial (passed to adb -s; defaults to $ANDROID_SERIAL)")
     sub = parser.add_subparsers(dest="command")
 
     p = sub.add_parser("screenshot", help="Capture screenshot")
@@ -288,7 +288,9 @@ def main():
     p = sub.add_parser("list", help="Dump UI hierarchy tree")
 
     args = parser.parse_args()
-    _serial = args.serial
+    # Explicit -s wins; otherwise fall back to $ANDROID_SERIAL so emu targets the
+    # same device as adb and Gradle (which read it natively).
+    _serial = args.serial or os.environ.get("ANDROID_SERIAL")
     if not args.command:
         parser.print_help()
         sys.exit(1)

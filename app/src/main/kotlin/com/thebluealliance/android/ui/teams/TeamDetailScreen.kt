@@ -36,7 +36,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -46,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +70,7 @@ import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
@@ -104,8 +105,8 @@ fun TeamDetailScreen(
         rememberPagerState(initialPage = initialTab, pageCount = { TeamDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
 
-    var showSignInDialog by remember { mutableStateOf(false) }
-    var showNotificationSheet by remember { mutableStateOf(false) }
+    var showSignInDialog by rememberSaveable { mutableStateOf(false) }
+    var showNotificationSheet by rememberSaveable { mutableStateOf(false) }
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
@@ -281,7 +282,8 @@ fun TeamDetailScreen(
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
                     TeamDetailTab.entries.forEach { tab ->
-                        Tab(
+                        TBATab(
+                            label = tab.readableName,
                             selected = pagerState.currentPage == tab.ordinal,
                             onClick = {
                                 coroutineScope.launch {
@@ -289,19 +291,6 @@ fun TeamDetailScreen(
                                         tab.ordinal,
                                     )
                                 }
-                            },
-                            text = {
-                                Text(
-                                    text = tab.readableName,
-                                    color =
-                                        if (pagerState.currentPage ==
-                                            tab.ordinal
-                                        ) {
-                                            Color.White
-                                        } else {
-                                            Color.White.copy(alpha = 0.7f)
-                                        },
-                                )
                             },
                         )
                     }
