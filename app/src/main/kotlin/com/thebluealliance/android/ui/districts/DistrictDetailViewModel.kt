@@ -87,11 +87,13 @@ class DistrictDetailViewModel
             )
         }
 
-        fun refreshTab(tab: Int) {
+        fun refreshTab(tab: DistrictDetailTab) {
             val key = "${_selectedYear.value}$districtAbbreviation"
             when (tab) {
-                0 -> refreshing({ eventRepository.refreshDistrictEvents(key) })
-                1 -> refreshing({ districtRepository.refreshDistrictRankings(key) })
+                DistrictDetailTab.EVENTS ->
+                    refreshing({ eventRepository.refreshDistrictEvents(key) })
+                DistrictDetailTab.RANKINGS ->
+                    refreshing({ districtRepository.refreshDistrictRankings(key) })
             }
         }
 
