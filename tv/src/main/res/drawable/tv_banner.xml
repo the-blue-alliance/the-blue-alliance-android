@@ -4,9 +4,12 @@
     android:height="180dp"
     android:viewportWidth="320"
     android:viewportHeight="180"
-    tools:ignore="VectorRaster,VectorPath">
-    <!-- 320x180 is the required Android TV banner size (over lint's 200px guidance); kept as a
-         vector, not a PNG, so the debug build can tint the field red via @color/launcher_background. -->
+    tools:ignore="VectorRaster,VectorPath,UnusedResources">
+    <!-- Source of truth for the TV launcher banner. The manifest points android:banner at the
+         density-bucketed @mipmap/tv_banner PNGs (so the launcher has a crisp asset to scale on
+         focus — see issue #1437); regenerate those with scripts/export-tv-banner.py after editing
+         this. 320x180 viewport = the Android TV banner spec; @color/launcher_background lets the
+         export script tint the debug field red. Kept (UnusedResources ignored) as the PNG source. -->
     <!-- Opaque brand field, full-bleed (no border, per the TV banner guidelines).
          Driven by @color/launcher_background so the debug build tints it red, matching :app. -->
     <path
