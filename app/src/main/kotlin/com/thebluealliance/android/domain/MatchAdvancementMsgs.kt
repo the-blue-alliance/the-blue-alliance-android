@@ -16,22 +16,26 @@ data class MatchAdvancementMsgs(
  */
 fun Match.getAdvancement(playoffType: PlayoffType?): MatchAdvancementMsgs? {
     if (this.compLevel !in PLAYOFF_COMP_LEVELS || this.compLevel == CompLevel.FINAL) return null
+    // Unplayed match: nobody has advanced or been eliminated yet.
+    if (this.winningAlliance.isNullOrEmpty() || this.redScore < 0) return null
 
     val (winAdvancement, loseAdvancement) =
         when (playoffType) {
-            // 2023+
+            // 2023+ bracket (FIRST Game Manual Table 11-3): M11 is the upper-bracket
+            // final (W7 vs W8, winner to Finals, loser to M13); M12 is lower bracket
+            // (W9 vs W10, winner to M13, loser out).
             PlayoffType.DOUBLE_ELIM_8_TEAM ->
                 when (this.setNumber) {
                     1, 2 -> "Advances to Upper Bracket - R2-7" to "Advances to Lower Bracket - R2-5"
                     3, 4 -> "Advances to Upper Bracket - R2-8" to "Advances to Lower Bracket - R2-6"
                     5 -> "Advances to Lower Bracket - R3-10" to "Eliminated"
                     6 -> "Advances to Lower Bracket - R3-9" to "Eliminated"
-                    7 -> "Advances to Upper Bracket - R4-12" to "Advances to Lower Bracket - R3-9"
-                    8 -> "Advances to Upper Bracket - R4-12" to "Advances to Lower Bracket - R3-10"
-                    9 -> "Advances to Lower Bracket - R4-11" to "Eliminated"
-                    10 -> "Advances to Lower Bracket - R4-11" to "Eliminated"
-                    11 -> "Advances to Lower Bracket - R5-13" to "Eliminated"
-                    12 -> "Advances to Finals" to "Advances to Lower Bracket - R5-13"
+                    7 -> "Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-9"
+                    8 -> "Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-10"
+                    9 -> "Advances to Lower Bracket - R4-12" to "Eliminated"
+                    10 -> "Advances to Lower Bracket - R4-12" to "Eliminated"
+                    11 -> "Advances to Finals" to "Advances to Lower Bracket - R5-13"
+                    12 -> "Advances to Lower Bracket - R5-13" to "Eliminated"
                     13 -> "Advances to Finals" to "Eliminated"
                     else -> null
                 }

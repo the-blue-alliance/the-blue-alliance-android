@@ -25,22 +25,19 @@ class MatchRepository
 
         fun observeMatch(key: String): Flow<Match?> = matchDao.observe(key).map { it?.toDomain() }
 
+        fun observeMatches(keys: List<String>): Flow<List<Match>> =
+            matchDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
+
         suspend fun refreshMatch(matchKey: String) {
-            try {
-                val dto = api.getMatch(matchKey)
-                matchDao.insertAll(listOf(dto.toEntity()))
-            } catch (_: Exception) {
-            }
+            val dto = api.getMatch(matchKey)
+            matchDao.insertAll(listOf(dto.toEntity()))
         }
 
         suspend fun refreshEventMatches(eventKey: String) {
-            try {
-                val dtos = api.getEventMatches(eventKey)
-                db.withTransaction {
-                    matchDao.deleteByEvent(eventKey)
-                    matchDao.insertAll(dtos.map { it.toEntity() })
-                }
-            } catch (_: Exception) {
+            val dtos = api.getEventMatches(eventKey)
+            db.withTransaction {
+                matchDao.deleteByEvent(eventKey)
+                matchDao.insertAll(dtos.map { it.toEntity() })
             }
         }
     }

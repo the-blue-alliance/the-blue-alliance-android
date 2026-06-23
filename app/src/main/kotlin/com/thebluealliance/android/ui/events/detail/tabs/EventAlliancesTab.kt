@@ -82,20 +82,47 @@ fun EventAlliancesTab(
                 }
                 FlowRow(
                     modifier = Modifier.padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     alliance.picks.forEachIndexed { index, teamKey ->
-                        Text(
-                            text =
-                                teamKey.teamNumber +
-                                    if (index < alliance.picks.lastIndex) "," else "",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.clickable { onTeamClick(teamKey) },
+                        AllianceSlot(
+                            label = if (index == 0) "Captain" else "Pick $index",
+                            teamKey = teamKey,
+                            onTeamClick = onTeamClick,
+                        )
+                    }
+                    alliance.backupIn?.let { backupKey ->
+                        AllianceSlot(
+                            label = "Backup",
+                            teamKey = backupKey,
+                            onTeamClick = onTeamClick,
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AllianceSlot(
+    label: String,
+    teamKey: String,
+    onTeamClick: (teamKey: String) -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.clickable { onTeamClick(teamKey) },
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = teamKey.teamNumber,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }

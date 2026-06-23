@@ -467,13 +467,13 @@ class MatchGroupExtensionTest {
         }
 
         @Test
-        fun `OCTOFINAL match full label is Eights followed by set and match number`() {
+        fun `OCTOFINAL match full label is Octos followed by set and match number`() {
             val match = createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 1, setNumber = 2)
-            assertEquals("Eights 2-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
+            assertEquals("Octos 2-1", match.getFullLabel(PlayoffType.BRACKET_8_TEAM))
 
             val match2 =
                 createMatch(compLevel = CompLevel.OCTOFINAL, matchNumber = 3, setNumber = 4)
-            assertEquals("Eights 4-3", match2.getFullLabel(PlayoffType.BRACKET_8_TEAM))
+            assertEquals("Octos 4-3", match2.getFullLabel(PlayoffType.BRACKET_8_TEAM))
         }
 
         @Test

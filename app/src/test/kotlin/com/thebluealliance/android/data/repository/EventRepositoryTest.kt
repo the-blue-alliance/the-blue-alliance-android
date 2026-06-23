@@ -75,6 +75,17 @@ class EventRepositoryTest {
         )
 
     @Test
+    fun `refresh methods propagate API failures without touching the DAO`() =
+        runTest {
+            coEvery { api.getEventAwards("2026test") } throws java.io.IOException("network down")
+
+            val thrown = runCatching { repo.refreshEventAwards("2026test") }.exceptionOrNull()
+
+            assertEquals("network down", thrown?.message)
+            coVerify(exactly = 0) { awardDao.deleteByEvent(any()) }
+        }
+
+    @Test
     fun `refreshEventsForYear fetches from API and inserts into DAO`() =
         runTest {
             val dto =

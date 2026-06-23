@@ -57,16 +57,13 @@ class TeamRepository
             eventTeamDao.observeByEvent(eventKey).map { list -> list.map { it.teamKey } }
 
         suspend fun refreshEventTeams(eventKey: String) {
-            try {
-                val dtos = api.getEventTeams(eventKey)
-                db.withTransaction {
-                    teamDao.insertAll(dtos.map { it.toEntity() })
-                    eventTeamDao.deleteByEvent(eventKey)
-                    eventTeamDao.insertAll(
-                        dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) },
-                    )
-                }
-            } catch (_: Exception) {
+            val dtos = api.getEventTeams(eventKey)
+            db.withTransaction {
+                teamDao.insertAll(dtos.map { it.toEntity() })
+                eventTeamDao.deleteByEvent(eventKey)
+                eventTeamDao.insertAll(
+                    dtos.map { EventTeamEntity(eventKey = eventKey, teamKey = it.key) },
+                )
             }
         }
 
@@ -95,10 +92,7 @@ class TeamRepository
             teamKey: String,
             eventKey: String,
         ) {
-            try {
-                val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
-                teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
-            } catch (_: Exception) {
-            }
+            val pitLocation = api.getTeamEventStatus(teamKey, eventKey)?.pitLocation
+            teamEventStatusDao.insert(TeamEventStatusEntity(teamKey, eventKey, pitLocation))
         }
     }

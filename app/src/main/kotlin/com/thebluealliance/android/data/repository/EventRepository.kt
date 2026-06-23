@@ -26,7 +26,6 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.EventInsightsDto
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Award
-import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.EventCOPRs
@@ -35,6 +34,7 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.EventRankings
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
+import com.thebluealliance.android.domain.sortedForDisplay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -69,8 +69,13 @@ class EventRepository
 
         fun observeEvent(key: String): Flow<Event?> = eventDao.observe(key).map { it?.toDomain() }
 
+        fun observeEvents(keys: List<String>): Flow<List<Event>> =
+            eventDao.observeByKeys(keys).map { list -> list.map { it.toDomain() } }
+
         fun observeEventAwards(eventKey: String): Flow<List<Award>> =
-            awardDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
+            awardDao.observeByEvent(eventKey).map { list ->
+                list.map { it.toDomain() }.sortedForDisplay()
+            }
 
         fun observeEventRankings(eventKey: String): Flow<List<Ranking>> =
             rankingDao.observeByEvent(eventKey).map { list -> list.map { it.toDomain() } }
@@ -125,16 +130,13 @@ class EventRepository
             teamKey: String,
             year: Int,
         ) {
-            try {
-                val dtos = api.getTeamEvents(teamKey, year)
-                db.withTransaction {
-                    eventDao.insertAll(dtos.map { it.toEntity() })
-                    eventTeamDao.deleteByTeamAndYear(teamKey, year.toString())
-                    eventTeamDao.insertAll(
-                        dtos.map { EventTeamEntity(eventKey = it.key, teamKey = teamKey) },
-                    )
-                }
-            } catch (_: Exception) {
+            val dtos = api.getTeamEvents(teamKey, year)
+            db.withTransaction {
+                eventDao.insertAll(dtos.map { it.toEntity() })
+                eventTeamDao.deleteByTeamAndYear(teamKey, year.toString())
+                eventTeamDao.insertAll(
+                    dtos.map { EventTeamEntity(eventKey = it.key, teamKey = teamKey) },
+                )
             }
         }
 
@@ -142,13 +144,10 @@ class EventRepository
             eventDao.observeByDistrict(districtKey).map { list -> list.map { it.toDomain() } }
 
         suspend fun refreshDistrictEvents(districtKey: String) {
-            try {
-                val dtos = api.getDistrictEvents(districtKey)
-                db.withTransaction {
-                    eventDao.deleteByDistrict(districtKey)
-                    eventDao.insertAll(dtos.map { it.toEntity() })
-                }
-            } catch (_: Exception) {
+            val dtos = api.getDistrictEvents(districtKey)
+            db.withTransaction {
+                eventDao.deleteByDistrict(districtKey)
+                eventDao.insertAll(dtos.map { it.toEntity() })
             }
         }
 
@@ -166,26 +165,20 @@ class EventRepository
         }
 
         suspend fun refreshEventAwards(eventKey: String) {
-            try {
-                val dtos = api.getEventAwards(eventKey)
-                db.withTransaction {
-                    awardDao.deleteByEvent(eventKey)
-                    awardDao.insertAll(dtos.flatMap { it.toEntities() })
-                }
-            } catch (_: Exception) {
+            val dtos = api.getEventAwards(eventKey)
+            db.withTransaction {
+                awardDao.deleteByEvent(eventKey)
+                awardDao.insertAll(dtos.flatMap { it.toEntities() })
             }
         }
 
         suspend fun refreshEventRankings(eventKey: String) {
-            try {
-                val response = api.getEventRankings(eventKey)
-                db.withTransaction {
-                    rankingDao.deleteByEvent(eventKey)
-                    rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
-                    eventRankingSortOrderDao.delete(eventKey)
-                    eventRankingSortOrderDao.insert(response.toSortOrderEntity(eventKey))
-                }
-            } catch (_: Exception) {
+            val response = api.getEventRankings(eventKey)
+            db.withTransaction {
+                rankingDao.deleteByEvent(eventKey)
+                rankingDao.insertAll(response.rankings.map { it.toEntity(eventKey) })
+                eventRankingSortOrderDao.delete(eventKey)
+                eventRankingSortOrderDao.insert(response.toSortOrderEntity(eventKey))
             }
         }
 
@@ -195,17 +188,14 @@ class EventRepository
             }
 
         suspend fun refreshEventDistrictPoints(eventKey: String) {
-            try {
-                val response = api.getEventDistrictPoints(eventKey)
-                val entities =
-                    response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey, PointsSource.DISTRICT)
-                    }
-                db.withTransaction {
-                    eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
-                    eventAdvancementPointsDao.insertAll(entities)
+            val response = api.getEventDistrictPoints(eventKey)
+            val entities =
+                response.points.map { (teamKey, entry) ->
+                    entry.toEntity(eventKey, teamKey, PointsSource.DISTRICT)
                 }
-            } catch (_: Exception) {
+            db.withTransaction {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.DISTRICT)
+                eventAdvancementPointsDao.insertAll(entities)
             }
         }
 
@@ -215,79 +205,29 @@ class EventRepository
             }
 
         suspend fun refreshEventRegionalPoints(eventKey: String) {
-            try {
-                val response = api.getEventRegionalPoints(eventKey)
-                val entities =
-                    response.points.map { (teamKey, entry) ->
-                        entry.toEntity(eventKey, teamKey, PointsSource.REGIONAL)
-                    }
-                db.withTransaction {
-                    eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
-                    eventAdvancementPointsDao.insertAll(entities)
+            val response = api.getEventRegionalPoints(eventKey)
+            val entities =
+                response.points.map { (teamKey, entry) ->
+                    entry.toEntity(eventKey, teamKey, PointsSource.REGIONAL)
                 }
-            } catch (_: Exception) {
+            db.withTransaction {
+                eventAdvancementPointsDao.deleteByEvent(eventKey, PointsSource.REGIONAL)
+                eventAdvancementPointsDao.insertAll(entities)
             }
         }
 
-        suspend fun fetchRegionalCmpAdvancementByTeam(year: Int): Map<String, CmpAdvancement> {
-            val advancements = api.getRegionalAdvancement(year).orEmpty()
-
-            // Pre-load event names for any EventQualified entries
-            val eventKeys =
-                advancements.values
-                    .filter { it.cmpStatus == "EventQualified" }
-                    .mapNotNull { it.qualifyingEvent }
-                    .distinct()
-            val eventsByKey =
-                if (eventKeys.isNotEmpty()) {
-                    eventDao.getByKeys(eventKeys).associateBy { it.key }
-                } else {
-                    emptyMap()
-                }
-
-            return advancements
-                .mapNotNull { (teamKey, advancement) ->
-                    if (!advancement.cmp) return@mapNotNull null
-                    val cmpAdv: CmpAdvancement =
-                        when (advancement.cmpStatus) {
-                            "EventQualified" -> {
-                                val eventKey = advancement.qualifyingEvent ?: ""
-                                val entity = eventsByKey[eventKey]
-                                val shortName =
-                                    entity?.shortName?.takeIf { it.isNotBlank() }
-                                        ?: entity?.name
-                                        ?: eventKey.ifBlank { null }
-                                CmpAdvancement.EventQualified(
-                                    eventKey = eventKey,
-                                    eventShortName = shortName,
-                                )
-                            }
-                            "PoolQualified" ->
-                                CmpAdvancement.PoolQualified(
-                                    week =
-                                        advancement.qualifyingPoolWeek ?: 0,
-                                )
-                            else -> CmpAdvancement.Qualified
-                        }
-                    teamKey to cmpAdv
-                }.toMap()
-        }
-
         suspend fun refreshEventAlliances(eventKey: String) {
-            try {
-                val dtos = api.getEventAlliances(eventKey)
-                db.withTransaction {
-                    allianceDao.deleteByEvent(eventKey)
-                    allianceDao.insertAll(
-                        dtos.mapIndexed { index, dto ->
-                            dto.toEntity(
-                                eventKey,
-                                index + 1,
-                            )
-                        },
-                    )
-                }
-            } catch (_: Exception) {
+            val dtos = api.getEventAlliances(eventKey)
+            db.withTransaction {
+                allianceDao.deleteByEvent(eventKey)
+                allianceDao.insertAll(
+                    dtos.mapIndexed { index, dto ->
+                        dto.toEntity(
+                            eventKey,
+                            index + 1,
+                        )
+                    },
+                )
             }
         }
 
@@ -295,13 +235,10 @@ class EventRepository
             eventOPRsDao.observe(eventKey).map { it?.toDomain() }
 
         suspend fun refreshEventOPRs(eventKey: String) {
-            try {
-                val dto = api.getEventOPRs(eventKey)
-                db.withTransaction {
-                    eventOPRsDao.delete(eventKey)
-                    eventOPRsDao.insert(dto.toEntity(eventKey))
-                }
-            } catch (_: Exception) {
+            val dto = api.getEventOPRs(eventKey)
+            db.withTransaction {
+                eventOPRsDao.delete(eventKey)
+                eventOPRsDao.insert(dto.toEntity(eventKey))
             }
         }
 
@@ -309,13 +246,10 @@ class EventRepository
             eventCOPRsDao.observe(eventKey).map { it?.toDomain() }
 
         suspend fun refreshEventCOPRs(eventKey: String) {
-            try {
-                val dto = api.getEventCOPRs(eventKey)
-                db.withTransaction {
-                    eventCOPRsDao.delete(eventKey)
-                    eventCOPRsDao.insert(dto.toEntity(eventKey))
-                }
-            } catch (_: Exception) {
+            val dto = api.getEventCOPRs(eventKey)
+            db.withTransaction {
+                eventCOPRsDao.delete(eventKey)
+                eventCOPRsDao.insert(dto.toEntity(eventKey))
             }
         }
 
@@ -323,18 +257,15 @@ class EventRepository
             eventInsightsDao.observe(eventKey).map { it?.toDomain() }
 
         suspend fun refreshEventInsights(eventKey: String) {
-            try {
-                val insights = api.getEventInsights(eventKey)
-                val dto =
-                    EventInsightsDto(
-                        qual = insights["qual"]?.toString(),
-                        playoff = insights["playoff"]?.toString(),
-                    )
-                db.withTransaction {
-                    eventInsightsDao.delete(eventKey)
-                    eventInsightsDao.insert(dto.toEntity(eventKey))
-                }
-            } catch (_: Exception) {
+            val insights = api.getEventInsights(eventKey)
+            val dto =
+                EventInsightsDto(
+                    qual = insights["qual"]?.toString(),
+                    playoff = insights["playoff"]?.toString(),
+                )
+            db.withTransaction {
+                eventInsightsDao.delete(eventKey)
+                eventInsightsDao.insert(dto.toEntity(eventKey))
             }
         }
 
@@ -347,17 +278,14 @@ class EventRepository
             }
 
         suspend fun refreshEventPitLocations(eventKey: String) {
-            try {
-                val statuses = api.getEventTeamsStatuses(eventKey)
-                val entities =
-                    statuses.map { (teamKey, status) ->
-                        TeamEventStatusEntity(teamKey, eventKey, status?.pitLocation)
-                    }
-                db.withTransaction {
-                    teamEventStatusDao.deleteByEvent(eventKey)
-                    teamEventStatusDao.insertAll(entities)
+            val statuses = api.getEventTeamsStatuses(eventKey)
+            val entities =
+                statuses.map { (teamKey, status) ->
+                    TeamEventStatusEntity(teamKey, eventKey, status?.pitLocation)
                 }
-            } catch (_: Exception) {
+            db.withTransaction {
+                teamEventStatusDao.deleteByEvent(eventKey)
+                teamEventStatusDao.insertAll(entities)
             }
         }
     }
