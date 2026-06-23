@@ -295,54 +295,54 @@ private fun RankingsTab(
                     Modifier
                         .fillMaxWidth()
                         .background(TBAIndigo400)
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "Rank",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
                 Text(
                     text = "Team",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n1",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n2",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "DCMP",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Rookie\nBonus",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Total\nPoints",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
