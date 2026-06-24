@@ -73,6 +73,12 @@ The Android debug build defaults to `http://10.0.2.2:8080/` (the emulator's alia
 
 The Docker Compose stack includes a Firebase Auth emulator, and debug builds of the Android app are wired to it in `AuthModule` — so Google Sign-In works against the local backend with the stub `google-services.json` alone. No real Firebase project needed.
 
+**On Android 17 (API 37):** the debug build's `10.0.2.2` dev server and the Firebase Auth emulator are on a local network (`10.0.0.0/8`), which Android 17 gates behind the runtime `ACCESS_LOCAL_NETWORK` permission. The debug manifest declares it, but as a *dangerous* permission it isn't auto-granted — a fresh debug install silently times out reaching the local backend until it's granted. `scripts/install-and-launch.sh` grants it for you; if you install another way (Android Studio's ▶ button or `./gradlew :app:installDebug`), grant it once per install:
+
+```bash
+adb shell pm grant com.thebluealliance.androidclient.development android.permission.ACCESS_LOCAL_NETWORK
+```
+
 ## Firebase project (optional)
 
 Only needed if you want to test Google Sign-In or push notifications **against production**. For local development the stub `google-services.json` is enough.
