@@ -125,6 +125,7 @@ fun EventRankingsTab(
     rankingSortOrders: List<RankingSortOrder>?,
     rankingExtraStatsInfo: List<RankingSortOrder>?,
     onTeamClick: (String) -> Unit = {},
+    isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (rankings == null) {
@@ -134,10 +135,12 @@ fun EventRankingsTab(
         return
     }
     if (rankings.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No rankings",
-        )
+        // An empty list while the first fetch is still in flight is loading, not empty.
+        if (isRefreshing) {
+            LoadingBox(modifier = Modifier.padding(innerPadding))
+        } else {
+            EmptyBox(modifier = Modifier.padding(innerPadding), message = "No rankings")
+        }
         return
     }
 

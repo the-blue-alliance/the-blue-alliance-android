@@ -343,6 +343,7 @@ fun EventDetailScreen(
                                 val eventKey = uiState.event?.key
                                 if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             },
+                            isRefreshing = isRefreshing,
                             innerPadding = bottomPadding,
                         )
                     EventDetailTab.MATCHES ->
@@ -359,6 +360,7 @@ fun EventDetailScreen(
                                 val eventKey = uiState.event?.key
                                 if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
                             },
+                            isRefreshing = isRefreshing,
                             innerPadding = bottomPadding,
                         )
                     EventDetailTab.INSIGHTS ->
@@ -396,6 +398,7 @@ fun EventDetailScreen(
                                     onNavigateToTeam(teamKey)
                                 }
                             },
+                            isRefreshing = isRefreshing,
                             innerPadding = bottomPadding,
                         )
                 }
