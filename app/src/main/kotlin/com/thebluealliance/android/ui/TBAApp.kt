@@ -6,12 +6,16 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.google.firebase.Firebase
@@ -68,9 +72,15 @@ fun TBAApp(
     }
 
     TBATheme(darkTheme = darkTheme) {
-        TBANavigation(
-            navState = navState,
-        )
+        // Surface Compose testTags to UiAutomator as view resource-ids. This lets the
+        // Baseline Profile macrobenchmark (and instrumentation tests) select stable
+        // nodes such as the events list (`events_list`) via By.res(...), instead of
+        // guessing among ambiguous scrollables. It is inert at runtime for users.
+        Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
+            TBANavigation(
+                navState = navState,
+            )
+        }
     }
 }
 

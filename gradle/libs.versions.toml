@@ -46,6 +46,18 @@ play-publisher = "4.0.0"
 lifecycle-process = "2.11.0"
 ktlint-gradle = "14.2.0"
 
+# Baseline Profiles / Macrobenchmark
+# 1.5.0-alphaNN is the line updated for AGP 9 + built-in Kotlin. The 1.4.1 stable
+# line was only tested against AGP < 9.0.0-alpha01, so on AGP 9.2.1 it emits a
+# maxAgpVersion warning and "may not work as intended"; pin the alpha that matches.
+benchmark = "1.5.0-alpha06"
+baselineprofile = "1.5.0-alpha06"
+profileinstaller = "1.4.1"
+junit4 = "4.13.2"
+androidx-test-ext-junit = "1.3.0"
+espresso = "3.7.0"
+uiautomator = "2.3.0"
+
 [libraries]
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
@@ -153,6 +165,14 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 
+# Baseline Profiles / Macrobenchmark
+profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
+benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmark" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
+uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -166,3 +186,5 @@ aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "abo
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "play-publisher" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint-gradle" }
+android-test = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }

@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.aboutlibraries)
     alias(libs.plugins.play.publisher)
+    alias(libs.plugins.baselineprofile)
 }
 
 val localProperties =
@@ -130,6 +131,18 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Optional override so Baseline Profile generation / startup benchmarking can
+            // point the (non-debuggable) release variant at a data source the journey can
+            // actually scroll. Defaults to prod; set tba.url.benchmark / tba.api.key.benchmark
+            // in local.properties (or via -P) to aim the nonMinifiedRelease build elsewhere
+            // (e.g. a local backend or a personal read key). No effect on shipped releases
+            // unless those properties are set.
+            localProperties.getProperty("tba.url.benchmark")?.let { url ->
+                buildConfigField("String", "TBA_BASE_URL", "\"$url\"")
+            }
+            localProperties.getProperty("tba.api.key.benchmark")?.let { key ->
+                buildConfigField("String", "TBA_API_KEY", "\"$key\"")
+            }
         }
     }
 
@@ -197,6 +210,26 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+// Baseline Profile build integration (commit-and-consume policy).
+//
+// Regular release builds (./gradlew :app:bundleRelease) just MERGE the committed
+// profile text rules into a binary baseline.prof packaged in the AAB/APK — no device
+// or test run is needed. The profile is only (re)generated when explicitly asked, via
+// ./gradlew :app:generateBaselineProfile (which runs the :baselineprofile macrobenchmark
+// on a device/managed-device and copies the captured rules into
+// app/src/main/generated/baselineProfiles/). Regeneration is on-demand only — run it
+// locally, or trigger the manual (workflow_dispatch) "Regenerate Baseline Profile" CI job
+// in .github/workflows/baseline-profile.yaml. It is deliberately NOT coupled to release
+// tags; a stale profile is still a valid win. See baselineprofile/README.md.
+baselineProfile {
+    // Do not run a device during ordinary builds; consume the committed profile.
+    automaticGenerationDuringBuild = false
+    // Commit the generated rules to src so the very next release ships AOT-compiled.
+    saveInSrc = true
+    // Single-flavor app: merge into the main variant's profile rather than per-variant.
+    mergeIntoMain = true
+}
+
 // TODO(kotlin-2.4): Hilt 2.59.2's annotation-processor classpath bundles
 // kotlin-metadata-jvm 2.2.20, which can't parse Kotlin 2.4.0 class metadata
 // (`hiltJavaCompile*` fails with "maximum supported version is 2.3.0"). Force the
@@ -211,6 +244,12 @@ configurations.configureEach {
 dependencies {
     // Modules
     implementation(project(":core-network"))
+
+    // Baseline Profiles: profileinstaller installs/AOT-compiles the shipped profile at
+    // first launch on devices without a Play cloud profile. baselineProfile(...) wires
+    // the :baselineprofile generator so its captured rules merge into the release AAB/APK.
+    implementation(libs.profileinstaller)
+    baselineProfile(project(":baselineprofile"))
 
     // Compose
     implementation(platform(libs.compose.bom))

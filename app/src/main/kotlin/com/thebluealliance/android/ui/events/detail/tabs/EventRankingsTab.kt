@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
@@ -153,7 +154,9 @@ fun EventRankingsTab(
         }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        // Stable id the Baseline Profile journey waits on to confirm real rankings content
+        // rendered (not just the always-visible tab label). Keep in sync with TbaJourney.
+        modifier = Modifier.fillMaxSize().testTag("event_rankings"),
         contentPadding = innerPadding,
     ) {
         stickyHeader {

@@ -21,7 +21,11 @@ class ApiKeyProvider
 
         val apiKey: String
             get() {
-                if (BuildConfig.DEBUG) {
+                // A key baked into BuildConfig is authoritative: debug builds, and the
+                // benchmark/CI build (tba.api.key.benchmark). Use it directly so we never
+                // depend on Firebase Remote Config — which needs Play Services that managed
+                // / CI devices lack. Shipped release builds bake no key and fall through.
+                if (BuildConfig.TBA_API_KEY.isNotEmpty()) {
                     return BuildConfig.TBA_API_KEY
                 }
 
@@ -45,7 +49,8 @@ class ApiKeyProvider
             }
 
         fun init() {
-            if (BuildConfig.DEBUG) {
+            // Baked key present (debug / benchmark / CI) — no Remote Config fetch needed.
+            if (BuildConfig.TBA_API_KEY.isNotEmpty()) {
                 fetchComplete.countDown()
                 return
             }

@@ -1,0 +1,154 @@
+name: Regenerate Baseline Profile
+
+# The Baseline Profile is COMMITTED to source (app/src/main/generated/baselineProfiles/)
+# and consumed by every release build with no emulator in the loop
+# (baselineProfile { automaticGenerationDuringBuild = false }). A slightly stale profile is
+# still a win — it just AOT-compiles slightly older paths — so this does NOT need to run per
+# release. It is a manual, on-demand job: trigger it after a change that meaningfully reworks
+# startup / events-list / event-detail, and merge the PR it opens before the next release.
+#
+# Deliberately NOT triggered on release tags: regenerating on a tag would land the refreshed
+# profile only in the *following* release (a one-release lag) and would couple every release
+# to the slowest, flakiest job in the repo. Keep the two decoupled.
+#
+# Locally you don't need this at all — see baselineprofile/README.md:
+#   ./gradlew :app:generateBaselineProfile -PuseConnectedDevices=true   # against a running emulator
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-baseline-profile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      # The emulator needs KVM; without this the AVD boots in slow software rendering.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Create CI google-services.json
+        # The androidx.baselineprofile plugin derives nonMinifiedRelease + benchmarkRelease
+        # build types from `release`; the Google Services plugin resolves google-services.json
+        # by build-type folder, so each derived type needs its own copy (or it fails with
+        # "File google-services.json is missing"). Placeholder values are fine — the generator
+        # gets its TBA key from local.properties below, not Firebase.
+        run: |
+          for dir in app/src/debug app/src/release app/src/nonMinifiedRelease app/src/benchmarkRelease; do
+            mkdir -p "$dir"
+            package="com.thebluealliance.androidclient"
+            [ "$dir" = "app/src/debug" ] && package="com.thebluealliance.androidclient.development"
+            cat > "$dir/google-services.json" << EOF
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "$package" }
+              },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+          done
+
+      # The generator runs the (non-debuggable) release journey against the REAL TBA API so
+      # the events list / event detail screens actually load content — the journey hard-fails
+      # on an empty list. Requires a repo secret BASELINE_PROFILE_TBA_READ_KEY: a read-only
+      # TBA APIv3 key (thebluealliance.com/account → Read API Keys). See baselineprofile/README.md.
+      - name: Configure release signing + TBA read key
+        env:
+          TBA_READ_KEY: ${{ secrets.BASELINE_PROFILE_TBA_READ_KEY }}
+        run: |
+          if [ -z "$TBA_READ_KEY" ]; then
+            echo "::error::Secret BASELINE_PROFILE_TBA_READ_KEY is not set. Add a read-only TBA APIv3 key in repo settings → Secrets → Actions. See baselineprofile/README.md."
+            exit 1
+          fi
+          # A throwaway keystore: the generated profile is build-type-agnostic plain text, so
+          # the signing identity is irrelevant — it just has to be a valid release config.
+          keytool -genkey -v -keystore ci-release.keystore -keyalg RSA -keysize 2048 \
+            -validity 1 -storepass android -alias ci -keypass android \
+            -dname "CN=CI,O=CI,C=US"
+          cat > local.properties << EOF
+          release.store.file=ci-release.keystore
+          release.store.password=android
+          release.key.alias=ci
+          release.key.password=android
+          tba.url.benchmark=https://www.thebluealliance.com/
+          tba.api.key.benchmark=${TBA_READ_KEY}
+          EOF
+
+      # Cache the AVD + system image so reruns skip the cold Pixel 6 API 34 image download.
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-pixel6-api34-aosp
+
+      - name: Create AVD snapshot (cache miss only)
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: aosp_atd
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-load -no-audio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Generate Baseline Profile on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: aosp_atd
+          arch: x86_64
+          profile: pixel_6
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -no-snapshot-load -no-audio -no-boot-anim -camera-back none
+          disable-animations: true
+          # Capture against the connected (cached) emulator this action booted, not the GMD.
+          script: ./gradlew :app:generateBaselineProfile -PuseConnectedDevices=true --stacktrace
+
+      - name: Open PR with regenerated profile
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: main
+          branch: chore/regenerate-baseline-profile
+          commit-message: "chore(perf): regenerate baseline profile"
+          title: "chore(perf): regenerate baseline profile"
+          body: |
+            Automated, on-demand regeneration of the committed Baseline Profile
+            (`app/src/main/generated/baselineProfiles/`). Merge before the next release so it
+            AOT-compiles the current startup / events-list / event-detail paths.
+
+            Triggered manually via the **Regenerate Baseline Profile** workflow. See
+            `baselineprofile/README.md` for when to run this and how the profile is consumed.
+          add-paths: |
+            app/src/main/generated/baselineProfiles/**

@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -64,6 +65,13 @@ import java.time.LocalDate
 
 /** Sentinel for [scrollOverride] indicating a scroll-to-favorites is in progress. */
 private const val SCROLL_TO_FAVORITES = "\u0000"
+
+/**
+ * Stable selector for the events [LazyColumn]. Exposed to UiAutomator as a resource-id so
+ * the Baseline Profile macrobenchmark journey can target this exact scrollable. Keep in sync
+ * with the `events_list` literal in :baselineprofile's TbaJourney.
+ */
+const val EVENTS_LIST_TEST_TAG = "events_list"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -273,7 +281,14 @@ private fun EventsList(
         )
 
         FastScrollbar(listState = listState, modifier = Modifier.weight(1f)) {
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+            // testTag is surfaced to UiAutomator as a resource-id (see
+            // Modifier.semantics { testTagsAsResourceId = true } on the app root) so the
+            // Baseline Profile macrobenchmark can scroll exactly this list, not some other
+            // scrollable that happens to be first in traversal order.
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize().testTag(EVENTS_LIST_TEST_TAG),
+            ) {
                 // Top-level Favorites section
                 if (favoriteEvents.isNotEmpty()) {
                     item(key = "favorites_header") {
