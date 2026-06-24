@@ -138,6 +138,10 @@ android {
         // depending on version — disable both.)
         disable += "GradleDependency"
         disable += "NewerVersionAvailable"
+        // The TV launcher icon is intentionally a full-bleed brand field (Google TV masks
+        // the square icon to a circle; the prior webp icon was full-bleed too). This rule
+        // targets phone launcher icons and is a false positive for the TV mipmap rasters.
+        disable += "IconLauncherShape"
     }
 
     @Suppress("UnstableApiUsage")
