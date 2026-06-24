@@ -2,6 +2,7 @@ package com.thebluealliance.android.tv.data.api
 
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.thebluealliance.android.core.network.TbaClientFactory
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.Cache
@@ -60,7 +61,7 @@ object GitHubApiFactory {
             .Builder()
             .baseUrl("https://api.github.com/")
             .client(client)
-            .addConverterFactory(TbaJson.asConverterFactory(contentType))
+            .addConverterFactory(TbaClientFactory.json.asConverterFactory(contentType))
             .build()
             .create(GitHubApi::class.java)
     }

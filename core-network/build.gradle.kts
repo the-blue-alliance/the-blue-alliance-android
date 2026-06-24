@@ -21,4 +21,15 @@ android {
 
 dependencies {
     api(libs.serialization.json)
+
+    // ApiKeyProvider + TbaClientFactory live here (RFC 0004 network unification, #1393).
+    // FirebaseRemoteConfig, Retrofit and OkHttpClient appear in their public signatures, so
+    // they are `api`; the converter, logging interceptor and core-ktx are internal.
+    api(platform(libs.firebase.bom))
+    api(libs.firebase.config)
+    api(libs.retrofit)
+    api(libs.okhttp)
+    implementation(libs.retrofit.serialization)
+    implementation(libs.okhttp.logging)
+    implementation(libs.core.ktx)
 }

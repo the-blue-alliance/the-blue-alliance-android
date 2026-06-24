@@ -3,7 +3,7 @@ package com.thebluealliance.android.wear
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.thebluealliance.android.wear.data.ApiKeyProvider
+import com.thebluealliance.android.core.network.ApiKeyProvider
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 import dagger.hilt.android.HiltAndroidApp

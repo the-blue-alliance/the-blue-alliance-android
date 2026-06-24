@@ -1,9 +1,9 @@
 package com.thebluealliance.android.tv.data.repository
 
 import android.content.Context
+import com.thebluealliance.android.core.network.TbaClientFactory
 import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.tv.data.api.TbaApi
-import com.thebluealliance.android.tv.data.api.TbaJson
 import com.thebluealliance.android.tv.data.api.toDomainOrNull
 import com.thebluealliance.android.tv.data.model.Event
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +64,7 @@ class AssetEventRepository(
                     .open(assetName)
                     .bufferedReader()
                     .use { it.readText() }
-            TbaJson
+            TbaClientFactory.json
                 .decodeFromString(ListSerializer(EventDto.serializer()), json)
                 .mapNotNull { it.toDomainOrNull() }
                 .anchoredToToday(today)
