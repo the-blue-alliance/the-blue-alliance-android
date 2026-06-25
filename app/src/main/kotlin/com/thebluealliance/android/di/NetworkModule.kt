@@ -30,6 +30,11 @@ import javax.inject.Singleton
 object NetworkModule {
     private const val HTTP_CACHE_SIZE_BYTES = 20L * 1024 * 1024
 
+    // Absolute ceiling on a whole TBA read call so a trickle/stalled response (which keeps
+    // resetting the per-byte read timeout) can't hang indefinitely. Generous vs TBA's small
+    // payloads, so it won't abort a legitimately slow load. (#1446)
+    private const val TBA_CALL_TIMEOUT_SECONDS = 45L
+
     // Canonical JSON for every client in this module (TBA read, authenticated ClientApi,
     // GitHub) so they cannot drift — see TbaClientFactory.json for the flag rationale.
     @Provides
@@ -62,6 +67,7 @@ object NetworkModule {
             cacheDir = context.cacheDir.resolve("http_cache"),
             cacheSizeBytes = HTTP_CACHE_SIZE_BYTES,
             isDebug = BuildConfig.DEBUG,
+            callTimeoutSeconds = TBA_CALL_TIMEOUT_SECONDS,
         )
 
     @Provides
