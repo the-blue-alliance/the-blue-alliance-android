@@ -17,10 +17,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
     api(libs.serialization.json)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 
     // ApiKeyProvider + TbaClientFactory live here (RFC 0004 network unification, #1393).
     // FirebaseRemoteConfig, Retrofit and OkHttpClient appear in their public signatures, so

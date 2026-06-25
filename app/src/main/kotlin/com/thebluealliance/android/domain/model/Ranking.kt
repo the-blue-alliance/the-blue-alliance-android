@@ -10,6 +10,8 @@ data class Ranking(
     val losses: Int,
     val ties: Int,
     val qualAverage: Double?,
-    val sortOrders: List<Double> = emptyList(),
-    val extraStats: List<Double> = emptyList(),
+    // Nullable elements: a null is a missing component kept in place so it stays index-aligned
+    // with sortOrderInfo (the UI renders that cell blank). #1445.
+    val sortOrders: List<Double?> = emptyList(),
+    val extraStats: List<Double?> = emptyList(),
 )
