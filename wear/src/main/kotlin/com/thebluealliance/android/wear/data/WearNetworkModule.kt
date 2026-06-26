@@ -20,6 +20,10 @@ object WearNetworkModule {
     // The watch keeps a deliberately small HTTP cache; the size stays a per-module choice.
     private const val HTTP_CACHE_SIZE_BYTES = 5L * 1024 * 1024
 
+    // Absolute ceiling on a whole TBA read call so a trickle/stalled response can't hang the
+    // watch indefinitely. Generous vs TBA's small payloads. (#1446)
+    private const val TBA_CALL_TIMEOUT_SECONDS = 45L
+
     @Provides
     @Singleton
     fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
@@ -53,6 +57,7 @@ object WearNetworkModule {
             cacheDir = context.cacheDir.resolve("http_cache"),
             cacheSizeBytes = HTTP_CACHE_SIZE_BYTES,
             isDebug = BuildConfig.DEBUG,
+            callTimeoutSeconds = TBA_CALL_TIMEOUT_SECONDS,
         )
 
     @Provides
