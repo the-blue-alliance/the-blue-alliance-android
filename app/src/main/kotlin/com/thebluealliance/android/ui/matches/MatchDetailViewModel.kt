@@ -6,11 +6,13 @@ import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -41,6 +43,8 @@ class MatchDetailViewModel
 
         private val json = Json { ignoreUnknownKeys = true }
 
+        private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
+
         private val timeFormatter =
             DateTimeFormatter.ofPattern(
                 "EEE, MMM d, yyyy 'at' h:mm a",
@@ -52,7 +56,8 @@ class MatchDetailViewModel
                 matchRepository.observeMatch(matchKey),
                 eventRepository.observeEvent(eventKey),
                 eventRepository.observeEventAlliances(eventKey),
-            ) { match, event, alliances ->
+                refreshOutcome,
+            ) { match, event, alliances, outcome ->
                 val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
                 val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
                 val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
@@ -74,6 +79,8 @@ class MatchDetailViewModel
                     formattedTime = formattedTime,
                     videos = videos,
                     year = year,
+                    // Only give up on an empty cache once a refresh has actually finished.
+                    loadFailed = match == null && outcome != RefreshOutcome.PENDING,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
@@ -92,7 +99,7 @@ class MatchDetailViewModel
         }
 
         fun refresh() {
-            refreshing({ matchRepository.refreshMatch(matchKey) })
+            refreshingTracked(refreshOutcome, { matchRepository.refreshMatch(matchKey) })
         }
 
         private fun formatMatchTime(epochSeconds: Long?): String? {
