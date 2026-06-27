@@ -8,4 +8,6 @@ export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Con
 
 ./gradlew :app:installDebug
 
-adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+# Launch via scripts/emu, which also grants the Android 17 ACCESS_LOCAL_NETWORK permission so
+# the debug build can reach the 10.0.2.2 local backend (the grant lives in one place — cmd_launch).
+scripts/emu launch com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity

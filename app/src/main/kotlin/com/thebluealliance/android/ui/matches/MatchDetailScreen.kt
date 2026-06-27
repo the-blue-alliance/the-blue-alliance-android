@@ -46,6 +46,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.MediaGridItem
@@ -122,9 +123,16 @@ fun MatchDetailScreen(
         ) {
             val match = uiState.match
             if (match == null) {
-                LoadingBox(
-                    modifier = Modifier.padding(innerPadding),
-                )
+                if (uiState.loadFailed) {
+                    EmptyBox(
+                        modifier = Modifier.padding(innerPadding),
+                        message = "Couldn't load match",
+                    )
+                } else {
+                    LoadingBox(
+                        modifier = Modifier.padding(innerPadding),
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),

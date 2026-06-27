@@ -17,4 +17,9 @@ data class MatchDetailUiState(
     val formattedTime: String? = null,
     val videos: List<MatchVideo> = emptyList(),
     val year: Int = 0,
+    /**
+     * True once a refresh has finished and there's still no match to show — a bad/stale deep
+     * link (404) or an uncached match we couldn't fetch (offline). Either way: stop spinning.
+     */
+    val loadFailed: Boolean = false,
 )
