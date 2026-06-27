@@ -288,9 +288,16 @@ fun RankingResponseDto.toSortOrderEntity(eventKey: String) =
         extraStatsInfo = json.encodeToString(extraStatsInfo ?: emptyList()),
     )
 
+// A null element is kept in place (decoded as RankingSortOrderDto?) and coalesced to a
+// blank-name placeholder, so this column stays index-aligned with its sort_orders values
+// instead of shifting; the UI falls back to "Sort N" for a blank name. #1445.
+private val placeholderSortOrder = RankingSortOrder(name = "", precision = 2)
+
 fun EventRankingSortOrderEntity.getSortOrderInfo(): List<RankingSortOrder> =
     try {
-        json.decodeFromString<List<RankingSortOrderDto>>(sortOrderInfo).map { it.toDomain() }
+        json
+            .decodeFromString<List<RankingSortOrderDto?>>(sortOrderInfo)
+            .map { it?.toDomain() ?: placeholderSortOrder }
     } catch (_: Exception) {
         emptyList()
     }
@@ -298,7 +305,9 @@ fun EventRankingSortOrderEntity.getSortOrderInfo(): List<RankingSortOrder> =
 fun EventRankingSortOrderEntity.getExtraStatsInfo(): List<RankingSortOrder> =
     try {
         if (extraStatsInfo != null) {
-            json.decodeFromString<List<RankingSortOrderDto>>(extraStatsInfo).map { it.toDomain() }
+            json
+                .decodeFromString<List<RankingSortOrderDto?>>(extraStatsInfo)
+                .map { it?.toDomain() ?: placeholderSortOrder }
         } else {
             emptyList()
         }
