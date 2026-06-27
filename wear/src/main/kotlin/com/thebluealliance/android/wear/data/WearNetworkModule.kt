@@ -2,7 +2,8 @@ package com.thebluealliance.android.wear.data
 
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.thebluealliance.android.core.network.ApiKeyProvider
+import com.thebluealliance.android.core.network.TbaClientFactory
 import com.thebluealliance.android.wear.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -10,19 +11,18 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
-import okhttp3.Cache
-import okhttp3.Interceptor
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object WearNetworkModule {
+    // The watch keeps a deliberately small HTTP cache; the size stays a per-module choice.
     private const val HTTP_CACHE_SIZE_BYTES = 5L * 1024 * 1024
+
+    // Absolute ceiling on a whole TBA read call so a trickle/stalled response can't hang the
+    // watch indefinitely. Generous vs TBA's small payloads. (#1446)
+    private const val TBA_CALL_TIMEOUT_SECONDS = 45L
 
     @Provides
     @Singleton
@@ -30,10 +30,21 @@ object WearNetworkModule {
 
     @Provides
     @Singleton
-    fun provideJson(): Json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    fun provideJson(): Json = TbaClientFactory.json
+
+    @Provides
+    @Singleton
+    fun provideApiKeyProvider(
+        @ApplicationContext context: Context,
+        remoteConfig: FirebaseRemoteConfig,
+    ): ApiKeyProvider =
+        ApiKeyProvider(
+            isDebug = BuildConfig.DEBUG,
+            bakedApiKey = BuildConfig.TBA_API_KEY,
+            // Same "api_config" prefs the wear copy always used, so the cached key survives.
+            prefs = context.getSharedPreferences("api_config", Context.MODE_PRIVATE),
+            remoteConfig = remoteConfig,
+        )
 
     @Provides
     @Singleton
@@ -41,43 +52,18 @@ object WearNetworkModule {
         @ApplicationContext context: Context,
         apiKeyProvider: ApiKeyProvider,
     ): OkHttpClient =
-        OkHttpClient
-            .Builder()
-            .cache(Cache(context.cacheDir.resolve("http_cache"), HTTP_CACHE_SIZE_BYTES))
-            .addInterceptor(
-                Interceptor { chain ->
-                    val request =
-                        chain
-                            .request()
-                            .newBuilder()
-                            .addHeader("X-TBA-Auth-Key", apiKeyProvider.apiKey)
-                            .build()
-                    chain.proceed(request)
-                },
-            ).addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level =
-                        if (BuildConfig.DEBUG) {
-                            HttpLoggingInterceptor.Level.BASIC
-                        } else {
-                            HttpLoggingInterceptor.Level.NONE
-                        }
-                },
-            ).connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .build()
+        TbaClientFactory.okHttpClient(
+            apiKey = { apiKeyProvider.apiKey },
+            cacheDir = context.cacheDir.resolve("http_cache"),
+            cacheSizeBytes = HTTP_CACHE_SIZE_BYTES,
+            isDebug = BuildConfig.DEBUG,
+            callTimeoutSeconds = TBA_CALL_TIMEOUT_SECONDS,
+        )
 
     @Provides
     @Singleton
-    fun provideWearTbaApi(
-        client: OkHttpClient,
-        json: Json,
-    ): WearTbaApi =
-        Retrofit
-            .Builder()
-            .baseUrl(BuildConfig.TBA_BASE_URL)
-            .client(client)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
+    fun provideWearTbaApi(client: OkHttpClient): WearTbaApi =
+        TbaClientFactory
+            .retrofit(BuildConfig.TBA_BASE_URL, client)
             .create(WearTbaApi::class.java)
 }

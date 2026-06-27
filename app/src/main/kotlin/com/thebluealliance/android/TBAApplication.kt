@@ -12,7 +12,7 @@ import androidx.work.Configuration
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
-import com.thebluealliance.android.config.ApiKeyProvider
+import com.thebluealliance.android.core.network.ApiKeyProvider
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.widget.TeamTrackingWidget

@@ -378,12 +378,11 @@ private fun RankingItem(
                     for (i in 2 until minOf(ranking.sortOrders.size, sortOrders.size)) {
                         val sortOrder = sortOrders[i]
                         val value = ranking.sortOrders[i]
+                        // null = a missing component kept in place to preserve column alignment.
                         val formattedValue =
-                            String.format(
-                                Locale.US,
-                                "%.${sortOrder.precision}f",
-                                value,
-                            )
+                            value?.let {
+                                String.format(Locale.US, "%.${sortOrder.precision}f", it)
+                            } ?: "--"
 
                         Row(
                             modifier =
@@ -392,7 +391,9 @@ private fun RankingItem(
                                     .padding(vertical = 2.dp),
                         ) {
                             Text(
-                                text = sortOrder.name,
+                                // Blank when a null sort_order_info element was coalesced to a
+                                // placeholder; fall back like the header/extra-stats rows.
+                                text = sortOrder.name.ifBlank { "Sort ${i + 1}" },
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.weight(1f),
                             )
@@ -431,7 +432,9 @@ private fun RankingItem(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = String.format(Locale.US, "%.${precision}f", value),
+                                text =
+                                    value?.let { String.format(Locale.US, "%.${precision}f", it) }
+                                        ?: "--",
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }
