@@ -22,6 +22,7 @@ import com.thebluealliance.android.util.teamNumber
 fun EventAwardsTab(
     awards: List<Award>?,
     onTeamClick: (String) -> Unit = {},
+    isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (awards == null) {
@@ -31,10 +32,12 @@ fun EventAwardsTab(
         return
     }
     if (awards.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No awards",
-        )
+        // An empty list while the first fetch is still in flight is loading, not empty.
+        if (isRefreshing) {
+            LoadingBox(modifier = Modifier.padding(innerPadding))
+        } else {
+            EmptyBox(modifier = Modifier.padding(innerPadding), message = "No awards")
+        }
         return
     }
     LazyColumn(

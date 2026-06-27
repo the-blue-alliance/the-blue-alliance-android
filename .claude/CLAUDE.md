@@ -12,9 +12,10 @@ The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alli
 ./gradlew :app:testDebugUnitTest
 ```
 
-After installing a debug build, always relaunch the app on the emulator:
+After installing a debug build, always relaunch the app on the emulator with `scripts/emu launch`
+(it also grants Android 17's `ACCESS_LOCAL_NETWORK` so the `10.0.2.2` local backend stays reachable):
 ```bash
-adb shell am force-stop com.thebluealliance.androidclient.development && adb shell am start -n com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+scripts/emu launch com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
 ```
 
 ## Emulator Interaction

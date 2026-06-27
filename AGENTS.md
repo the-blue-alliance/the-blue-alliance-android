@@ -39,7 +39,8 @@ scripts/worktree-emu.sh bless               # 2. save its state as the 'verify-b
 mkdir -p artifacts
 export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"   # boot read-only instance; prints its serial
 ./gradlew :app:installDebug                                     # installs only — adb + Gradle read $ANDROID_SERIAL
-# MUST launch — installDebug does NOT start the app; screenshotting without this captures the launcher:
+# MUST launch — installDebug does NOT start the app; screenshotting without this captures the launcher.
+# (scripts/emu launch also grants Android 17's ACCESS_LOCAL_NETWORK so the 10.0.2.2 backend is reachable.)
 scripts/emu launch \
   com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
 scripts/emu screenshot artifacts/<name>.png

@@ -31,6 +31,7 @@ import com.thebluealliance.android.util.teamNumber
 fun EventAlliancesTab(
     alliances: List<Alliance>?,
     onTeamClick: (teamKey: String) -> Unit = {},
+    isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (alliances == null) {
@@ -40,10 +41,12 @@ fun EventAlliancesTab(
         return
     }
     if (alliances.isEmpty()) {
-        EmptyBox(
-            modifier = Modifier.padding(innerPadding),
-            message = "No alliances",
-        )
+        // An empty list while the first fetch is still in flight is loading, not empty.
+        if (isRefreshing) {
+            LoadingBox(modifier = Modifier.padding(innerPadding))
+        } else {
+            EmptyBox(modifier = Modifier.padding(innerPadding), message = "No alliances")
+        }
         return
     }
     LazyColumn(
