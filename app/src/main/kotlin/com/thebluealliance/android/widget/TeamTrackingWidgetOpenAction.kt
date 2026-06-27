@@ -23,6 +23,7 @@ class TeamTrackingWidgetOpenAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
+        WidgetAnalytics.logWidgetClick(context, WidgetAnalytics.SURFACE_OPEN, glanceId)
         val state = getAppWidgetState(context, PreferencesGlanceStateDefinition, glanceId)
         val teamKey = state[TeamTrackingWidgetKeys.TEAM_KEY]
 

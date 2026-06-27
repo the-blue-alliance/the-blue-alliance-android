@@ -255,6 +255,14 @@ class TeamTrackingWorker
                     } else {
                         prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
                     }
+                    prefs[TeamTrackingWidgetKeys.WIDGET_STATE] =
+                        (
+                            if (upcomingEventsData.isNotEmpty()) {
+                                WidgetState.UPCOMING
+                            } else {
+                                WidgetState.NO_UPCOMING
+                            }
+                        ).value
                     TeamTrackingWidgetKeys.ALL_LAST_MATCH_KEYS.forEach { prefs.remove(it) }
                     TeamTrackingWidgetKeys.ALL_NEXT_MATCH_KEYS.forEach { prefs.remove(it) }
                 }
@@ -311,6 +319,7 @@ class TeamTrackingWorker
                     }
                 prefs[TeamTrackingWidgetKeys.NEXT_ALLIANCE] = nextAlliance
                 prefs.remove(TeamTrackingWidgetKeys.UPCOMING_EVENTS)
+                prefs[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.CURRENT_EVENT.value
 
                 if (lastMatch != null) {
                     prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL] =
