@@ -121,7 +121,9 @@ class WidgetMetricsWorker
                 val snapshots = ArrayList<WidgetEventSnapshot>()
                 for (event in events) {
                     // Identity over the overlapping window: a re-seen (id, start, end) is skipped.
-                    val key = "${event.appWidgetId}:${event.start.toEpochMilli()}:${event.end.toEpochMilli()}"
+                    val startMs = event.start.toEpochMilli()
+                    val endMs = event.end.toEpochMilli()
+                    val key = "${event.appWidgetId}:$startMs:$endMs"
                     if (!seen.add(key)) continue
                     snapshots.add(
                         WidgetEventSnapshot(
