@@ -2,5 +2,5 @@
 # Configure locally with: git config blame.ignoreRevsFile .git-blame-ignore-revs
 # GitHub respects this file automatically in its blame UI.
 
-# chore: apply ktlint formatting to entire codebase (#1069)
-47b2061d6a1a17b5da2822c799243200fa46064e
+# chore: set up ktlint formatting and CI lint job (#1297)
+31723a4465650ef02af53f9799feaed610992cb0
