@@ -4,6 +4,23 @@
 
 The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alliance-2026` with its Docker container running. When the app targets the local dev server (e.g. `http://10.0.2.2:8080` in the emulator), requests go to that container.
 
+## Testing Signed-In Features Locally
+
+Signed-in features (myTBA favorites/notifications — anything gated on `isSignedIn` / Firebase
+Auth) are testable locally **without a real Google account**. Debug builds wire Firebase Auth to
+the local emulator: `AuthModule` calls `useEmulator("10.0.2.2", 9099)` whenever `BuildConfig.DEBUG`.
+
+1. Make sure the local stack is up — the Docker Compose backend includes the Firebase Auth
+   emulator on `:9099`. Check: `curl -s localhost:9099` returns `200`.
+2. Install + launch via the script — `scripts/install-and-launch.sh`, or `scripts/emu launch <component>`
+   after a build. This grants Android 17's `ACCESS_LOCAL_NETWORK`; **without it the app can't reach
+   `10.0.2.2`** (the backend *or* the auth emulator), so sign-in silently fails.
+3. In the app, tap **Sign in with Google**. In debug this calls `MainActivity.signInWithEmulator()`,
+   which signs in a fake user (`user@thebluealliance.com`) against the emulator — no OAuth dialog.
+
+`isSignedIn` is then true and the myTBA tabs render (otherwise the screen shows only the sign-in
+prompt). For myTBA data to sync, point `tba.url.debug` at the local backend (`http://10.0.2.2:8080/`).
+
 ## Build Commands
 
 ```bash
