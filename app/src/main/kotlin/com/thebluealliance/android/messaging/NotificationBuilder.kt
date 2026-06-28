@@ -85,6 +85,9 @@ class NotificationBuilder
                 .setStyle(NotificationCompat.BigTextStyle().bigText(body))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
+                // Collapsing fan-out pushes share a notify id; alert once so the replacing push
+                // updates silently instead of re-buzzing for content already shown (#1461).
+                .setOnlyAlertOnce(true)
                 .build()
         }
 
@@ -106,6 +109,9 @@ class NotificationBuilder
                 return if (!matchKey.isNullOrEmpty()) {
                     "${data["notification_type"]}|$matchKey".hashCode()
                 } else {
+                    // Event-level types (alliance_selection, schedule_updated, …) can still double
+                    // for users following 2+ teams at one event; collapsing those needs per-type
+                    // granularity (e.g. comp_level) and is left as a follow-up.
                     data.hashCode()
                 }
             }
