@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.PlayCircle
+import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +34,7 @@ import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
+import com.thebluealliance.android.util.copyToClipboard
 import com.thebluealliance.android.util.openUrl
 
 @Composable
@@ -113,6 +116,39 @@ fun EventInfoTab(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(top = 4.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+
+        // Event code / key — tap to copy (needed for scouting tools, the API, and URLs)
+        item {
+            Row(
+                modifier =
+                    Modifier
+                        .padding(top = 8.dp)
+                        .clickable {
+                            context.copyToClipboard("Event code", event.key)
+                        },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    Icons.Outlined.Tag,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = event.key,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    Icons.Outlined.ContentCopy,
+                    contentDescription = "Copy event code",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(14.dp),
                 )
             }
         }
