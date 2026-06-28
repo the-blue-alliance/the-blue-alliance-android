@@ -93,5 +93,21 @@ class NotificationBuilder
             const val EXTRA_EVENT_KEY = "event_key"
             const val EXTRA_MATCH_KEY = "match_key"
             const val EXTRA_TEAM_KEY = "team_key"
+
+            /**
+             * Notification id for [android.app.NotificationManager.notify]. Match notifications
+             * collapse per (type, match) so two *followed teams in the same match* show ONE
+             * notification instead of two — the backend fans out one push per subscribed team, so
+             * the later push replaces the earlier rather than stacking (#1461). Notifications
+             * without a match context keep a per-message id (no over-collapsing).
+             */
+            fun collapseId(data: Map<String, String>): Int {
+                val matchKey = data["match_key"]
+                return if (!matchKey.isNullOrEmpty()) {
+                    "${data["notification_type"]}|$matchKey".hashCode()
+                } else {
+                    data.hashCode()
+                }
+            }
         }
     }
