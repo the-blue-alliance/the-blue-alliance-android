@@ -135,4 +135,30 @@ class MyTBADisplayNamesTest {
 
         assertNull(names["2026casj_qm42"])
     }
+
+    @Test
+    fun `event_team with cached team and event maps to "team at event"`() {
+        val names =
+            buildMyTBADisplayNames(
+                teams = listOf(makeTeam(key = "frc254", number = 254)),
+                events = listOf(makeEvent(key = "2026casj")),
+                matches = emptyList(),
+                eventTeamKeys = listOf("2026casj_frc254"),
+            )
+
+        assertEquals("254 @ 2026 Silicon Valley Regional", names["2026casj_frc254"])
+    }
+
+    @Test
+    fun `event_team without cached data falls back to parsed key parts`() {
+        val names =
+            buildMyTBADisplayNames(
+                teams = emptyList(),
+                events = emptyList(),
+                matches = emptyList(),
+                eventTeamKeys = listOf("2026casj_frc254"),
+            )
+
+        assertEquals("254 @ 2026casj", names["2026casj_frc254"])
+    }
 }
