@@ -120,14 +120,15 @@ fun EventInfoTab(
             }
         }
 
-        // Event code / key — tap to copy (needed for scouting tools, the API, and URLs)
+        // Event key — tap to copy (needed for scouting tools, the API, and URLs).
+        // This is the full TBA key (e.g. 2026casf); the short FIRST code is event.eventCode.
         item {
             Row(
                 modifier =
                     Modifier
                         .padding(top = 8.dp)
                         .clickable {
-                            context.copyToClipboard("Event code", event.key)
+                            context.copyToClipboard("Event key", event.key)
                         },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -139,14 +140,14 @@ fun EventInfoTab(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = event.key,
+                    text = "Event key: ${event.key}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(Modifier.width(8.dp))
                 Icon(
                     Icons.Outlined.ContentCopy,
-                    contentDescription = "Copy event code",
+                    contentDescription = "Copy event key",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(14.dp),
                 )
