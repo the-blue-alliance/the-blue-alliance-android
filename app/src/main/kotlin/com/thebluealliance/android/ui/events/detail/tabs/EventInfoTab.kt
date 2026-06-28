@@ -120,40 +120,6 @@ fun EventInfoTab(
             }
         }
 
-        // Event key — tap to copy (needed for scouting tools, the API, and URLs).
-        // This is the full TBA key (e.g. 2026casf); the short FIRST code is event.eventCode.
-        item {
-            Row(
-                modifier =
-                    Modifier
-                        .padding(top = 8.dp)
-                        .clickable {
-                            context.copyToClipboard("Event key", event.key)
-                        },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    Icons.Outlined.Tag,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = "Event key: ${event.key}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(Modifier.width(8.dp))
-                Icon(
-                    Icons.Outlined.ContentCopy,
-                    contentDescription = "Copy event key",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(14.dp),
-                )
-            }
-        }
-
         // Address (tappable → opens Google Maps)
         if (event.address != null) {
             item {
@@ -280,6 +246,40 @@ fun EventInfoTab(
                         )
                     }
                 }
+            }
+        }
+
+        // Event key — last, below the address/contact info. Tap to copy (needed for scouting
+        // tools, the API, and URLs). Full TBA key (e.g. 2026casf); short FIRST code is eventCode.
+        item {
+            Row(
+                modifier =
+                    Modifier
+                        .padding(top = 8.dp)
+                        .clickable {
+                            context.copyToClipboard("Event key", event.key)
+                        },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    Icons.Outlined.Tag,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "Event key: ${event.key}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Spacer(Modifier.width(8.dp))
+                Icon(
+                    Icons.Outlined.ContentCopy,
+                    contentDescription = "Copy event key",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(14.dp),
+                )
             }
         }
     }
