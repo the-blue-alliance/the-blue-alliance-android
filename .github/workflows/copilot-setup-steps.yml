@@ -1,0 +1,55 @@
+# Prepares the environment for the GitHub Copilot coding agent so it can build
+# the app immediately. GitHub only reads this file at this exact path with a job
+# named `copilot-setup-steps`; it mirrors the app CI setup (see ci-app.yaml).
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Create placeholder google-services.json
+        run: |
+          mkdir -p app/src/debug app/src/release
+          for pkg in "com.thebluealliance.androidclient.development:app/src/debug" "com.thebluealliance.androidclient:app/src/release"; do
+            IFS=: read -r package dir <<< "$pkg"
+            cat > "$dir/google-services.json" << EOF
+          {
+            "project_info": {
+              "project_number": "000000000000",
+              "project_id": "ci-placeholder",
+              "storage_bucket": "ci-placeholder.appspot.com"
+            },
+            "client": [{
+              "client_info": {
+                "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+                "android_client_info": { "package_name": "$package" }
+              },
+              "oauth_client": [{ "client_id": "000000000000-ci.apps.googleusercontent.com", "client_type": 3 }],
+              "api_key": [{ "current_key": "ci-placeholder-key" }]
+            }],
+            "configuration_version": "1"
+          }
+          EOF
+          done
+      - name: Warm the Gradle build cache
+        run: ./gradlew :app:assembleDebug --stacktrace
