@@ -13,6 +13,7 @@ class TeamTrackingWidgetRefreshAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
+        WidgetAnalytics.logWidgetClick(context, WidgetAnalytics.SURFACE_REFRESH, glanceId)
         val workRequest = OneTimeWorkRequestBuilder<TeamTrackingWorker>().build()
         WorkManager.getInstance(context).enqueue(workRequest)
     }

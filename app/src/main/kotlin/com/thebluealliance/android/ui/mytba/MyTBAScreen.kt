@@ -337,6 +337,8 @@ private fun FavoritesTab(
                         ModelType.TEAM -> onNavigateToTeam(favorite.modelKey)
                         ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
                         ModelType.MATCH -> onNavigateToMatch(favorite.modelKey)
+                        ModelType.EVENT_TEAM ->
+                            onNavigateToEvent(favorite.modelKey.substringBefore('_'))
                     }
                 },
                 canPinShortcuts = canPinShortcuts,
@@ -380,6 +382,8 @@ private fun FavoriteItem(
             ModelType.EVENT -> "Event"
             ModelType.TEAM -> "Team"
             ModelType.MATCH -> "Match"
+            ModelType.EVENT_TEAM -> "Team @ Event"
+            ModelType.DISTRICT -> "District"
             else -> "Other"
         }
     var menuExpanded by remember { mutableStateOf(false) }
@@ -473,6 +477,8 @@ private fun NotificationsTab(
                         ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
                         ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
                         ModelType.MATCH -> onNavigateToMatch(subscription.modelKey)
+                        ModelType.EVENT_TEAM ->
+                            onNavigateToEvent(subscription.modelKey.substringBefore('_'))
                     }
                 },
                 onRemove = { onRemoveSubscription(subscription) },
@@ -493,6 +499,8 @@ private fun SubscriptionItem(
             ModelType.EVENT -> "Event"
             ModelType.TEAM -> "Team"
             ModelType.MATCH -> "Match"
+            ModelType.EVENT_TEAM -> "Team @ Event"
+            ModelType.DISTRICT -> "District"
             else -> "Other"
         }
     var menuExpanded by remember { mutableStateOf(false) }

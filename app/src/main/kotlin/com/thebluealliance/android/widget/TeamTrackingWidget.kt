@@ -121,14 +121,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 "2x2" -> "square"
                 "2x1" -> "minimal"
                 "1x1" -> "tiny"
-                else ->
-                    when {
-                        size.width >= 250.dp && size.height >= 110.dp -> "full"
-                        size.width >= 250.dp -> "compact"
-                        size.width >= 110.dp && size.height >= 110.dp -> "square"
-                        size.width >= 110.dp -> "minimal"
-                        else -> "tiny"
-                    }
+                else -> WidgetSizeTier.classify(size.width, size.height)
             }
 
         when (tier) {

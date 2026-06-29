@@ -33,6 +33,9 @@ object TeamTrackingWidgetKeys {
     // Upcoming events (when no current event) — tab-separated rows: "name\tcity\tdate"
     val UPCOMING_EVENTS = stringPreferencesKey("upcoming_events")
 
+    // Which of the three render states the widget is in — the analytics `widget_state` dimension.
+    val WIDGET_STATE = stringPreferencesKey("widget_state")
+
     // Debug: force a specific size tier (e.g. "1x1", "2x1", "2x2", "4x1", "4x2")
     val DEBUG_FORCED_SIZE = stringPreferencesKey("debug_forced_size")
 
