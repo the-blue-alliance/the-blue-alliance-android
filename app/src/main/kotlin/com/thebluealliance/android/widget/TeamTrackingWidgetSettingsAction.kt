@@ -14,6 +14,7 @@ class TeamTrackingWidgetSettingsAction : ActionCallback {
         glanceId: GlanceId,
         parameters: ActionParameters,
     ) {
+        WidgetAnalytics.logWidgetClick(context, WidgetAnalytics.SURFACE_SETTINGS, glanceId)
         val manager = GlanceAppWidgetManager(context)
         val appWidgetId = manager.getAppWidgetId(glanceId)
 
