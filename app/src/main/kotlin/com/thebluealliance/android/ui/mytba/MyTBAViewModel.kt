@@ -53,13 +53,28 @@ class MyTBAViewModel
             }.distinctUntilChanged().flatMapLatest { keyedTypes ->
                 fun keysOf(type: Int) = keyedTypes.filter { it.second == type }.map { it.first }
                 val matchKeys = keysOf(ModelType.MATCH)
+                // event_team keys are "{eventKey}_{teamKey}" — observe both halves so the row
+                // resolves to a friendly "team @ event" name instead of the raw key (#1460).
+                val eventTeamKeys = keysOf(ModelType.EVENT_TEAM)
+                val teamKeys =
+                    (
+                        keysOf(
+                            ModelType.TEAM,
+                        ) + eventTeamKeys.map { it.substringAfter('_') }
+                    ).distinct()
                 val eventKeys =
-                    (keysOf(ModelType.EVENT) + matchKeys.map { it.substringBefore('_') }).distinct()
+                    (
+                        keysOf(ModelType.EVENT) +
+                            matchKeys.map { it.substringBefore('_') } +
+                            eventTeamKeys.map { it.substringBefore('_') }
+                    ).distinct()
                 combine(
-                    teamRepository.observeTeams(keysOf(ModelType.TEAM)),
+                    teamRepository.observeTeams(teamKeys),
                     eventRepository.observeEvents(eventKeys),
                     matchRepository.observeMatches(matchKeys),
-                ) { teams, events, matches -> buildMyTBADisplayNames(teams, events, matches) }
+                ) { teams, events, matches ->
+                    buildMyTBADisplayNames(teams, events, matches, eventTeamKeys)
+                }
             }
 
         val uiState: StateFlow<MyTBAUiState> =
@@ -178,8 +193,10 @@ internal fun buildMyTBADisplayNames(
     teams: List<Team>,
     events: List<Event>,
     matches: List<Match>,
+    eventTeamKeys: List<String> = emptyList(),
 ): Map<String, String> {
     val eventsByKey = events.associateBy { it.key }
+    val teamsByKey = teams.associateBy { it.key }
     return buildMap {
         teams.forEach { team ->
             val label = team.nickname ?: team.name
@@ -193,6 +210,15 @@ internal fun buildMyTBADisplayNames(
             val event = eventsByKey[match.eventKey] ?: return@forEach
             val label = match.getFullLabel(event.playoffType)
             put(match.key, "$label - ${event.year} ${event.name}")
+        }
+        // event_team ("{eventKey}_{teamKey}") → "2471 @ 2024 <Event>", falling back to the
+        // parsed key parts when the team/event aren't cached locally (#1460).
+        eventTeamKeys.forEach { key ->
+            val eventKey = key.substringBefore('_')
+            val teamKey = key.substringAfter('_')
+            val teamLabel = teamsByKey[teamKey]?.number?.toString() ?: teamKey.removePrefix("frc")
+            val eventLabel = eventsByKey[eventKey]?.let { "${it.year} ${it.name}" } ?: eventKey
+            put(key, "$teamLabel @ $eventLabel")
         }
     }
 }

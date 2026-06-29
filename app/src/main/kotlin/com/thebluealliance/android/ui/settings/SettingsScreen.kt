@@ -151,6 +151,16 @@ fun SettingsScreen(
                 ) {
                     Text("Test: Event update notification")
                 }
+
+                Button(
+                    onClick = { viewModel.seedDebugEventTeamSubscription() },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                ) {
+                    Text("Test: Seed event_team subscription (myTBA)")
+                }
             }
         }
     }
