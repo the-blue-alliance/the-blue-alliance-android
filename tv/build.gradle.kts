@@ -205,6 +205,12 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.config)
 
+    // play-services-basement (pulled in transitively by Firebase) declares an ancient
+    // androidx.fragment:fragment:1.1.0, which Play flags as outdated. This Compose+leanback app
+    // doesn't use fragments directly, but nothing else here requests a newer one (:app/:wear get
+    // 1.5.x transitively), so :tv resolves to 1.1.0. Pin the transitive to the current stable.
+    implementation(libs.fragment)
+
     // Core library desugaring (java.time on minSdk 23)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
