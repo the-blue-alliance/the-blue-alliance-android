@@ -60,7 +60,11 @@ android {
     defaultConfig {
         applicationId = "com.thebluealliance.androidclient"
         minSdk = 30
-        targetSdk = 37
+        // Wear OS 7 (API 37) is still in Developer Preview, so the Play Wear
+        // track rejects bundles targeting it ("SDK version used by APK is too
+        // high"). Cap at 36 (Wear OS 6.1 / Android 16) until Wear OS 7 ships.
+        // compileSdk stays at 37 — Play only checks the manifest's targetSdk.
+        targetSdk = 36
         versionCode = computedVersionCode
         versionName = computedVersionName
 
