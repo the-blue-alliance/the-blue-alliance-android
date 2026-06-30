@@ -153,6 +153,16 @@ fun SettingsScreen(
                 }
 
                 Button(
+                    onClick = { sendTestDuplicateMatch(context) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                ) {
+                    Text("Test: Duplicate match (2 followed teams)")
+                }
+
+                Button(
                     onClick = { viewModel.seedDebugEventTeamSubscription() },
                     modifier =
                         Modifier
@@ -212,4 +222,31 @@ private fun sendTestEventUpdate(context: Context) {
         )
     val manager = context.getSystemService(NotificationManager::class.java)
     manager.notify(9003, notification)
+}
+
+// Repros #1461: two followed teams in the SAME match. The backend fans out one push per
+// subscribed team; with the collapse-id fix these post as ONE notification, not two.
+private fun sendTestDuplicateMatch(context: Context) {
+    val builder = NotificationBuilder(context)
+    val manager = context.getSystemService(NotificationManager::class.java)
+    listOf("frc254", "frc1323").forEach { team ->
+        val data =
+            mapOf(
+                "notification_type" to "match_score",
+                "event_key" to "2026cmptx",
+                "match_key" to "2026cmptx_qm61",
+                "team_key" to team,
+            )
+        val notification =
+            builder.build(
+                channelId = NotificationChannelManager.CHANNEL_MATCH,
+                title = "CMPTX Q61 Results",
+                body = "254, 1323, 1718 beat 118, 148, 195 scoring 168-150.",
+                eventKey = data["event_key"],
+                matchKey = data["match_key"],
+                teamKey = team,
+                notificationType = data["notification_type"],
+            )
+        manager.notify(NotificationBuilder.collapseId(data), notification)
+    }
 }

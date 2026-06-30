@@ -65,7 +65,7 @@ class TBAFirebaseMessagingService : FirebaseMessagingService() {
             Log.w(TAG, "Dropping notification (type=$typeKey): POST_NOTIFICATIONS not granted")
             return
         }
-        val notificationId = message.data.hashCode()
+        val notificationId = NotificationBuilder.collapseId(message.data)
         manager.notify(notificationId, notification)
     }
 
