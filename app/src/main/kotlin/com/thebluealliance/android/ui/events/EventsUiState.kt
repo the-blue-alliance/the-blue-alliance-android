@@ -25,8 +25,21 @@ data class EventsData(
     val districtNames: Map<String, String> = emptyMap(),
 )
 
+/**
+ * Coarse ordering buckets for event sections. Within [DATED], sections sort
+ * chronologically by their earliest event, so a delayed "Week 17" lands after
+ * Championship just like on the website.
+ */
+private enum class SectionRank {
+    ACTIVE_PRESEASON,
+    DATED,
+    FINISHED_PRESEASON,
+    OFFSEASON,
+    OTHER,
+}
+
 private data class SectionKey(
-    val sortOrder: Int,
+    val rank: SectionRank,
     val label: String,
 )
 
@@ -54,22 +67,26 @@ private fun eventSectionKey(
 ): SectionKey {
     return when (event.type) {
         EventType.PRESEASON ->
-            if (preseasonOver) SectionKey(1500, "Preseason") else SectionKey(-1, "Preseason")
+            if (preseasonOver) {
+                SectionKey(SectionRank.FINISHED_PRESEASON, "Preseason")
+            } else {
+                SectionKey(SectionRank.ACTIVE_PRESEASON, "Preseason")
+            }
         EventType.REGIONAL, EventType.DISTRICT, EventType.DISTRICT_CHAMPIONSHIP,
         EventType.DISTRICT_CHAMPIONSHIP_DIVISION,
         -> {
-            val week = event.week ?: return SectionKey(9999, "Other events")
-            SectionKey(week, weekLabel(event.year, week))
+            val week = event.week ?: return SectionKey(SectionRank.OTHER, "Other events")
+            SectionKey(SectionRank.DATED, weekLabel(event.year, week))
         }
         EventType.CHAMPIONSHIP_DIVISION, EventType.CHAMPIONSHIP_FINALS ->
-            SectionKey(1000, "Championship")
-        EventType.OFFSEASON -> SectionKey(2000, "Offseason")
+            SectionKey(SectionRank.DATED, "Championship")
+        EventType.OFFSEASON -> SectionKey(SectionRank.OFFSEASON, "Offseason")
         else -> {
             // Unknown type but has a week — group with regular weeks
             if (event.week != null) {
-                SectionKey(event.week, weekLabel(event.year, event.week))
+                SectionKey(SectionRank.DATED, weekLabel(event.year, event.week))
             } else {
-                SectionKey(9999, "Other events")
+                SectionKey(SectionRank.OTHER, "Other events")
             }
         }
     }
@@ -93,8 +110,14 @@ fun buildEventSections(
     return events
         .groupBy { eventSectionKey(it, preseasonOver) }
         .entries
-        .sortedBy { it.key.sortOrder }
-        .map { (key, sectionEvents) ->
+        .sortedWith(
+            compareBy(
+                { it.key.rank },
+                { entry ->
+                    entry.value.mapNotNull { parseDate(it.startDate) }.minOrNull() ?: LocalDate.MAX
+                },
+            ),
+        ).map { (key, sectionEvents) ->
             val sortedEvents = sectionEvents.sortedWith(eventComparator)
             val subSections = buildSubSections(sortedEvents, districtNames)
             EventSection(key.label, subSections)

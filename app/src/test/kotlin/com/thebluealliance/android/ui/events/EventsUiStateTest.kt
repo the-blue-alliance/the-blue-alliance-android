@@ -310,6 +310,58 @@ class EventsUiStateTest {
         )
     }
 
+    @Test
+    fun `weeks delayed past championship sort chronologically after it`() {
+        // 2026 Israel events were postponed to weeks 17-19, after FIRST Championship.
+        val today = LocalDate.of(2026, 3, 10)
+        val events =
+            listOf(
+                makeEvent(
+                    key = "2026wk1",
+                    type = EventType.REGIONAL,
+                    week = 0,
+                    startDate = "2026-03-04",
+                    endDate = "2026-03-07",
+                ),
+                makeEvent(
+                    key = "2026isde1",
+                    type = EventType.DISTRICT,
+                    week = 16,
+                    district = "2026isr",
+                    startDate = "2026-06-29",
+                    endDate = "2026-07-01",
+                ),
+                makeEvent(
+                    key = "2026iscmp",
+                    type = EventType.DISTRICT_CHAMPIONSHIP,
+                    week = 18,
+                    district = "2026isr",
+                    startDate = "2026-07-15",
+                    endDate = "2026-07-17",
+                ),
+                makeEvent(
+                    key = "2026cmp",
+                    type = EventType.CHAMPIONSHIP_DIVISION,
+                    startDate = "2026-04-15",
+                    endDate = "2026-04-18",
+                ),
+                makeEvent(
+                    key = "2026off1",
+                    type = EventType.OFFSEASON,
+                    startDate = "2026-06-20",
+                    endDate = "2026-06-21",
+                ),
+            )
+
+        val sections = buildEventSections(events, today)
+
+        // Offseason stays pinned last even though it starts before Week 19.
+        assertEquals(
+            listOf("Week 1", "Championship", "Week 17", "Week 19", "Offseason"),
+            sections.map { it.label },
+        )
+    }
+
     // --- computeThisWeekEvents (used by DistrictDetailScreen) ---
 
     @Test
