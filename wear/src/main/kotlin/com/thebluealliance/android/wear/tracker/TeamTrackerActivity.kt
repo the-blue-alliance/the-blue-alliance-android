@@ -54,6 +54,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
+import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackerActivity : ComponentActivity() {
@@ -80,7 +81,7 @@ class TeamTrackerActivity : ComponentActivity() {
         }
 
         setContent {
-            MaterialTheme {
+            TbaWearTheme {
                 AppScaffold {
                     val currentState by state
                     TeamTrackerScreen(

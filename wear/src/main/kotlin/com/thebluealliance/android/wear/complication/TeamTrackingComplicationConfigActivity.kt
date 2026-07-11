@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +31,9 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
+import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
+import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
 class TeamTrackingComplicationConfigActivity : ComponentActivity() {
@@ -54,7 +57,7 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
         val existingTeam = TeamTrackerPreferences(this).teamNumber
 
         setContent {
-            MaterialTheme {
+            TbaWearTheme {
                 AppScaffold {
                     ScreenScaffold {
                         ConfigScreen(
@@ -121,7 +124,12 @@ private fun ConfigScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = if (initialTeam.isNotBlank()) "Change Team" else "Team Number",
+            text =
+                if (initialTeam.isNotBlank()) {
+                    stringResource(R.string.change_team)
+                } else {
+                    stringResource(R.string.team_number)
+                },
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.padding(bottom = 8.dp),
         )
@@ -164,7 +172,7 @@ private fun ConfigScreen(
         )
         FilledTonalButton(
             onClick = { save() },
-            label = { Text("Save") },
+            label = { Text(stringResource(R.string.save)) },
             modifier =
                 Modifier
                     .fillMaxWidth()
