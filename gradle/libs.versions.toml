@@ -24,7 +24,7 @@ room = "2.8.4"
 datastore = "1.2.1"
 
 coil = "3.5.0"
-aboutlibraries = "15.0.3"
+aboutlibraries = "15.0.4"
 
 firebase-bom = "34.16.0"
 google-services = "4.5.0"
