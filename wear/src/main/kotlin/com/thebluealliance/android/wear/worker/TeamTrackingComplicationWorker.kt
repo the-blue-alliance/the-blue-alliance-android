@@ -162,9 +162,11 @@ class TeamTrackingComplicationWorker
                 // Request complication data update from the watch face
                 requestComplicationUpdate()
 
+                trackerPrefs.lastRefreshFailed = false
                 Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update complications", e)
+                trackerPrefs.lastRefreshFailed = true
                 Result.retry()
             } finally {
                 trackerPrefs.isLoading = false

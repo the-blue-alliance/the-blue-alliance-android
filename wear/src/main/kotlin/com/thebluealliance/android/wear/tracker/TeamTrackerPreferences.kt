@@ -23,6 +23,10 @@ class TeamTrackerPreferences(
         get() = prefs.getBoolean(KEY_IS_LOADING, false)
         set(value) = prefs.edit { putBoolean(KEY_IS_LOADING, value) }
 
+    /** True when the most recent refresh threw before completing (network/API failure). */
+    var lastRefreshFailed: Boolean
+        get() = prefs.getBoolean(KEY_LAST_REFRESH_FAILED, false)
+        set(value) = prefs.edit { putBoolean(KEY_LAST_REFRESH_FAILED, value) }
     var avatarBase64: String?
         get() = prefs.getString(KEY_AVATAR_BASE64, null)
         set(value) = prefs.edit { putString(KEY_AVATAR_BASE64, value) }
@@ -131,6 +135,7 @@ class TeamTrackerPreferences(
     companion object {
         private const val KEY_TEAM_NUMBER = "team_number"
         private const val KEY_IS_LOADING = "is_loading"
+        private const val KEY_LAST_REFRESH_FAILED = "last_refresh_failed"
         private const val KEY_AVATAR_BASE64 = "avatar_base64"
         private const val KEY_EVENT_NAME = "event_name"
         private const val KEY_RECORD = "record"
