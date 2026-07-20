@@ -86,6 +86,7 @@ class TeamTrackerActivity : ComponentActivity() {
                     TeamTrackerScreen(
                         state = currentState,
                         onChangeTeam = { launchConfigActivity() },
+                        onRetry = { retryRefresh() },
                     )
                 }
             }
@@ -111,6 +112,7 @@ class TeamTrackerActivity : ComponentActivity() {
                 record = trackerPrefs.record,
                 hasActiveEvent = trackerPrefs.hasActiveEvent,
                 isLoading = trackerPrefs.isLoading,
+                lastRefreshFailed = trackerPrefs.lastRefreshFailed,
                 lastMatchLabel = trackerPrefs.lastMatchLabel,
                 lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
                 lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
@@ -137,6 +139,13 @@ class TeamTrackerActivity : ComponentActivity() {
             Intent(this, TeamTrackingComplicationConfigActivity::class.java),
         )
     }
+
+    /** Re-run the fetch after a failed refresh; shows the spinner immediately for feedback. */
+    private fun retryRefresh() {
+        trackerPrefs.lastRefreshFailed = false
+        trackerPrefs.isLoading = true
+        TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
+    }
 }
 
 data class TeamTrackerState(
@@ -146,6 +155,7 @@ data class TeamTrackerState(
     val record: String = "",
     val hasActiveEvent: Boolean = false,
     val isLoading: Boolean = false,
+    val lastRefreshFailed: Boolean = false,
     val lastMatchLabel: String = "",
     val lastMatchRedTeams: String = "",
     val lastMatchBlueTeams: String = "",
@@ -175,6 +185,7 @@ private val AllianceNeutralBg = Color(0xFF424242)
 private fun TeamTrackerScreen(
     state: TeamTrackerState,
     onChangeTeam: () -> Unit,
+    onRetry: () -> Unit,
 ) {
     if (state.teamNumber.isBlank()) {
         EmptyState(onChangeTeam)
@@ -213,6 +224,11 @@ private fun TeamTrackerScreen(
 
             val hasMatchData =
                 state.lastMatchLabel.isNotBlank() || state.nextMatchLabel.isNotBlank()
+            val hasAnyData =
+                hasMatchData || state.hasActiveEvent || state.upcomingEvents.isNotEmpty()
+            // A failed refresh only surfaces an error when there's nothing cached to fall back on;
+            // otherwise the (stale) data keeps showing.
+            val showError = state.lastRefreshFailed && !hasAnyData
             val sparseContent = !hasMatchData && state.upcomingEvents.size <= 1
             if (!state.isLoading && sparseContent) {
                 item { Spacer(modifier = Modifier.height(4.dp)) }
@@ -227,6 +243,8 @@ private fun TeamTrackerScreen(
                         CircularProgressIndicator()
                     }
                 }
+            } else if (showError) {
+                item { ErrorState(onRetry) }
             } else {
                 item { EventSubtitle(state) }
             }
@@ -337,6 +355,26 @@ private fun TeamHeader(state: TeamTrackerState) {
         Text(
             text = state.teamNumber,
             style = MaterialTheme.typography.titleLarge,
+        )
+    }
+}
+
+@Composable
+private fun ErrorState(onRetry: () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(vertical = 2.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.refresh_failed),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FilledTonalButton(
+            onClick = onRetry,
+            label = { Text(stringResource(R.string.retry)) },
+            modifier = Modifier.padding(top = 6.dp),
         )
     }
 }
