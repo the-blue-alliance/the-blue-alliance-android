@@ -53,6 +53,7 @@ import androidx.wear.compose.material3.Text
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.AvatarConverter
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
+import com.thebluealliance.android.wear.ui.TbaColors
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
@@ -172,14 +173,6 @@ data class TeamTrackerState(
     val nextAlliance: Alliance? = null,
     val upcomingEvents: List<String> = emptyList(),
 )
-
-private val AllianceRed = Color(0xFFF2B8B5)
-private val AllianceBlue = Color(0xFF9FA8DA)
-private val AllianceRedBg = Color(0xFFC62828)
-private val AllianceBlueBg = Color(0xFF1565C0)
-
-/** Avatar backdrop when the tracked alliance is unknown — a neutral, not an arbitrary color. */
-private val AllianceNeutralBg = Color(0xFF424242)
 
 @Composable
 private fun TeamTrackerScreen(
@@ -332,9 +325,9 @@ private fun TeamHeader(state: TeamTrackerState) {
         if (bitmap != null) {
             val bgColor =
                 when (state.nextAlliance ?: state.lastAlliance) {
-                    Alliance.RED -> AllianceRedBg
-                    Alliance.BLUE -> AllianceBlueBg
-                    null -> AllianceNeutralBg
+                    Alliance.RED -> TbaColors.AllianceRedBg
+                    Alliance.BLUE -> TbaColors.AllianceBlueBg
+                    null -> TbaColors.AllianceNeutralBg
                 }
             Box(
                 modifier =
@@ -455,7 +448,7 @@ private fun MatchSection(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 AllianceRow(
-                    color = AllianceRed,
+                    color = TbaColors.AllianceRed,
                     teams = redTeams,
                     score = redScore,
                     isWinner = winningAlliance == Alliance.RED,
@@ -463,7 +456,7 @@ private fun MatchSection(
                     bonusRp = if (trackedAlliance == Alliance.RED) bonusRp else 0,
                 )
                 AllianceRow(
-                    color = AllianceBlue,
+                    color = TbaColors.AllianceBlue,
                     teams = blueTeams,
                     score = blueScore,
                     isWinner = winningAlliance == Alliance.BLUE,
