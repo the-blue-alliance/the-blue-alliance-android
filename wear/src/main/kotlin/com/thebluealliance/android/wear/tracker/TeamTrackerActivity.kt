@@ -116,15 +116,15 @@ class TeamTrackerActivity : ComponentActivity() {
                 lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
                 lastMatchRedScore = trackerPrefs.lastMatchRedScore,
                 lastMatchBlueScore = trackerPrefs.lastMatchBlueScore,
-                lastMatchWinningAlliance = trackerPrefs.lastMatchWinningAlliance,
-                lastAlliance = trackerPrefs.lastAlliance,
+                lastMatchWinningAlliance = Alliance.fromKey(trackerPrefs.lastMatchWinningAlliance),
+                lastAlliance = Alliance.fromKey(trackerPrefs.lastAlliance),
                 lastMatchBonusRp = trackerPrefs.lastMatchBonusRp,
                 nextMatchLabel = trackerPrefs.nextMatchLabel,
                 nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
                 nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
                 nextMatchTime = trackerPrefs.nextMatchTime,
                 nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
-                nextAlliance = trackerPrefs.nextAlliance,
+                nextAlliance = Alliance.fromKey(trackerPrefs.nextAlliance),
                 upcomingEvents =
                     trackerPrefs.upcomingEvents
                         .split("|")
@@ -151,15 +151,15 @@ data class TeamTrackerState(
     val lastMatchBlueTeams: String = "",
     val lastMatchRedScore: Int = -1,
     val lastMatchBlueScore: Int = -1,
-    val lastMatchWinningAlliance: String = "",
-    val lastAlliance: String = "",
+    val lastMatchWinningAlliance: Alliance? = null,
+    val lastAlliance: Alliance? = null,
     val lastMatchBonusRp: Int = 0,
     val nextMatchLabel: String = "",
     val nextMatchRedTeams: String = "",
     val nextMatchBlueTeams: String = "",
     val nextMatchTime: String = "",
     val nextMatchTimeIsEstimate: Boolean = false,
-    val nextAlliance: String = "",
+    val nextAlliance: Alliance? = null,
     val upcomingEvents: List<String> = emptyList(),
 )
 
@@ -167,6 +167,9 @@ private val AllianceRed = Color(0xFFF2B8B5)
 private val AllianceBlue = Color(0xFF9FA8DA)
 private val AllianceRedBg = Color(0xFFC62828)
 private val AllianceBlueBg = Color(0xFF1565C0)
+
+/** Avatar backdrop when the tracked alliance is unknown — a neutral, not an arbitrary color. */
+private val AllianceNeutralBg = Color(0xFF424242)
 
 @Composable
 private fun TeamTrackerScreen(
@@ -310,10 +313,10 @@ private fun TeamHeader(state: TeamTrackerState) {
     ) {
         if (bitmap != null) {
             val bgColor =
-                when (state.nextAlliance.ifBlank { state.lastAlliance }) {
-                    "red" -> AllianceRedBg
-                    "blue" -> AllianceBlueBg
-                    else -> AllianceBlueBg
+                when (state.nextAlliance ?: state.lastAlliance) {
+                    Alliance.RED -> AllianceRedBg
+                    Alliance.BLUE -> AllianceBlueBg
+                    null -> AllianceNeutralBg
                 }
             Box(
                 modifier =
@@ -391,9 +394,9 @@ private fun MatchSection(
     blueTeams: String,
     redScore: Int? = null,
     blueScore: Int? = null,
-    winningAlliance: String = "",
+    winningAlliance: Alliance? = null,
     trackedTeam: String,
-    trackedAlliance: String = "",
+    trackedAlliance: Alliance? = null,
     bonusRp: Int = 0,
     timeText: String? = null,
 ) {
@@ -417,17 +420,17 @@ private fun MatchSection(
                     color = AllianceRed,
                     teams = redTeams,
                     score = redScore,
-                    isWinner = winningAlliance == "red",
+                    isWinner = winningAlliance == Alliance.RED,
                     trackedTeam = trackedTeam,
-                    bonusRp = if (trackedAlliance == "red") bonusRp else 0,
+                    bonusRp = if (trackedAlliance == Alliance.RED) bonusRp else 0,
                 )
                 AllianceRow(
                     color = AllianceBlue,
                     teams = blueTeams,
                     score = blueScore,
-                    isWinner = winningAlliance == "blue",
+                    isWinner = winningAlliance == Alliance.BLUE,
                     trackedTeam = trackedTeam,
-                    bonusRp = if (trackedAlliance == "blue") bonusRp else 0,
+                    bonusRp = if (trackedAlliance == Alliance.BLUE) bonusRp else 0,
                 )
             }
             if (timeText != null) {
