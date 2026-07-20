@@ -15,100 +15,125 @@ class TeamTrackerPreferences(
     private val prefs: SharedPreferences =
         context.getSharedPreferences("team_tracker_app", Context.MODE_PRIVATE)
 
+    /** Non-null while a [beginBatch] batch is open; setters write here instead of committing. */
+    private var batchEditor: SharedPreferences.Editor? = null
+
+    /** Route a write to the open [beginBatch] batch, or commit it immediately when none is active. */
+    private inline fun put(write: SharedPreferences.Editor.() -> Unit) {
+        val editor = batchEditor
+        if (editor != null) editor.write() else prefs.edit { write() }
+    }
+
+    /**
+     * Open a batch: subsequent property writes accumulate into one editor instead of each
+     * committing on its own. Pairs with [applyBatch]. Without this a single worker refresh fires
+     * ~20 writes, each waking a full reload + recompose in the foreground tracker. Not reentrant;
+     * intended for the single refresh worker.
+     */
+    fun beginBatch() {
+        if (batchEditor == null) batchEditor = prefs.edit()
+    }
+
+    /** Commit and close the batch opened by [beginBatch] as a single write, if one is open. */
+    fun applyBatch() {
+        batchEditor?.apply()
+        batchEditor = null
+    }
+
     var teamNumber: String
         get() = prefs.getString(KEY_TEAM_NUMBER, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_TEAM_NUMBER, value) }
+        set(value) = put { putString(KEY_TEAM_NUMBER, value) }
 
     var isLoading: Boolean
         get() = prefs.getBoolean(KEY_IS_LOADING, false)
-        set(value) = prefs.edit { putBoolean(KEY_IS_LOADING, value) }
+        set(value) = put { putBoolean(KEY_IS_LOADING, value) }
 
     /** True when the most recent refresh threw before completing (network/API failure). */
     var lastRefreshFailed: Boolean
         get() = prefs.getBoolean(KEY_LAST_REFRESH_FAILED, false)
-        set(value) = prefs.edit { putBoolean(KEY_LAST_REFRESH_FAILED, value) }
+        set(value) = put { putBoolean(KEY_LAST_REFRESH_FAILED, value) }
     var avatarBase64: String?
         get() = prefs.getString(KEY_AVATAR_BASE64, null)
-        set(value) = prefs.edit { putString(KEY_AVATAR_BASE64, value) }
+        set(value) = put { putString(KEY_AVATAR_BASE64, value) }
 
     var eventName: String
         get() = prefs.getString(KEY_EVENT_NAME, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_EVENT_NAME, value) }
+        set(value) = put { putString(KEY_EVENT_NAME, value) }
 
     var record: String
         get() = prefs.getString(KEY_RECORD, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_RECORD, value) }
+        set(value) = put { putString(KEY_RECORD, value) }
 
     var hasActiveEvent: Boolean
         get() = prefs.getBoolean(KEY_HAS_ACTIVE_EVENT, false)
-        set(value) = prefs.edit { putBoolean(KEY_HAS_ACTIVE_EVENT, value) }
+        set(value) = put { putBoolean(KEY_HAS_ACTIVE_EVENT, value) }
 
     // Last match
 
     var lastMatchLabel: String
         get() = prefs.getString(KEY_LAST_MATCH_LABEL, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_LAST_MATCH_LABEL, value) }
+        set(value) = put { putString(KEY_LAST_MATCH_LABEL, value) }
 
     var lastMatchRedTeams: String
         get() = prefs.getString(KEY_LAST_MATCH_RED_TEAMS, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_LAST_MATCH_RED_TEAMS, value) }
+        set(value) = put { putString(KEY_LAST_MATCH_RED_TEAMS, value) }
 
     var lastMatchBlueTeams: String
         get() = prefs.getString(KEY_LAST_MATCH_BLUE_TEAMS, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_LAST_MATCH_BLUE_TEAMS, value) }
+        set(value) = put { putString(KEY_LAST_MATCH_BLUE_TEAMS, value) }
 
     var lastMatchRedScore: Int
         get() = prefs.getInt(KEY_LAST_MATCH_RED_SCORE, -1)
-        set(value) = prefs.edit { putInt(KEY_LAST_MATCH_RED_SCORE, value) }
+        set(value) = put { putInt(KEY_LAST_MATCH_RED_SCORE, value) }
 
     var lastMatchBlueScore: Int
         get() = prefs.getInt(KEY_LAST_MATCH_BLUE_SCORE, -1)
-        set(value) = prefs.edit { putInt(KEY_LAST_MATCH_BLUE_SCORE, value) }
+        set(value) = put { putInt(KEY_LAST_MATCH_BLUE_SCORE, value) }
 
     var lastMatchWinningAlliance: String
         get() = prefs.getString(KEY_LAST_MATCH_WINNING_ALLIANCE, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_LAST_MATCH_WINNING_ALLIANCE, value) }
+        set(value) = put { putString(KEY_LAST_MATCH_WINNING_ALLIANCE, value) }
 
     var lastAlliance: String
         get() = prefs.getString(KEY_LAST_ALLIANCE, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_LAST_ALLIANCE, value) }
+        set(value) = put { putString(KEY_LAST_ALLIANCE, value) }
 
     var lastMatchBonusRp: Int
         get() = prefs.getInt(KEY_LAST_MATCH_BONUS_RP, 0)
-        set(value) = prefs.edit { putInt(KEY_LAST_MATCH_BONUS_RP, value) }
+        set(value) = put { putInt(KEY_LAST_MATCH_BONUS_RP, value) }
 
     // Next match
 
     var nextMatchLabel: String
         get() = prefs.getString(KEY_NEXT_MATCH_LABEL, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_NEXT_MATCH_LABEL, value) }
+        set(value) = put { putString(KEY_NEXT_MATCH_LABEL, value) }
 
     var nextMatchRedTeams: String
         get() = prefs.getString(KEY_NEXT_MATCH_RED_TEAMS, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_NEXT_MATCH_RED_TEAMS, value) }
+        set(value) = put { putString(KEY_NEXT_MATCH_RED_TEAMS, value) }
 
     var nextMatchBlueTeams: String
         get() = prefs.getString(KEY_NEXT_MATCH_BLUE_TEAMS, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_NEXT_MATCH_BLUE_TEAMS, value) }
+        set(value) = put { putString(KEY_NEXT_MATCH_BLUE_TEAMS, value) }
 
     var nextMatchTime: String
         get() = prefs.getString(KEY_NEXT_MATCH_TIME, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_NEXT_MATCH_TIME, value) }
+        set(value) = put { putString(KEY_NEXT_MATCH_TIME, value) }
 
     var nextMatchTimeIsEstimate: Boolean
         get() = prefs.getBoolean(KEY_NEXT_MATCH_TIME_IS_ESTIMATE, false)
-        set(value) = prefs.edit { putBoolean(KEY_NEXT_MATCH_TIME_IS_ESTIMATE, value) }
+        set(value) = put { putBoolean(KEY_NEXT_MATCH_TIME_IS_ESTIMATE, value) }
 
     var nextAlliance: String
         get() = prefs.getString(KEY_NEXT_ALLIANCE, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_NEXT_ALLIANCE, value) }
+        set(value) = put { putString(KEY_NEXT_ALLIANCE, value) }
 
     // Upcoming event (when no active event)
 
     /** Pipe-separated list of "Date — Name" strings for all upcoming events. */
     var upcomingEvents: String
         get() = prefs.getString(KEY_UPCOMING_EVENTS, "") ?: ""
-        set(value) = prefs.edit { putString(KEY_UPCOMING_EVENTS, value) }
+        set(value) = put { putString(KEY_UPCOMING_EVENTS, value) }
 
     fun registerOnChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)
