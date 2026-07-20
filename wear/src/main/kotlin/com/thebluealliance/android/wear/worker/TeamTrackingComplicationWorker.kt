@@ -291,15 +291,6 @@ class TeamTrackingComplicationWorker
         ): Boolean {
             val teamKey = "frc$teamNumber"
 
-            // Fetch team nickname — keep existing on failure
-            prefs.teamNickname =
-                try {
-                    api.getTeam(teamKey).nickname ?: prefs.teamNickname
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to fetch team info for $teamKey", e)
-                    prefs.teamNickname
-                }
-
             if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
 
             if (data.currentEvent == null) {
