@@ -31,6 +31,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
+import com.thebluealliance.android.wear.BuildConfig
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.ui.TbaWearTheme
@@ -47,11 +48,16 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
             -1,
         ) ?: -1
 
-        // Support passing team number directly via intent (for ADB configuration)
-        val intentTeam = intent?.getStringExtra("team_number")
-        if (intentTeam != null) {
-            saveAndFinish(intentTeam)
-            return
+        // Support passing team number directly via intent (debug-only, for ADB configuration).
+        // Never honored in release builds: this activity is exported, so any app could otherwise
+        // silently repoint the tracked team. Normalize to digits so the intent path cannot bypass
+        // the validation the on-screen field applies.
+        if (BuildConfig.DEBUG) {
+            val intentTeam = intent?.getStringExtra("team_number")?.let(::normalizeTeamNumber)
+            if (!intentTeam.isNullOrBlank()) {
+                saveAndFinish(intentTeam)
+                return
+            }
         }
 
         val existingTeam = TeamTrackerPreferences(this).teamNumber
@@ -103,6 +109,9 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
     }
 }
 
+/** Strip everything but digits, matching what the on-screen team-number field accepts. */
+private fun normalizeTeamNumber(raw: String): String = raw.filter { it.isDigit() }
+
 @Composable
 private fun ConfigScreen(
     initialTeam: String,
@@ -111,7 +120,7 @@ private fun ConfigScreen(
     val textFieldState = rememberTextFieldState()
 
     fun save() {
-        val value = textFieldState.text.toString().filter { it.isDigit() }
+        val value = normalizeTeamNumber(textFieldState.text.toString())
         onSave(value.ifBlank { initialTeam })
     }
 
