@@ -23,12 +23,7 @@ import com.thebluealliance.android.wear.tracker.Alliance
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
@@ -44,8 +39,6 @@ class TeamTrackingComplicationWorker
             private const val TAG = "ComplicationRefresh"
             private const val WORK_NAME = "complication_refresh"
             private const val FAST_WORK_NAME = "complication_fast_refresh"
-
-            private val timeFormat = DateTimeFormatter.ofPattern("h:mm")
 
             private val networkConstraints =
                 Constraints
@@ -207,7 +200,7 @@ class TeamTrackingComplicationWorker
                                 teamKey in red || teamKey in blue
                             }.sortedWith(
                                 compareBy(
-                                    { compLevelOrder(it.compLevel) },
+                                    { MatchLogic.compLevelOrder(it.compLevel) },
                                     { it.setNumber },
                                     { it.matchNumber },
                                 ),
@@ -274,8 +267,9 @@ class TeamTrackingComplicationWorker
 
             val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
             if (nextMatch != null) {
-                prefs.matchLabel = getShortLabel(nextMatch)
-                prefs.matchTime = formatMatchTime(nextMatch, includeEstimatePrefix = true)
+                prefs.matchLabel = MatchLogic.getShortLabel(nextMatch)
+                prefs.matchTime =
+                    MatchLogic.formatMatchTime(nextMatch, includeEstimatePrefix = true)
             } else {
                 prefs.matchLabel = ""
                 prefs.matchTime = ""
@@ -331,28 +325,12 @@ class TeamTrackingComplicationWorker
             prefs.eventName = data.currentEvent.shortName ?: data.currentEvent.name
             prefs.upcomingEvents = ""
 
-            // Compute qual record
-            val qualMatches =
-                data.teamMatches.filter {
-                    it.compLevel == "qm" && (it.alliances?.red?.score ?: -1) >= 0
-                }
-            var wins = 0
-            var losses = 0
-            var ties = 0
-            for (match in qualMatches) {
-                val teamAlliance = Alliance.of(match, teamKey)
-                when {
-                    match.winningAlliance.isNullOrBlank() -> ties++
-                    Alliance.fromKey(match.winningAlliance) == teamAlliance -> wins++
-                    else -> losses++
-                }
-            }
-            prefs.record = "$wins-$losses-$ties"
+            prefs.record = MatchLogic.qualRecord(data.teamMatches, teamKey)
 
             // Last played match
             val lastMatch = data.teamMatches.lastOrNull { (it.alliances?.red?.score ?: -1) >= 0 }
             if (lastMatch != null) {
-                prefs.lastMatchLabel = getShortLabel(lastMatch)
+                prefs.lastMatchLabel = MatchLogic.getShortLabel(lastMatch)
                 prefs.lastMatchRedTeams = teamKeysToNumbers(lastMatch.alliances?.red?.teamKeys)
                 prefs.lastMatchBlueTeams = teamKeysToNumbers(lastMatch.alliances?.blue?.teamKeys)
                 prefs.lastMatchRedScore = lastMatch.alliances?.red?.score ?: -1
@@ -360,7 +338,7 @@ class TeamTrackingComplicationWorker
                 prefs.lastMatchWinningAlliance = lastMatch.winningAlliance ?: ""
                 val lastAlliance = Alliance.of(lastMatch, teamKey)
                 prefs.lastAlliance = lastAlliance?.key ?: ""
-                prefs.lastMatchBonusRp = extractBonusRp(lastMatch, lastAlliance)
+                prefs.lastMatchBonusRp = MatchLogic.extractBonusRp(lastMatch, lastAlliance)
             } else {
                 clearLastMatch(prefs)
             }
@@ -368,11 +346,12 @@ class TeamTrackingComplicationWorker
             // Next unplayed match
             val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
             if (nextMatch != null) {
-                prefs.nextMatchLabel = getShortLabel(nextMatch)
+                prefs.nextMatchLabel = MatchLogic.getShortLabel(nextMatch)
                 prefs.nextMatchRedTeams = teamKeysToNumbers(nextMatch.alliances?.red?.teamKeys)
                 prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
                 prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
-                prefs.nextMatchTime = formatMatchTime(nextMatch, includeEstimatePrefix = false)
+                prefs.nextMatchTime =
+                    MatchLogic.formatMatchTime(nextMatch, includeEstimatePrefix = false)
                 prefs.nextAlliance = Alliance.of(nextMatch, teamKey)?.key ?: ""
             } else {
                 clearNextMatch(prefs)
@@ -391,23 +370,6 @@ class TeamTrackingComplicationWorker
             prefs.lastMatchWinningAlliance = ""
             prefs.lastAlliance = ""
             prefs.lastMatchBonusRp = 0
-        }
-
-        /** Extract bonus RPs (total minus win/tie RPs) from score_breakdown. */
-        private fun extractBonusRp(
-            match: MatchDto,
-            alliance: Alliance?,
-        ): Int {
-            if (alliance == null) return 0
-            val breakdown = match.scoreBreakdown?.get(alliance.key)?.jsonObject ?: return 0
-            val totalRp = breakdown["rp"]?.jsonPrimitive?.intOrNull ?: return 0
-            val winRp =
-                when {
-                    Alliance.fromKey(match.winningAlliance) == alliance -> 2
-                    match.winningAlliance.isNullOrBlank() -> 1
-                    else -> 0
-                }
-            return (totalRp - winRp).coerceAtLeast(0)
         }
 
         private fun clearNextMatch(prefs: TeamTrackerPreferences) {
@@ -486,51 +448,6 @@ class TeamTrackingComplicationWorker
                     }.maxByOrNull { it.endDate ?: "" }
 
             return recentPast
-        }
-
-        private fun compLevelOrder(compLevel: String): Int =
-            when (compLevel) {
-                "qm" -> 0
-                "ef" -> 1
-                "qf" -> 2
-                "sf" -> 3
-                "f" -> 4
-                else -> Int.MAX_VALUE
-            }
-
-        /** Simplified short label — "Q18", "SF2-1", "F1-1" */
-        private fun getShortLabel(match: MatchDto): String =
-            when (match.compLevel) {
-                "qm" -> "Q${match.matchNumber}"
-                "ef" -> "EF${match.setNumber}-${match.matchNumber}"
-                "qf" -> "QF${match.setNumber}-${match.matchNumber}"
-                "sf" -> "SF${match.setNumber}-${match.matchNumber}"
-                "f" -> "F${match.setNumber}-${match.matchNumber}"
-                else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
-            }
-
-        /**
-         * Format a match time for display. When [includeEstimatePrefix] is true, a predicted
-         * (rather than official) time is prefixed with "~"; the app tracker passes false because
-         * it stores the estimate flag separately.
-         */
-        private fun formatMatchTime(
-            match: MatchDto,
-            includeEstimatePrefix: Boolean,
-        ): String {
-            val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
-            val instant = Instant.ofEpochSecond(epochSeconds)
-            val zoned = instant.atZone(ZoneId.systemDefault())
-            val today = LocalDate.now()
-            val matchDate = zoned.toLocalDate()
-
-            return if (matchDate == today) {
-                val prefix = if (includeEstimatePrefix && match.predictedTime != null) "~" else ""
-                val amPm = if (zoned.hour < 12) "A" else "P"
-                "$prefix${timeFormat.format(zoned)}$amPm"
-            } else {
-                zoned.format(DateTimeFormatter.ofPattern("EEE"))
-            }
         }
 
         // endregion

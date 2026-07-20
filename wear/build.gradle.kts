@@ -137,6 +137,13 @@ android {
         disable += "GradleDependency"
         disable += "NewerVersionAvailable"
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 play {
@@ -203,4 +210,9 @@ dependencies {
     // AndroidX
     implementation(libs.core.ktx)
     implementation(libs.core.splashscreen)
+
+    // Testing
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
