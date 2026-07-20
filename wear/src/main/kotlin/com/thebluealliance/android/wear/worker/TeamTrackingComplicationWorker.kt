@@ -169,6 +169,8 @@ class TeamTrackingComplicationWorker
                 trackerPrefs.lastRefreshFailed = true
                 Result.retry()
             } finally {
+                // Close any batch a failed updateAppTracker left open, so this write commits.
+                trackerPrefs.applyBatch()
                 trackerPrefs.isLoading = false
             }
         }
@@ -247,6 +249,8 @@ class TeamTrackingComplicationWorker
             prefs: TeamTrackingComplicationPreferences,
             data: TeamEventData,
         ): Boolean {
+            // Batch all writes into a single commit instead of ~6 separate edit/apply calls.
+            prefs.beginBatch()
             if (data.currentEvent == null) {
                 prefs.matchLabel = ""
                 prefs.matchTime = ""
@@ -264,6 +268,7 @@ class TeamTrackingComplicationWorker
                 }
 
                 if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
+                prefs.applyBatch()
                 return false
             }
 
@@ -278,6 +283,7 @@ class TeamTrackingComplicationWorker
             prefs.activeEventName = data.currentEvent.shortName ?: data.currentEvent.name
 
             if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
+            prefs.applyBatch()
             return true
         }
 
@@ -293,6 +299,7 @@ class TeamTrackingComplicationWorker
         ): Boolean {
             val teamKey = "frc$teamNumber"
 
+            prefs.beginBatch()
             if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
 
             if (data.currentEvent == null) {
@@ -316,6 +323,7 @@ class TeamTrackingComplicationWorker
                     } else {
                         ""
                     }
+                prefs.applyBatch()
                 return false
             }
 
@@ -370,6 +378,7 @@ class TeamTrackingComplicationWorker
                 clearNextMatch(prefs)
             }
 
+            prefs.applyBatch()
             return true
         }
 
