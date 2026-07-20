@@ -133,7 +133,7 @@ class TeamTrackingComplicationWorker
                                     applicationContext,
                                     complicationId,
                                 )
-                            val hasActive = updateComplication(prefs, trackerTeam, data)
+                            val hasActive = updateComplication(prefs, data)
                             if (hasActive) anyActiveEvent = true
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to update complication $complicationId", e)
@@ -242,7 +242,6 @@ class TeamTrackingComplicationWorker
         /** Returns true if the team has an active event. */
         private fun updateComplication(
             prefs: TeamTrackingComplicationPreferences,
-            teamNumber: String,
             data: TeamEventData,
         ): Boolean {
             if (data.currentEvent == null) {
