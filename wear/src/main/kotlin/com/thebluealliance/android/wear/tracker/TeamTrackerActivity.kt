@@ -2,9 +2,7 @@ package com.thebluealliance.android.wear.tracker
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Base64
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -53,6 +51,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.thebluealliance.android.wear.R
+import com.thebluealliance.android.wear.complication.AvatarConverter
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -303,14 +302,7 @@ private fun EmptyState(onChangeTeam: () -> Unit) {
 private fun TeamHeader(state: TeamTrackerState) {
     val bitmap =
         remember(state.avatarBase64) {
-            state.avatarBase64?.let { base64 ->
-                try {
-                    val bytes = Base64.decode(base64, Base64.DEFAULT)
-                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                } catch (_: Exception) {
-                    null
-                }
-            }
+            state.avatarBase64?.let { AvatarConverter.decodeBoundedBitmap(it) }
         }
 
     Row(
