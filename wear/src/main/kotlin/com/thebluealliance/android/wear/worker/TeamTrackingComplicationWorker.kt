@@ -268,7 +268,7 @@ class TeamTrackingComplicationWorker
             val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
             if (nextMatch != null) {
                 prefs.matchLabel = getShortLabel(nextMatch)
-                prefs.matchTime = formatMatchTime(nextMatch)
+                prefs.matchTime = formatMatchTime(nextMatch, includeEstimatePrefix = true)
             } else {
                 prefs.matchLabel = ""
                 prefs.matchTime = ""
@@ -385,7 +385,7 @@ class TeamTrackingComplicationWorker
                 prefs.nextMatchRedTeams = teamKeysToNumbers(nextMatch.alliances?.red?.teamKeys)
                 prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
                 prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
-                prefs.nextMatchTime = formatMatchTimeRaw(nextMatch)
+                prefs.nextMatchTime = formatMatchTime(nextMatch, includeEstimatePrefix = false)
                 prefs.nextAlliance =
                     if (teamKey in
                         (nextMatch.alliances?.red?.teamKeys ?: emptyList())
@@ -527,34 +527,25 @@ class TeamTrackingComplicationWorker
                 else -> "${match.compLevel}${match.setNumber}-${match.matchNumber}"
             }
 
-        /** Format match time with estimate prefix for complication display. */
-        private fun formatMatchTime(match: MatchDto): String {
+        /**
+         * Format a match time for display. When [includeEstimatePrefix] is true, a predicted
+         * (rather than official) time is prefixed with "~"; the app tracker passes false because
+         * it stores the estimate flag separately.
+         */
+        private fun formatMatchTime(
+            match: MatchDto,
+            includeEstimatePrefix: Boolean,
+        ): String {
             val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
             val instant = Instant.ofEpochSecond(epochSeconds)
             val zoned = instant.atZone(ZoneId.systemDefault())
             val today = LocalDate.now()
             val matchDate = zoned.toLocalDate()
-            val prefix = if (match.predictedTime != null) "~" else ""
 
             return if (matchDate == today) {
+                val prefix = if (includeEstimatePrefix && match.predictedTime != null) "~" else ""
                 val amPm = if (zoned.hour < 12) "A" else "P"
                 "$prefix${timeFormat.format(zoned)}$amPm"
-            } else {
-                zoned.format(DateTimeFormatter.ofPattern("EEE"))
-            }
-        }
-
-        /** Format match time without estimate prefix — app tracker stores the flag separately. */
-        private fun formatMatchTimeRaw(match: MatchDto): String {
-            val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
-            val instant = Instant.ofEpochSecond(epochSeconds)
-            val zoned = instant.atZone(ZoneId.systemDefault())
-            val today = LocalDate.now()
-            val matchDate = zoned.toLocalDate()
-
-            return if (matchDate == today) {
-                val amPm = if (zoned.hour < 12) "A" else "P"
-                "${timeFormat.format(zoned)}$amPm"
             } else {
                 zoned.format(DateTimeFormatter.ofPattern("EEE"))
             }
