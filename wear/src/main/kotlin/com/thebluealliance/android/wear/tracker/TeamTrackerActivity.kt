@@ -107,7 +107,6 @@ class TeamTrackerActivity : ComponentActivity() {
         state.value =
             TeamTrackerState(
                 teamNumber = trackerPrefs.teamNumber,
-                teamNickname = trackerPrefs.teamNickname,
                 avatarBase64 = trackerPrefs.avatarBase64,
                 eventName = trackerPrefs.eventName,
                 record = trackerPrefs.record,
@@ -143,7 +142,6 @@ class TeamTrackerActivity : ComponentActivity() {
 
 data class TeamTrackerState(
     val teamNumber: String = "",
-    val teamNickname: String = "",
     val avatarBase64: String? = null,
     val eventName: String = "",
     val record: String = "",
