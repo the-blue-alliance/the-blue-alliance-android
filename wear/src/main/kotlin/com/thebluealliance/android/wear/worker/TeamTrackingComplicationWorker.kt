@@ -19,6 +19,7 @@ import com.thebluealliance.android.data.remote.dto.MatchDto
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationPreferences
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationService
 import com.thebluealliance.android.wear.data.WearTbaApi
+import com.thebluealliance.android.wear.tracker.Alliance
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -329,17 +330,10 @@ class TeamTrackingComplicationWorker
             var losses = 0
             var ties = 0
             for (match in qualMatches) {
-                val alliance =
-                    if (teamKey in
-                        (match.alliances?.red?.teamKeys ?: emptyList())
-                    ) {
-                        "red"
-                    } else {
-                        "blue"
-                    }
+                val teamAlliance = Alliance.of(match, teamKey)
                 when {
-                    match.winningAlliance == alliance -> wins++
                     match.winningAlliance.isNullOrBlank() -> ties++
+                    Alliance.fromKey(match.winningAlliance) == teamAlliance -> wins++
                     else -> losses++
                 }
             }
@@ -354,15 +348,8 @@ class TeamTrackingComplicationWorker
                 prefs.lastMatchRedScore = lastMatch.alliances?.red?.score ?: -1
                 prefs.lastMatchBlueScore = lastMatch.alliances?.blue?.score ?: -1
                 prefs.lastMatchWinningAlliance = lastMatch.winningAlliance ?: ""
-                val lastAlliance =
-                    if (teamKey in
-                        (lastMatch.alliances?.red?.teamKeys ?: emptyList())
-                    ) {
-                        "red"
-                    } else {
-                        "blue"
-                    }
-                prefs.lastAlliance = lastAlliance
+                val lastAlliance = Alliance.of(lastMatch, teamKey)
+                prefs.lastAlliance = lastAlliance?.key ?: ""
                 prefs.lastMatchBonusRp = extractBonusRp(lastMatch, lastAlliance)
             } else {
                 clearLastMatch(prefs)
@@ -376,14 +363,7 @@ class TeamTrackingComplicationWorker
                 prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
                 prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
                 prefs.nextMatchTime = formatMatchTime(nextMatch, includeEstimatePrefix = false)
-                prefs.nextAlliance =
-                    if (teamKey in
-                        (nextMatch.alliances?.red?.teamKeys ?: emptyList())
-                    ) {
-                        "red"
-                    } else {
-                        "blue"
-                    }
+                prefs.nextAlliance = Alliance.of(nextMatch, teamKey)?.key ?: ""
             } else {
                 clearNextMatch(prefs)
             }
@@ -405,13 +385,14 @@ class TeamTrackingComplicationWorker
         /** Extract bonus RPs (total minus win/tie RPs) from score_breakdown. */
         private fun extractBonusRp(
             match: MatchDto,
-            alliance: String,
+            alliance: Alliance?,
         ): Int {
-            val breakdown = match.scoreBreakdown?.get(alliance)?.jsonObject ?: return 0
+            if (alliance == null) return 0
+            val breakdown = match.scoreBreakdown?.get(alliance.key)?.jsonObject ?: return 0
             val totalRp = breakdown["rp"]?.jsonPrimitive?.intOrNull ?: return 0
             val winRp =
                 when {
-                    match.winningAlliance == alliance -> 2
+                    Alliance.fromKey(match.winningAlliance) == alliance -> 2
                     match.winningAlliance.isNullOrBlank() -> 1
                     else -> 0
                 }
