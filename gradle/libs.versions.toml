@@ -5,7 +5,7 @@ ksp = "2.3.10"
 
 compose-bom = "2026.06.01"
 activity = "1.13.0"
-navigation3-runtime = "1.1.4"
+navigation3-runtime = "1.1.5"
 navigation3-ui = "1.1.5"
 hilt = "2.60.1"
 hilt-androidx = "1.4.0"
