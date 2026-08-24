@@ -28,7 +28,7 @@ aboutlibraries = "15.0.4"
 
 firebase-bom = "34.17.0"
 google-services = "4.5.0"
-firebase-crashlytics-plugin = "3.0.7"
+firebase-crashlytics-plugin = "3.0.8"
 credentials = "1.6.0"
 googleid = "1.2.0"
 
