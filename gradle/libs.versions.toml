@@ -23,7 +23,7 @@ retrofit-serialization = "1.0.0"
 room = "2.8.4"
 datastore = "1.2.1"
 
-coil = "3.5.0"
+coil = "3.6.0"
 aboutlibraries = "15.1.1"
 
 firebase-bom = "34.18.0"
