@@ -3,7 +3,7 @@
 
 Subcommands:
   screenshot [path]          Capture screenshot (default: screenshot.png)
-  find <text>                Find UI elements matching text/content-desc
+  find <text> [--raw]        Find UI elements matching text/content-desc
   tap <text>                 Tap element matching text/content-desc (must be unique)
   tap-xy <x> <y>            Tap at exact device pixel coordinates
   logcat [options]           Show recent logcat lines
@@ -12,7 +12,13 @@ Subcommands:
   swipe <left|right>         Swipe home screen page
   swipe-xy <x1> <y1> <x2> <y2> [ms]  Swipe between coordinates
   long-press <x> <y> [ms]   Long press at coordinates (default 2000ms)
-  list                       Dump UI hierarchy as readable tree
+  list [--raw]               Dump UI hierarchy as readable tree
+
+All reported and accepted coordinates are physical display pixels — the space
+`input tap` and screenshots use — so a center printed by `find`/`list` can be
+handed straight to `tap-xy`. On the Meta Spatial Simulator, where the spatial
+shell composites each app window as a scaled, off-centre panel, that means
+converting uiautomator's logical bounds; see the panel transform notes below.
 """
 
 import argparse
@@ -23,7 +29,7 @@ import sys
 import tempfile
 import xml.etree.ElementTree as ET
 
-BOUNDS_RE = re.compile(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]")
+BOUNDS_RE = re.compile(r"\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]")
 
 # Global serial; set by --serial / -s flag in main().
 _serial = None
@@ -57,8 +63,151 @@ def parse_bounds(bounds_str):
     return x1, y1, x2, y2, cx, cy
 
 
-def dump_ui_tree():
-    """Dump UI hierarchy XML from device and return parsed ElementTree root."""
+# ── Panel (Spatial Simulator) coordinate transform ───────────────────
+#
+# On the Meta Spatial Simulator (Horizon OS) apps are not drawn fullscreen. The
+# spatial shell composites each app window as a *panel* — a scaled, usually
+# off-centre rectangle somewhere on the physical display. `uiautomator dump`
+# keeps reporting bounds in the window's own logical space, but `input tap`
+# injects in physical display pixels, so raw uiautomator centers land nowhere
+# near the element.
+#
+# It is not a multi-display problem: `dumpsys display` shows only the built-in
+# screen plus an idle MirrorRoot virtual display, and `dumpsys input` reports a
+# single viewport with FocusedDisplayId=0 — so `input -d <id>` has nothing to
+# target. What differs is the per-window logical->screen transform SurfaceFlinger
+# applies, which its dump spells out for every composited layer:
+#
+#   - Output Layer 0x..(com.example/com.example.MainActivity#42)
+#       ... displayFrame=[l t r b] sourceCrop=[l t r b] ...
+#
+# sourceCrop is the slice of the window's buffer being sampled, sized in that
+# window's logical pixels; displayFrame is where it lands on the physical
+# display. uiautomator reports bounds relative to the window's own logical
+# origin, so anchoring on that origin gives
+#   screen = displayFrame.origin + (logical - windowOrigin) * scale
+# with scale = displayFrame.size / sourceCrop.size.
+#
+# Worked example — The Blue Alliance on the simulator:
+#   displayFrame=[103 524 1961 1685]  sourceCrop=[0 0 1280 800]
+#   window logical bounds [103,523][1383,1323]  (1280x800, i.e. the whole crop)
+#   scale = 1858/1280, 1161/800 → the "Sign in with Google" button moves from
+#   logical (743, 971) to physical (1032, 1174), which is where it is on screen.
+#
+# The correction is applied when *reporting* bounds (find/list/tap all then speak
+# physical pixels, matching screenshots), never when injecting. Injection stays a
+# plain `input tap/swipe`, so on phones — where the whole path is skipped, since
+# they report displayFrame == sourceCrop for the focused app window — the adb
+# commands are byte-for-byte what they have always been.
+
+LAYER_RE = re.compile(r"Output Layer 0x[0-9a-f]+\((.+)#\d+\)")
+GEOMETRY_RE = re.compile(
+    r"displayFrame=\[(-?\d+) (-?\d+) (-?\d+) (-?\d+)\]"
+    r"\s+sourceCrop=\[(-?[\d.]+) (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)\]"
+)
+IDENTITY = (1.0, 1.0, 0.0, 0.0)
+
+# Cached `ro.product.name` probe; None until first queried.
+_is_panel_device = None
+
+
+def is_panel_device():
+    """True on the Meta Spatial Simulator, where windows are composited as panels."""
+    global _is_panel_device
+    if _is_panel_device is None:
+        name = adb("shell", "getprop", "ro.product.name").stdout.strip()
+        _is_panel_device = "spatialsim" in name
+    return _is_panel_device
+
+
+def panel_layers():
+    """Map package name → [(crop_w, crop_h, scale_x, scale_y, frame_x, frame_y)].
+
+    One entry per composited layer, read out of `dumpsys SurfaceFlinger`.
+    """
+    result = adb("shell", "dumpsys", "SurfaceFlinger")
+    if result.returncode != 0:
+        print(f"warning: dumpsys SurfaceFlinger failed: {result.stderr.strip()}", file=sys.stderr)
+        return {}
+
+    layers = {}
+    package = None
+    for line in result.stdout.splitlines():
+        m = LAYER_RE.search(line)
+        if m:
+            # Layer names are "<package>/<activity>", sometimes prefixed "VRI-".
+            # Anything without a package (Wallpaper, StatusBar, …) is not a window
+            # a uiautomator subtree can be matched onto.
+            package = m.group(1).removeprefix("VRI-").split("/")[0]
+            continue
+        if package is None:
+            continue
+        m = GEOMETRY_RE.search(line)
+        if m:
+            dl, dt, dr, db = (int(v) for v in m.group(1, 2, 3, 4))
+            cl, ct, cr, cb = (float(v) for v in m.group(5, 6, 7, 8))
+            crop_w, crop_h = cr - cl, cb - ct
+            if crop_w > 0 and crop_h > 0:
+                layers.setdefault(package, []).append(
+                    (crop_w, crop_h, (dr - dl) / crop_w, (db - dt) / crop_h, dl, dt)
+                )
+            package = None
+    return layers
+
+
+def window_transform(layers, window):
+    """Affine (scale_x, scale_y, offset_x, offset_y) for one top-level window.
+
+    Returns None when the window can't be matched to a composited layer, in
+    which case its bounds are left alone rather than mangled.
+    """
+    candidates = layers.get(window.get("package", ""))
+    bounds = parse_bounds(window.get("bounds", ""))
+    if not candidates or not bounds:
+        return None
+    width, height = bounds[2] - bounds[0], bounds[3] - bounds[1]
+    # A package can own several layers (dialogs, popups). uiautomator reports the
+    # window at its logical size, which is exactly the region SurfaceFlinger
+    # samples, so the crop size both picks the right layer and confirms the pair.
+    crop_w, crop_h, sx, sy, dl, dt = min(
+        candidates, key=lambda c: abs(c[0] - width) + abs(c[1] - height)
+    )
+    if abs(crop_w - width) > 1 or abs(crop_h - height) > 1:
+        return None
+    return sx, sy, dl - bounds[0] * sx, dt - bounds[1] * sy
+
+
+def retag_bounds(elem, transform):
+    """Rewrite bounds on elem and all descendants from logical to physical pixels."""
+    sx, sy, ox, oy = transform
+    for node in elem.iter():
+        b = parse_bounds(node.get("bounds", ""))
+        if not b:
+            continue
+        node.set("bounds", "[{},{}][{},{}]".format(
+            round(b[0] * sx + ox), round(b[1] * sy + oy),
+            round(b[2] * sx + ox), round(b[3] * sy + oy),
+        ))
+
+
+def apply_panel_transform(root):
+    """Map every window in the hierarchy from logical into physical display pixels."""
+    layers = panel_layers()
+    if not layers:
+        return
+    for window in root:
+        transform = window_transform(layers, window)
+        if transform is not None and transform != IDENTITY:
+            retag_bounds(window, transform)
+
+
+def dump_ui_tree(raw=False):
+    """Dump UI hierarchy XML from device and return parsed ElementTree root.
+
+    Bounds come back in physical display pixels — the space `input tap` and
+    screenshots use. Pass raw=True for the unconverted uiautomator (logical)
+    bounds, which only differ on a panel device.
+    """
     device_path = "/sdcard/window_dump.xml"
     adb_check("shell", "uiautomator", "dump", device_path)
 
@@ -69,7 +218,20 @@ def dump_ui_tree():
     tree = ET.parse(local_path)
     os.unlink(local_path)
     os.rmdir(tmpdir)
-    return tree.getroot()
+    root = tree.getroot()
+    if not raw and is_panel_device():
+        apply_panel_transform(root)
+    return root
+
+
+def display_size():
+    """Physical display size as (width, height), honouring any `wm size` override."""
+    out = adb_check("shell", "wm", "size").stdout
+    m = re.search(r"Override size:\s*(\d+)x(\d+)", out) or re.search(r"Physical size:\s*(\d+)x(\d+)", out)
+    if not m:
+        print(f"Could not parse display size from: {out.strip()}", file=sys.stderr)
+        sys.exit(1)
+    return int(m.group(1)), int(m.group(2))
 
 
 def find_elements(root, query):
@@ -122,7 +284,7 @@ def cmd_screenshot(args):
 
 
 def cmd_find(args):
-    root = dump_ui_tree()
+    root = dump_ui_tree(raw=args.raw)
     matches = find_elements(root, args.text)
     if not matches:
         print(f"No elements matching \"{args.text}\"")
@@ -193,11 +355,16 @@ def cmd_launch(args):
 
 def cmd_swipe(args):
     direction = args.direction.lower()
+    # Derived from the display rather than hardcoded, so the gesture stays on
+    # screen on a Spatial Simulator panel. The fractions reproduce the phone
+    # values this command has always used (1080x2400 → x=270, y=800).
+    width, height = display_size()
+    far, near, y = str(width // 4), "10", str(height // 3)
     if direction == "left":
-        adb_check("shell", "input", "swipe", "270", "800", "10", "800", "150")
+        adb_check("shell", "input", "swipe", far, y, near, y, "150")
         print("Swiped home page left")
     elif direction == "right":
-        adb_check("shell", "input", "swipe", "10", "800", "270", "800", "150")
+        adb_check("shell", "input", "swipe", near, y, far, y, "150")
         print("Swiped home page right")
     else:
         print(f"Unknown direction: {direction}. Use 'left' or 'right'.", file=sys.stderr)
@@ -217,7 +384,7 @@ def cmd_long_press(args):
 
 
 def cmd_list(args):
-    root = dump_ui_tree()
+    root = dump_ui_tree(raw=args.raw)
     def walk(elem, depth=0):
         indent = "  " * depth
         text = elem.get("text", "")
@@ -246,6 +413,11 @@ def cmd_list(args):
 # ── Argument parsing ─────────────────────────────────────────────────
 
 
+RAW_HELP = ("Report unconverted uiautomator (logical) bounds instead of physical display "
+            "pixels; only differs on a Spatial Simulator, where the logical coordinates "
+            "are not tappable")
+
+
 def main():
     global _serial
     parser = argparse.ArgumentParser(prog="emu", description="Android emulator automation CLI")
@@ -257,6 +429,7 @@ def main():
 
     p = sub.add_parser("find", help="Find UI elements by text/desc")
     p.add_argument("text", help="Substring to match (case-insensitive)")
+    p.add_argument("--raw", action="store_true", help=RAW_HELP)
 
     p = sub.add_parser("tap", help="Tap UI element by text/desc")
     p.add_argument("text", help="Substring to match (must be unique)")
@@ -291,6 +464,7 @@ def main():
     p.add_argument("ms", type=int, nargs="?", default=2000, help="Duration in ms (default 2000)")
 
     p = sub.add_parser("list", help="Dump UI hierarchy tree")
+    p.add_argument("--raw", action="store_true", help=RAW_HELP)
 
     args = parser.parse_args()
     # Explicit -s wins; otherwise fall back to $ANDROID_SERIAL so emu targets the
