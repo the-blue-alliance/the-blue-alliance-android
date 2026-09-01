@@ -126,9 +126,11 @@ class MetaVRSignInLauncher(
 
         val response = data?.let { AuthorizationResponse.fromIntent(it) }
         if (response == null) {
-            // Backing out of the browser comes back as no response and no error.
+            // Backing out of the browser comes back either as no response and no error at
+            // all, or as one of AppAuth's cancellation exceptions. Both mean the user chose
+            // not to sign in, so both stay quiet.
             val error = data?.let { AuthorizationException.fromIntent(it) }
-            if (error == null) {
+            if (error == null || error.isCancellation()) {
                 Log.i(TAG, "Sign-in cancelled")
             } else {
                 Log.e(TAG, "Authorization failed", error)
@@ -208,3 +210,25 @@ class MetaVRSignInLauncher(
             )
     }
 }
+
+/**
+ * Whether AppAuth reported an abandoned flow rather than a failed one — nothing went wrong, so
+ * the caller should stay silent instead of blaming the user's headset.
+ *
+ * - `USER_CANCELED_AUTH_FLOW` is the plain back-out, and is also what Horizon OS produces when
+ *   the user walks away from a system passkey prompt that didn't complete.
+ * - `PROGRAM_CANCELED_AUTH_FLOW` is the same event from the other side: the app or the system
+ *   dropped the pending intent (this activity going away mid-flow, for instance). The user
+ *   still ends up not signed in through no fault of theirs, and there is nothing to retry
+ *   right now, so it gets the same quiet treatment.
+ *
+ * Every other general error (network, bad discovery document) and every OAuth-protocol error is
+ * a real failure and must keep its loud path.
+ *
+ * The exception is rebuilt from JSON on its way through the result intent, so it is never the
+ * same instance as the constant. [AuthorizationException.equals] compares type and code, which
+ * is how the library itself matches an exception against one of its constants.
+ */
+internal fun AuthorizationException.isCancellation(): Boolean =
+    this == AuthorizationException.GeneralErrors.USER_CANCELED_AUTH_FLOW ||
+        this == AuthorizationException.GeneralErrors.PROGRAM_CANCELED_AUTH_FLOW
