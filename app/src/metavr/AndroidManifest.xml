@@ -1,12 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- installLocation="auto" is a hard Meta release requirement (VRC.Quest.Packaging.1);
+     the Android default of internalOnly fails the Horizon upload validator.
+     https://developers.meta.com/horizon/resources/publish-mobile-manifest/ -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:installLocation="auto">
 
-    <!-- A 2D panel app runs on the Horizon shell and must not require head tracking. -->
+    <!-- A 2D panel app runs on the Horizon shell and must not require head tracking.
+         android:version="1" matches Meta's 2D manifest example verbatim. -->
     <uses-feature
         android:name="android.hardware.vr.headtracking"
-        android:required="false" />
+        android:required="false"
+        android:version="1" />
+
+    <!-- VRC.Quest.Security.2 ("request the minimum number of permissions required to
+         function") is required for 2D apps, and Horizon OS has no Google Play services,
+         so every permission below is dead weight a reviewer would have to ask about.
+
+         POST_NOTIFICATIONS comes from app/src/main and is on Meta's review-requiring
+         list; the metavr flavor binds NoPushRegistrar and ships no FCM, so nothing here
+         ever posts a notification. (Meta's own guidance: send notifications from the
+         Developer Dashboard's Engagement > User Notifications, which needs no permission.)
+
+         The rest are injected by firebase-analytics / play-services-measurement and are
+         Play-Store and ads-attribution plumbing that cannot function on a GMS-less
+         headset. Revisit only if a future phase actually needs one. -->
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:node="remove" />
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
+        tools:node="remove" />
+    <uses-permission
+        android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
+        tools:node="remove" />
+    <uses-permission
+        android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE"
+        tools:node="remove" />
+    <uses-permission
+        android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"
+        tools:node="remove" />
 
     <application>
+
+        <!-- Ads-attribution shared library, also injected by firebase-analytics. Optional
+             (uses-library-not-required) and unavailable on Horizon OS. -->
+        <uses-library
+            android:name="android.ext.adservices"
+            tools:node="remove" />
 
         <!-- Meta Horizon Store device targeting. Deliberately no
              com.oculus.intent.category.VR — that marks an app immersive-only. -->
@@ -14,7 +58,23 @@
             android:name="com.oculus.supportedDevices"
             android:value="quest2|questpro|quest3|quest3s" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:excludeFromRecents="true">
+            <!-- ⚠️ excludeFromRecents=true is a Meta release requirement for the launch
+                 activity (publish-mobile-manifest), so it ships — omitting it silently is
+                 not an option. But it is in TENSION with a behavior verified on a Quest 3
+                 on 2026-09-01: LAUNCH_ADJACENT|NEW_TASK|MULTIPLE_TASK opens several
+                 MainActivity panels side by side, all RESUMED, and that is the mechanism
+                 Phase 2's multi-panel webcast work is built on. If Horizon's task switcher
+                 is what re-summons those panels, this attribute may hide them.
+                 It is deliberately set here (flavor level, both build types) rather than in
+                 a release-only overlay so that hardware testing of metavrDebug exercises
+                 the config we actually ship. MUST be sanity-checked in-headset: open
+                 multiple panels, then try to switch back to them. If it breaks multi-panel
+                 access, that is a conversation with Meta support (the requirement predates
+                 multi-panel 2D apps), not a silent omission. -->
+
             <!-- Horizon OS's standard panel size — landscape by geometry. The shell lets
                  the user resize down to its own 384x500dp minimum, so the activity stays
                  resizeable (no resizeableActivity=false, no screenOrientation lock). -->

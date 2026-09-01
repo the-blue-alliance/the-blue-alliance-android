@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.settings
 
+import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Context
 import androidx.compose.foundation.background
@@ -176,6 +177,11 @@ fun SettingsScreen(
     }
 }
 
+// Debug-only buttons that exercise the notification pipeline. The metavr flavor removes
+// POST_NOTIFICATIONS (no FCM on Horizon OS, and Meta flags the permission for review), so
+// lint sees an unpermitted notify() there; these are developer scaffolding behind
+// BuildConfig.DEBUG and are simply inert on that flavor.
+@SuppressLint("NotificationPermission")
 private fun sendTestMatchScore(context: Context) {
     val builder = NotificationBuilder(context)
     val notification =
@@ -192,6 +198,7 @@ private fun sendTestMatchScore(context: Context) {
     manager.notify(9001, notification)
 }
 
+@SuppressLint("NotificationPermission")
 private fun sendTestUpcomingMatch(context: Context) {
     val builder = NotificationBuilder(context)
     val notification =
@@ -208,6 +215,7 @@ private fun sendTestUpcomingMatch(context: Context) {
     manager.notify(9002, notification)
 }
 
+@SuppressLint("NotificationPermission")
 private fun sendTestEventUpdate(context: Context) {
     val builder = NotificationBuilder(context)
     val notification =
@@ -226,6 +234,7 @@ private fun sendTestEventUpdate(context: Context) {
 
 // Repros #1461: two followed teams in the SAME match. The backend fans out one push per
 // subscribed team; with the collapse-id fix these post as ONE notification, not two.
+@SuppressLint("NotificationPermission")
 private fun sendTestDuplicateMatch(context: Context) {
     val builder = NotificationBuilder(context)
     val manager = context.getSystemService(NotificationManager::class.java)
