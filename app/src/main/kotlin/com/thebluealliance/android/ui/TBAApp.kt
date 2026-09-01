@@ -32,6 +32,7 @@ fun TBAApp(
     startRoute: NavKey,
     isNewTask: Boolean,
     themePreferences: ThemePreferences? = null,
+    onSignIn: () -> Unit = {},
 ) {
     val navState =
         rememberNavigationState(
@@ -70,6 +71,7 @@ fun TBAApp(
     TBATheme(darkTheme = darkTheme) {
         TBANavigation(
             navState = navState,
+            onSignIn = onSignIn,
         )
     }
 }

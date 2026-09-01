@@ -12,23 +12,18 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.credentials.CredentialManager
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation3.runtime.NavKey
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.thebluealliance.android.auth.SignInLauncher
 import com.thebluealliance.android.config.ThemePreferences
 import com.thebluealliance.android.data.sync.DataSyncManager
-import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
+import com.thebluealliance.android.messaging.PushRegistrar
 import com.thebluealliance.android.navigation.DeeplinkMatcher
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.TBAApp
-import com.thebluealliance.android.widget.TeamTrackingWidgetOpenAction
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -40,9 +35,11 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var dataSyncManager: DataSyncManager
 
-    @Inject lateinit var deviceRegistrationManager: DeviceRegistrationManager
+    @Inject lateinit var pushRegistrar: PushRegistrar
 
     @Inject lateinit var themePreferences: ThemePreferences
+
+    @Inject lateinit var signInLauncher: SignInLauncher
 
     private val deepLinkHandler = DeeplinkMatcher()
 
@@ -74,11 +71,12 @@ class MainActivity : ComponentActivity() {
                 startRoute = startRoute,
                 isNewTask = isNewTask,
                 themePreferences = themePreferences,
+                onSignIn = ::startSignIn,
             )
         }
 
         // Register device if already signed in
-        lifecycleScope.launch { deviceRegistrationManager.registerIfNeeded() }
+        lifecycleScope.launch { pushRegistrar.registerIfNeeded() }
 
         // Sync missing event years and team pages for comprehensive search
         lifecycleScope.launch { dataSyncManager.syncIfNeeded() }
@@ -97,7 +95,7 @@ class MainActivity : ComponentActivity() {
                 teamKey != null -> {
                     val initialTab =
                         intent.getIntExtra(
-                            TeamTrackingWidgetOpenAction.EXTRA_INITIAL_TAB,
+                            NotificationBuilder.EXTRA_INITIAL_TAB,
                             0,
                         )
                     Screen.TeamDetail(teamKey, initialTab)
@@ -121,7 +119,9 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "Received new intent: $intent")
     }
 
-    fun requestNotificationPermission() {
+    private fun requestNotificationPermission() {
+        // Nothing can push to a distribution without a push transport, so don't ask.
+        if (!pushRegistrar.isPushAvailable) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
                 PackageManager.PERMISSION_GRANTED
@@ -131,43 +131,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun startGoogleSignIn() {
+    private fun startSignIn() {
         if (BuildConfig.DEBUG) {
             signInWithEmulator()
             return
         }
-
-        val googleIdOption =
-            GetGoogleIdOption
-                .Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(getString(R.string.default_web_client_id))
-                .build()
-
-        val request =
-            GetCredentialRequest
-                .Builder()
-                .addCredentialOption(googleIdOption)
-                .build()
-
-        lifecycleScope.launch {
-            try {
-                val credentialManager = CredentialManager.create(this@MainActivity)
-                val result = credentialManager.getCredential(this@MainActivity, request)
-                val googleIdToken = GoogleIdTokenCredential.createFrom(result.credential.data)
-                val firebaseCredential =
-                    GoogleAuthProvider.getCredential(
-                        googleIdToken.idToken,
-                        null,
-                    )
-                firebaseAuth.signInWithCredential(firebaseCredential).await()
-                requestNotificationPermission()
-            } catch (e: NoCredentialException) {
-                Log.i("MainActivity", "No Google credential available", e)
-            } catch (e: Exception) {
-                Log.e("MainActivity", "Sign-in failed", e)
-            }
-        }
+        signInLauncher.signIn(this, ::requestNotificationPermission)
     }
 
     private fun signInWithEmulator() {

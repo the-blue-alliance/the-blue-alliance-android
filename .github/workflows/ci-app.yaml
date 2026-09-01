@@ -44,9 +44,9 @@ jobs:
           EOF
           done
       - name: Build debug APKs
-        run: ./gradlew :app:assembleGmsDebug :app:assembleQuestDebug --stacktrace
+        run: ./gradlew :app:assembleGmsDebug :app:assembleMetavrDebug --stacktrace
       - name: Run unit tests
-        run: ./gradlew :app:testGmsDebugUnitTest :app:testQuestDebugUnitTest --stacktrace
+        run: ./gradlew :app:testGmsDebugUnitTest :app:testMetavrDebugUnitTest --stacktrace
 
   app-release-build:
     runs-on: ubuntu-latest
@@ -91,4 +91,4 @@ jobs:
           release.key.password=android
           EOF
       - name: Build release APKs
-        run: ./gradlew :app:assembleGmsRelease :app:assembleQuestRelease --stacktrace
+        run: ./gradlew :app:assembleGmsRelease :app:assembleMetavrRelease --stacktrace

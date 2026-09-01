@@ -11,6 +11,7 @@ import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.dto.ModelPreferenceRequestDto
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.messaging.DeviceIdProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.net.HttpURLConnection
@@ -32,8 +33,7 @@ class MyTBARepository
         private val clientApi: ClientApi,
         private val favoriteDao: FavoriteDao,
         private val subscriptionDao: SubscriptionDao,
-        private val deviceRegistrationManager:
-            com.thebluealliance.android.messaging.DeviceRegistrationManager,
+        private val deviceIdProvider: DeviceIdProvider,
     ) {
         fun observeFavorites(): Flow<List<Favorite>> =
             favoriteDao.observeAll().map { list ->
@@ -113,7 +113,7 @@ class MyTBARepository
                     ModelPreferenceRequestDto(
                         modelKey = modelKey,
                         modelType = modelType,
-                        deviceKey = deviceRegistrationManager.deviceUuid,
+                        deviceKey = deviceIdProvider.deviceUuid,
                         favorite = true,
                     ),
                 )
@@ -143,7 +143,7 @@ class MyTBARepository
                     ModelPreferenceRequestDto(
                         modelKey = modelKey,
                         modelType = modelType,
-                        deviceKey = deviceRegistrationManager.deviceUuid,
+                        deviceKey = deviceIdProvider.deviceUuid,
                         favorite = false,
                     ),
                 )
@@ -169,7 +169,7 @@ class MyTBARepository
                     ModelPreferenceRequestDto(
                         modelKey = modelKey,
                         modelType = modelType,
-                        deviceKey = deviceRegistrationManager.deviceUuid,
+                        deviceKey = deviceIdProvider.deviceUuid,
                         favorite = favorite,
                         notifications = notifications,
                     ),

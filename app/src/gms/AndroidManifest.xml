@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+
+        <!-- FCM needs Google Play services, so it ships only in the gms flavor. -->
+        <service
+            android:name=".messaging.TBAFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="general" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+
+        <!-- Glance app widgets: no widget host exists on Horizon OS, so gms-only. -->
+        <activity
+            android:name=".widget.TeamTrackingWidgetConfigActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.thebluealliance.android.widget.config"
+            android:theme="@style/Theme.TBA.Transparent">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+            android:name=".widget.TeamTrackingWidgetReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/team_tracking_widget_info" />
+        </receiver>
+
+    </application>
+</manifest>

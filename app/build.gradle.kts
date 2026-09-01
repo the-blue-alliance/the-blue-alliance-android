@@ -91,24 +91,24 @@ android {
         )
     }
 
-    // "gms" = Google Play (Google Mobile Services present). "quest" = Meta Horizon Store,
+    // "gms" = Google Play (Google Mobile Services present). "metavr" = Meta Horizon Store,
     // which is AOSP with no GMS, so sign-in and push are swapped out per source set.
     flavorDimensions += "distribution"
     productFlavors {
         create("gms") {
             dimension = "distribution"
         }
-        create("quest") {
+        create("metavr") {
             dimension = "distribution"
             // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps.
             targetSdk = 34
         }
     }
 
-    // Quest ships through the Meta Horizon Store, not Play — keep gradle-play-publisher
+    // MetaVR ships through the Meta Horizon Store, not Play — keep gradle-play-publisher
     // from generating publish tasks for its variants.
     playConfigs {
-        register("quest") {
+        register("metavr") {
             enabled.set(false)
         }
     }
@@ -264,11 +264,11 @@ dependencies {
     implementation(libs.hilt.work)
     ksp(libs.hilt.work.compiler)
 
-    // Glance (App Widgets)
-    implementation(libs.glance.appwidget)
-    implementation(libs.glance.material3)
-    implementation(libs.glance.preview)
-    implementation(libs.glance.appwidget.preview)
+    // Glance (App Widgets) — Horizon OS has no widget host, so gms-only.
+    "gmsImplementation"(libs.glance.appwidget)
+    "gmsImplementation"(libs.glance.material3)
+    "gmsImplementation"(libs.glance.preview)
+    "gmsImplementation"(libs.glance.appwidget.preview)
 
     // Coroutines
     implementation(libs.coroutines.core)
@@ -298,18 +298,20 @@ dependencies {
     // AboutLibraries
     implementation(libs.aboutlibraries.compose.m3)
 
-    // Firebase
+    // Firebase. Auth, Remote Config, Crashlytics, and Analytics all work without Google
+    // Play services, so they stay common; Cloud Messaging does not and is gms-only.
+    // https://firebase.google.com/docs/android/android-play-services
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.config)
-    implementation(libs.firebase.messaging)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.analytics)
+    "gmsImplementation"(libs.firebase.messaging)
 
-    // Credentials (Google Sign-In)
-    implementation(libs.credentials)
-    implementation(libs.credentials.play)
-    implementation(libs.googleid)
+    // Google Sign-In via Credential Manager — Play services only, so gms-only.
+    "gmsImplementation"(libs.credentials)
+    "gmsImplementation"(libs.credentials.play)
+    "gmsImplementation"(libs.googleid)
 
     // Testing
     testImplementation(libs.junit.api)

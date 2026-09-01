@@ -19,7 +19,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
@@ -57,9 +56,10 @@ private fun Map<NavKey, MutableSharedFlow<Unit>>.reselectFlowFor(route: NavKey) 
 @Composable
 fun TBANavigation(
     navState: NavigationState,
+    onSignIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val activity = LocalActivity.current as MainActivity
+    val activity = checkNotNull(LocalActivity.current)
     val navigator = remember { Navigator(navState, activity) }
 
     val showBottomBar =
@@ -204,7 +204,7 @@ fun TBANavigation(
                                 metadata = Transitions.topLevelTransitionSpec,
                             ) {
                                 MyTBAScreen(
-                                    onSignIn = { activity.startGoogleSignIn() },
+                                    onSignIn = onSignIn,
                                     onNavigateToTeam = { teamKey ->
                                         navigator.navigate(Screen.TeamDetail(teamKey))
                                     },

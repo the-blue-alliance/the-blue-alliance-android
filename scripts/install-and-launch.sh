@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Build debug APK, install on connected device/emulator, and launch.
-# Defaults to the gms flavor (the Play build); set TBA_FLAVOR=Quest for the Horizon build.
+# Defaults to the gms flavor (the Play build); set TBA_FLAVOR=Metavr for the Horizon build.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

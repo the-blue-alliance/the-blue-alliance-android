@@ -52,4 +52,4 @@ jobs:
           EOF
           done
       - name: Warm the Gradle build cache
-        run: ./gradlew :app:assembleDebug --stacktrace
+        run: ./gradlew :app:assembleGmsDebug --stacktrace

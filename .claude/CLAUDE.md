@@ -23,9 +23,9 @@ prompt). For myTBA data to sync, point `tba.url.debug` at the local backend (`ht
 
 ## Build Commands
 
-`:app` has a `distribution` flavor dimension — `gms` (Google Play) and `quest` (Meta
+`:app` has a `distribution` flavor dimension — `gms` (Google Play) and `metavr` (Meta
 Horizon Store, no GMS). Unqualified `installDebug`/`testDebugUnitTest` no longer exist;
-use the `gms` variant unless you're working on Quest.
+use the `gms` variant unless you're working on MetaVR.
 
 ```bash
 ./gradlew :app:assembleGmsDebug

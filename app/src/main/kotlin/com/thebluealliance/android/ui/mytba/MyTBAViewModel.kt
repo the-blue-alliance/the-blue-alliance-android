@@ -12,7 +12,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
-import com.thebluealliance.android.messaging.DeviceRegistrationManager
+import com.thebluealliance.android.messaging.PushRegistrar
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +35,7 @@ class MyTBAViewModel
     constructor(
         private val authRepository: AuthRepository,
         private val myTBARepository: MyTBARepository,
-        private val deviceRegistrationManager: DeviceRegistrationManager,
+        private val pushRegistrar: PushRegistrar,
         private val shortcutManager: TBAShortcutManager,
         teamRepository: TeamRepository,
         eventRepository: EventRepository,
@@ -106,7 +106,7 @@ class MyTBAViewModel
                         if (signedIn) {
                             launch {
                                 try {
-                                    deviceRegistrationManager.onSignIn()
+                                    pushRegistrar.onSignIn()
                                 } catch (
                                     _: Exception,
                                 ) {
@@ -180,7 +180,7 @@ class MyTBAViewModel
         fun signOut() {
             viewModelScope.launch {
                 try {
-                    deviceRegistrationManager.onSignOut()
+                    pushRegistrar.onSignOut()
                 } catch (_: Exception) {
                 }
                 authRepository.signOut()

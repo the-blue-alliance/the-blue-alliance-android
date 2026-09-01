@@ -111,7 +111,7 @@ Install the pre-commit hook once to catch formatting issues before they reach CI
 
 ```bash
 ./gradlew :app:lintGmsDebug
-./gradlew :app:lintQuestDebug
+./gradlew :app:lintMetavrDebug
 ./gradlew :wear:lintDebug
 ./gradlew :tv:lintDebug
 ```
@@ -120,6 +120,6 @@ Install the pre-commit hook once to catch formatting issues before they reach CI
 
 ```bash
 ./gradlew :app:testGmsDebugUnitTest
-./gradlew :app:testQuestDebugUnitTest
+./gradlew :app:testMetavrDebugUnitTest
 ./gradlew :tv:testDebugUnitTest
 ```

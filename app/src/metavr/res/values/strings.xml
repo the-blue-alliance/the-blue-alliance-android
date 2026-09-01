@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sign_in_unavailable">Sign-in isn\'t available on this device yet.</string>
+</resources>

@@ -6,10 +6,8 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
-import com.google.firebase.messaging.RemoteMessage
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.R
-import com.thebluealliance.android.domain.model.NotificationType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,26 +18,6 @@ class NotificationBuilder
     constructor(
         @param:ApplicationContext private val context: Context,
     ) {
-        fun buildFromRemoteMessage(message: RemoteMessage): Notification? {
-            val data = message.data
-            val typeKey = data["notification_type"] ?: return null
-            val type = NotificationType.fromServerKey(typeKey) ?: return null
-            if (type.isSilent) return null
-
-            val title = message.notification?.title ?: return null
-            val body = message.notification?.body ?: ""
-
-            return build(
-                channelId = type.channelId,
-                title = title,
-                body = body,
-                eventKey = data["event_key"],
-                matchKey = data["match_key"],
-                teamKey = data["team_key"],
-                notificationType = typeKey,
-            )
-        }
-
         fun build(
             channelId: String,
             title: String,
@@ -96,6 +74,9 @@ class NotificationBuilder
             const val EXTRA_EVENT_KEY = "event_key"
             const val EXTRA_MATCH_KEY = "match_key"
             const val EXTRA_TEAM_KEY = "team_key"
+
+            /** Tab index for [MainActivity]; also set by the team-tracking widget. */
+            const val EXTRA_INITIAL_TAB = "initial_tab"
 
             /**
              * Notification id for [android.app.NotificationManager.notify]. Match notifications

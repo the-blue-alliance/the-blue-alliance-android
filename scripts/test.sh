@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 export JAVA_HOME="${JAVA_HOME:-/Applications/Android Studio.app/Contents/jbr/Contents/Home}"
 
 echo "=== Unit tests ==="
-./gradlew :app:testGmsDebugUnitTest :app:testQuestDebugUnitTest
+./gradlew :app:testGmsDebugUnitTest :app:testMetavrDebugUnitTest
 
 if adb devices | grep -q 'device$'; then
     echo "=== Instrumentation tests ==="

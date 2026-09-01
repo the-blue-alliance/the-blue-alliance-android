@@ -14,7 +14,7 @@ import com.thebluealliance.android.data.remote.dto.ModelPreferenceRequestDto
 import com.thebluealliance.android.data.remote.dto.SubscriptionCollectionDto
 import com.thebluealliance.android.data.remote.dto.SubscriptionDto
 import com.thebluealliance.android.domain.model.ModelType
-import com.thebluealliance.android.messaging.DeviceRegistrationManager
+import com.thebluealliance.android.messaging.DeviceIdProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -41,13 +41,13 @@ class MyTBARepositoryTest {
         }
     private val favoriteDao: FavoriteDao = mockk(relaxUnitFun = true)
     private val subscriptionDao: SubscriptionDao = mockk(relaxUnitFun = true)
-    private val deviceRegistrationManager: DeviceRegistrationManager =
+    private val deviceIdProvider: DeviceIdProvider =
         mockk {
             every { deviceUuid } returns "test-device-uuid"
         }
 
     private val repo =
-        MyTBARepository(db, clientApi, favoriteDao, subscriptionDao, deviceRegistrationManager)
+        MyTBARepository(db, clientApi, favoriteDao, subscriptionDao, deviceIdProvider)
 
     @BeforeEach
     fun setUp() {
