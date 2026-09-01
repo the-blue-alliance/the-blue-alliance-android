@@ -33,6 +33,8 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.util.openUrl
+import com.thebluealliance.android.util.openWebcast
+import com.thebluealliance.android.util.webcastUrl
 
 @Composable
 fun EventInfoTab(
@@ -225,7 +227,7 @@ fun EventInfoTab(
                             Modifier
                                 .padding(top = 4.dp)
                                 .clickable {
-                                    context.openUrl(url)
+                                    context.openWebcast(webcast, url)
                                 },
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
@@ -247,15 +249,6 @@ fun EventInfoTab(
         }
     }
 }
-
-private fun webcastUrl(webcast: Webcast): String? =
-    when (webcast.type) {
-        "twitch" -> "https://twitch.tv/${webcast.channel}"
-        "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
-        "livestream" ->
-            "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
-        else -> null
-    }
 
 private fun webcastLabel(webcast: Webcast): String {
     val base =
