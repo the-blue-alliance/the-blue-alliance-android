@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Widget dimensions (shared between TeamTrackingWidget.kt and widget_preview.xml) -->
+    <dimen name="widget_padding">12dp</dimen>
+    <dimen name="widget_match_label_width">36dp</dimen>
+    <dimen name="widget_title_text_size">16sp</dimen>
+    <dimen name="widget_subtitle_text_size">13sp</dimen>
+    <dimen name="widget_match_text_size">12sp</dimen>
+    <dimen name="widget_section_label_text_size">11sp</dimen>
+    <dimen name="widget_estimate_text_size">10sp</dimen>
+</resources>

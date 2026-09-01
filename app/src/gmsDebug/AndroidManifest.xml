@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Widget automation harnesses for scripts/screenshot-playbook.sh. Widgets are
+         gms-only, so these live in gmsDebug rather than debug. -->
+    <application>
+
+        <activity
+            android:name=".widget.PinWidgetActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".widget.ReconfigureWidgetsActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".widget.ResizeWidgetsActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".widget.RemoveWidgetsActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name=".widget.MockWidgetActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <receiver
+            android:name=".widget.PinWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.thebluealliance.android.widget.WIDGET_PINNED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- A 2D panel app runs on the Horizon shell and must not require head tracking. -->
+    <uses-feature
+        android:name="android.hardware.vr.headtracking"
+        android:required="false" />
+
+    <application>
+
+        <!-- Meta Horizon Store device targeting. Deliberately no
+             com.oculus.intent.category.VR — that marks an app immersive-only. -->
+        <meta-data
+            android:name="com.oculus.supportedDevices"
+            android:value="quest2|questpro|quest3|quest3s" />
+
+        <activity android:name=".MainActivity">
+            <!-- Horizon OS's standard panel size — landscape by geometry. The shell lets
+                 the user resize down to its own 384x500dp minimum, so the activity stays
+                 resizeable (no resizeableActivity=false, no screenOrientation lock). -->
+            <layout
+                android:defaultWidth="1024dp"
+                android:defaultHeight="640dp"
+                android:minWidth="384dp"
+                android:minHeight="500dp" />
+        </activity>
+
+    </application>
+</manifest>
