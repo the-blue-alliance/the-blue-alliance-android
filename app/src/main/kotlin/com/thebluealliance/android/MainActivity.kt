@@ -132,7 +132,9 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startSignIn() {
-        if (BuildConfig.DEBUG) {
+        // The same flag that points Firebase Auth at the local emulator (AuthModule) decides
+        // whether sign-in short-circuits to it — a real flow can't complete against it anyway.
+        if (BuildConfig.AUTH_EMULATOR) {
             signInWithEmulator()
             return
         }

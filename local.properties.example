@@ -12,3 +12,7 @@ tba.api.key.debug=tba-dev-key
 # http://10.0.2.2:8080/ (the emulator's alias for the host's localhost).
 # Uncomment to hit production instead.
 #tba.url.debug=https://www.thebluealliance.com/
+
+# Debug builds point Firebase Auth at the local emulator (10.0.2.2:9099) and sign in a
+# fake user instead of running the real sign-in flow. Set to false to exercise the real one.
+#tba.auth.emulator=false

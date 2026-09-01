@@ -143,8 +143,17 @@ android {
                 "TBA_API_KEY",
                 "\"${localProperties.getProperty("tba.api.key.debug", "tba-dev-key")}\"",
             )
+            // Debug builds normally point Firebase Auth at the local emulator and sign in a
+            // fake user instead of running the real flow. Set tba.auth.emulator=false to
+            // exercise the real sign-in flow.
+            buildConfigField(
+                "boolean",
+                "AUTH_EMULATOR",
+                localProperties.getProperty("tba.auth.emulator", "true"),
+            )
         }
         release {
+            buildConfigField("boolean", "AUTH_EMULATOR", "false")
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true

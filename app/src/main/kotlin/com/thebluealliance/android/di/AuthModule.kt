@@ -15,7 +15,7 @@ object AuthModule {
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth {
         val auth = FirebaseAuth.getInstance()
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.AUTH_EMULATOR) {
             auth.useEmulator("10.0.2.2", 9099)
         }
         return auth
