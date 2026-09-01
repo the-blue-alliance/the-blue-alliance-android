@@ -12,11 +12,26 @@ import androidx.activity.ComponentActivity
  */
 interface SignInLauncher {
     /**
-     * Launches sign-in from [activity], invoking [onSignedIn] once Firebase holds the
-     * credential. Failures are logged, not surfaced.
+     * Binds the launcher to [activity], calling [onSignedIn] once Firebase holds the
+     * credential.
+     *
+     * **Call this from `onCreate`, before the activity is STARTED.** A flow that hands off
+     * to another app (the browser, on Horizon OS) can outlive the process, and AndroidX
+     * only redelivers the restored result to an `ActivityResultLauncher` registered this
+     * early. Passing [onSignedIn] here rather than at tap time is what lets a sign-in that
+     * finished while the process was dead still run to completion.
+     *
+     * The binding is released when [activity] is destroyed; a recreated activity registers
+     * again.
      */
-    fun signIn(
+    fun register(
         activity: ComponentActivity,
         onSignedIn: () -> Unit,
     )
+
+    /**
+     * Launches sign-in from the registered activity. Failures are logged and surfaced to
+     * the user; a second call while one flow is already pending is ignored.
+     */
+    fun signIn()
 }

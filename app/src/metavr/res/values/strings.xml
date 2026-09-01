@@ -2,4 +2,5 @@
 <resources>
     <string name="sign_in_unavailable">Sign-in isn\'t available in this build.</string>
     <string name="sign_in_failed">Sign-in failed. Please try again.</string>
+    <string name="sign_in_needs_browser">Sign-in requires a web browser, which this device doesn\'t have.</string>
 </resources>

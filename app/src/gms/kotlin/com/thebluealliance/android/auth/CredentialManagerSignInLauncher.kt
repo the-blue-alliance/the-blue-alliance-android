@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.NoCredentialException
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -18,10 +20,36 @@ import kotlinx.coroutines.tasks.await
 class CredentialManagerSignInLauncher(
     private val firebaseAuth: FirebaseAuth,
 ) : SignInLauncher {
-    override fun signIn(
+    private var activity: ComponentActivity? = null
+    private var onSignedIn: (() -> Unit)? = null
+
+    // Credential Manager runs the whole flow inside a coroutine on the calling activity —
+    // there's no pending activity result to restore — so registering is just holding on to
+    // the activity until it goes away.
+    override fun register(
         activity: ComponentActivity,
         onSignedIn: () -> Unit,
     ) {
+        this.activity = activity
+        this.onSignedIn = onSignedIn
+        activity.lifecycle.addObserver(
+            object : DefaultLifecycleObserver {
+                override fun onDestroy(owner: LifecycleOwner) {
+                    if (this@CredentialManagerSignInLauncher.activity !== owner) return
+                    this@CredentialManagerSignInLauncher.activity = null
+                    this@CredentialManagerSignInLauncher.onSignedIn = null
+                }
+            },
+        )
+    }
+
+    override fun signIn() {
+        val activity = activity
+        if (activity == null) {
+            Log.e(TAG, "signIn() before register(); ignoring")
+            return
+        }
+
         val googleIdOption =
             GetGoogleIdOption
                 .Builder()
@@ -46,7 +74,7 @@ class CredentialManagerSignInLauncher(
                         null,
                     )
                 firebaseAuth.signInWithCredential(firebaseCredential).await()
-                onSignedIn()
+                onSignedIn?.invoke()
             } catch (e: NoCredentialException) {
                 Log.i(TAG, "No Google credential available", e)
             } catch (e: Exception) {

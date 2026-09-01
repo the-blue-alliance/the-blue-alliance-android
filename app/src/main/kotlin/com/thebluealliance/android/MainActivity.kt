@@ -61,6 +61,10 @@ class MainActivity : ComponentActivity() {
             flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0 &&
                 flags and Intent.FLAG_ACTIVITY_CLEAR_TASK != 0
 
+        // Before the activity is STARTED, so a sign-in that finished in another app while
+        // this process was gone still comes back to us.
+        signInLauncher.register(this, ::requestNotificationPermission)
+
         val startRoute =
             getNotificationDestination()
                 ?: getDeeplinkDestination()
@@ -138,7 +142,7 @@ class MainActivity : ComponentActivity() {
             signInWithEmulator()
             return
         }
-        signInLauncher.signIn(this, ::requestNotificationPermission)
+        signInLauncher.signIn()
     }
 
     private fun signInWithEmulator() {
