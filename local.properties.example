@@ -23,4 +23,17 @@ tba.api.key.debug=tba-dev-key
 # that is the client type whose redirect URI is its own id reversed — which is what AppAuth
 # registers. Blank means sign-in reports that it isn't available rather than opening a
 # browser that can't succeed.
+#
+# "the same project as Firebase" means the project of the google-services.json the build
+# type picks up, which differs per build type: app/src/debug is the dev project and
+# app/src/release is prod. One value can't satisfy both, so a debug build needs a client
+# minted in the dev project — a prod client id gets the browser dance and the token
+# exchange all the way to signInWithCredential, which then fails with "Invalid Idp
+# Response: ... audience ... not authorized to be used in the project with project_number".
+# (A prod client id can also be accepted by the dev project by adding it under Firebase
+# console → Authentication → Google → external client IDs, which needs no rebuild.)
+#
+# Either way a debug build signs in against the *dev* Firebase project, so the ID token it
+# then sends to prod's myTBA clientapi comes back 401 "Unauthorized to list favorites".
+# Signed-in myTBA against real data needs a build on the prod Firebase project.
 #tba.oauth.client.id.metavr=000000000000-xxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
