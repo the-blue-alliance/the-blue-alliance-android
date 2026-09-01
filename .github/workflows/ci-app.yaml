@@ -92,3 +92,7 @@ jobs:
           EOF
       - name: Build release APKs
         run: ./gradlew :app:assembleGmsRelease :app:assembleMetavrRelease --stacktrace
+      - name: Verify Horizon Store packaging rules
+        # Meta's upload validator rejects rather than warns, and it runs on the
+        # first ALPHA upload — catch a regression here instead of at upload time.
+        run: scripts/verify-metavr-apk.sh --require-signed
