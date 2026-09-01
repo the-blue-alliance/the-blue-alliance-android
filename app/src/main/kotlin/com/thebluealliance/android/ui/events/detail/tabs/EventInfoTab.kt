@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -94,14 +96,9 @@ fun EventInfoTab(
         if (event.district != null) {
             item {
                 val districtLabel = districtDisplayName ?: event.district
-                Text(
+                EventInfoLinkRow(
                     text = "District: $districtLabel",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier =
-                        Modifier
-                            .padding(top = 4.dp)
-                            .clickable { onNavigateToDistrict(event.district) },
+                    onClick = { onNavigateToDistrict(event.district) },
                 )
             }
         }
@@ -120,85 +117,57 @@ fun EventInfoTab(
         // Address (tappable → opens Google Maps)
         if (event.address != null) {
             item {
-                Row(
-                    modifier =
-                        Modifier
-                            .padding(top = 8.dp)
-                            .clickable {
-                                val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
-                                context.openUrl(url)
-                            },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Outlined.LocationOn,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = event.address,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                EventInfoLinkRow(
+                    text = event.address,
+                    onClick = {
+                        val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
+                        context.openUrl(url)
+                    },
+                    icon = {
+                        Icon(
+                            Icons.Outlined.LocationOn,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                )
             }
         }
 
         // Website (clickable)
         if (event.website != null) {
             item {
-                Row(
-                    modifier =
-                        Modifier
-                            .padding(top = 8.dp)
-                            .clickable {
-                                context.openUrl(event.website)
-                            },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        Icons.Outlined.Language,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = event.website,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                EventInfoLinkRow(
+                    text = event.website,
+                    onClick = { context.openUrl(event.website) },
+                    icon = {
+                        Icon(
+                            Icons.Outlined.Language,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                )
             }
         }
 
         // Pit Map link (shown when any team has a pit location)
         if (pitLocations.isNotEmpty()) {
             item {
-                Row(
-                    modifier =
-                        Modifier
-                            .padding(top = 8.dp)
-                            .clickable {
-                                onNavigateToPitMap(event.key, favoriteTeamKeys)
-                            },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_nexus_logo),
-                        contentDescription = "FRC Nexus",
-                        tint = Color.Unspecified,
-                        modifier = Modifier.size(18.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = "Pit Map",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                }
+                EventInfoLinkRow(
+                    text = "Pit Map",
+                    onClick = { onNavigateToPitMap(event.key, favoriteTeamKeys) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_nexus_logo),
+                            contentDescription = "FRC Nexus",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                )
             }
         }
 
@@ -220,31 +189,55 @@ fun EventInfoTab(
                 val url = webcastUrl(webcast)
                 val label = webcastLabel(webcast)
                 if (url != null) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .padding(top = 4.dp)
-                                .clickable {
-                                    context.openUrl(url)
-                                },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            Icons.Outlined.PlayCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(18.dp),
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    }
+                    EventInfoLinkRow(
+                        text = label,
+                        onClick = { context.openUrl(url) },
+                        icon = {
+                            Icon(
+                                Icons.Outlined.PlayCircle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        },
+                    )
                 }
             }
         }
+    }
+}
+
+/**
+ * A tappable link row on the Event Info tab.
+ *
+ * The padding lives *inside* the clickable (and the row fills the available width) so the
+ * hover highlight and ripple cover the whole row instead of hugging the wrap-content text.
+ * `heightIn` keeps the target at least 48dp tall for touch and pointer input alike.
+ */
+@Composable
+private fun EventInfoLinkRow(
+    text: String,
+    onClick: () -> Unit,
+    icon: (@Composable () -> Unit)? = null,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .heightIn(min = 48.dp)
+                .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (icon != null) {
+            icon()
+            Spacer(Modifier.width(8.dp))
+        }
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.primary,
+        )
     }
 }
 
