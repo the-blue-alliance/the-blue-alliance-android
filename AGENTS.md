@@ -38,7 +38,7 @@ scripts/worktree-emu.sh bless               # 2. save its state as the 'verify-b
 ```bash
 mkdir -p artifacts
 export ANDROID_SERIAL="$(scripts/worktree-emu.sh up "$SLOT")"   # boot read-only instance; prints its serial
-./gradlew :app:installDebug                                     # installs only — adb + Gradle read $ANDROID_SERIAL
+./gradlew :app:installGmsDebug                                     # installs only — adb + Gradle read $ANDROID_SERIAL
 # MUST launch — installDebug does NOT start the app; screenshotting without this captures the launcher.
 # (scripts/emu launch also grants Android 17's ACCESS_LOCAL_NETWORK so the 10.0.2.2 backend is reachable.)
 scripts/emu launch \
@@ -68,8 +68,8 @@ Notes:
 - Max **3** concurrent instances on a 32 GB host (`TBA_WT_CAP`). Slots use console
   ports `5580+`, leaving `5554–5578` free for interactive use.
 - Gitignored configs (`google-services.json`, `local.properties`) must be present in each
-  worktree for `:app:installDebug` to build — the orchestrator copies them in.
+  worktree for `:app:installGmsDebug` to build — the orchestrator copies them in.
 - **Emulators parallelize cheaply; builds don't.** Idle read-only instances are light, but
-  three simultaneous `:app:installDebug` builds will thrash a 32 GB host (especially under
+  three simultaneous `:app:installGmsDebug` builds will thrash a 32 GB host (especially under
   other load) — serialize or throttle them (`nice -n 10`, `--max-workers`) even while the
   emulators run in parallel.

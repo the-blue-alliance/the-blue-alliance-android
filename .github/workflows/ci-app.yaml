@@ -43,10 +43,10 @@ jobs:
           }
           EOF
           done
-      - name: Build debug APK
-        run: ./gradlew :app:assembleDebug --stacktrace
+      - name: Build debug APKs
+        run: ./gradlew :app:assembleGmsDebug :app:assembleQuestDebug --stacktrace
       - name: Run unit tests
-        run: ./gradlew :app:testDebugUnitTest --stacktrace
+        run: ./gradlew :app:testGmsDebugUnitTest :app:testQuestDebugUnitTest --stacktrace
 
   app-release-build:
     runs-on: ubuntu-latest
@@ -90,5 +90,5 @@ jobs:
           release.key.alias=ci
           release.key.password=android
           EOF
-      - name: Build release APK
-        run: ./gradlew :app:assembleRelease --stacktrace
+      - name: Build release APKs
+        run: ./gradlew :app:assembleGmsRelease :app:assembleQuestRelease --stacktrace

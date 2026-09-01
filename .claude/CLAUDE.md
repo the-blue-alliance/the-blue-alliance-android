@@ -23,10 +23,14 @@ prompt). For myTBA data to sync, point `tba.url.debug` at the local backend (`ht
 
 ## Build Commands
 
+`:app` has a `distribution` flavor dimension — `gms` (Google Play) and `quest` (Meta
+Horizon Store, no GMS). Unqualified `installDebug`/`testDebugUnitTest` no longer exist;
+use the `gms` variant unless you're working on Quest.
+
 ```bash
-./gradlew :app:assembleDebug
-./gradlew :app:installDebug   # always install to emulator after building
-./gradlew :app:testDebugUnitTest
+./gradlew :app:assembleGmsDebug
+./gradlew :app:installGmsDebug   # always install to emulator after building
+./gradlew :app:testGmsDebugUnitTest
 ```
 
 After installing a debug build, always relaunch the app on the emulator with `scripts/emu launch`

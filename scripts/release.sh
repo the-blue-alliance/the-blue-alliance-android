@@ -452,7 +452,7 @@ cmd_test() {
     print_version
 
     info "Building release APK..."
-    run ./gradlew :app:assembleRelease
+    run ./gradlew :app:assembleGmsRelease
 
     maybe_test_on_device
 
@@ -480,18 +480,18 @@ cmd_alpha() {
 
     info "Building release bundles..."
     run ./gradlew \
-        :app:bundleRelease :app:assembleRelease \
+        :app:bundleGmsRelease :app:assembleGmsRelease \
         :wear:bundleRelease :wear:assembleRelease \
         :tv:bundleRelease :tv:assembleRelease
 
 
     # :app and :tv share one Play edit on alpha. :tv has commit.set(false) so its
     # publish task only stages; :app keeps default commit=true so its publish task
-    # flushes the shared edit (containing both AABs). :app:publishReleaseBundle
+    # flushes the shared edit (containing both AABs). :app:publishGmsReleaseBundle
     # mustRunAfter :tv:publishReleaseBundle so the committer goes last. The auto-
     # wired commitEditFor… finalizer (per-applicationId) does the actual commit.
     info "Publishing phone + TV apps to alpha..."
-    run ./gradlew :tv:publishReleaseBundle :app:publishReleaseBundle
+    run ./gradlew :tv:publishReleaseBundle :app:publishGmsReleaseBundle
     info "Publishing wear app to wear:alpha..."
     run ./gradlew :wear:publishReleaseBundle
 
@@ -549,7 +549,7 @@ cmd_beta() {
     info "Promoting phone + TV apps alpha → beta..."
     run ./gradlew \
         :tv:promoteReleaseArtifact \
-        :app:promoteReleaseArtifact \
+        :app:promoteGmsReleaseArtifact \
         --from-track alpha --promote-track beta
     info "Promoting wear app wear:alpha → wear:beta..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:alpha" --promote-track "wear:beta"
@@ -575,7 +575,7 @@ cmd_listing() {
     info "Publishing store listing (screenshots, descriptions, etc.)"
     echo ""
 
-    run ./gradlew :app:publishReleaseListing
+    run ./gradlew :app:publishGmsReleaseListing
 
     echo ""
     echo -e "${GREEN}✓ Store listing updated${NC}"
@@ -620,13 +620,13 @@ cmd_production() {
     info "Promoting phone + TV apps beta → production..."
     run ./gradlew \
         :tv:promoteReleaseArtifact \
-        :app:promoteReleaseArtifact \
+        :app:promoteGmsReleaseArtifact \
         --from-track beta --promote-track production
     info "Promoting wear app wear:beta → wear:production..."
     run ./gradlew :wear:promoteReleaseArtifact --from-track "wear:beta" --promote-track "wear:production"
 
     info "Publishing store listing..."
-    run ./gradlew :app:publishReleaseListing
+    run ./gradlew :app:publishGmsReleaseListing
 
     info "Returning to ${original_ref}..."
     run git checkout "$original_ref"

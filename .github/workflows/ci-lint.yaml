@@ -65,4 +65,4 @@ jobs:
           EOF
           done
       - name: Run Android Lint
-        run: ./gradlew :app:lintDebug :wear:lintDebug :tv:lintDebug --stacktrace
+        run: ./gradlew :app:lintGmsDebug :app:lintQuestDebug :wear:lintDebug :tv:lintDebug --stacktrace

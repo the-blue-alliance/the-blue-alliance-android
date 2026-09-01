@@ -91,6 +91,28 @@ android {
         )
     }
 
+    // "gms" = Google Play (Google Mobile Services present). "quest" = Meta Horizon Store,
+    // which is AOSP with no GMS, so sign-in and push are swapped out per source set.
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("gms") {
+            dimension = "distribution"
+        }
+        create("quest") {
+            dimension = "distribution"
+            // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps.
+            targetSdk = 34
+        }
+    }
+
+    // Quest ships through the Meta Horizon Store, not Play — keep gradle-play-publisher
+    // from generating publish tasks for its variants.
+    playConfigs {
+        register("quest") {
+            enabled.set(false)
+        }
+    }
+
     signingConfigs {
         create("release") {
             storeFile =
@@ -185,10 +207,10 @@ play {
 }
 
 afterEvaluate {
-    tasks.named("publishReleaseBundle").configure {
+    tasks.named("publishGmsReleaseBundle").configure {
         mustRunAfter(":tv:publishReleaseBundle")
     }
-    tasks.named("promoteReleaseArtifact").configure {
+    tasks.named("promoteGmsReleaseArtifact").configure {
         mustRunAfter(":tv:promoteReleaseArtifact")
     }
 }

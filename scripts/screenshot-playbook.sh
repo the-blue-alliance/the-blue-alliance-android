@@ -8,7 +8,7 @@
 # Prerequisites:
 #   - Android emulator running (1080x2400 device)
 #   - emu tool available at scripts/emu (included in repo)
-#   - Release build installed: ./gradlew :app:installRelease
+#   - Release build installed: ./gradlew :app:installGmsRelease
 #   - A Google account signed in on the emulator (for Google Sign-In)
 #   - App has data loaded (events, teams, districts for current year)
 #   - Emulator DNS must work: if Private DNS is enabled, disable it with:
@@ -159,7 +159,7 @@ $EMU screenshot "$RAW_DIR/06-district-detail.png"
 # Uses MockWidgetActivity to inject deterministic data — no network needed.
 if [ "$INCLUDE_WIDGETS" = true ]; then
   echo "==> Installing debug build for widget automation..."
-  ./gradlew :app:installDebug -q
+  ./gradlew :app:installGmsDebug -q
   adb shell appwidget grantbind --package "$DEV_PKG" --user 0
   echo "==> Screenshot 7: Home screen widgets"
   # Clean up any existing TBA widgets
