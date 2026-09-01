@@ -31,6 +31,8 @@ import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
+import com.thebluealliance.android.util.openWebcast
+import com.thebluealliance.android.util.webcastUrl
 
 /**
  * The tab's horizontal text margin. It lives on the individual items rather than on the
@@ -201,7 +203,7 @@ fun EventInfoTab(
                 if (url != null) {
                     EventInfoLinkRow(
                         text = label,
-                        onClick = { context.openUrl(url) },
+                        onClick = { context.openWebcast(webcast, url) },
                         icon = {
                             Icon(
                                 TbaIcons.PlayCircle,
@@ -255,15 +257,6 @@ private fun EventInfoLinkRow(
         )
     }
 }
-
-private fun webcastUrl(webcast: Webcast): String? =
-    when (webcast.type) {
-        "twitch" -> "https://twitch.tv/${webcast.channel}"
-        "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
-        "livestream" ->
-            "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
-        else -> null
-    }
 
 private fun webcastLabel(webcast: Webcast): String {
     val base =
