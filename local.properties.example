@@ -14,5 +14,13 @@ tba.api.key.debug=tba-dev-key
 #tba.url.debug=https://www.thebluealliance.com/
 
 # Debug builds point Firebase Auth at the local emulator (10.0.2.2:9099) and sign in a
-# fake user instead of running the real sign-in flow. Set to false to exercise the real one.
+# fake user instead of running the real sign-in flow. Set to false to exercise the real
+# flow — the only way to try the metavr flavor's AppAuth browser sign-in in a debug build.
 #tba.auth.emulator=false
+
+# Google OAuth client for the metavr (Meta Horizon) flavor's browser sign-in. Needs an
+# installed-app ("iOS") OAuth client in the same Google Cloud project as Firebase, because
+# that is the client type whose redirect URI is its own id reversed — which is what AppAuth
+# registers. Blank means sign-in reports that it isn't available rather than opening a
+# browser that can't succeed.
+#tba.oauth.client.id.metavr=000000000000-xxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com

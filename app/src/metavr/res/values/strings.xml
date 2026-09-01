@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sign_in_unavailable">Sign-in isn\'t available on this device yet.</string>
+    <string name="sign_in_unavailable">Sign-in isn\'t available in this build.</string>
+    <string name="sign_in_failed">Sign-in failed. Please try again.</string>
 </resources>

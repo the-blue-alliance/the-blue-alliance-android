@@ -1,7 +1,8 @@
 package com.thebluealliance.android.di
 
+import com.google.firebase.auth.FirebaseAuth
+import com.thebluealliance.android.auth.MetaVRSignInLauncher
 import com.thebluealliance.android.auth.SignInLauncher
-import com.thebluealliance.android.auth.UnavailableSignInLauncher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +14,6 @@ import javax.inject.Singleton
 object SignInModule {
     @Provides
     @Singleton
-    fun provideSignInLauncher(): SignInLauncher = UnavailableSignInLauncher()
+    fun provideSignInLauncher(firebaseAuth: FirebaseAuth): SignInLauncher =
+        MetaVRSignInLauncher(firebaseAuth)
 }

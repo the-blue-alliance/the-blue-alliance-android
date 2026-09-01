@@ -21,6 +21,22 @@ val localProperties =
         if (file.exists()) load(FileInputStream(file))
     }
 
+// --- MetaVR (Horizon OS) sign-in OAuth client ---
+// Horizon OS has no Credential Manager, so the metavr flavor signs in through the browser
+// with AppAuth against a Google "installed app" OAuth client. Blank until someone mints one
+// (see local.properties.example); MetaVROAuthConfig treats blank as "not configured".
+val metavrOAuthClientId = localProperties.getProperty("tba.oauth.client.id.metavr", "").trim()
+
+// The AppAuth redirect activity's scheme has to be a manifest literal, so the reversed-client-id
+// rule is spelled out here as well as in MetaVROAuthConfig — keep the two in step.
+val metavrOAuthRedirectScheme =
+    if (metavrOAuthClientId.isEmpty()) {
+        "tba.appauth.unconfigured"
+    } else {
+        val id = metavrOAuthClientId.removeSuffix(".apps.googleusercontent.com")
+        "com.googleusercontent.apps.$id"
+    }
+
 // --- Git tag-based versioning ---
 // Tags must be in the format "vMAJOR.MINOR.PATCH" (e.g., v10.9.0)
 // versionCode formula: MAJOR * 1_000_000 + MINOR * 10_000 + PATCH * 100
@@ -102,6 +118,9 @@ android {
             dimension = "distribution"
             // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps.
             targetSdk = 34
+            buildConfigField("String", "OAUTH_CLIENT_ID", "\"$metavrOAuthClientId\"")
+            // Consumed by AppAuth's RedirectUriReceiverActivity intent filter.
+            manifestPlaceholders["appAuthRedirectScheme"] = metavrOAuthRedirectScheme
         }
     }
 
@@ -321,6 +340,9 @@ dependencies {
     "gmsImplementation"(libs.credentials)
     "gmsImplementation"(libs.credentials.play)
     "gmsImplementation"(libs.googleid)
+
+    // Horizon OS's sign-in front door: browser OAuth (authorization code + PKCE).
+    "metavrImplementation"(libs.appauth)
 
     // Testing
     testImplementation(libs.junit.api)

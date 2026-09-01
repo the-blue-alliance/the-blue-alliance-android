@@ -31,6 +31,7 @@ google-services = "4.5.0"
 firebase-crashlytics-plugin = "3.0.8"
 credentials = "1.6.0"
 googleid = "1.2.0"
+appauth = "0.11.1"
 
 work = "2.11.2"
 glance = "1.3.0-alpha02"
@@ -118,6 +119,7 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 credentials-play = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
+appauth = { group = "net.openid", name = "appauth", version.ref = "appauth" }
 
 # WorkManager
 work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
