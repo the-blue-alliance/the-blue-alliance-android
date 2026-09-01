@@ -37,6 +37,9 @@ private val DarkColorScheme =
         surfaceTint = TBABlueLight,
     )
 
+// ObsoleteSdkInt: the guard is live for the gms flavor (minSdk 26). Only metavr, whose
+// minSdk is 32 to satisfy Meta's release floor, makes it look unnecessary.
+@Suppress("ObsoleteSdkInt")
 @Composable
 fun TBATheme(
     darkTheme: Boolean = isSystemInDarkTheme(),

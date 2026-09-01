@@ -37,3 +37,9 @@ tba.api.key.debug=tba-dev-key
 # then sends to prod's myTBA clientapi comes back 401 "Unauthorized to list favorites".
 # Signed-in myTBA against real data needs a build on the prod Firebase project.
 #tba.oauth.client.id.metavr=000000000000-xxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+
+# Added to the metavr flavor's versionCode (the gms/Play formula is untouched). The Meta
+# Horizon Store refuses any build number it has already accepted, so bump this — never
+# lower it — when a Horizon upload has to be re-cut from a commit that already shipped a
+# build. CI can set METAVR_VERSIONCODE_OFFSET instead; the env var wins.
+#metavr.versioncode.offset=0

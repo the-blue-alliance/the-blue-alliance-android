@@ -5,9 +5,15 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- DataExtractionRules: android:allowBackup is deprecated once minSdk >= 31, which only
+         the metavr flavor is (32, Meta's release floor) — the gms flavor still ships to
+         API 26 devices where the attribute is load-bearing. Splitting backup config into
+         per-variant extraction rules is a product decision, not part of the Horizon
+         packaging work; suppressed here until it's made deliberately. -->
     <application
         android:name=".TBAApplication"
         android:allowBackup="true"
+        tools:ignore="DataExtractionRules"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"

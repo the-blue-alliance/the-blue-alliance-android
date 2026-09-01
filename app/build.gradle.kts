@@ -70,6 +70,19 @@ val computedVersionCode =
         1,
         vMajor * 1_000_000 + vMinor * 10_000 + vPatch * 100 + commitDistance,
     )
+// Bumped (in local.properties or via the METAVR_VERSIONCODE_OFFSET env var in CI) when a
+// Horizon upload has to be re-cut from a commit that already produced an uploaded build.
+// Never decrease it: Meta refuses any build number it has already seen, even for rollbacks.
+val metavrVersionCodeOffset =
+    (
+        System.getenv("METAVR_VERSIONCODE_OFFSET")
+            ?: localProperties.getProperty("metavr.versioncode.offset", "0")
+    ).trim().ifEmpty { "0" }.toInt()
+
+require(metavrVersionCodeOffset >= 0) {
+    "metavr.versioncode.offset must be >= 0, was $metavrVersionCodeOffset"
+}
+
 val computedVersionName =
     if (commitDistance == 0) {
         "$vMajor.$vMinor.$vPatch"
@@ -116,8 +129,28 @@ android {
         }
         create("metavr") {
             dimension = "distribution"
-            // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps.
+            // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps,
+            // and its release-build table permits minSdk 29-34 (32 recommended for the
+            // Quest 2 / Pro / 3 family). The shared minSdk 26 is below that floor.
+            minSdk = 32
             targetSdk = 34
+            // VRC.Quest.Packaging.6: "All Quest applications must be submitted as 64-bit
+            // binaries." Without this the APK also ships armeabi-v7a/x86/x86_64 copies of
+            // libandroidx.graphics.path.so and libdatastore_shared_counter.so. Applied to
+            // the whole flavor, not just release: Quest hardware is arm64 and so is the
+            // Spatial Simulator on Apple Silicon, so debug loses nothing.
+            ndk {
+                // ChromeOsAbiSupport wants an x86/x86_64 binary too — irrelevant here:
+                // this flavor only ever runs on Horizon OS headsets, which are all arm64.
+                // The gms flavor still ships every ABI, so ChromeOS support is untouched.
+                //noinspection ChromeOsAbiSupport
+                abiFilters += "arm64-v8a"
+            }
+            // Meta rejects an upload whose build number is not strictly greater than the
+            // last one, including a re-upload cut from the same commit (an asset-only fix
+            // or a retry). The git-describe formula only moves when a commit lands, so
+            // metavr gets an offset knob on top of it. Keep the gms/Play formula untouched.
+            versionCode = computedVersionCode + metavrVersionCodeOffset
             buildConfigField("String", "OAUTH_CLIENT_ID", "\"$metavrOAuthClientId\"")
             // Consumed by AppAuth's RedirectUriReceiverActivity intent filter.
             manifestPlaceholders["appAuthRedirectScheme"] = metavrOAuthRedirectScheme
