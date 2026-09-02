@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +55,7 @@ import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.mediaUrl
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -412,10 +413,10 @@ private fun AllianceTeams(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.error,
                     modifier =
-                        Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable { onTeamClick(key) }
-                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        Modifier.paddedClickable(
+                            shape = MaterialTheme.shapes.small,
+                            padding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                        ) { onTeamClick(key) },
                 )
             }
         }
@@ -438,10 +439,10 @@ private fun AllianceTeams(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
-                        Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable { onTeamClick(key) }
-                            .padding(horizontal = 12.dp, vertical = 4.dp),
+                        Modifier.paddedClickable(
+                            shape = MaterialTheme.shapes.small,
+                            padding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                        ) { onTeamClick(key) },
                 )
             }
         }

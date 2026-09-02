@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -32,7 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +43,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.Flow
 
@@ -221,10 +222,10 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable {
-                                onNavigateToEvent(sortedEvents[0].eventKey)
-                            }.padding(vertical = 6.dp),
+                            .paddedClickable(
+                                shape = MaterialTheme.shapes.small,
+                                padding = PaddingValues(vertical = 6.dp),
+                            ) { onNavigateToEvent(sortedEvents[0].eventKey) },
                 )
             } else {
                 Text(
@@ -241,10 +242,10 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable {
-                                onNavigateToEvent(sortedEvents[1].eventKey)
-                            }.padding(vertical = 6.dp),
+                            .paddedClickable(
+                                shape = MaterialTheme.shapes.small,
+                                padding = PaddingValues(vertical = 6.dp),
+                            ) { onNavigateToEvent(sortedEvents[1].eventKey) },
                 )
             } else {
                 Text(

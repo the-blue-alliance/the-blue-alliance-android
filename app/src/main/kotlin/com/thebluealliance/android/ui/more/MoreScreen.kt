@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.more
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -28,11 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.paddedClickable
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,10 +91,11 @@ fun MoreScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
-                        Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable(onClick = onNavigateToAbout)
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        Modifier.paddedClickable(
+                            shape = MaterialTheme.shapes.small,
+                            padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                            onClick = onNavigateToAbout,
+                        ),
                 )
                 Text(
                     text = "·",
@@ -106,10 +108,11 @@ fun MoreScreen(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
-                        Modifier
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable(onClick = onNavigateToThanks)
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        Modifier.paddedClickable(
+                            shape = MaterialTheme.shapes.small,
+                            padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                            onClick = onNavigateToThanks,
+                        ),
                 )
             }
 
