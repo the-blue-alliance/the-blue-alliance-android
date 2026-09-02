@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -61,6 +62,13 @@ fun TBANavigation(
 ) {
     val activity = LocalActivity.current as MainActivity
     val navigator = remember { Navigator(navState, activity) }
+
+    // Deeplinks and notification taps that arrive while the app is already running reach
+    // MainActivity.onNewIntent rather than onCreate, so they navigate the live back stack here
+    // instead of setting a start route.
+    LaunchedEffect(navigator) {
+        activity.intentRoutes.collect { navigator.navigate(it) }
+    }
 
     val showBottomBar =
         TOP_LEVEL_DESTINATIONS.any { it.key.isSameTab(navState.currentRoute) } ||
