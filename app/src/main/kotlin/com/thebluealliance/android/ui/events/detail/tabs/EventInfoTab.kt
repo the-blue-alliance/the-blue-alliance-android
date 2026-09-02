@@ -35,6 +35,13 @@ import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.util.openUrl
 
+/**
+ * The tab's horizontal text margin. It lives on the individual items rather than on the
+ * `LazyColumn`, so that [EventInfoLinkRow]'s hover highlight can span the full panel width while
+ * its label still lines up with everything else on the tab.
+ */
+private val CONTENT_INSET = 16.dp
+
 @Composable
 fun EventInfoTab(
     event: Event?,
@@ -53,14 +60,20 @@ fun EventInfoTab(
     }
     val context = LocalContext.current
     LazyColumn(
+        // Only the vertical margin is on the list: the horizontal one is applied per item (see
+        // CONTENT_INSET) so the link rows can bleed to the panel's edges.
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(vertical = CONTENT_INSET),
         contentPadding = innerPadding,
     ) {
         item {
-            Text(event.name, style = MaterialTheme.typography.headlineSmall)
+            Text(
+                event.name,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(horizontal = CONTENT_INSET),
+            )
         }
         val location = listOfNotNull(event.city, event.state, event.country).joinToString(", ")
         if (location.isNotEmpty()) {
@@ -68,7 +81,7 @@ fun EventInfoTab(
                 Text(
                     text = location,
                     style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
                 )
             }
         }
@@ -78,7 +91,7 @@ fun EventInfoTab(
                 Text(
                     text = dateRange,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
                 )
             }
         }
@@ -88,7 +101,7 @@ fun EventInfoTab(
                 Text(
                     text = weekLabel(event.year, week),
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
                 )
             }
         }
@@ -107,7 +120,7 @@ fun EventInfoTab(
                 Text(
                     text = event.locationName,
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -177,6 +190,7 @@ fun EventInfoTab(
                 Text(
                     text = "Webcasts",
                     style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(horizontal = CONTENT_INSET),
                 )
             }
             itemsIndexed(event.webcasts, key = {
@@ -211,8 +225,12 @@ fun EventInfoTab(
  *
  * The padding lives *inside* the clickable (and the row fills the available width) so the hover
  * highlight and ripple cover the whole row with a little breathing room, instead of hugging the
- * wrap-content text. These rows are primarily informational and there are five of them, so the
- * 4dp keeps each one at about the height it has always had rather than growing it to a 48dp
+ * wrap-content text. The horizontal half of that padding is the tab's own [CONTENT_INSET], which
+ * the surrounding `LazyColumn` deliberately does not apply: the highlight therefore runs edge to
+ * edge like a list row, while the label still lines up with the plain text above and below it.
+ *
+ * These rows are primarily informational and there are five of them, so the 4dp of vertical
+ * padding keeps each one at about the height it has always had rather than growing it to a 48dp
  * minimum target.
  */
 @Composable
@@ -226,7 +244,7 @@ private fun EventInfoLinkRow(
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(vertical = 4.dp),
+                .padding(horizontal = CONTENT_INSET, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
