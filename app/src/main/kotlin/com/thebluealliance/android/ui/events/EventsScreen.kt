@@ -29,10 +29,12 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -343,6 +345,13 @@ private fun WeekFilterChips(
         }
     }
 
+    // Flat chips drawn straight onto the blue app bar. Their transparent container has two
+    // consequences the call sites below opt out of:
+    //  - a shadow shows through it, so the chips pass `elevation = null` — M3's default 1.dp
+    //    hover elevation otherwise renders as a dark blotch across the chip;
+    //  - `contentColorFor(Color.Transparent)` is unspecified, so the hover/press state layers
+    //    inherit the ambient content color (near-black onSurface) and darken the chip. The
+    //    white LocalContentColor below makes them lighten it, as TBATabRow's tabs do.
     val weekChipColors =
         FilterChipDefaults.filterChipColors(
             containerColor = Color.Transparent,
@@ -358,94 +367,98 @@ private fun WeekFilterChips(
             selectedBorderColor = Color.Transparent,
         )
 
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(TBABlue)
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(constraints)
-                    val overlapPx = 4.dp.roundToPx()
-                    layout(placeable.width, (placeable.height - overlapPx).coerceAtLeast(0)) {
-                        placeable.placeRelative(0, -overlapPx)
-                    }
-                },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (hasFavorites) {
-            FilterChip(
-                selected = isFavoritesSelected,
-                onClick = onFavoritesSelected,
-                label = {
-                    Icon(
-                        Icons.Filled.Star,
-                        contentDescription = "Favorites",
-                        modifier = Modifier.size(18.dp),
-                    )
-                },
-                modifier = Modifier.padding(start = 12.dp, bottom = 4.dp),
-                colors = weekChipColors,
-                border = weekChipBorder,
-            )
-            // Vertical divider between pinned star and scrollable chips
-            Box(
-                modifier =
-                    Modifier
-                        .padding(start = 8.dp, bottom = 4.dp)
-                        .height(24.dp)
-                        .width(1.dp)
-                        .background(Color.White.copy(alpha = 0.3f)),
-            )
-        }
-        val fadeWidth = 24.dp
-        LazyRow(
-            state = chipRowState,
+    CompositionLocalProvider(LocalContentColor provides Color.White) {
+        Row(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .then(
-                        if (hasFavorites) {
-                            Modifier.drawWithContent {
-                                drawContent()
-                                if (chipRowState.canScrollBackward) {
-                                    val solidZone = 4.dp.toPx()
-                                    val totalWidth = fadeWidth.toPx()
-                                    drawRect(
-                                        brush =
-                                            Brush.horizontalGradient(
-                                                colorStops =
-                                                    arrayOf(
-                                                        0f to TBABlue,
-                                                        solidZone / totalWidth to TBABlue,
-                                                        1f to Color.Transparent,
-                                                    ),
-                                                endX = totalWidth,
-                                            ),
-                                        size = size.copy(width = totalWidth),
-                                    )
-                                }
-                            }
-                        } else {
-                            Modifier
-                        },
-                    ),
-            contentPadding =
-                PaddingValues(
-                    start = 8.dp,
-                    end = 12.dp,
-                    bottom = 4.dp,
-                ),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .fillMaxWidth()
+                    .background(TBABlue)
+                    .layout { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        val overlapPx = 4.dp.roundToPx()
+                        layout(placeable.width, (placeable.height - overlapPx).coerceAtLeast(0)) {
+                            placeable.placeRelative(0, -overlapPx)
+                        }
+                    },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            items(weekLabels.size) { index ->
-                val label = weekLabels[index]
+            if (hasFavorites) {
                 FilterChip(
-                    selected = selectedLabel == label && !isFavoritesSelected,
-                    onClick = { onWeekSelected(label) },
-                    label = { Text(label) },
+                    selected = isFavoritesSelected,
+                    onClick = onFavoritesSelected,
+                    label = {
+                        Icon(
+                            Icons.Filled.Star,
+                            contentDescription = "Favorites",
+                            modifier = Modifier.size(18.dp),
+                        )
+                    },
+                    modifier = Modifier.padding(start = 12.dp, bottom = 4.dp),
                     colors = weekChipColors,
+                    elevation = null,
                     border = weekChipBorder,
                 )
+                // Vertical divider between pinned star and scrollable chips
+                Box(
+                    modifier =
+                        Modifier
+                            .padding(start = 8.dp, bottom = 4.dp)
+                            .height(24.dp)
+                            .width(1.dp)
+                            .background(Color.White.copy(alpha = 0.3f)),
+                )
+            }
+            val fadeWidth = 24.dp
+            LazyRow(
+                state = chipRowState,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .then(
+                            if (hasFavorites) {
+                                Modifier.drawWithContent {
+                                    drawContent()
+                                    if (chipRowState.canScrollBackward) {
+                                        val solidZone = 4.dp.toPx()
+                                        val totalWidth = fadeWidth.toPx()
+                                        drawRect(
+                                            brush =
+                                                Brush.horizontalGradient(
+                                                    colorStops =
+                                                        arrayOf(
+                                                            0f to TBABlue,
+                                                            solidZone / totalWidth to TBABlue,
+                                                            1f to Color.Transparent,
+                                                        ),
+                                                    endX = totalWidth,
+                                                ),
+                                            size = size.copy(width = totalWidth),
+                                        )
+                                    }
+                                }
+                            } else {
+                                Modifier
+                            },
+                        ),
+                contentPadding =
+                    PaddingValues(
+                        start = 8.dp,
+                        end = 12.dp,
+                        bottom = 4.dp,
+                    ),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(weekLabels.size) { index ->
+                    val label = weekLabels[index]
+                    FilterChip(
+                        selected = selectedLabel == label && !isFavoritesSelected,
+                        onClick = { onWeekSelected(label) },
+                        label = { Text(label) },
+                        colors = weekChipColors,
+                        elevation = null,
+                        border = weekChipBorder,
+                    )
+                }
             }
         }
     }

@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -106,14 +107,21 @@ fun TeamEventDetailScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                // Both halves of the title are links: each gets a clipped,
+                                // padded tap target. Their 6.dp insets replace the spaces
+                                // that used to surround the "@" separator.
                                 Text(
                                     text = "${team.number}",
                                     maxLines = 1,
-                                    modifier = Modifier.clickable { onNavigateToTeam(team.key) },
+                                    modifier =
+                                        Modifier
+                                            .clip(MaterialTheme.shapes.small)
+                                            .clickable { onNavigateToTeam(team.key) }
+                                            .padding(horizontal = 6.dp, vertical = 4.dp),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                                 Text(
-                                    text = " @ ",
+                                    text = "@",
                                     maxLines = 1,
                                     style = MaterialTheme.typography.titleLarge,
                                 )
@@ -123,14 +131,14 @@ fun TeamEventDetailScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier =
                                         Modifier
-                                            .weight(
-                                                1f,
-                                            ).clickable {
+                                            .weight(1f)
+                                            .clip(MaterialTheme.shapes.small)
+                                            .clickable {
                                                 onNavigateToEvent(
                                                     event.key,
                                                     EventDetailTab.INFO,
                                                 )
-                                            },
+                                            }.padding(horizontal = 6.dp, vertical = 4.dp),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -591,11 +599,14 @@ private fun StatsTab(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier =
-                    Modifier.clickable {
-                        context.openUrl(
-                            "https://www.thebluealliance.com/opr",
-                        )
-                    },
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable {
+                            context.openUrl(
+                                "https://www.thebluealliance.com/opr",
+                            )
+                        }.padding(vertical = 4.dp),
             )
         }
 

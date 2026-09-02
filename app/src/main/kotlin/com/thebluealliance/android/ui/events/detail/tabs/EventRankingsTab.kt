@@ -312,7 +312,10 @@ private fun RankingItem(
                 Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 12.dp),
+                    // 8.dp vertical here + 4.dp inside the team cell below keeps the row's height
+                    // and every child's position unchanged while the nested tap target grows. The
+                    // horizontal inset is the screen margin minus the cells' own COLUMN_GUTTER.
+                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -326,8 +329,9 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .weight(0.22f)
+                        .clip(MaterialTheme.shapes.small)
                         .clickable { onTeamClick(ranking.teamKey) }
-                        .padding(horizontal = COLUMN_GUTTER),
+                        .padding(horizontal = COLUMN_GUTTER, vertical = 4.dp),
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(

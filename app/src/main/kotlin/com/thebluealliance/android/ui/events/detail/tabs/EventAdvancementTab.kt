@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -129,7 +130,9 @@ private fun AdvancementPointsItem(
                 Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
+                    // 8.dp here + 2.dp inside the team-number tap target below keeps the
+                    // row's overall height unchanged while the nested target grows.
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -142,7 +145,12 @@ private fun AdvancementPointsItem(
                     text = points.teamKey.teamNumber,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable { onTeamClick(points.teamKey) },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable { onTeamClick(points.teamKey) }
+                            .padding(vertical = 2.dp),
                 )
                 if (teamName != null) {
                     Text(
