@@ -50,6 +50,16 @@ import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
 
+/**
+ * Half of the gutter between two table columns, applied inside every cell of both the header and
+ * the data rows so the columns stay aligned. The rows carry [TABLE_ROW_PADDING] instead of the
+ * usual 16.dp so the outermost cells' content still lands on the screen's 16.dp margin.
+ */
+private val COLUMN_GUTTER = 4.dp
+
+/** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
+private val TABLE_ROW_PADDING = 12.dp
+
 enum class RankingSortColumn {
     TEAM,
     PRIMARY,
@@ -193,16 +203,17 @@ private fun RankingHeaderRow(
             Modifier
                 .fillMaxWidth()
                 .background(TBAIndigo400)
-                // 6.dp here + 6.dp inside each sortable cell below: the sort targets get a
-                // full-height hover band without changing the header's height.
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                // 6.dp vertical here + 6.dp inside each sortable cell below: the sort targets get
+                // a full-height hover band without changing the header's height. The horizontal
+                // inset is the screen margin minus the cells' own COLUMN_GUTTER.
+                .padding(horizontal = TABLE_ROW_PADDING, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
-            modifier = Modifier.weight(0.12f),
+            modifier = Modifier.weight(0.12f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = "Team",
@@ -216,7 +227,7 @@ private fun RankingHeaderRow(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
-            modifier = Modifier.weight(0.22f),
+            modifier = Modifier.weight(0.22f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = primaryLabel,
@@ -249,11 +260,15 @@ private fun RankingHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
+        // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded
+        // band spanning the whole column with the label inset from both its edges, instead of a
+        // highlight glued to the glyphs. The data cells carry the same gutter, so the label stays
+        // in line with the column below it.
         modifier =
             modifier
                 .clip(MaterialTheme.shapes.small)
                 .clickable { onSortClick() }
-                .padding(vertical = 6.dp),
+                .padding(horizontal = COLUMN_GUTTER, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -297,13 +312,13 @@ private fun RankingItem(
                 Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "#${ranking.rank}",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.12f),
+                modifier = Modifier.weight(0.12f).padding(horizontal = COLUMN_GUTTER),
             )
             Text(
                 text = ranking.teamKey.teamNumber,
@@ -311,13 +326,14 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .weight(0.22f)
-                        .clickable { onTeamClick(ranking.teamKey) },
+                        .clickable { onTeamClick(ranking.teamKey) }
+                        .padding(horizontal = COLUMN_GUTTER),
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(0.22f),
+                modifier = Modifier.weight(0.22f).padding(horizontal = COLUMN_GUTTER),
             )
 
             // Show first two sort order values (without labels, header has them)
@@ -330,7 +346,7 @@ private fun RankingItem(
             Text(
                 text = primarySortValue,
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.18f),
+                modifier = Modifier.weight(0.18f).padding(horizontal = COLUMN_GUTTER),
             )
 
             val secondarySortValue =
@@ -342,7 +358,7 @@ private fun RankingItem(
             Text(
                 text = secondarySortValue,
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.14f),
+                modifier = Modifier.weight(0.14f).padding(horizontal = COLUMN_GUTTER),
             )
 
             Icon(
@@ -351,7 +367,8 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rotate(rotationAngle)
-                        .weight(0.12f),
+                        .weight(0.12f)
+                        .padding(horizontal = COLUMN_GUTTER),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
