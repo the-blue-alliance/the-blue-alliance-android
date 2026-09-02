@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -210,9 +209,11 @@ fun EventInfoTab(
 /**
  * A tappable link row on the Event Info tab.
  *
- * The padding lives *inside* the clickable (and the row fills the available width) so the
- * hover highlight and ripple cover the whole row instead of hugging the wrap-content text.
- * `heightIn` keeps the target at least 48dp tall for touch and pointer input alike.
+ * The padding lives *inside* the clickable (and the row fills the available width) so the hover
+ * highlight and ripple cover the whole row with a little breathing room, instead of hugging the
+ * wrap-content text. These rows are primarily informational and there are five of them, so the
+ * 4dp keeps each one at about the height it has always had rather than growing it to a 48dp
+ * minimum target.
  */
 @Composable
 private fun EventInfoLinkRow(
@@ -225,8 +226,7 @@ private fun EventInfoLinkRow(
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .heightIn(min = 48.dp)
-                .padding(vertical = 8.dp),
+                .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
