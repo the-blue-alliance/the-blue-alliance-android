@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -18,13 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.model.playoffSummary
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -121,10 +120,10 @@ private fun AllianceSlot(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            Modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable { onTeamClick(teamKey) }
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+            Modifier.paddedClickable(
+                shape = MaterialTheme.shapes.small,
+                padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+            ) { onTeamClick(teamKey) },
     ) {
         Text(
             text = label,

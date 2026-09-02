@@ -33,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,6 +42,7 @@ import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.util.teamNumber
 
@@ -148,9 +148,10 @@ private fun AdvancementPointsItem(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable { onTeamClick(points.teamKey) }
-                            .padding(vertical = 2.dp),
+                            .paddedClickable(
+                                shape = MaterialTheme.shapes.small,
+                                padding = PaddingValues(vertical = 2.dp),
+                            ) { onTeamClick(points.teamKey) },
                 )
                 if (teamName != null) {
                     Text(

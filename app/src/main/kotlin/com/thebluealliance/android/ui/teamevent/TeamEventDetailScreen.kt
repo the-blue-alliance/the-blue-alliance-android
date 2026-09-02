@@ -34,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -63,6 +62,7 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.util.openUrl
@@ -114,10 +114,14 @@ fun TeamEventDetailScreen(
                                     text = "${team.number}",
                                     maxLines = 1,
                                     modifier =
-                                        Modifier
-                                            .clip(MaterialTheme.shapes.small)
-                                            .clickable { onNavigateToTeam(team.key) }
-                                            .padding(horizontal = 6.dp, vertical = 4.dp),
+                                        Modifier.paddedClickable(
+                                            shape = MaterialTheme.shapes.small,
+                                            padding =
+                                                PaddingValues(
+                                                    horizontal = 6.dp,
+                                                    vertical = 4.dp,
+                                                ),
+                                        ) { onNavigateToTeam(team.key) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                                 Text(
@@ -132,13 +136,19 @@ fun TeamEventDetailScreen(
                                     modifier =
                                         Modifier
                                             .weight(1f)
-                                            .clip(MaterialTheme.shapes.small)
-                                            .clickable {
+                                            .paddedClickable(
+                                                shape = MaterialTheme.shapes.small,
+                                                padding =
+                                                    PaddingValues(
+                                                        horizontal = 6.dp,
+                                                        vertical = 4.dp,
+                                                    ),
+                                            ) {
                                                 onNavigateToEvent(
                                                     event.key,
                                                     EventDetailTab.INFO,
                                                 )
-                                            }.padding(horizontal = 6.dp, vertical = 4.dp),
+                                            },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -601,12 +611,14 @@ private fun StatsTab(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable {
+                        .paddedClickable(
+                            shape = MaterialTheme.shapes.small,
+                            padding = PaddingValues(vertical = 4.dp),
+                        ) {
                             context.openUrl(
                                 "https://www.thebluealliance.com/opr",
                             )
-                        }.padding(vertical = 4.dp),
+                        },
             )
         }
 
