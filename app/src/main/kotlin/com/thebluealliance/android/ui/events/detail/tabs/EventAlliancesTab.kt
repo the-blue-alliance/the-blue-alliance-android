@@ -121,8 +121,9 @@ private fun AllianceSlot(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
             Modifier.paddedClickable(
-                shape = MaterialTheme.shapes.small,
-                padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                MaterialTheme.shapes.small,
+                horizontal = 8.dp,
+                vertical = 4.dp,
             ) { onTeamClick(teamKey) },
     ) {
         Text(

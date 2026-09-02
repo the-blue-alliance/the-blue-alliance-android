@@ -3,7 +3,6 @@ package com.thebluealliance.android.ui.more
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -92,8 +91,9 @@ fun MoreScreen(
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier.paddedClickable(
-                            shape = MaterialTheme.shapes.small,
-                            padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                            MaterialTheme.shapes.small,
+                            horizontal = 8.dp,
+                            vertical = 4.dp,
                             onClick = onNavigateToAbout,
                         ),
                 )
@@ -109,8 +109,9 @@ fun MoreScreen(
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier.paddedClickable(
-                            shape = MaterialTheme.shapes.small,
-                            padding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                            MaterialTheme.shapes.small,
+                            horizontal = 8.dp,
+                            vertical = 4.dp,
                             onClick = onNavigateToThanks,
                         ),
                 )

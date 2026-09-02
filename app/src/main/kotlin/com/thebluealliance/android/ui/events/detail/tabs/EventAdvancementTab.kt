@@ -148,10 +148,9 @@ private fun AdvancementPointsItem(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .paddedClickable(
-                                shape = MaterialTheme.shapes.small,
-                                padding = PaddingValues(vertical = 2.dp),
-                            ) { onTeamClick(points.teamKey) },
+                            .paddedClickable(MaterialTheme.shapes.small, vertical = 2.dp) {
+                                onTeamClick(points.teamKey)
+                            },
                 )
                 if (teamName != null) {
                     Text(

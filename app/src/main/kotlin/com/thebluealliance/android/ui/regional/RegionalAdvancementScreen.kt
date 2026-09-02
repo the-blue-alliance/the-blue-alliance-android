@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -222,10 +221,9 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .paddedClickable(
-                                shape = MaterialTheme.shapes.small,
-                                padding = PaddingValues(vertical = 6.dp),
-                            ) { onNavigateToEvent(sortedEvents[0].eventKey) },
+                            .paddedClickable(MaterialTheme.shapes.small, vertical = 6.dp) {
+                                onNavigateToEvent(sortedEvents[0].eventKey)
+                            },
                 )
             } else {
                 Text(
@@ -242,10 +240,9 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .paddedClickable(
-                                shape = MaterialTheme.shapes.small,
-                                padding = PaddingValues(vertical = 6.dp),
-                            ) { onNavigateToEvent(sortedEvents[1].eventKey) },
+                            .paddedClickable(MaterialTheme.shapes.small, vertical = 6.dp) {
+                                onNavigateToEvent(sortedEvents[1].eventKey)
+                            },
                 )
             } else {
                 Text(
