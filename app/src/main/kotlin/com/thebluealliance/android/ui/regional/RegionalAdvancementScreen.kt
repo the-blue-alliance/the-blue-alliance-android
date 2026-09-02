@@ -32,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -219,11 +220,11 @@ private fun RegionalRankingRow(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier =
                         Modifier
-                            .weight(
-                                0.15f,
-                            ).clickable {
+                            .weight(0.15f)
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable {
                                 onNavigateToEvent(sortedEvents[0].eventKey)
-                            },
+                            }.padding(vertical = 6.dp),
                 )
             } else {
                 Text(
@@ -239,11 +240,11 @@ private fun RegionalRankingRow(
                     style = MaterialTheme.typography.bodyMedium,
                     modifier =
                         Modifier
-                            .weight(
-                                0.15f,
-                            ).clickable {
+                            .weight(0.15f)
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable {
                                 onNavigateToEvent(sortedEvents[1].eventKey)
-                            },
+                            }.padding(vertical = 6.dp),
                 )
             } else {
                 Text(

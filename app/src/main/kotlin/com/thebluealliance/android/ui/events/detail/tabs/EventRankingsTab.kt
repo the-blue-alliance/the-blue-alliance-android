@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -290,7 +291,9 @@ private fun RankingItem(
                 Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded }
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    // 8.dp here + 4.dp inside the team cell below keeps the row's height and
+                    // every child's position unchanged while the nested tap target grows.
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -304,7 +307,9 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .weight(0.22f)
-                        .clickable { onTeamClick(ranking.teamKey) },
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable { onTeamClick(ranking.teamKey) }
+                        .padding(vertical = 4.dp),
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(

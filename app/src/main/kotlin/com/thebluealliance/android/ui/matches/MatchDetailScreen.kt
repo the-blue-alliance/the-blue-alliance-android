@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -246,14 +247,20 @@ private fun EventInfo(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
+                .padding(vertical = 4.dp),
     ) {
         if (eventName != null && eventKey != null) {
+            // Full-width tap target (EventRow idiom) so hover/ripple reads as a row rather
+            // than hugging the text; the 16.dp inset keeps the text where it was.
             Text(
                 text = eventName,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.clickable { onNavigateToEvent(eventKey) },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToEvent(eventKey) }
+                        .padding(horizontal = 16.dp, vertical = 2.dp),
             )
         }
         if (formattedTime != null) {
@@ -261,7 +268,7 @@ private fun EventInfo(
                 text = formattedTime,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 2.dp),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 2.dp),
             )
         }
     }
@@ -406,8 +413,9 @@ private fun AllianceTeams(
                     color = MaterialTheme.colorScheme.error,
                     modifier =
                         Modifier
+                            .clip(MaterialTheme.shapes.small)
                             .clickable { onTeamClick(key) }
-                            .padding(top = 2.dp),
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
                 )
             }
         }
@@ -431,8 +439,9 @@ private fun AllianceTeams(
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
                         Modifier
+                            .clip(MaterialTheme.shapes.small)
                             .clickable { onTeamClick(key) }
-                            .padding(top = 2.dp),
+                            .padding(horizontal = 12.dp, vertical = 4.dp),
                 )
             }
         }

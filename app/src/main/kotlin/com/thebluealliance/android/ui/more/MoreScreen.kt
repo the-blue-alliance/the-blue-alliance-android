@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.BuildConfig
@@ -81,23 +82,34 @@ fun MoreScreen(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)) {
+            // Each link carries its own 8.dp inset inside the tap target, so the row's own
+            // padding drops by the same amount and the separator's spaces are no longer needed.
+            Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp)) {
                 Text(
                     text = "About",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onNavigateToAbout),
+                    modifier =
+                        Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(onClick = onNavigateToAbout)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                 )
                 Text(
-                    text = " · ",
+                    text = "·",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 4.dp),
                 )
                 Text(
                     text = "Thanks",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.clickable(onClick = onNavigateToThanks),
+                    modifier =
+                        Modifier
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(onClick = onNavigateToThanks)
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                 )
             }
 
