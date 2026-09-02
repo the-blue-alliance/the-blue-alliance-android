@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.displayTitle
@@ -58,10 +59,12 @@ fun EventAlliancesTab(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        // 8.dp here + 8.dp on each child keeps content on the 16.dp margin
+                        // while letting the pick slots' tap targets absorb the other half.
+                        .padding(horizontal = 8.dp, vertical = 8.dp),
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -85,7 +88,9 @@ fun EventAlliancesTab(
                 }
                 FlowRow(
                     modifier = Modifier.padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    // Slots carry their own 8.dp horizontal padding inside their tap target,
+                    // which supplies the 16.dp gap that used to come from the arrangement.
+                    horizontalArrangement = Arrangement.spacedBy(0.dp),
                 ) {
                     alliance.picks.forEachIndexed { index, teamKey ->
                         AllianceSlot(
@@ -115,7 +120,11 @@ private fun AllianceSlot(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.clickable { onTeamClick(teamKey) },
+        modifier =
+            Modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onTeamClick(teamKey) }
+                .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
         Text(
             text = label,
