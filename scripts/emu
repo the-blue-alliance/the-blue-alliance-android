@@ -6,6 +6,9 @@ Subcommands:
   find <text> [--raw]        Find UI elements matching text/content-desc
   tap <text>                 Tap element matching text/content-desc (must be unique)
   tap-xy <x> <y>            Tap at exact device pixel coordinates
+  hover <text> | <x> <y>     Park a hovering pointer over an element/coordinate
+                             (--shot PATH captures while it is hovering)
+  hover --clear              Release a pointer left by a previous `hover`
   logcat [options]           Show recent logcat lines
   back                       Press BACK key
   launch <package/activity>  Force-stop + start activity
@@ -22,11 +25,14 @@ converting uiautomator's logical bounds; see the panel transform notes below.
 """
 
 import argparse
+import json
 import os
 import re
+import signal
 import subprocess
 import sys
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 
 BOUNDS_RE = re.compile(r"\[(-?\d+),(-?\d+)\]\[(-?\d+),(-?\d+)\]")
@@ -272,15 +278,121 @@ def print_match(m, idx=None):
     print(prefix + "  ".join(parts))
 
 
+# ── Hover injection ──────────────────────────────────────────────────
+#
+# `input` cannot inject hover: its motionevent verb only accepts
+# DOWN|UP|MOVE|CANCEL, so there is no way to produce ACTION_HOVER_MOVE with it.
+# Hover matters because a Quest's laser pointer hovers constantly, and because
+# mouse and trackpad users see the same states — so hover regressions need to be
+# reproducible and screenshottable.
+#
+# Instead we register a virtual absolute-positioning stylus over /dev/uinput, via
+# the platform's `uinput` shell tool (which `shell` may use: it is in the `uhid`
+# group). A pen reporting BTN_TOOL_PEN *without* BTN_TOUCH is hovering — the
+# kernel and InputReader turn that into ACTION_HOVER_ENTER/MOVE. Declaring
+# INPUT_PROP_DIRECT maps its ABS range 1:1 onto the display, so the coordinates
+# this command takes are the same physical display pixels `tap-xy` uses and
+# `find`/`list` report, including on a Spatial Simulator where the panel
+# transform above has already been applied.
+#
+# The virtual device lives exactly as long as the `uinput` process holds it open,
+# so the hover has to outlive this command for a screenshot to catch it: we send
+# a trailing `delay` and leave the child running detached, recording its pid so a
+# later call can release it.
+
+EV_SYN, EV_KEY, EV_ABS = 0, 1, 3
+ABS_X, ABS_Y = 0, 1
+BTN_TOUCH, BTN_TOOL_PEN = 330, 320
+UI_SET_EVBIT, UI_SET_KEYBIT, UI_SET_ABSBIT, UI_SET_PROPBIT = 100, 101, 103, 110
+INPUT_PROP_DIRECT = 0
+
+HOVER_PID_FILE = os.path.join(tempfile.gettempdir(), "emu-hover.pid")
+
+
+def _abs_axis(code, maximum):
+    return {"code": code, "info": {"value": 0, "minimum": 0, "maximum": maximum,
+                                   "fuzz": 0, "flat": 0, "resolution": 0}}
+
+
+def hover_release():
+    """Kill the `uinput` child from a previous `hover`, if it is still alive."""
+    try:
+        with open(HOVER_PID_FILE) as f:
+            pid = int(f.read().strip())
+    except (OSError, ValueError):
+        return False
+    alive = True
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGTERM)
+    except (ProcessLookupError, PermissionError):
+        alive = False
+    try:
+        os.remove(HOVER_PID_FILE)
+    except OSError:
+        pass
+    return alive
+
+
+def hover_at(x, y, hold):
+    """Park a hovering stylus at (x, y) for `hold` seconds; return immediately."""
+    width, height = display_size()
+    if not (0 <= x < width and 0 <= y < height):
+        print(f"({x}, {y}) is outside the {width}x{height} display", file=sys.stderr)
+        sys.exit(1)
+
+    script = [
+        {"id": 1, "command": "register", "name": "emu-hover",
+         "vid": 0x18d1, "pid": 0x4004, "bus": "usb",
+         "configuration": [
+             {"type": UI_SET_EVBIT, "data": [EV_KEY, EV_ABS]},
+             {"type": UI_SET_KEYBIT, "data": [BTN_TOOL_PEN, BTN_TOUCH]},
+             {"type": UI_SET_ABSBIT, "data": [ABS_X, ABS_Y]},
+             {"type": UI_SET_PROPBIT, "data": [INPUT_PROP_DIRECT]},
+         ],
+         "abs_info": [_abs_axis(ABS_X, width - 1), _abs_axis(ABS_Y, height - 1)]},
+        # Let InputReader notice the new device before addressing it.
+        {"id": 1, "command": "delay", "duration": 500},
+        # Pen in range but not touching == hover.
+        {"id": 1, "command": "inject",
+         "events": [EV_KEY, BTN_TOOL_PEN, 1,
+                    EV_ABS, ABS_X, x,
+                    EV_ABS, ABS_Y, y,
+                    EV_SYN, 0, 0]},
+        {"id": 1, "command": "delay", "duration": int(hold * 1000)},
+    ]
+
+    cmd = ["adb"] + (["-s", _serial] if _serial else []) + ["shell", "uinput", "-"]
+    # start_new_session so the child outlives this process and can be signalled as
+    # a group; stdin is closed so `uinput` runs the script straight through.
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
+                            stderr=subprocess.DEVNULL, text=True, start_new_session=True)
+    proc.stdin.write("\n".join(json.dumps(s) for s in script) + "\n")
+    proc.stdin.flush()
+    proc.stdin.close()
+
+    with open(HOVER_PID_FILE, "w") as f:
+        f.write(str(proc.pid))
+
+    # Cover registration plus the settle delay above, so that by the time this
+    # returns the hover is on screen and ready to be captured.
+    time.sleep(1.5)
+    if proc.poll() is not None:
+        print("uinput exited immediately — is /dev/uinput readable by shell?", file=sys.stderr)
+        sys.exit(1)
+
+
 # ── Subcommand handlers ──────────────────────────────────────────────
 
 
-def cmd_screenshot(args):
+def capture_screenshot(out_path):
     device_path = "/sdcard/screen.png"
-    out_path = args.path
     adb_check("shell", "screencap", "-p", device_path)
     adb_check("pull", device_path, out_path)
     print(f"Screenshot saved to {out_path}")
+
+
+def cmd_screenshot(args):
+    capture_screenshot(args.path)
 
 
 def cmd_find(args):
@@ -318,6 +430,49 @@ def cmd_tap(args):
 def cmd_tap_xy(args):
     adb_check("shell", "input", "tap", str(args.x), str(args.y))
     print(f"Tapped ({args.x}, {args.y})")
+
+
+def cmd_hover(args):
+    if args.clear:
+        print("Released hover pointer" if hover_release() else "No hover pointer to release")
+        return
+
+    # Any earlier pointer would keep hovering its own target and muddy the shot.
+    hover_release()
+
+    if args.target is None:
+        print("hover needs an element query, or x and y", file=sys.stderr)
+        sys.exit(1)
+
+    described = None
+    if args.y is not None:
+        if not args.target.lstrip("-").isdigit():
+            print(f"hover got a y but \"{args.target}\" is not an x coordinate", file=sys.stderr)
+            sys.exit(1)
+        x, y = int(args.target), args.y
+    else:
+        root = dump_ui_tree()
+        matches = find_elements(root, args.target)
+        if len(matches) == 0:
+            print(f"No elements matching \"{args.target}\"", file=sys.stderr)
+            sys.exit(1)
+        if len(matches) > 1:
+            print(f"Ambiguous: {len(matches)} elements match \"{args.target}\". Refine your query:", file=sys.stderr)
+            for i, m in enumerate(matches):
+                print_match(m, i)
+            sys.exit(1)
+        described = matches[0]
+        if not described["center"]:
+            print("Matched element has no parseable bounds", file=sys.stderr)
+            sys.exit(1)
+        x, y = described["center"]
+
+    hover_at(x, y, args.hold)
+    print(f"Hovering ({x}, {y}) for {args.hold}s")
+    if args.shot:
+        capture_screenshot(args.shot)
+    if described:
+        print_match(described)
 
 
 def cmd_logcat(args):
@@ -437,6 +592,16 @@ def main():
     p.add_argument("x", type=int)
     p.add_argument("y", type=int)
 
+    p = sub.add_parser("hover", help="Park a hovering pointer over an element or coordinate")
+    p.add_argument("target", nargs="?", help="Substring to match (must be unique), or an x coordinate")
+    p.add_argument("y", type=int, nargs="?", help="y coordinate, when target is an x coordinate")
+    p.add_argument("--hold", type=float, default=30.0,
+                   help="Seconds to keep hovering before releasing (default 30)")
+    p.add_argument("--shot", metavar="PATH",
+                   help="Capture a screenshot while hovering (the pointer sprite auto-hides "
+                        "after a few idle seconds, so a separate screenshot may miss it)")
+    p.add_argument("--clear", action="store_true", help="Release a pointer left by an earlier hover")
+
     p = sub.add_parser("logcat", help="Show recent logcat")
     p.add_argument("--tag", "-t", help="Filter by tag")
     p.add_argument("--grep", "-g", help="Filter lines by substring")
@@ -478,6 +643,7 @@ def main():
         "find": cmd_find,
         "tap": cmd_tap,
         "tap-xy": cmd_tap_xy,
+        "hover": cmd_hover,
         "logcat": cmd_logcat,
         "back": cmd_back,
         "launch": cmd_launch,
