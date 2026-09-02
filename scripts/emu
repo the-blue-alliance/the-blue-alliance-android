@@ -321,13 +321,12 @@ def cmd_tap_xy(args):
 
 
 def cmd_logcat(args):
-    cmd = ["adb"]
-    if _serial:
-        cmd += ["-s", _serial]
-    cmd += ["logcat", "-d"]
+    # adb_check appends these after any `-s <serial>`, so logcat's own `-s <tag>`
+    # filter doesn't collide with the device selector.
+    logcat_args = ["logcat", "-d"]
     if args.tag:
-        cmd += ["-s", args.tag]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+        logcat_args += ["-s", args.tag]
+    result = adb_check(*logcat_args)
     lines = result.stdout.splitlines()
     if args.grep:
         pattern = args.grep.lower()
