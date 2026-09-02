@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -849,7 +850,14 @@ private fun OprHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.clickable { onSortClick() },
+        // Clip + padding inside the clickable so the sort target is a rounded band across the
+        // column instead of a highlight glued to the label. The header row's height is set by
+        // its 48.dp icon button, so this does not change the header's layout.
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onSortClick() }
+                .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -879,7 +887,12 @@ private fun CoprHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.clickable { onSortClick() },
+        // Same treatment as OprHeaderItem above.
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onSortClick() }
+                .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(

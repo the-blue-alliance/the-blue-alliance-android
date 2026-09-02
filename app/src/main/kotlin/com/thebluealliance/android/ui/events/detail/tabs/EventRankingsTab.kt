@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
@@ -192,7 +193,9 @@ private fun RankingHeaderRow(
             Modifier
                 .fillMaxWidth()
                 .background(TBAIndigo400)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                // 6.dp here + 6.dp inside each sortable cell below: the sort targets get a
+                // full-height hover band without changing the header's height.
+                .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -246,7 +249,11 @@ private fun RankingHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.clickable { onSortClick() },
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onSortClick() }
+                .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
