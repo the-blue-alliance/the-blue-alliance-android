@@ -115,12 +115,9 @@ fun TeamEventDetailScreen(
                                     maxLines = 1,
                                     modifier =
                                         Modifier.paddedClickable(
-                                            shape = MaterialTheme.shapes.small,
-                                            padding =
-                                                PaddingValues(
-                                                    horizontal = 6.dp,
-                                                    vertical = 4.dp,
-                                                ),
+                                            MaterialTheme.shapes.small,
+                                            horizontal = 6.dp,
+                                            vertical = 4.dp,
                                         ) { onNavigateToTeam(team.key) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
@@ -137,18 +134,10 @@ fun TeamEventDetailScreen(
                                         Modifier
                                             .weight(1f)
                                             .paddedClickable(
-                                                shape = MaterialTheme.shapes.small,
-                                                padding =
-                                                    PaddingValues(
-                                                        horizontal = 6.dp,
-                                                        vertical = 4.dp,
-                                                    ),
-                                            ) {
-                                                onNavigateToEvent(
-                                                    event.key,
-                                                    EventDetailTab.INFO,
-                                                )
-                                            },
+                                                MaterialTheme.shapes.small,
+                                                horizontal = 6.dp,
+                                                vertical = 4.dp,
+                                            ) { onNavigateToEvent(event.key, EventDetailTab.INFO) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
@@ -611,10 +600,7 @@ private fun StatsTab(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .paddedClickable(
-                            shape = MaterialTheme.shapes.small,
-                            padding = PaddingValues(vertical = 4.dp),
-                        ) {
+                        .paddedClickable(MaterialTheme.shapes.small, vertical = 4.dp) {
                             context.openUrl(
                                 "https://www.thebluealliance.com/opr",
                             )
