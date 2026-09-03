@@ -3,15 +3,19 @@ package com.thebluealliance.android.ui.events.detail.tabs
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -40,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventInsights
@@ -65,6 +70,38 @@ private val COLUMN_GUTTER = 4.dp
 
 /** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
 private val TABLE_ROW_PADDING = 12.dp
+
+/**
+ * Width the header rows' overflow button occupies. The data rows reserve the same trailing slot,
+ * so both rows share one weighted region and their columns cannot drift apart.
+ */
+private val OVERFLOW_SLOT_WIDTH = 48.dp + COLUMN_GUTTER
+
+/**
+ * One column of an insights table.
+ *
+ * The header cell and the data cells of a column are driven by the same [TableColumn], so a
+ * column's width and alignment are decided in one place instead of being duplicated between the
+ * two rows. A [numeric] column sets its values in tabular figures and right-aligns them so they
+ * stack on the decimal point, and right-aligns its header label onto that same right edge (see
+ * [TableHeaderCell] for why). A text column stays start-aligned throughout.
+ */
+private data class TableColumn(
+    val weight: Float,
+    val numeric: Boolean = false,
+)
+
+/** Every numeric cell shows two decimals, so right-aligned values line up digit for digit. */
+private fun formatStatValue(value: Double): String = "%.2f".format(value)
+
+/** OpenType tabular figures: every digit takes the same advance, so the columns grid up. */
+private const val TABULAR_FIGURES = "tnum"
+
+private val OPR_TEAM_COLUMN = TableColumn(weight = 1.2f)
+private val OPR_VALUE_COLUMN = TableColumn(weight = 1f, numeric = true)
+
+private val COPR_TEAM_COLUMN = TableColumn(weight = 1.2f)
+private val COPR_VALUE_COLUMN = TableColumn(weight = 2f, numeric = true)
 
 sealed class StatType {
     object StandardOPRs : StatType()
@@ -402,6 +439,8 @@ private fun InsightsView(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
+        // Left as it was: both of this table's columns hold prose, not figures, and they are
+        // wide enough that spending COLUMN_GUTTER on each edge would wrap values that fit today.
         stickyHeader {
             Row(
                 modifier =
@@ -597,24 +636,25 @@ private fun StandardOPRsView(
             }
         }
 
+    // Numeric columns all sort descending first — the interesting end of an OPR is the top.
+    val onValueSortClick: (OprSortColumn) -> Unit = { column ->
+        if (sortColumn == column) {
+            onSortChange(column, !sortAscending)
+        } else {
+            onSortChange(column, false)
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         stickyHeader {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(TBAIndigo400)
-                        .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OprHeaderItem(
+            InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
+                TableHeaderCell(
                     text = "Team",
-                    modifier = Modifier.weight(1.2f),
-                    sortColumn = OprSortColumn.TEAM,
-                    currentSort = sortColumn,
+                    column = OPR_TEAM_COLUMN,
+                    sorted = sortColumn == OprSortColumn.TEAM,
                     ascending = sortAscending,
                     onSortClick = {
                         if (sortColumn == OprSortColumn.TEAM) {
@@ -624,93 +664,46 @@ private fun StandardOPRsView(
                         }
                     },
                 )
-                OprHeaderItem(
+                TableHeaderCell(
                     text = "OPR",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.OPR,
-                    currentSort = sortColumn,
+                    column = OPR_VALUE_COLUMN,
+                    sorted = sortColumn == OprSortColumn.OPR,
                     ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.OPR) {
-                            onSortChange(OprSortColumn.OPR, !sortAscending)
-                        } else {
-                            onSortChange(OprSortColumn.OPR, false)
-                        }
-                    },
+                    onSortClick = { onValueSortClick(OprSortColumn.OPR) },
                 )
-                OprHeaderItem(
+                TableHeaderCell(
                     text = "DPR",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.DPR,
-                    currentSort = sortColumn,
+                    column = OPR_VALUE_COLUMN,
+                    sorted = sortColumn == OprSortColumn.DPR,
                     ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.DPR) {
-                            onSortChange(OprSortColumn.DPR, !sortAscending)
-                        } else {
-                            onSortChange(OprSortColumn.DPR, false)
-                        }
-                    },
+                    onSortClick = { onValueSortClick(OprSortColumn.DPR) },
                 )
-                OprHeaderItem(
+                TableHeaderCell(
                     text = "CCWM",
-                    modifier = Modifier.weight(1f),
-                    sortColumn = OprSortColumn.CCWM,
-                    currentSort = sortColumn,
+                    column = OPR_VALUE_COLUMN,
+                    sorted = sortColumn == OprSortColumn.CCWM,
                     ascending = sortAscending,
-                    onSortClick = {
-                        if (sortColumn == OprSortColumn.CCWM) {
-                            onSortChange(OprSortColumn.CCWM, !sortAscending)
-                        } else {
-                            onSortChange(OprSortColumn.CCWM, false)
-                        }
-                    },
+                    onSortClick = { onValueSortClick(OprSortColumn.CCWM) },
                 )
-                IconButton(
-                    onClick = onShowStatSelector,
-                    // Keeps the button's outer edge on the 16.dp screen margin now that the row
-                    // itself only insets by TABLE_ROW_PADDING.
-                    modifier = Modifier.padding(end = COLUMN_GUTTER),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Select stat type",
-                        tint = Color.White,
-                    )
-                }
             }
         }
 
         items(sortedTeams) { teamKey ->
             Column {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = teamKey.teamNumber,
-                        modifier = Modifier.weight(1.2f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
+                InsightsTableDataRow {
+                    TableDataCell(text = teamKey.teamNumber, column = OPR_TEAM_COLUMN)
+                    TableDataCell(
+                        text = formatStatValue(oprs.oprs[teamKey] ?: 0.0),
+                        column = OPR_VALUE_COLUMN,
                     )
-                    Text(
-                        text = "%.2f".format(oprs.oprs[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
+                    TableDataCell(
+                        text = formatStatValue(oprs.dprs[teamKey] ?: 0.0),
+                        column = OPR_VALUE_COLUMN,
                     )
-                    Text(
-                        text = "%.2f".format(oprs.dprs[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
+                    TableDataCell(
+                        text = formatStatValue(oprs.ccwms[teamKey] ?: 0.0),
+                        column = OPR_VALUE_COLUMN,
                     )
-                    Text(
-                        text = "%.2f".format(oprs.ccwms[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Box(modifier = Modifier.weight(0.4f))
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
@@ -765,19 +758,11 @@ private fun COPRView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         stickyHeader {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .background(TBAIndigo400)
-                        .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CoprHeaderItem(
+            InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
+                TableHeaderCell(
                     text = "Team",
-                    modifier = Modifier.weight(1.2f),
-                    sortColumn = CoprSortColumn.TEAM,
-                    currentSort = sortColumn,
+                    column = COPR_TEAM_COLUMN,
+                    sorted = sortColumn == CoprSortColumn.TEAM,
                     ascending = sortAscending,
                     onSortClick = {
                         if (sortColumn == CoprSortColumn.TEAM) {
@@ -787,11 +772,10 @@ private fun COPRView(
                         }
                     },
                 )
-                CoprHeaderItem(
+                TableHeaderCell(
                     text = statName,
-                    modifier = Modifier.weight(2f),
-                    sortColumn = CoprSortColumn.VALUE,
-                    currentSort = sortColumn,
+                    column = COPR_VALUE_COLUMN,
+                    sorted = sortColumn == CoprSortColumn.VALUE,
                     ascending = sortAscending,
                     onSortClick = {
                         if (sortColumn == CoprSortColumn.VALUE) {
@@ -801,39 +785,16 @@ private fun COPRView(
                         }
                     },
                 )
-                IconButton(
-                    onClick = onShowStatSelector,
-                    // Keeps the button's outer edge on the 16.dp screen margin now that the row
-                    // itself only insets by TABLE_ROW_PADDING.
-                    modifier = Modifier.padding(end = COLUMN_GUTTER),
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "Select stat type",
-                        tint = Color.White,
-                    )
-                }
             }
         }
 
         items(sortedTeams) { teamKey ->
             Column {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = teamKey.teamNumber,
-                        modifier = Modifier.weight(1.2f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    Text(
-                        text = "%.2f".format(coprData[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(2f).padding(horizontal = COLUMN_GUTTER),
-                        style = MaterialTheme.typography.bodyLarge,
+                InsightsTableDataRow {
+                    TableDataCell(text = teamKey.teamNumber, column = COPR_TEAM_COLUMN)
+                    TableDataCell(
+                        text = formatStatValue(coprData[teamKey] ?: 0.0),
+                        column = COPR_VALUE_COLUMN,
                     )
                 }
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
@@ -854,76 +815,140 @@ private fun COPRView(
     }
 }
 
+/**
+ * The header row shared by every insights table: the indigo band, the row's own inset, and the
+ * trailing overflow button that opens the stat selector.
+ */
 @Composable
-private fun OprHeaderItem(
-    text: String,
-    modifier: Modifier = Modifier,
-    sortColumn: OprSortColumn,
-    currentSort: OprSortColumn,
-    ascending: Boolean,
-    onSortClick: () -> Unit,
+private fun InsightsTableHeaderRow(
+    onShowStatSelector: () -> Unit,
+    cells: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded
-        // band spanning the whole column with the label inset from both its edges, instead of a
-        // highlight glued to the glyphs. The data cells carry the same gutter, so the label stays
-        // in line with the column below it; the header row's height is set by its 48.dp icon
-        // button, so the vertical padding does not change the header's layout either.
         modifier =
-            modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable { onSortClick() }
-                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
+            Modifier
+                .fillMaxWidth()
+                .background(TBAIndigo400)
+                .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
-        )
-        if (currentSort == sortColumn) {
-            Icon(
-                imageVector =
-                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription =
-                    if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White,
-            )
+        cells()
+        Box(
+            // A fixed slot rather than a weighted one: the data rows below reserve the same width,
+            // so both rows share one weighted region and their columns cannot drift apart. The end
+            // padding keeps the button's outer edge on the 16.dp screen margin.
+            modifier =
+                Modifier
+                    .width(OVERFLOW_SLOT_WIDTH)
+                    .padding(end = COLUMN_GUTTER),
+            contentAlignment = Alignment.Center,
+        ) {
+            IconButton(onClick = onShowStatSelector) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "Select stat type",
+                    tint = Color.White,
+                )
+            }
         }
     }
 }
 
+/** A data row of an insights table, reserving the same trailing slot as the header above it. */
 @Composable
-private fun CoprHeaderItem(
-    text: String,
-    modifier: Modifier = Modifier,
-    sortColumn: CoprSortColumn,
-    currentSort: CoprSortColumn,
-    ascending: Boolean,
-    onSortClick: () -> Unit,
-) {
+private fun InsightsTableDataRow(cells: @Composable RowScope.() -> Unit) {
     Row(
-        // Same treatment as OprHeaderItem above.
         modifier =
-            modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable { onSortClick() }
-                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        cells()
+        Spacer(modifier = Modifier.width(OVERFLOW_SLOT_WIDTH))
+    }
+}
+
+/**
+ * A column's header cell. Pass [onSortClick] to make the column sortable.
+ *
+ * Clip + clickable sit outside the cell's own [COLUMN_GUTTER], so the sort target is a rounded
+ * band spanning the whole column with the label inset from both its edges, instead of a highlight
+ * glued to the glyphs. The header row's height is set by its 48.dp icon button, so the vertical
+ * padding does not change the header's layout.
+ *
+ * A numeric column right-aligns its label onto the values' shared right edge (matching the data
+ * cells below) and leads it with the sort carat, so the carat sits to the label's left and does not
+ * disrupt that right edge. A text column keeps a start-aligned label with a trailing sort carat.
+ *
+ * Why right-align numerics but not the team column: Material 3 ships no data-table component, so
+ * the governing spec is Material 2 — Data tables, "Text alignment": right-align numeric columns,
+ * left-align text (https://m2.material.io/components/data-tables). The team number is left-aligned
+ * because it is an identifier (nominal — a label made of digits, like a jersey number), not a
+ * measured quantity scanned by magnitude, so the numeric rule does not apply to it. Leading the
+ * sort carat on a right-aligned header follows Material Components' numeric header-cell + sort
+ * handling (material-components-web `2139200`).
+ */
+@Composable
+private fun RowScope.TableHeaderCell(
+    text: String,
+    column: TableColumn,
+    sorted: Boolean = false,
+    ascending: Boolean = false,
+    onSortClick: (() -> Unit)? = null,
+) {
+    val sortTarget =
+        if (onSortClick == null) {
+            Modifier
+        } else {
+            Modifier.clip(MaterialTheme.shapes.small).clickable { onSortClick() }
+        }
+    Row(
+        modifier =
+            Modifier
+                .weight(column.weight)
+                .then(sortTarget)
+                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
+        horizontalArrangement = if (column.numeric) Arrangement.End else Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (sorted && column.numeric) {
+            SortIndicator(ascending)
+        }
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
         )
-        if (currentSort == sortColumn) {
-            Icon(
-                imageVector =
-                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription =
-                    if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White,
-            )
+        if (sorted && !column.numeric) {
+            SortIndicator(ascending)
         }
     }
+}
+
+/** A column's data cell, aligned and styled from the same [TableColumn] as its header. */
+@Composable
+private fun RowScope.TableDataCell(
+    text: String,
+    column: TableColumn,
+) {
+    val style = MaterialTheme.typography.bodyLarge
+    Text(
+        text = text,
+        modifier =
+            Modifier
+                .weight(column.weight)
+                .padding(horizontal = COLUMN_GUTTER),
+        style = if (column.numeric) style.copy(fontFeatureSettings = TABULAR_FIGURES) else style,
+        textAlign = if (column.numeric) TextAlign.End else TextAlign.Start,
+    )
+}
+
+@Composable
+private fun SortIndicator(ascending: Boolean) {
+    Icon(
+        imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+        contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
+        tint = Color.White,
+    )
 }
