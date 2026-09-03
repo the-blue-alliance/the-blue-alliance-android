@@ -39,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
@@ -59,6 +61,9 @@ private val COLUMN_GUTTER = 4.dp
 
 /** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
 private val TABLE_ROW_PADDING = 12.dp
+
+/** OpenType tabular figures: every digit takes the same advance, so numeric columns grid up. */
+private const val TABULAR_FIGURES = "tnum"
 
 enum class RankingSortColumn {
     TEAM,
@@ -213,7 +218,7 @@ private fun RankingHeaderRow(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
-            modifier = Modifier.weight(0.12f).padding(horizontal = COLUMN_GUTTER),
+            modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = "Team",
@@ -227,11 +232,12 @@ private fun RankingHeaderRow(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
             color = Color.White,
-            modifier = Modifier.weight(0.22f).padding(horizontal = COLUMN_GUTTER),
+            modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = primaryLabel,
-            modifier = Modifier.weight(0.18f),
+            modifier = Modifier.weight(0.23f),
+            numeric = true,
             sortColumn = RankingSortColumn.PRIMARY,
             currentSort = sortState.column,
             ascending = sortState.ascending,
@@ -239,14 +245,15 @@ private fun RankingHeaderRow(
         )
         RankingHeaderItem(
             text = secondaryLabel,
-            modifier = Modifier.weight(0.14f),
+            modifier = Modifier.weight(0.19f),
+            numeric = true,
             sortColumn = RankingSortColumn.SECONDARY,
             currentSort = sortState.column,
             ascending = sortState.ascending,
             onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
         )
         // Spacer for chevron alignment
-        Spacer(modifier = Modifier.weight(0.12f))
+        Spacer(modifier = Modifier.weight(0.10f))
     }
 }
 
@@ -254,40 +261,92 @@ private fun RankingHeaderRow(
 private fun RankingHeaderItem(
     text: String,
     modifier: Modifier = Modifier,
+    numeric: Boolean = false,
     sortColumn: RankingSortColumn,
     currentSort: RankingSortColumn,
     ascending: Boolean,
     onSortClick: () -> Unit,
 ) {
-    Row(
-        // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded
-        // band spanning the whole column with the label inset from both its edges, instead of a
-        // highlight glued to the glyphs. The data cells carry the same gutter, so the label stays
-        // in line with the column below it.
-        modifier =
-            modifier
-                .clip(MaterialTheme.shapes.small)
-                .clickable { onSortClick() }
-                .padding(horizontal = COLUMN_GUTTER, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
-        if (currentSort == sortColumn) {
-            Icon(
-                imageVector =
-                    if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                contentDescription =
-                    if (ascending) "Sorted Ascending" else "Sorted Descending",
-                tint = Color.White,
+    val sorted = currentSort == sortColumn
+    // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded band
+    // spanning the whole column with the label inset from both its edges, instead of a highlight
+    // glued to the glyphs. The data cells carry the same gutter, so the label stays in line with
+    // the column below it.
+    val cellModifier =
+        modifier
+            .clip(MaterialTheme.shapes.small)
+            .clickable { onSortClick() }
+            .padding(horizontal = COLUMN_GUTTER, vertical = 6.dp)
+    if (numeric) {
+        // Numeric column: right-align the label onto the values' shared right edge, with the sort
+        // carat leading it (Material data-table convention — a leading carat keeps the numeric
+        // header's right edge in line with the digits below). A hand layout, because this column
+        // is narrow and its label ("Ranking Score") wraps to two lines: the label (child 0) is
+        // measured at the cell's full width so it never ellipsizes, then right-anchored; the carat
+        // (child 1) is placed just left of the label, spilling into the column's left slack rather
+        // than stealing width from the label.
+        Layout(
+            modifier = cellModifier,
+            content = {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = Color.White,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.End,
+                )
+                if (sorted) {
+                    SortCaret(ascending)
+                }
+            },
+        ) { measurables, constraints ->
+            val loose = constraints.copy(minWidth = 0, minHeight = 0)
+            // Reserve the carat's width up front, then measure the label in what's left, so a
+            // right-aligned (full-width) two-line label can't swallow the whole column and clip
+            // the carat off the cell's leading edge.
+            val caret = measurables.getOrNull(1)?.measure(loose)
+            val caretWidth = caret?.width ?: 0
+            val width = constraints.maxWidth
+            val labelMax = (width - caretWidth).coerceAtLeast(0)
+            val label = measurables[0].measure(loose.copy(maxWidth = labelMax))
+            val height = maxOf(label.height, caret?.height ?: 0)
+            // Right-anchor the label on the cell's right edge (the values' shared edge), then seat
+            // the carat directly to its left.
+            val labelLeft = (width - label.width).coerceAtLeast(caretWidth)
+            layout(width, height) {
+                label.place(labelLeft, (height - label.height) / 2)
+                caret?.place((labelLeft - caretWidth).coerceAtLeast(0), (height - caret.height) / 2)
+            }
+        }
+    } else {
+        Row(
+            modifier = cellModifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.titleSmall,
+                color = Color.White,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
             )
+            if (sorted) {
+                SortCaret(ascending)
+            }
         }
     }
+}
+
+@Composable
+private fun SortCaret(ascending: Boolean) {
+    Icon(
+        imageVector =
+            if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+        contentDescription =
+            if (ascending) "Sorted Ascending" else "Sorted Descending",
+        tint = Color.White,
+    )
 }
 
 @Composable
@@ -321,7 +380,7 @@ private fun RankingItem(
             Text(
                 text = "#${ranking.rank}",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.12f).padding(horizontal = COLUMN_GUTTER),
+                modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
             )
             Text(
                 text = ranking.teamKey.teamNumber,
@@ -337,7 +396,7 @@ private fun RankingItem(
             Text(
                 text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(0.22f).padding(horizontal = COLUMN_GUTTER),
+                modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
             )
 
             // Show first two sort order values (without labels, header has them)
@@ -349,8 +408,11 @@ private fun RankingItem(
 
             Text(
                 text = primarySortValue,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.18f).padding(horizontal = COLUMN_GUTTER),
+                style =
+                    MaterialTheme.typography.labelLarge
+                        .copy(fontFeatureSettings = TABULAR_FIGURES),
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(0.23f).padding(horizontal = COLUMN_GUTTER),
             )
 
             val secondarySortValue =
@@ -361,8 +423,11 @@ private fun RankingItem(
 
             Text(
                 text = secondarySortValue,
-                style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.14f).padding(horizontal = COLUMN_GUTTER),
+                style =
+                    MaterialTheme.typography.labelLarge
+                        .copy(fontFeatureSettings = TABULAR_FIGURES),
+                textAlign = TextAlign.End,
+                modifier = Modifier.weight(0.19f).padding(horizontal = COLUMN_GUTTER),
             )
 
             Icon(
@@ -371,7 +436,7 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rotate(rotationAngle)
-                        .weight(0.12f)
+                        .weight(0.10f)
                         .padding(horizontal = COLUMN_GUTTER),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
