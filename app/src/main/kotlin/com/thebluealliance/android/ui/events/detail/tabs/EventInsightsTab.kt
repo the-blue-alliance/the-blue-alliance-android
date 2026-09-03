@@ -36,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -54,6 +55,16 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.int
+
+/**
+ * Half of the gutter between two table columns, applied inside every cell of both the header and
+ * the data rows so the columns stay aligned. The rows carry [TABLE_ROW_PADDING] instead of the
+ * usual 16.dp so the outermost cells' content still lands on the screen's 16.dp margin.
+ */
+private val COLUMN_GUTTER = 4.dp
+
+/** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
+private val TABLE_ROW_PADDING = 12.dp
 
 sealed class StatType {
     object StandardOPRs : StatType()
@@ -596,7 +607,7 @@ private fun StandardOPRsView(
                     Modifier
                         .fillMaxWidth()
                         .background(TBAIndigo400)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 OprHeaderItem(
@@ -657,7 +668,9 @@ private fun StandardOPRsView(
                 )
                 IconButton(
                     onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp),
+                    // Keeps the button's outer edge on the 16.dp screen margin now that the row
+                    // itself only insets by TABLE_ROW_PADDING.
+                    modifier = Modifier.padding(end = COLUMN_GUTTER),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -674,27 +687,27 @@ private fun StandardOPRsView(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = teamKey.teamNumber,
-                        modifier = Modifier.weight(1.2f),
+                        modifier = Modifier.weight(1.2f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.oprs[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.dprs[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(oprs.ccwms[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Box(modifier = Modifier.weight(0.4f))
@@ -757,7 +770,7 @@ private fun COPRView(
                     Modifier
                         .fillMaxWidth()
                         .background(TBAIndigo400)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 CoprHeaderItem(
@@ -790,7 +803,9 @@ private fun COPRView(
                 )
                 IconButton(
                     onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp),
+                    // Keeps the button's outer edge on the 16.dp screen margin now that the row
+                    // itself only insets by TABLE_ROW_PADDING.
+                    modifier = Modifier.padding(end = COLUMN_GUTTER),
                 ) {
                     Icon(
                         imageVector = Icons.Default.MoreVert,
@@ -807,17 +822,17 @@ private fun COPRView(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
+                            .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = teamKey.teamNumber,
-                        modifier = Modifier.weight(1.2f),
+                        modifier = Modifier.weight(1.2f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
                         text = "%.2f".format(coprData[teamKey] ?: 0.0),
-                        modifier = Modifier.weight(2f),
+                        modifier = Modifier.weight(2f).padding(horizontal = COLUMN_GUTTER),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -849,7 +864,16 @@ private fun OprHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.clickable { onSortClick() },
+        // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded
+        // band spanning the whole column with the label inset from both its edges, instead of a
+        // highlight glued to the glyphs. The data cells carry the same gutter, so the label stays
+        // in line with the column below it; the header row's height is set by its 48.dp icon
+        // button, so the vertical padding does not change the header's layout either.
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onSortClick() }
+                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -879,7 +903,12 @@ private fun CoprHeaderItem(
     onSortClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.clickable { onSortClick() },
+        // Same treatment as OprHeaderItem above.
+        modifier =
+            modifier
+                .clip(MaterialTheme.shapes.small)
+                .clickable { onSortClick() }
+                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
