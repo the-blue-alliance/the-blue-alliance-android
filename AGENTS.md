@@ -61,6 +61,12 @@ adb devices                         # confirm only your base/interactive emulato
 
 Notes:
 
+- `:app` builds per distribution flavor, so there is no unqualified `assembleDebug` /
+  `installDebug` / `testDebugUnitTest` — use the `Gms` variants, or `Metavr` for the Meta
+  Horizon OS flavor (`METAVR.md`).
+- The Meta Spatial Simulator is a normal adb device and everything above works against it,
+  but it is **single-instance** and cold-boots every time (~45 s), so it can't join the
+  read-only fleet.
 - `scripts/emu`, `adb`, and Gradle all honor `$ANDROID_SERIAL`, so exporting it once points
   every command at the right device. Pass `-s <serial>` to `scripts/emu` to override it.
 - Debug package is `com.thebluealliance.androidclient.development`, activity

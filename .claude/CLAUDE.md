@@ -8,18 +8,25 @@ The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alli
 
 Signed-in features (myTBA favorites/notifications — anything gated on `isSignedIn` / Firebase
 Auth) are testable locally **without a real Google account**. Debug builds wire Firebase Auth to
-the local emulator: `AuthModule` calls `useEmulator("10.0.2.2", 9099)` whenever `BuildConfig.DEBUG`.
+the local emulator: `AuthModule` calls `useEmulator("10.0.2.2", 9099)` whenever
+`BuildConfig.AUTH_EMULATOR`, which comes from `tba.auth.emulator` in `local.properties` —
+default true in debug, always false in release.
 
 1. Make sure the local stack is up — the Docker Compose backend includes the Firebase Auth
    emulator on `:9099`. Check: `curl -s localhost:9099` returns `200`.
 2. Install + launch via the script — `scripts/install-and-launch.sh`, or `scripts/emu launch <component>`
    after a build. This grants Android 17's `ACCESS_LOCAL_NETWORK`; **without it the app can't reach
    `10.0.2.2`** (the backend *or* the auth emulator), so sign-in silently fails.
-3. In the app, tap **Sign in with Google**. In debug this calls `MainActivity.signInWithEmulator()`,
-   which signs in a fake user (`user@thebluealliance.com`) against the emulator — no OAuth dialog.
+3. In the app, tap **Sign in with Google**. With the flag on this calls
+   `MainActivity.signInWithEmulator()`, which signs in a fake user (`user@thebluealliance.com`)
+   against the emulator — no OAuth dialog.
 
 `isSignedIn` is then true and the myTBA tabs render (otherwise the screen shows only the sign-in
 prompt). For myTBA data to sync, point `tba.url.debug` at the local backend (`http://10.0.2.2:8080/`).
+
+Set `tba.auth.emulator=false` to exercise the *real* sign-in flow in a debug build — Credential
+Manager on `gms`, AppAuth in the browser on `metavr`. That is the only way to test MetaVR sign-in
+without a release build.
 
 ## Build Commands
 
@@ -48,6 +55,7 @@ scripts/emu screenshot screenshots/<name>.png   # capture screenshot
 scripts/emu find "text"                          # find UI elements by text
 scripts/emu tap "text"                           # tap element by text (must match exactly one)
 scripts/emu tap-xy <x> <y>                       # tap at exact device pixel coordinates
+scripts/emu hover "text" --shot <path>           # park a hovering pointer, screenshot the hover state
 scripts/emu back                                 # press BACK key
 scripts/emu list                                 # dump full UI hierarchy as readable tree
 scripts/emu logcat --tag <tag> --grep <pattern> -n <count>  # filtered logcat
@@ -55,6 +63,30 @@ scripts/emu launch <package/activity>            # force-stop and start activity
 ```
 
 Use `find` before `tap` to verify unique matching; use `list` to explore the UI hierarchy.
+
+## MetaVR / Meta Quest
+
+The `metavr` flavor (`./gradlew :app:assembleMetavrDebug`) targets Horizon OS — AOSP with no
+GMS — as a 2D panel app. `METAVR.md` has the design, the seams, and the store checklist.
+
+Daily loop on the Meta Spatial Simulator (Horizon OS emulator; single instance, ~45 s cold
+boot every time — it has no snapshots, so it can't join the read-only fleet):
+
+```bash
+metavr ssim start
+export ANDROID_SERIAL="$(metavr ssim status --json | jq -r '.adb_serial')"
+export HZDB_DEVICE="$ANDROID_SERIAL"   # the metavr CLI ignores ANDROID_SERIAL
+./gradlew :app:installMetavrDebug
+scripts/emu launch com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+metavr ssim stop
+```
+
+It's a normal adb device, so all of `scripts/emu` works — `tap` included; it undoes the
+panel's coordinate transform. Two things it does not have: **any browser** (sign-in needs one;
+ours has Firefox sideloaded) and **GMS**. Hover states matter more here than on a phone,
+because the headset's laser pointer hovers constantly — that's what `scripts/emu hover` is for.
+
+Real hardware over Wi-Fi: `adb tcpip 5555` once over USB, then `adb connect <headset-ip>:5555`.
 
 ## PR Screenshots (before/after in PR descriptions)
 
@@ -76,9 +108,10 @@ The script never touches your working tree, index, or current branch (pure git p
 into the asset branch). Each filename is content-hashed so GitHub's image proxy can't
 serve a stale cached copy.
 
-**Getting real data for the shots.** The local backend has no competition data, so point
-the *debug* build at prod with a personal read key (thebluealliance.com/account) in
-`local.properties`, then rebuild:
+**Getting real data for the shots.** The local backend does serve the current (2026) season
+over APIv3 with `tba.api.key.debug=tba-dev-key`, which covers most shots. For earlier seasons
+or live production data, point the *debug* build at prod with a personal read key
+(thebluealliance.com/account) in `local.properties`, then rebuild:
 ```
 tba.url.debug=https://www.thebluealliance.com/
 tba.api.key.debug=<your-read-key>
