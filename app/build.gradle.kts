@@ -120,15 +120,58 @@ android {
         )
     }
 
+    // Declared before productFlavors because the flavors below reference these configs by name
+    // (signingConfigs.getByName(...)), and the DSL blocks are evaluated top to bottom.
+    signingConfigs {
+        // gms / Google Play upload key. Play App Signing re-signs with the escrowed key,
+        // so what ships to devices is Google's key; this is only the upload identity.
+        create("release") {
+            storeFile =
+                rootProject.file(
+                    localProperties.getProperty("release.store.file", "release.keystore"),
+                )
+            storePassword = localProperties.getProperty("release.store.password", "")
+            keyAlias = localProperties.getProperty("release.key.alias", "")
+            keyPassword = localProperties.getProperty("release.key.password", "")
+        }
+        // metavr / Meta Horizon Store upload key. Deliberately NOT the Play key: the Horizon
+        // Store has no key reset and no re-signing escrow, so the update path is bound to
+        // whatever key first uploads. Keeping it separate also means a Play key rotation can
+        // never break Horizon updates and vice versa. Defaults mirror the `release` config so
+        // a checkout without the keystore configures cleanly and only fails if it actually
+        // builds a metavr release (same behavior as `release`).
+        create("metavrRelease") {
+            storeFile =
+                rootProject.file(
+                    localProperties.getProperty(
+                        "metavr.release.store.file",
+                        "meta-vr-upload-keystore.jks",
+                    ),
+                )
+            storePassword = localProperties.getProperty("metavr.release.store.password", "")
+            keyAlias = localProperties.getProperty("metavr.release.key.alias", "meta-vr-upload")
+            keyPassword = localProperties.getProperty("metavr.release.key.password", "")
+        }
+    }
+
     // "gms" = Google Play (Google Mobile Services present). "metavr" = Meta Horizon Store,
     // which is AOSP with no GMS, so sign-in and push are swapped out per source set.
     flavorDimensions += "distribution"
     productFlavors {
         create("gms") {
             dimension = "distribution"
+            // Release signing is assigned per flavor rather than on the release build type,
+            // because a build type's signingConfig outranks a flavor's — so a build-type-level
+            // assignment could not be overridden for metavr. Debug variants are unaffected: the
+            // debug build type carries its own (auto) signing config, which outranks this.
+            signingConfig = signingConfigs.getByName("release")
         }
         create("metavr") {
             dimension = "distribution"
+            // Dedicated Horizon upload key (see the metavrRelease signingConfig above) — NOT
+            // the Play key. Assigned at the flavor level so only metavr's release variant picks
+            // it up; metavrDebug stays debug-signed via the debug build type's signing config.
+            signingConfig = signingConfigs.getByName("metavrRelease")
             // Horizon OS is Android 14; Meta requires targetSdk 34 for new store apps,
             // and its release-build table permits minSdk 29-34 (32 recommended for the
             // Quest 2 / Pro / 3 family). The shared minSdk 26 is below that floor.
@@ -165,18 +208,6 @@ android {
         }
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile =
-                rootProject.file(
-                    localProperties.getProperty("release.store.file", "release.keystore"),
-                )
-            storePassword = localProperties.getProperty("release.store.password", "")
-            keyAlias = localProperties.getProperty("release.key.alias", "")
-            keyPassword = localProperties.getProperty("release.key.password", "")
-        }
-    }
-
     buildTypes {
         debug {
             applicationIdSuffix = ".development"
@@ -206,7 +237,8 @@ android {
         }
         release {
             buildConfigField("boolean", "AUTH_EMULATOR", "false")
-            signingConfig = signingConfigs.getByName("release")
+            // NOTE: release signing is assigned per flavor (see productFlavors), not here — a
+            // build-type signingConfig outranks a flavor's, which would block metavr's override.
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

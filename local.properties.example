@@ -43,3 +43,22 @@ tba.api.key.debug=tba-dev-key
 # lower it — when a Horizon upload has to be re-cut from a commit that already shipped a
 # build. CI can set METAVR_VERSIONCODE_OFFSET instead; the env var wins.
 #metavr.versioncode.offset=0
+
+# Signing for the metavr (Meta Horizon Store) release variant. This is a DEDICATED Horizon
+# upload key — NOT the Google Play upload key. The two stores are kept on separate keys on
+# purpose: the Horizon Store has no re-signing escrow (what you upload is what ships) and no
+# key reset, so the store app's update path is permanently bound to whichever key first
+# uploads it. gms release keeps using the release.* key above; only metavr uses these.
+#
+# BACK THIS UP. If you lose the .jks or its password there is no recovery and no reset — the
+# published Horizon app can never be updated again. Store the .jks file, the alias, and the
+# password together with your other release secrets (an offline password manager / the
+# team's encrypted key bundle), not just on one laptop.
+#
+# The store and key passwords must match: keytool writes a PKCS12 keystore, which ignores a
+# separate key password. Absent these entries a build only fails if it actually assembles a
+# metavr release (same graceful behavior as the release.* key).
+#metavr.release.store.file=.signing/meta-vr-upload-keystore.jks
+#metavr.release.store.password=CHANGE_ME_dedicated_horizon_upload_key_password
+#metavr.release.key.alias=meta-vr-upload
+#metavr.release.key.password=CHANGE_ME_same_as_store_password_pkcs12
