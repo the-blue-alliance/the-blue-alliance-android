@@ -30,6 +30,10 @@ import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.TBAApp
 import com.thebluealliance.android.widget.TeamTrackingWidgetOpenAction
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -45,6 +49,20 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var themePreferences: ThemePreferences
 
     private val deepLinkHandler = DeeplinkMatcher()
+
+    /**
+     * Destinations from intents delivered to an already-running Activity (see [onNewIntent]).
+     *
+     * [onCreate] can only route the intent the Activity was launched with, so warm deep links —
+     * browser links, notification taps, `am start` — need their own channel into the navigation
+     * that [com.thebluealliance.android.navigation.TBANavigation] collects.
+     */
+    private val newIntentRoutes =
+        MutableSharedFlow<NavKey>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
+    val intentRoutes: SharedFlow<NavKey> = newIntentRoutes.asSharedFlow()
 
     private val notificationPermissionLauncher =
         registerForActivityResult(
@@ -64,10 +82,7 @@ class MainActivity : ComponentActivity() {
             flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0 &&
                 flags and Intent.FLAG_ACTIVITY_CLEAR_TASK != 0
 
-        val startRoute =
-            getNotificationDestination()
-                ?: getDeeplinkDestination()
-                ?: Screen.Events()
+        val startRoute = intent.destination() ?: Screen.Events()
 
         setContent {
             TBAApp(
@@ -84,41 +99,51 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { dataSyncManager.syncIfNeeded() }
     }
 
-    private fun getNotificationDestination(): NavKey? {
-        val matchKey = intent.getStringExtra(NotificationBuilder.EXTRA_MATCH_KEY)
-        val eventKey = intent.getStringExtra(NotificationBuilder.EXTRA_EVENT_KEY)
-        val teamKey = intent.getStringExtra(NotificationBuilder.EXTRA_TEAM_KEY)
+    /** The destination this intent targets: a notification/widget extra, or a deeplink URI. */
+    private fun Intent.destination(): NavKey? = notificationDestination() ?: deeplinkDestination()
 
-        val destination =
-            when {
-                matchKey != null -> Screen.MatchDetail(matchKey)
-                teamKey != null && eventKey != null -> Screen.TeamEventDetail(teamKey, eventKey)
-                eventKey != null -> Screen.EventDetail(eventKey)
-                teamKey != null -> {
-                    val initialTab =
-                        intent.getIntExtra(
-                            TeamTrackingWidgetOpenAction.EXTRA_INITIAL_TAB,
-                            0,
-                        )
-                    Screen.TeamDetail(teamKey, initialTab)
-                }
-                else -> null
+    private fun Intent.notificationDestination(): NavKey? {
+        val matchKey = getStringExtra(NotificationBuilder.EXTRA_MATCH_KEY)
+        val eventKey = getStringExtra(NotificationBuilder.EXTRA_EVENT_KEY)
+        val teamKey = getStringExtra(NotificationBuilder.EXTRA_TEAM_KEY)
+
+        return when {
+            matchKey != null -> Screen.MatchDetail(matchKey)
+            teamKey != null && eventKey != null -> Screen.TeamEventDetail(teamKey, eventKey)
+            eventKey != null -> Screen.EventDetail(eventKey)
+            teamKey != null -> {
+                val initialTab =
+                    getIntExtra(
+                        TeamTrackingWidgetOpenAction.EXTRA_INITIAL_TAB,
+                        0,
+                    )
+                Screen.TeamDetail(teamKey, initialTab)
             }
-
-        return destination
+            else -> null
+        }
     }
 
-    private fun getDeeplinkDestination(): NavKey? {
-        val data = intent.data ?: return null
-        return deepLinkHandler.match(data)
+    private fun Intent.deeplinkDestination(): NavKey? {
+        val uri = data ?: return null
+        return deepLinkHandler.match(uri)
     }
 
+    /**
+     * Routes intents that arrive while this Activity is already running.
+     *
+     * The Activity is `singleTop`, so a deeplink or notification tap aimed at the running app is
+     * delivered here instead of through a fresh [onCreate]. Publishing the destination on
+     * [intentRoutes] navigates the live back stack, rather than dropping the intent.
+     */
     override fun onNewIntent(
         intent: Intent,
         caller: ComponentCaller,
     ) {
         super.onNewIntent(intent, caller)
-        Log.d("MainActivity", "Received new intent: $intent")
+        val destination = intent.destination()
+        Log.d("MainActivity", "New intent: $intent -> $destination")
+        if (destination == null) return
+        newIntentRoutes.tryEmit(destination)
     }
 
     fun requestNotificationPermission() {
