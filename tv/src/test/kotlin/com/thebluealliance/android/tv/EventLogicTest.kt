@@ -1,11 +1,16 @@
 package com.thebluealliance.android.tv
 
+import com.thebluealliance.android.data.remote.dto.DistrictDto
 import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.data.remote.dto.WebcastDto
 import com.thebluealliance.android.tv.data.api.toDomainOrNull
+import com.thebluealliance.android.tv.data.model.District
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
 import com.thebluealliance.android.tv.data.model.EventSection
+import com.thebluealliance.android.tv.data.model.EventType
+import com.thebluealliance.android.tv.data.model.FeedRow
+import com.thebluealliance.android.tv.data.model.RowTitle
 import com.thebluealliance.android.tv.data.model.Webcast
 import com.thebluealliance.android.tv.data.model.WebcastResolver
 import com.thebluealliance.android.tv.data.model.WebcastType
@@ -44,6 +49,8 @@ class EventLogicTest {
         city: String? = "Town",
         stateProv: String? = "ST",
         country: String? = "USA",
+        type: EventType = EventType.REGIONAL,
+        district: District? = null,
     ) = Event(
         key = key,
         name = key,
@@ -54,7 +61,20 @@ class EventLogicTest {
         startDate = start,
         endDate = end,
         webcasts = webcasts,
+        type = type,
+        district = district,
     )
+
+    private val fim = District("fim", "FIRST In Michigan")
+    private val fit = District("fit", "FIRST In Texas")
+    private val ne = District("ne", "New England")
+
+    /** An event running today; [key] doubles as its display name so name ordering is visible. */
+    private fun today(
+        key: String,
+        type: EventType = EventType.REGIONAL,
+        district: District? = null,
+    ) = event(key, today, type = type, district = district)
 
     // --- WebcastResolver: well-typed casts pass through unchanged ---------------------------
 
@@ -163,6 +183,204 @@ class EventLogicTest {
             )
         val e = withDatedCast.toDomainOrNull()!!
         assertEquals(LocalDate.of(2026, 5, 30), e.webcasts.first().date)
+    }
+
+    @Test fun dto_mapsTypeAndDistrict() {
+        val dcmp =
+            battleAtTheBorder
+                .copy(
+                    eventType = 2,
+                    district = DistrictDto("fim", "FIRST In Michigan", "2026fim", 2026),
+                ).toDomainOrNull()!!
+        assertEquals(EventType.DISTRICT_CHAMPIONSHIP, dcmp.type)
+        assertEquals(District("fim", "FIRST In Michigan"), dcmp.district)
+    }
+
+    @Test fun dto_missingOrUnknownTypeIsUnlabeled() {
+        val bare = battleAtTheBorder.toDomainOrNull()!!
+        assertEquals(EventType.UNLABELED, bare.type)
+        assertNull(bare.district)
+        assertEquals(
+            EventType.UNLABELED,
+            battleAtTheBorder.copy(eventType = 42).toDomainOrNull()!!.type,
+        )
+    }
+
+    @Test fun eventType_fromApiCoversEveryCode() {
+        assertEquals(EventType.REGIONAL, EventType.fromApi(0))
+        assertEquals(EventType.DISTRICT_CHAMPIONSHIP_DIVISION, EventType.fromApi(5))
+        assertEquals(EventType.REMOTE, EventType.fromApi(7))
+        assertEquals(EventType.OFFSEASON, EventType.fromApi(99))
+        assertEquals(EventType.PRESEASON, EventType.fromApi(100))
+        assertEquals(EventType.UNLABELED, EventType.fromApi(-1))
+        assertEquals(EventType.UNLABELED, EventType.fromApi(null))
+    }
+
+    // --- EventFeed.todayRows: splitting today's events into themed rows ------------------------
+
+    private fun List<FeedRow>.keys() = map { it.key }
+
+    private fun FeedRow.eventKeys() = events.map { it.key }
+
+    @Test fun todayRows_emptyWhenNothingToday() {
+        assertTrue(EventFeed.todayRows(emptyList()).isEmpty())
+    }
+
+    @Test fun todayRows_collapsesQuietDayIntoOneRow() {
+        // Six events across four groups is still a quiet day: one row, nothing to theme.
+        val live =
+            listOf(
+                today("cmp", EventType.CHAMPIONSHIP_FINALS),
+                today("mi1", EventType.DISTRICT, fim),
+                today("mi2", EventType.DISTRICT, fim),
+                today("reg1"),
+                today("reg2"),
+                today("off", EventType.OFFSEASON),
+            )
+        val rows = EventFeed.todayRows(live)
+        assertEquals(listOf("live"), rows.keys())
+        assertEquals(RowTitle.HappeningNow, rows.single().title)
+        assertEquals(live, rows.single().events)
+    }
+
+    @Test fun todayRows_collapsesWhenOnlyOneGroup() {
+        // A busy off-season Saturday is still one kind of event — no point in a lone themed row.
+        val live = (1..9).map { today("off$it", EventType.OFFSEASON) }
+        val rows = EventFeed.todayRows(live)
+        assertEquals(listOf("live"), rows.keys())
+        assertEquals(RowTitle.HappeningNow, rows.single().title)
+    }
+
+    @Test fun todayRows_ordersGroupsAndTitlesThem() {
+        val live =
+            listOf(
+                today("off", EventType.PRESEASON),
+                today("reg"),
+                today("remote", EventType.REMOTE),
+                today("tx1", EventType.DISTRICT, fit),
+                today("tx2", EventType.DISTRICT, fit),
+                today("mi1", EventType.DISTRICT, fim),
+                today("mi2", EventType.DISTRICT, fim),
+                today("mi3", EventType.DISTRICT, fim),
+                today("div", EventType.CHAMPIONSHIP_DIVISION),
+            )
+        val rows = EventFeed.todayRows(live)
+        assertEquals(
+            listOf(
+                "live-championship",
+                "live-district-fim",
+                "live-district-fit",
+                "live-regionals",
+                "live-more",
+                "live-offseason",
+            ),
+            rows.keys(),
+        )
+        assertEquals(
+            listOf(
+                RowTitle.Championship,
+                RowTitle.District("FIRST In Michigan"),
+                RowTitle.District("FIRST In Texas"),
+                RowTitle.Regionals,
+                RowTitle.MoreEvents,
+                RowTitle.Offseason,
+            ),
+            rows.map { it.title },
+        )
+    }
+
+    @Test fun todayRows_championshipFinalsLeadDivisionsByName() {
+        val live =
+            listOf(
+                today("Newton", EventType.CHAMPIONSHIP_DIVISION),
+                today("archimedes", EventType.CHAMPIONSHIP_DIVISION),
+                today("Einstein", EventType.CHAMPIONSHIP_FINALS),
+            ) + (1..5).map { today("reg$it") }
+        val cmp = EventFeed.todayRows(live).first()
+        assertEquals(listOf("Einstein", "archimedes", "Newton"), cmp.eventKeys())
+    }
+
+    @Test fun todayRows_districtsOrderedByName_dcmpFirstWithinRow() {
+        val zeta = District("zz", "Zeta")
+        val alpha = District("aa", "Alpha")
+        val live =
+            listOf(
+                today("z1", EventType.DISTRICT, zeta),
+                today("z2", EventType.DISTRICT, zeta),
+                today("a1", EventType.DISTRICT, alpha),
+                today("a2", EventType.DISTRICT, alpha),
+                today("Mi Lansing", EventType.DISTRICT, fim),
+                today("Mi Division", EventType.DISTRICT_CHAMPIONSHIP_DIVISION, fim),
+                today("Mi Alpena", EventType.DISTRICT, fim),
+                today("Mi State", EventType.DISTRICT_CHAMPIONSHIP, fim),
+            )
+        val rows = EventFeed.todayRows(live)
+        // Alphabetical by district name, regardless of how many events each has today: rows stay in
+        // a predictable place. FIM has the most events but sorts by its name.
+        assertEquals(
+            listOf("live-district-aa", "live-district-fim", "live-district-zz"),
+            rows.keys(),
+        )
+        assertEquals(
+            listOf("Mi State", "Mi Division", "Mi Alpena", "Mi Lansing"),
+            rows.first { it.key == "live-district-fim" }.eventKeys(),
+        )
+    }
+
+    @Test fun todayRows_leftoversGoToMoreEventsNotRegionals() {
+        val live =
+            listOf(
+                today("mi1", EventType.DISTRICT, fim),
+                today("mi2", EventType.DISTRICT, fim),
+                today("granite", EventType.DISTRICT, ne),
+                today("utah"),
+                today("arizona"),
+                today("remote", EventType.REMOTE),
+                today("foc", EventType.FESTIVAL_OF_CHAMPIONS),
+                today("mystery", EventType.UNLABELED),
+            )
+        val rows = EventFeed.todayRows(live)
+        assertEquals(listOf("live-district-fim", "live-regionals", "live-more"), rows.keys())
+        // Regionals holds only true regionals; a single-event district gets no row of its own.
+        assertEquals(listOf("arizona", "utah"), rows[1].eventKeys())
+        assertEquals(listOf("foc", "granite", "mystery", "remote"), rows[2].eventKeys())
+    }
+
+    @Test fun feedRows_marksOnlyFirstRowAfterTodayBlock() {
+        val feed =
+            EventFeed.from(
+                listOf(
+                    today("live"),
+                    event("up", today.plusDays(3)),
+                    event("past", today.minusDays(3)),
+                ),
+                today,
+            )
+        assertEquals(listOf(false, true, false), feed.rows().map { it.startsAfterToday })
+        // With no Upcoming, Recent is the first row past today and takes the boundary.
+        val noUpcoming =
+            EventFeed.from(listOf(today("live"), event("past", today.minusDays(3))), today)
+        assertEquals(listOf(false, true), noUpcoming.rows().map { it.startsAfterToday })
+        // Nothing today: no block to close off, so no extra gap at the top of the feed.
+        val nothingToday = EventFeed.from(listOf(event("up", today.plusDays(3))), today)
+        assertEquals(listOf(false), nothingToday.rows().map { it.startsAfterToday })
+    }
+
+    @Test fun feedRows_appendUpcomingAndRecentAfterToday() {
+        val feed =
+            EventFeed.from(
+                listOf(
+                    today("live"),
+                    event("up", today.plusDays(3)),
+                    event("past", today.minusDays(3)),
+                ),
+                today,
+            )
+        assertEquals(listOf("live", "upcoming", "recent"), feed.rows().keys())
+        assertEquals(
+            listOf(RowTitle.HappeningNow, RowTitle.Upcoming, RowTitle.Recent),
+            feed.rows().map { it.title },
+        )
     }
 
     // --- Event.sectionFor boundaries ---------------------------------------------------------

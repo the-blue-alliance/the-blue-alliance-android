@@ -44,9 +44,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -66,6 +71,7 @@ import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
+import com.thebluealliance.android.tv.data.model.RowTitle
 import com.thebluealliance.android.tv.data.model.Webcast
 import com.thebluealliance.android.tv.data.model.WebcastType
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
@@ -108,19 +114,35 @@ private fun Webcast.pickerLabel(): String =
     date?.let { stringResource(R.string.watch_on_dated, type.label, it.format(WebcastDay)) }
         ?: stringResource(R.string.watch_on, type.label)
 
-private data class Section(
-    @StringRes val titleRes: Int,
-    val events: List<Event>,
-)
-
-private fun EventFeed.rowSections(): List<Section> =
-    buildList {
-        // "Happening Now" rather than "Live": these events are running today, but we can't confirm a
-        // webcast is actually streaming this second, so we don't claim it.
-        if (live.isNotEmpty()) add(Section(R.string.section_happening_now, live))
-        if (upcoming.isNotEmpty()) add(Section(R.string.section_upcoming, upcoming))
-        if (recent.isNotEmpty()) add(Section(R.string.section_recent, recent))
+@Composable
+private fun RowTitle.text(): AnnotatedString {
+    // Today's group rows lead with what the row is ("FIRST In Michigan") and demote the shared
+    // "Happening Now" marker to a quieter suffix, so a stack of today rows scans by group name.
+    val group =
+        when (this) {
+            RowTitle.HappeningNow -> stringResource(R.string.section_happening_now)
+            RowTitle.Upcoming -> stringResource(R.string.section_upcoming)
+            RowTitle.Recent -> stringResource(R.string.section_recent)
+            RowTitle.Championship -> stringResource(R.string.group_championship)
+            is RowTitle.District -> displayName
+            RowTitle.Regionals -> stringResource(R.string.group_regionals)
+            RowTitle.MoreEvents -> stringResource(R.string.group_more_events)
+            RowTitle.Offseason -> stringResource(R.string.group_offseason)
+        }
+    val isTodayGroup =
+        this != RowTitle.HappeningNow && this != RowTitle.Upcoming && this != RowTitle.Recent
+    if (!isTodayGroup) return AnnotatedString(group)
+    val suffix = stringResource(R.string.section_happening_now)
+    val suffixStyle =
+        SpanStyle(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Normal,
+        )
+    return buildAnnotatedString {
+        append(group)
+        withStyle(suffixStyle) { append("  ·  $suffix") }
     }
+}
 
 @Composable
 fun EventsScreen(
@@ -299,7 +321,7 @@ private fun EventFeedContent(
     onAboutClick: () -> Unit,
     onEventClick: (Event) -> Unit,
 ) {
-    val rows = feed.rowSections()
+    val rows = remember(feed) { feed.rows() }
     // Initial focus lands on the very first card exactly once. The hoisted guard lives here (not on
     // the card) so recycling cards as the user scrolls never re-fires the request — which would snap
     // focus and scroll back to the top of the feed.
@@ -329,13 +351,17 @@ private fun EventFeedContent(
                     modifier = Modifier.padding(horizontal = TbaScreenHPadding),
                 )
             }
-            itemsIndexed(rows, key = { _, s -> s.titleRes }) { sIndex, section ->
-                Column {
+            itemsIndexed(rows, key = { _, row -> row.key }) { rowIndex, row ->
+                // Extra air above the first post-today row closes off the today block without a rule.
+                Column(Modifier.ifElse(row.startsAfterToday, Modifier.padding(top = 16.dp))) {
                     Text(
-                        stringResource(section.titleRes),
+                        row.title.text(),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = TbaScreenHPadding),
+                        modifier =
+                            Modifier
+                                .padding(start = TbaScreenHPadding)
+                                .semantics { heading() },
                     )
                     Spacer(Modifier.height(8.dp))
                     // Content padding gives the focus-scale "bloom" room so it isn't clipped by
@@ -350,12 +376,12 @@ private fun EventFeedContent(
                                 vertical = 12.dp,
                             ),
                     ) {
-                        itemsIndexed(section.events, key = { _, e -> e.key }) { eIndex, event ->
+                        itemsIndexed(row.events, key = { _, e -> e.key }) { eIndex, event ->
                             EventCard(
                                 event = event,
                                 onClick = { onEventClick(event) },
                                 modifier =
-                                    if (sIndex == 0 && eIndex == 0) {
+                                    if (rowIndex == 0 && eIndex == 0) {
                                         Modifier.focusOnInitialVisibility(initialFocusDone)
                                     } else {
                                         Modifier
