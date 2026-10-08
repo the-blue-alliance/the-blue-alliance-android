@@ -13,17 +13,15 @@ val TbaScreenHPadding = 48.dp
 val TbaOverscanTopPadding = 27.dp
 val TbaListBottomPadding = 48.dp
 
-// Focus language: a bright border (+ scale where the viewport allows it), never a bare colour fill
-// as the only cue. One width and the two surface shapes live here so every focusable surface reads
-// the same. JetStream uses 3dp; we hold 2dp to match the existing card weight.
-val TbaFocusBorderWidth = 2.dp
+// Focus language, app-wide: tv-material's card ring (3dp, theme border colour), never a bare colour
+// fill as the only cue. Cards use the library default as-is; controls that can't bloom past a clip
+// edge paint the same ring inside their bounds (insideFocusBorder).
+val TbaFocusBorderWidth = 3.dp
 
-// Event cards use a heavier ring than the rest of the app: it sits on busy art, not a flat fill.
-val TbaCardFocusBorderWidth = 3.dp
-
-// 8dp matches the tv-material Card default and Google TV; larger radii read as phone UI.
+// The art's clip; 8dp matches the tv-material Card default shape.
 val TbaCardShape = RoundedCornerShape(8.dp)
-val TbaRowShape = RoundedCornerShape(10.dp)
+val TbaRowRadius = 10.dp
+val TbaRowShape = RoundedCornerShape(TbaRowRadius)
 
 // Android TV "standard card": a 3-up width from the 960dp TV grid (3 cards + a peek of the 4th at
 // a 48dp inset and 20dp gaps), 16:9 art, and the text block 8dp below the art.

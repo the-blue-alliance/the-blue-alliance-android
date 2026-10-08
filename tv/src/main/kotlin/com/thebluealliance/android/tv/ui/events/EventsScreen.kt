@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,6 +67,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -75,7 +77,6 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Card
-import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
@@ -96,6 +97,7 @@ import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.StatusMessage
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
 import com.thebluealliance.android.tv.ui.common.ifElse
+import com.thebluealliance.android.tv.ui.common.insideFocusBorder
 import com.thebluealliance.android.tv.ui.common.requestFocusOnFirstGainingVisibility
 import com.thebluealliance.android.tv.ui.theme.TbaArtGradientEnd
 import com.thebluealliance.android.tv.ui.theme.TbaArtGradientStart
@@ -103,13 +105,10 @@ import com.thebluealliance.android.tv.ui.theme.TbaArtTitleStyle
 import com.thebluealliance.android.tv.ui.theme.TbaArtWatermark
 import com.thebluealliance.android.tv.ui.theme.TbaBlueBright
 import com.thebluealliance.android.tv.ui.theme.TbaCardArtAspectRatio
-import com.thebluealliance.android.tv.ui.theme.TbaCardFocusBorderWidth
-import com.thebluealliance.android.tv.ui.theme.TbaCardFocusRing
 import com.thebluealliance.android.tv.ui.theme.TbaCardShape
 import com.thebluealliance.android.tv.ui.theme.TbaCardSpacing
 import com.thebluealliance.android.tv.ui.theme.TbaCardTextGap
 import com.thebluealliance.android.tv.ui.theme.TbaCardWidth
-import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 import com.thebluealliance.android.tv.ui.theme.TbaIconButtonSize
 import com.thebluealliance.android.tv.ui.theme.TbaIconSize
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
@@ -286,25 +285,15 @@ private fun AboutButton(onClick: () -> Unit) {
             ClickableSurfaceDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                focusedContainerColor = MaterialTheme.colorScheme.primary,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedContentColor = MaterialTheme.colorScheme.onSurface,
             ),
         // This button hugs the top of the (vertically-clipping) header, so a focus scale or glow
-        // would bloom past the clip line and shear off. A border is painted inside the bounds, so
-        // it reads as focus without clipping — the same bright-border language as the feed cards.
+        // would bloom past the clip line and shear off. The cards' ring is painted inside the bounds
+        // instead, over a dark fill (the library's default focused fill is a light inverseSurface,
+        // which would swallow the ring).
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        border =
-            ClickableSurfaceDefaults.border(
-                focusedBorder =
-                    Border(
-                        border =
-                            BorderStroke(
-                                TbaFocusBorderWidth,
-                                MaterialTheme.colorScheme.secondary,
-                            ),
-                        shape = CircleShape,
-                    ),
-            ),
+        border = ClickableSurfaceDefaults.border(focusedBorder = insideFocusBorder(CircleShape)),
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
@@ -388,7 +377,7 @@ private fun EventFeedContent(
                                 .padding(start = TbaScreenHPadding)
                                 .semantics { heading() },
                     )
-                    Spacer(Modifier.height(12.dp))
+                    Spacer(Modifier.height(RowTitleGap))
                     // Content padding gives the focus-scale "bloom" room so it isn't clipped by
                     // the row viewport. focusRestorer returns focus to the last-focused card when
                     // you move up/down to another row and come back.
@@ -398,7 +387,7 @@ private fun EventFeedContent(
                         contentPadding =
                             PaddingValues(
                                 horizontal = TbaScreenHPadding,
-                                vertical = 12.dp,
+                                vertical = CardRowVerticalPadding,
                             ),
                     ) {
                         itemsIndexed(row.events, key = { _, e -> e.key }) { eIndex, event ->
@@ -420,10 +409,27 @@ private fun EventFeedContent(
     }
 }
 
-// The art tile grows by this much on each side when focused; the text block below slides down by
-// the same amount so the bloomed tile never crowds its own title.
-private val CardFocusedScale = 1.08f
-private val CardFocusBloom = TbaCardWidth / TbaCardArtAspectRatio * (CardFocusedScale - 1f) / 2f
+// The card uses tv-material's own focus defaults (Google's TV focus-system and cards guides). These
+// mirror CardDefaults.scale() (focused 1.1, pressed = rest 1.0) and CardDefaults.border() (a 3dp
+// stroke centred on the art's edge, pressed = focused), which keep the values internal, so the text
+// slide below can be computed from them.
+private val LibraryCardFocusedScale = 1.1f
+private val LibraryCardPressedScale = 1f
+private val LibraryCardBorderWidth = 3.dp
+private val CardArtHeight = TbaCardWidth / TbaCardArtAspectRatio
+
+// How far the focus ring's outer edge reaches past the art's resting edge at [scale]: half the
+// stroke sits outside the edge, and the ring is drawn inside the card's scale layer.
+private fun cardFocusReach(scale: Float): Dp =
+    (CardArtHeight / 2 + LibraryCardBorderWidth / 2) * scale - CardArtHeight / 2
+
+// StandardCardContainer doesn't move the title on focus, so the text block slides down by the
+// ring's reach itself; otherwise the scaled art would overlap it. The card's own height reserves that
+// slide; the row's vertical content padding covers the same reach (~9dp at 1.1x) above the art.
+private val CardFocusedReach = cardFocusReach(LibraryCardFocusedScale)
+private val CardPressedReach = cardFocusReach(LibraryCardPressedScale)
+private val CardRowVerticalPadding = 12.dp
+private val RowTitleGap = 8.dp
 
 // Same art for every event (no per-district/type colour — product decision): a lit TBA-blue corner
 // fading diagonally (top-left to bottom-right) to near the page background.
@@ -461,8 +467,14 @@ private fun EventCard(
         }
     val interactionSource = remember { MutableInteractionSource() }
     val focused by interactionSource.collectIsFocusedAsState()
+    val pressed by interactionSource.collectIsPressedAsState()
     val textShift by animateDpAsState(
-        targetValue = if (focused) CardFocusBloom else 0.dp,
+        targetValue =
+            when {
+                pressed -> CardPressedReach
+                focused -> CardFocusedReach
+                else -> 0.dp
+            },
         label = "card-text-shift",
     )
     // Cards in a row stay the same height whether a title takes one line or two, and whether or not
@@ -472,7 +484,7 @@ private fun EventCard(
     val typography = MaterialTheme.typography
     val minHeight =
         with(LocalDensity.current) {
-            TbaCardWidth / TbaCardArtAspectRatio + TbaCardTextGap + CardFocusBloom +
+            TbaCardWidth / TbaCardArtAspectRatio + TbaCardTextGap + CardFocusedReach +
                 (typography.titleMedium.lineHeight * 2).toDp() +
                 typography.bodySmall.lineHeight.toDp()
         }
@@ -493,15 +505,6 @@ private fun EventCard(
                         .aspectRatio(TbaCardArtAspectRatio)
                         .semantics { contentDescription = description },
                 interactionSource = source,
-                scale = CardDefaults.scale(focusedScale = CardFocusedScale),
-                border =
-                    CardDefaults.border(
-                        focusedBorder =
-                            Border(
-                                border = BorderStroke(TbaCardFocusBorderWidth, TbaCardFocusRing),
-                                shape = TbaCardShape,
-                            ),
-                    ),
             ) {
                 EventArt(event)
             }
@@ -648,14 +651,17 @@ private fun LoadingSkeleton() {
                         .width(160.dp)
                         .background(shimmer, RoundedCornerShape(6.dp)),
                 )
-                Spacer(Modifier.height(12.dp))
+                Spacer(Modifier.height(RowTitleGap))
                 // Unbounded so the 4th card runs off the right edge as a peek, like the real row.
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(TbaCardSpacing),
                     modifier =
                         Modifier
                             .wrapContentWidth(Alignment.Start, unbounded = true)
-                            .padding(horizontal = TbaScreenHPadding, vertical = 12.dp),
+                            .padding(
+                                horizontal = TbaScreenHPadding,
+                                vertical = CardRowVerticalPadding,
+                            ),
                 ) {
                     repeat(4) {
                         Column(Modifier.width(TbaCardWidth)) {
