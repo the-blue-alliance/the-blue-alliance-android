@@ -8,6 +8,7 @@ import com.thebluealliance.android.tv.data.model.District
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
 import com.thebluealliance.android.tv.data.model.EventSection
+import com.thebluealliance.android.tv.data.model.EventStatus
 import com.thebluealliance.android.tv.data.model.EventType
 import com.thebluealliance.android.tv.data.model.FeedRow
 import com.thebluealliance.android.tv.data.model.RowTitle
@@ -522,5 +523,127 @@ class EventLogicTest {
         val e = event("live", FIXTURE_ANCHOR, webcasts = listOf(Webcast(WebcastType.TWITCH, "ch")))
         val shifted = listOf(e).anchoredToToday(FIXTURE_ANCHOR.plusDays(5)).first()
         assertNull(shifted.webcasts.first().date)
+    }
+
+    // --- Event.statusLabel: date-based card badge (today = Sat 2026-05-30) -------------------
+
+    private fun status(
+        start: LocalDate,
+        end: LocalDate = start,
+        on: LocalDate = today,
+    ) = event("e", start, end).statusLabel(on)
+
+    @Test fun status_singleDayToday_isToday() {
+        assertEquals(EventStatus.Today, status(today))
+    }
+
+    @Test fun status_firstDayOfMultiDay_isDayOne() {
+        assertEquals(EventStatus.Running(1, 3), status(today, today.plusDays(2)))
+    }
+
+    @Test fun status_middleDay_isDayN() {
+        assertEquals(EventStatus.Running(2, 3), status(today.minusDays(1), today.plusDays(1)))
+    }
+
+    @Test fun status_lastDay_isFinalDay() {
+        assertEquals(EventStatus.Running(3, 3), status(today.minusDays(2), today))
+    }
+
+    @Test fun status_runningAcrossMonthBoundary_countsCalendarDays() {
+        // Apr 30 – May 2; on May 1 it's day 2 of 3.
+        val s =
+            status(
+                LocalDate.of(2026, 4, 30),
+                LocalDate.of(2026, 5, 2),
+                on = LocalDate.of(2026, 5, 1),
+            )
+        assertEquals(EventStatus.Running(2, 3), s)
+    }
+
+    @Test fun status_runningAcrossYearBoundary_countsCalendarDays() {
+        val s =
+            status(
+                LocalDate.of(2025, 12, 31),
+                LocalDate.of(2026, 1, 2),
+                on = LocalDate.of(2026, 1, 2),
+            )
+        assertEquals(EventStatus.Running(3, 3), s)
+    }
+
+    @Test fun status_startsTomorrow() {
+        assertEquals(EventStatus.StartsTomorrow, status(today.plusDays(1), today.plusDays(3)))
+    }
+
+    @Test fun status_startsWithinSixDays_isWeekday() {
+        assertEquals(EventStatus.StartsThisWeek(today.plusDays(2)), status(today.plusDays(2)))
+        assertEquals(EventStatus.StartsThisWeek(today.plusDays(6)), status(today.plusDays(6)))
+    }
+
+    @Test fun status_startsAWeekOrMoreOut_isDate() {
+        assertEquals(EventStatus.StartsOn(today.plusDays(7)), status(today.plusDays(7)))
+        assertEquals(
+            EventStatus.StartsOn(LocalDate.of(2026, 10, 3)),
+            status(LocalDate.of(2026, 10, 3)),
+        )
+    }
+
+    @Test fun status_startsNextYear_isDate() {
+        val start = LocalDate.of(2027, 1, 8)
+        assertEquals(EventStatus.StartsOn(start), status(start, on = LocalDate.of(2026, 12, 30)))
+    }
+
+    @Test fun status_endedYesterday_usesEndDateNotStart() {
+        assertEquals(EventStatus.EndedYesterday, status(today.minusDays(3), today.minusDays(1)))
+    }
+
+    @Test fun status_endedWithinSixDays_isWeekdayOfEnd() {
+        val end = today.minusDays(2)
+        assertEquals(EventStatus.EndedThisWeek(end), status(end.minusDays(2), end))
+        assertEquals(EventStatus.EndedThisWeek(today.minusDays(6)), status(today.minusDays(6)))
+    }
+
+    @Test fun status_endedAWeekOrMoreAgo_isDate() {
+        assertEquals(EventStatus.EndedOn(today.minusDays(7)), status(today.minusDays(7)))
+        assertEquals(
+            EventStatus.EndedOn(LocalDate.of(2026, 3, 15)),
+            status(LocalDate.of(2026, 3, 15)),
+        )
+    }
+
+    @Test fun status_endedLastYear_isDate() {
+        val end = LocalDate.of(2025, 12, 20)
+        assertEquals(EventStatus.EndedOn(end), status(end, on = LocalDate.of(2026, 1, 3)))
+    }
+
+    @Test fun status_tomorrowAcrossYearBoundary() {
+        assertEquals(
+            EventStatus.StartsTomorrow,
+            status(LocalDate.of(2027, 1, 1), on = LocalDate.of(2026, 12, 31)),
+        )
+        assertEquals(
+            EventStatus.EndedYesterday,
+            status(LocalDate.of(2026, 12, 31), on = LocalDate.of(2027, 1, 1)),
+        )
+    }
+
+    @Test fun status_agreesWithSectionForEveryOffset() {
+        // Running states exactly cover LIVE; Starts* cover UPCOMING; Ended* cover RECENT.
+        for (offset in -20L..20L) {
+            val e = event("e", today.plusDays(offset), today.plusDays(offset + 2))
+            val expected = e.sectionFor(today)
+            val actual =
+                when (e.statusLabel(today)) {
+                    EventStatus.Today, is EventStatus.Running -> EventSection.LIVE
+                    EventStatus.StartsTomorrow,
+                    is EventStatus.StartsThisWeek,
+                    is EventStatus.StartsOn,
+                    -> EventSection.UPCOMING
+                    EventStatus.EndedYesterday,
+                    is EventStatus.EndedThisWeek,
+                    is EventStatus.EndedOn,
+                    -> EventSection.RECENT
+                }
+            assertEquals(expected, actual, "offset $offset")
+        }
     }
 }
