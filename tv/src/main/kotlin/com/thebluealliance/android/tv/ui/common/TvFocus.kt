@@ -1,5 +1,6 @@
 package com.thebluealliance.android.tv.ui.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,7 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.onPlaced
+import androidx.tv.material3.Border
+import androidx.tv.material3.MaterialTheme
+import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 
 // Focus helpers adapted from the official TvMaterialCatalog sample (Apache-2.0):
 // https://github.com/android/tv-samples/tree/main/TvMaterialCatalog
@@ -66,6 +72,22 @@ fun PositionFocusedItemInLazyLayout(
         content = content,
     )
 }
+
+/**
+ * The cards' focus ring (CardDefaults.border(): 3dp in the theme's border colour) painted entirely
+ * inside the bounds, for surfaces that can't bloom (they hug a clip edge or span the viewport). The
+ * negative inset pulls the stroke's centreline in by half its width. [shape] is that centreline's
+ * shape: for a rounded rect, pass the component radius minus half the stroke so the ring's outer
+ * edge matches the component's corners. Pressed reuses it, as the library's pressed = focused.
+ */
+@Composable
+@ReadOnlyComposable
+fun insideFocusBorder(shape: Shape): Border =
+    Border(
+        border = BorderStroke(TbaFocusBorderWidth, MaterialTheme.colorScheme.border),
+        inset = -TbaFocusBorderWidth / 2,
+        shape = shape,
+    )
 
 /** Requests focus the first time this node is placed — more reliable than LaunchedEffect(Unit). */
 @Composable

@@ -14,8 +14,6 @@ val TbaArtGradientEnd = Color(0xFF10141C)
 // Lamp watermark tint on the art: a light TBA indigo so it reads as brand, not a grey shape.
 val TbaArtWatermark = Color(0xFF7986CB)
 
-// Card focus ring. White, because a blue ring disappears against the blue placeholder art.
-val TbaCardFocusRing = Color.White
 val TbaBackground = Color(0xFF0E1116)
 val TbaSurface = Color(0xFF1A1F2B)
 val TbaSurfaceVariant = Color(0xFF252B3A)
