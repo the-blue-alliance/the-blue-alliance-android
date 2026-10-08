@@ -34,7 +34,7 @@ googleid = "1.2.1"
 
 work = "2.12.0"
 glance = "1.3.0-alpha02"
-wear-compose = "1.6.2"
+wear-compose = "1.7.0"
 wear-complications = "1.3.0"
 core-splashscreen = "1.2.0"
 tv-material = "1.1.0"
