@@ -13,6 +13,17 @@
     <string name="section_upcoming">Upcoming</string>
     <string name="section_recent">Recent</string>
     <string name="sample_data">SAMPLE DATA</string>
+
+    <!-- Card status badges. Date-based only: never imply a stream is live. -->
+    <string name="status_today">Today</string>
+    <!-- %1$d is today's 1-based day of the event, %2$d the event's total days. -->
+    <string name="status_day_of">Day %1$d of %2$d</string>
+    <string name="status_starts_tomorrow">Tomorrow</string>
+    <!-- %1$s is a short weekday (e.g. Sat) or a short date (e.g. Oct 3). -->
+    <string name="status_starts">Starts %1$s</string>
+    <string name="status_ended_yesterday">Ended yesterday</string>
+    <!-- %1$s is a short weekday (e.g. Sun) or a short date (e.g. Sep 2). -->
+    <string name="status_ended">Ended %1$s</string>
     <string name="about">About</string>
     <string name="empty_title">No webcasts right now</string>
     <string name="empty_message">Check back when events are live or scheduled.</string>

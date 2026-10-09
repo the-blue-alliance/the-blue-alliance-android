@@ -38,7 +38,7 @@ class EventsViewModel(
             _uiState.value =
                 try {
                     val events = repository.getEvents(today.year)
-                    EventsUiState.Success(EventFeed.from(events, today), usingMockData)
+                    EventsUiState.Success(EventFeed.from(events, today), usingMockData, today)
                 } catch (e: Exception) {
                     EventsUiState.Error(friendlyError(e))
                 }
