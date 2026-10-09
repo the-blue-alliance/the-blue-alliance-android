@@ -493,7 +493,7 @@ private fun camelCaseToLabel(key: String): String =
         .trim()
         .replaceFirstChar { it.uppercase() }
 
-private fun getOrderedBreakdownFields(
+internal fun getOrderedBreakdownFields(
     year: Int,
     redBreakdown: Map<String, String>,
     blueBreakdown: Map<String, String>,
@@ -537,10 +537,10 @@ private val breakdownFields2026 =
         "energizedAchieved" to "Energized bonus",
         "superchargedAchieved" to "Supercharged bonus",
         "traversalAchieved" to "Traversal bonus",
-        "minorFoulCount" to "Minor fouls",
-        "majorFoulCount" to "Major fouls",
         "g206Penalty" to "G206 penalty",
-        "foulPoints" to "Foul points",
+        "minorFoulCount" to "Minor fouls committed",
+        "majorFoulCount" to "Major fouls committed",
+        "foulPoints" to "Foul points received",
         "adjustPoints" to "Adjust",
         "totalPoints" to "Total",
         "rp" to "RP",
@@ -567,9 +567,9 @@ private val breakdownFields2025 =
         "autoBonusAchieved" to "Auto bonus",
         "coralBonusAchieved" to "Coral bonus",
         "bargeBonusAchieved" to "Barge bonus",
-        "foulCount" to "Fouls",
-        "techFoulCount" to "Tech fouls",
-        "foulPoints" to "Foul points",
+        "foulCount" to "Fouls committed",
+        "techFoulCount" to "Tech fouls committed",
+        "foulPoints" to "Foul points received",
         "adjustPoints" to "Adjust",
         "totalPoints" to "Total",
         "rp" to "RP",
@@ -600,9 +600,9 @@ private val breakdownFields2024 =
         "coopertitionBonusAchieved" to "Coopertition",
         "melodyBonusAchieved" to "Melody bonus",
         "ensembleBonusAchieved" to "Ensemble bonus",
-        "foulCount" to "Fouls",
-        "techFoulCount" to "Tech fouls",
-        "foulPoints" to "Foul points",
+        "foulCount" to "Fouls committed",
+        "techFoulCount" to "Tech fouls committed",
+        "foulPoints" to "Foul points received",
         "adjustPoints" to "Adjust",
         "totalPoints" to "Total",
         "rp" to "RP",
@@ -629,12 +629,41 @@ private val breakdownFields2023 =
         "activationBonusAchieved" to "Activation bonus",
         "sustainabilityBonusAchieved" to "Sustainability bonus",
         "coopertitionCriteriaMet" to "Coopertition",
-        "foulCount" to "Fouls",
-        "techFoulCount" to "Tech fouls",
-        "foulPoints" to "Foul points",
+        "foulCount" to "Fouls committed",
+        "techFoulCount" to "Tech fouls committed",
+        "foulPoints" to "Foul points received",
         "adjustPoints" to "Adjust",
         "totalPoints" to "Total",
         "rp" to "RP",
+    )
+
+private val breakdownFields2015 =
+    listOf(
+        "robot_set" to "Robot set",
+        "container_set" to "Container set",
+        "tote_set" to "Tote set",
+        "tote_stack" to "Stacked tote set",
+        "auto_points" to "Total auto",
+        "tote_count_far" to "Totes (far)",
+        "tote_count_near" to "Totes (near)",
+        "tote_points" to "Tote points",
+        "container_count_level1" to "Containers level 1",
+        "container_count_level2" to "Containers level 2",
+        "container_count_level3" to "Containers level 3",
+        "container_count_level4" to "Containers level 4",
+        "container_count_level5" to "Containers level 5",
+        "container_count_level6" to "Containers level 6",
+        "container_points" to "Container points",
+        "litter_count_container" to "Litter in containers",
+        "litter_count_landfill" to "Litter in landfill",
+        "litter_count_unprocessed" to "Unprocessed litter",
+        "litter_points" to "Litter points",
+        "teleop_points" to "Total teleop",
+        "foul_count" to "Fouls committed",
+        // In 2015 fouls were deducted from the offending alliance's own score.
+        "foul_points" to "Foul points deducted",
+        "adjust_points" to "Adjust",
+        "total_points" to "Total",
     )
 
 private val breakdownFieldsByYear =
@@ -643,4 +672,5 @@ private val breakdownFieldsByYear =
         2025 to breakdownFields2025,
         2024 to breakdownFields2024,
         2023 to breakdownFields2023,
+        2015 to breakdownFields2015,
     )
