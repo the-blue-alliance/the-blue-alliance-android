@@ -201,6 +201,10 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
+    // Coil — stream thumbnails layered over the card's placeholder art
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
+
     // Firebase — Crashlytics + Analytics auto-initialize via the google-services
     // plugin and the bundled google-services.json. Remote Config fetches the TBA
     // API key from apiv3_auth_key on release builds. All matching :app and :wear.
