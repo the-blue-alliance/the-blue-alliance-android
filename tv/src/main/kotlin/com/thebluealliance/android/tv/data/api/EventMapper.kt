@@ -1,7 +1,9 @@
 package com.thebluealliance.android.tv.data.api
 
 import com.thebluealliance.android.data.remote.dto.EventDto
+import com.thebluealliance.android.tv.data.model.District
 import com.thebluealliance.android.tv.data.model.Event
+import com.thebluealliance.android.tv.data.model.EventType
 import com.thebluealliance.android.tv.data.model.WebcastResolver
 import java.time.LocalDate
 
@@ -23,5 +25,13 @@ fun EventDto.toDomainOrNull(): Event? {
                 .orEmpty()
                 .filter { it.channel.isNotBlank() }
                 .map { WebcastResolver.resolve(it.type, it.channel, it.file, it.date) },
+        type = EventType.fromApi(eventType),
+        district =
+            district?.let {
+                District(
+                    abbreviation = it.abbreviation,
+                    displayName = it.displayName,
+                )
+            },
     )
 }

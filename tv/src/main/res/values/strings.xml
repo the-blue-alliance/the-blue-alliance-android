@@ -2,7 +2,14 @@
     <string name="app_name">The Blue Alliance</string>
 
     <!-- Events feed -->
+    <!-- "Happening Now" rather than "Live": events run today, but we can't confirm a stream is up. -->
+    <!-- Also the de-emphasised suffix on today's group rows, e.g. "Regionals  ·  Happening Now". -->
     <string name="section_happening_now">Happening Now</string>
+    <!-- Group names for today's rows (district rows use the district's own name). -->
+    <string name="group_championship">Championship</string>
+    <string name="group_regionals">Regionals</string>
+    <string name="group_more_events">More Events</string>
+    <string name="group_offseason">Offseason</string>
     <string name="section_upcoming">Upcoming</string>
     <string name="section_recent">Recent</string>
     <string name="sample_data">SAMPLE DATA</string>
