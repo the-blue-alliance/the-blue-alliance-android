@@ -20,8 +20,8 @@ import androidx.tv.material3.Text
 import com.thebluealliance.android.tv.R
 
 /**
- * The single retry affordance shared by every load-failure state. Colours come from the theme so
- * focus reads the same here as on the feed cards (primary fill → secondary on focus).
+ * The single retry affordance shared by every load-failure state. A filled button, so focus is a
+ * fill change (primary → secondary), matching the webcast picker's buttons rather than the card ring.
  */
 @Composable
 fun RetryButton(
