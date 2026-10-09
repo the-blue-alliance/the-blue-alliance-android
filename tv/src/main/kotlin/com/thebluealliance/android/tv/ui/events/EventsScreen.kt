@@ -3,6 +3,7 @@
 package com.thebluealliance.android.tv.ui.events
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
@@ -41,6 +42,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +57,7 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -86,6 +90,13 @@ import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.decode.DataSource
+import coil3.request.ImageRequest
+import coil3.request.transformations
+import coil3.size.Size
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
@@ -93,6 +104,7 @@ import com.thebluealliance.android.tv.data.model.EventFeed
 import com.thebluealliance.android.tv.data.model.EventStatus
 import com.thebluealliance.android.tv.data.model.RowTitle
 import com.thebluealliance.android.tv.data.model.Webcast
+import com.thebluealliance.android.tv.data.model.WebcastThumbnails
 import com.thebluealliance.android.tv.data.model.WebcastType
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
@@ -118,6 +130,7 @@ import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
 import com.thebluealliance.android.tv.ui.theme.TbaScreenHPadding
 import com.thebluealliance.android.tv.ui.theme.TwitchPurple
 import com.thebluealliance.android.tv.ui.theme.YouTubeRed
+import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -359,6 +372,8 @@ private fun EventFeedContent(
     onEventClick: (Event) -> Unit,
 ) {
     val rows = remember(feed) { feed.rows() }
+    // Once per feed load, so Twitch previews refresh on reload but not on every recomposition.
+    val thumbnailBucket = remember(feed) { WebcastThumbnails.cacheBucket(Instant.now()) }
     // Initial focus lands on the very first card exactly once. The hoisted guard lives here (not on
     // the card) so recycling cards as the user scrolls never re-fires the request — which would snap
     // focus and scroll back to the top of the feed.
@@ -417,6 +432,7 @@ private fun EventFeedContent(
                             EventCard(
                                 event = event,
                                 status = event.statusLabel(today),
+                                thumbnailUrl = WebcastThumbnails.url(event, today, thumbnailBucket),
                                 onClick = { onEventClick(event) },
                                 modifier =
                                     if (rowIndex == 0 && eIndex == 0) {
@@ -475,6 +491,7 @@ private val LampAspectRatio = 72f / 112f // ic_tba_lamp's viewport
 private fun EventCard(
     event: Event,
     status: EventStatus,
+    thumbnailUrl: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -532,7 +549,7 @@ private fun EventCard(
                         .semantics { contentDescription = description },
                 interactionSource = source,
             ) {
-                EventArt(event, status, statusText)
+                EventArt(event, status, statusText, thumbnailUrl)
             }
         },
         // The full official name, not the short name already on the art: it adds information and
@@ -559,14 +576,15 @@ private fun EventCard(
 }
 
 /**
- * The card's 16:9 art. Today it's always the branded placeholder; stream thumbnails will layer over
- * it (between the placeholder and the scrim) so a failed load still leaves a finished tile.
+ * The card's 16:9 art. The branded placeholder always draws; a stream thumbnail layers over it
+ * (between the placeholder and the scrim) so a missing or failed load still leaves a finished tile.
  */
 @Composable
 private fun EventArt(
     event: Event,
     status: EventStatus,
     statusText: String,
+    thumbnailUrl: String?,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -575,13 +593,6 @@ private fun EventArt(
             .background(PlaceholderBrush)
             .clearAndSetSemantics {},
     ) {
-        Box(
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(ArtScrimFraction)
-                .background(ArtScrimBrush),
-        )
         // Brand-tinted lamp watermark, just kissing the bottom-right edge (clipped by the card shape).
         Image(
             painter = painterResource(R.drawable.ic_tba_lamp),
@@ -616,23 +627,66 @@ private fun EventArt(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
         )
+        thumbnailUrl?.let { StreamThumbnail(it) }
+        Box(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .fillMaxHeight(ArtScrimFraction)
+                .background(ArtScrimBrush),
+        )
         StatusBadge(statusText, Modifier.align(Alignment.TopStart).padding(ArtOverlayInset))
         // Monochrome on purpose: brand-coloured chips were the loudest thing on screen.
         if (event.streamPlatforms.isNotEmpty()) {
-            // Same height as the badge so the two top-corner labels share a centre line.
-            Box(
-                Modifier.align(Alignment.TopEnd).padding(ArtOverlayInset).height(StatusBadgeHeight),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    event.streamPlatforms.joinToString(" · ") { it.label },
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.White.copy(alpha = 0.8f),
-                    maxLines = 1,
-                )
-            }
+            // Same dark pill as the date badge: bare white text vanished on bright stream stills.
+            StatusBadge(
+                event.streamPlatforms.joinToString(" · ") { it.label },
+                Modifier.align(Alignment.TopEnd).padding(ArtOverlayInset),
+            )
         }
     }
+}
+
+private val ThumbnailFadeMs = 250
+
+/**
+ * A YouTube/Twitch still over the placeholder. It stays invisible until it loads *and* passes the
+ * missing-art checks, so errors, offline channels and YouTube's grey or black slates all leave the
+ * placeholder.
+ */
+@Composable
+private fun StreamThumbnail(url: String) {
+    val context = LocalPlatformContext.current
+    // Decode at the source size so the art check sees the CDN's real pixels, not a downsample.
+    val request =
+        remember(url) {
+            ImageRequest
+                .Builder(context)
+                .data(url)
+                .size(Size.ORIGINAL)
+                .transformations(MissingArtCheck)
+                .build()
+        }
+    val painter = rememberAsyncImagePainter(request)
+    val state by painter.state.collectAsState()
+    val success = state as? AsyncImagePainter.State.Success
+    val alpha = remember(url) { Animatable(0f) }
+    LaunchedEffect(success) {
+        when {
+            success == null -> alpha.snapTo(0f)
+            // Already in memory (scrolling back to a card): show it at once rather than re-fading.
+            success.result.dataSource == DataSource.MEMORY_CACHE -> alpha.snapTo(1f)
+            else -> alpha.animateTo(1f, tween(ThumbnailFadeMs))
+        }
+    }
+    Image(
+        painter = painter,
+        contentDescription = null,
+        // hqdefault is a letterboxed 4:3 frame; a 16:9 centre crop removes the bars exactly.
+        contentScale = ContentScale.Crop,
+        alpha = alpha.value,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 // The art is ~151dp tall and the badge ends 34dp down, so a vertically centred title of up to two
