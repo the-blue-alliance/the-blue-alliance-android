@@ -62,9 +62,16 @@ Release assets do NOT work here — the org has immutable releases enabled.
 ```bash
 # Uploads images, then rewrites the PR body's screenshot block in place.
 scripts/pr-screenshots.sh --pr <N> \
-  --row "Label" before.png after.png \   # a before/after table row (repeatable)
-  --shot "Label" single.png              # a single image (repeatable)
+  --row "Label" before.png after.png \   # one table row: Before | After | Diff (repeatable)
+  --shot "Label" single.png              # a single image, listed after the table (repeatable)
 ```
+
+Every visual change gets the same evidence: one table where each row shows **Before |
+After | Diff** side by side. The script computes the diff itself (changed pixels in
+magenta over a dimmed "after", with the % of pixels changed under it), so don't make or
+upload diff images by hand. Capture before and after from the same screen state at the
+same size; the script refuses a size mismatch. Use `--shot` only for states with no
+"before". Needs python3 + Pillow; `--no-diff` drops the column.
 
 Omit `--pr` to just print the markdown. Re-runs cleanly replace the
 `<!-- screenshots:start/end -->` block. Works on fork PRs too (run as a maintainer).

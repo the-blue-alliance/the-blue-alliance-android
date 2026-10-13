@@ -24,7 +24,16 @@ val rpBonusFields: Set<String> = rpBonusFieldsByYear.values.flatten().toSet()
 
 /** Boolean fields that should display as ✓/✗ (RP bonuses + other booleans). */
 val booleanDisplayFields: Set<String> =
-    rpBonusFields + setOf("coopertitionBonusAchieved", "coopertitionCriteriaMet", "g206Penalty")
+    rpBonusFields +
+        setOf(
+            "coopertitionBonusAchieved",
+            "coopertitionCriteriaMet",
+            "g206Penalty",
+            "robot_set",
+            "container_set",
+            "tote_set",
+            "tote_stack",
+        )
 
 data class AllianceRpBonuses(
     val red: List<Boolean>,
@@ -73,6 +82,7 @@ fun formatBreakdownValue(
         apiKey == "rp" -> "+$value RP"
         apiKey in rpBonusFields -> if (value == "true") "✓ (+1 RP)" else "✗"
         apiKey in booleanDisplayFields -> if (value == "true") "✓" else "✗"
+        apiKey == "foul_points" && value != "0" -> "−$value"
         else -> value
     }
 }
