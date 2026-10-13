@@ -5,6 +5,7 @@
     "year": 2026,
     "name": "Battle at the Border (Off-Season)",
     "short_name": "Battle at the Border",
+    "event_type": 99,
     "city": "Detroit",
     "state_prov": "MI",
     "country": "USA",
@@ -21,6 +22,7 @@
     "year": 2026,
     "name": "Beach Blitz (Off-Season)",
     "short_name": "Beach Blitz",
+    "event_type": 99,
     "city": "Cape Coral",
     "state_prov": "FL",
     "country": "USA",
@@ -32,16 +34,248 @@
     ]
   },
   {
+    "key": "2026mitvc",
+    "event_code": "mitvc",
+    "year": 2026,
+    "name": "FIM District Traverse City Event",
+    "short_name": "Traverse City",
+    "event_type": 1,
+    "district": { "abbreviation": "fim", "display_name": "FIRST In Michigan", "key": "2026fim", "year": 2026 },
+    "week": 5,
+    "city": "Traverse City",
+    "state_prov": "MI",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstinmichigan" }
+    ]
+  },
+  {
+    "key": "2026milan",
+    "event_code": "milan",
+    "year": 2026,
+    "name": "FIM District Lansing Event",
+    "short_name": "Lansing",
+    "event_type": 1,
+    "district": { "abbreviation": "fim", "display_name": "FIRST In Michigan", "key": "2026fim", "year": 2026 },
+    "week": 5,
+    "city": "Mason",
+    "state_prov": "MI",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstinmichigan2" }
+    ]
+  },
+  {
+    "key": "2026mimil",
+    "event_code": "mimil",
+    "year": 2026,
+    "name": "FIM District Milford Event",
+    "short_name": "Milford",
+    "event_type": 1,
+    "district": { "abbreviation": "fim", "display_name": "FIRST In Michigan", "key": "2026fim", "year": 2026 },
+    "week": 5,
+    "city": "Milford",
+    "state_prov": "MI",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "fim-milford-26" }
+    ]
+  },
+  {
+    "key": "2026txcmp1",
+    "event_code": "txcmp1",
+    "year": 2026,
+    "name": "FIRST In Texas District Championship - Mercury Division",
+    "short_name": "FIT Championship - Mercury",
+    "event_type": 5,
+    "district": { "abbreviation": "fit", "display_name": "FIRST In Texas", "key": "2026fit", "year": 2026 },
+    "week": 5,
+    "city": "Houston",
+    "state_prov": "TX",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstintexas" }
+    ]
+  },
+  {
+    "key": "2026txcmp2",
+    "event_code": "txcmp2",
+    "year": 2026,
+    "name": "FIRST In Texas District Championship - Apollo Division",
+    "short_name": "FIT Championship - Apollo",
+    "event_type": 5,
+    "district": { "abbreviation": "fit", "display_name": "FIRST In Texas", "key": "2026fit", "year": 2026 },
+    "week": 5,
+    "city": "Houston",
+    "state_prov": "TX",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "firstintexas2" }
+    ]
+  },
+  {
+    "key": "2026onwat",
+    "event_code": "onwat",
+    "year": 2026,
+    "name": "ONT District University of Waterloo Event",
+    "short_name": "University of Waterloo",
+    "event_type": 1,
+    "district": { "abbreviation": "ont", "display_name": "Ontario", "key": "2026ont", "year": 2026 },
+    "week": 5,
+    "city": "Waterloo",
+    "state_prov": "ON",
+    "country": "Canada",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-31",
+    "webcasts": [
+      { "type": "youtube", "channel": "ont-waterloo-26" }
+    ]
+  },
+  {
+    "key": "2026onbar",
+    "event_code": "onbar",
+    "year": 2026,
+    "name": "ONT District Georgian Event",
+    "short_name": "Georgian",
+    "event_type": 1,
+    "district": { "abbreviation": "ont", "display_name": "Ontario", "key": "2026ont", "year": 2026 },
+    "week": 5,
+    "city": "Barrie",
+    "state_prov": "ON",
+    "country": "Canada",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-31",
+    "webcasts": [
+      { "type": "youtube", "channel": "ont-georgian-26" }
+    ]
+  },
+  {
+    "key": "2026nhgrs",
+    "event_code": "nhgrs",
+    "year": 2026,
+    "name": "NE District Granite State Event",
+    "short_name": "Granite State",
+    "event_type": 1,
+    "district": { "abbreviation": "ne", "display_name": "New England", "key": "2026ne", "year": 2026 },
+    "week": 5,
+    "city": "Salem",
+    "state_prov": "NH",
+    "country": "USA",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "nefirst_red" }
+    ]
+  },
+  {
+    "key": "2026wasam",
+    "event_code": "wasam",
+    "year": 2026,
+    "name": "PNW District Sammamish Event",
+    "short_name": "Sammamish",
+    "event_type": 1,
+    "district": { "abbreviation": "pnw", "display_name": "Pacific Northwest", "key": "2026pnw", "year": 2026 },
+    "week": 5,
+    "city": "Sammamish",
+    "state_prov": "WA",
+    "country": "USA",
+    "start_date": "2026-05-29",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "pnw-sammamish-26" }
+    ]
+  },
+  {
+    "key": "2026cala",
+    "event_code": "cala",
+    "year": 2026,
+    "name": "Los Angeles Regional",
+    "short_name": "Los Angeles",
+    "event_type": 0,
+    "week": 5,
+    "city": "Los Angeles",
+    "state_prov": "CA",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "frcla" }
+    ]
+  },
+  {
+    "key": "2026azva",
+    "event_code": "azva",
+    "year": 2026,
+    "name": "Arizona Valley Regional",
+    "short_name": "Arizona Valley",
+    "event_type": 0,
+    "week": 5,
+    "city": "Phoenix",
+    "state_prov": "AZ",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "az-valley-26" }
+    ]
+  },
+  {
+    "key": "2026utwv",
+    "event_code": "utwv",
+    "year": 2026,
+    "name": "Utah Regional",
+    "short_name": "Utah",
+    "event_type": 0,
+    "week": 5,
+    "city": "West Valley City",
+    "state_prov": "UT",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "twitch", "channel": "utahfrc" }
+    ]
+  },
+  {
+    "key": "2026mndu",
+    "event_code": "mndu",
+    "year": 2026,
+    "name": "Lake Superior Regional",
+    "short_name": "Lake Superior",
+    "event_type": 0,
+    "week": 5,
+    "city": "Duluth",
+    "state_prov": "MN",
+    "country": "USA",
+    "start_date": "2026-05-28",
+    "end_date": "2026-05-30",
+    "webcasts": [
+      { "type": "youtube", "channel": "mn-lake-superior-26" },
+      { "type": "twitch", "channel": "mnfirst" }
+    ]
+  },
+  {
     "key": "2026moctt",
     "event_code": "moctt",
     "year": 2026,
     "name": "Cow Town Throwdown (Off-Season)",
     "short_name": "Cow Town Throwdown",
+    "event_type": 99,
     "city": "Kansas City",
     "state_prov": "MO",
     "country": "USA",
-    "start_date": "2026-05-30",
-    "end_date": "2026-05-30",
+    "start_date": "2026-06-13",
+    "end_date": "2026-06-13",
     "webcasts": [
       { "type": "youtube", "channel": "frc-kc-2026" }
     ]
@@ -52,11 +286,12 @@
     "year": 2026,
     "name": "Ontario Summer Showdown (Off-Season)",
     "short_name": "Ontario Summer Showdown",
+    "event_type": 99,
     "city": "Toronto",
     "state_prov": "ON",
     "country": "Canada",
-    "start_date": "2026-05-30",
-    "end_date": "2026-05-30",
+    "start_date": "2026-05-23",
+    "end_date": "2026-05-23",
     "webcasts": [
       { "type": "livestream", "channel": "https://livestream.firstinspires.org/on-summer" }
     ]
@@ -67,6 +302,7 @@
     "year": 2026,
     "name": "Summer Heat (Off-Season)",
     "short_name": "Summer Heat",
+    "event_type": 99,
     "city": "Phoenix",
     "state_prov": "AZ",
     "country": "USA",
@@ -82,6 +318,7 @@
     "year": 2026,
     "name": "Indiana Robotics Invitational (Off-Season)",
     "short_name": "Indiana Robotics Invitational",
+    "event_type": 99,
     "city": "Indianapolis",
     "state_prov": "IN",
     "country": "USA",
@@ -97,6 +334,8 @@
     "year": 2026,
     "name": "FIRST Championship — Houston",
     "short_name": "Houston Championship",
+    "event_type": 4,
+    "week": 7,
     "city": "Houston",
     "state_prov": "TX",
     "country": "USA",
@@ -113,6 +352,9 @@
     "year": 2026,
     "name": "FIRST in Michigan State Championship",
     "short_name": "Michigan State Championship",
+    "event_type": 2,
+    "district": { "abbreviation": "fim", "display_name": "FIRST In Michigan", "key": "2026fim", "year": 2026 },
+    "week": 5,
     "city": "Saginaw",
     "state_prov": "MI",
     "country": "USA",
@@ -128,6 +370,9 @@
     "year": 2026,
     "name": "New England District Championship",
     "short_name": "New England Championship",
+    "event_type": 2,
+    "district": { "abbreviation": "ne", "display_name": "New England", "key": "2026ne", "year": 2026 },
+    "week": 6,
     "city": "Springfield",
     "state_prov": "MA",
     "country": "USA",
@@ -143,6 +388,8 @@
     "year": 2026,
     "name": "New York City Regional",
     "short_name": "NYC Regional",
+    "event_type": 0,
+    "week": 3,
     "city": "New York",
     "state_prov": "NY",
     "country": "USA",

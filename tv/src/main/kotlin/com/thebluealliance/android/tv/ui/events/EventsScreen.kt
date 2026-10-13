@@ -3,7 +3,9 @@
 package com.thebluealliance.android.tv.ui.events
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -11,24 +13,39 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,59 +56,104 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.Card
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.Glow
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.decode.DataSource
+import coil3.request.ImageRequest
+import coil3.request.transformations
+import coil3.size.Size
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
+import com.thebluealliance.android.tv.data.model.EventStatus
+import com.thebluealliance.android.tv.data.model.RowTitle
 import com.thebluealliance.android.tv.data.model.Webcast
+import com.thebluealliance.android.tv.data.model.WebcastThumbnails
 import com.thebluealliance.android.tv.data.model.WebcastType
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.StatusMessage
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
 import com.thebluealliance.android.tv.ui.common.ifElse
+import com.thebluealliance.android.tv.ui.common.insideFocusBorder
 import com.thebluealliance.android.tv.ui.common.requestFocusOnFirstGainingVisibility
+import com.thebluealliance.android.tv.ui.theme.TbaArtGradientEnd
+import com.thebluealliance.android.tv.ui.theme.TbaArtGradientStart
+import com.thebluealliance.android.tv.ui.theme.TbaArtTitleStyle
+import com.thebluealliance.android.tv.ui.theme.TbaArtWatermark
 import com.thebluealliance.android.tv.ui.theme.TbaBlueBright
+import com.thebluealliance.android.tv.ui.theme.TbaCardArtAspectRatio
 import com.thebluealliance.android.tv.ui.theme.TbaCardShape
-import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
+import com.thebluealliance.android.tv.ui.theme.TbaCardSpacing
+import com.thebluealliance.android.tv.ui.theme.TbaCardTextGap
+import com.thebluealliance.android.tv.ui.theme.TbaCardWidth
 import com.thebluealliance.android.tv.ui.theme.TbaIconButtonSize
 import com.thebluealliance.android.tv.ui.theme.TbaIconSize
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
 import com.thebluealliance.android.tv.ui.theme.TbaScreenHPadding
-import com.thebluealliance.android.tv.ui.theme.TwitchOnChip
 import com.thebluealliance.android.tv.ui.theme.TwitchPurple
-import com.thebluealliance.android.tv.ui.theme.YouTubeOnChip
 import com.thebluealliance.android.tv.ui.theme.YouTubeRed
+import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private val MonthDay: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d")
 private val DayOnly: DateTimeFormatter = DateTimeFormatter.ofPattern("d")
 private val WebcastDay: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, MMM d")
+private val Weekday: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE")
+
+@Composable
+private fun EventStatus.text(): String =
+    when (this) {
+        EventStatus.Today -> stringResource(R.string.status_today)
+        is EventStatus.Running -> stringResource(R.string.status_day_of, day, totalDays)
+        EventStatus.StartsTomorrow -> stringResource(R.string.status_starts_tomorrow)
+        is EventStatus.StartsThisWeek ->
+            stringResource(R.string.status_starts, date.format(Weekday))
+        is EventStatus.StartsOn -> stringResource(R.string.status_starts, date.format(MonthDay))
+        EventStatus.EndedYesterday -> stringResource(R.string.status_ended_yesterday)
+        is EventStatus.EndedThisWeek -> stringResource(R.string.status_ended, date.format(Weekday))
+        is EventStatus.EndedOn -> stringResource(R.string.status_ended, date.format(MonthDay))
+    }
 
 private fun Event.dateRangeLabel(): String =
     when {
@@ -108,26 +170,77 @@ private fun Webcast.pickerLabel(): String =
     date?.let { stringResource(R.string.watch_on_dated, type.label, it.format(WebcastDay)) }
         ?: stringResource(R.string.watch_on, type.label)
 
-private data class Section(
-    @StringRes val titleRes: Int,
-    val events: List<Event>,
-)
-
-private fun EventFeed.rowSections(): List<Section> =
-    buildList {
-        // "Happening Now" rather than "Live": these events are running today, but we can't confirm a
-        // webcast is actually streaming this second, so we don't claim it.
-        if (live.isNotEmpty()) add(Section(R.string.section_happening_now, live))
-        if (upcoming.isNotEmpty()) add(Section(R.string.section_upcoming, upcoming))
-        if (recent.isNotEmpty()) add(Section(R.string.section_recent, recent))
+@Composable
+private fun RowTitle.text(): AnnotatedString {
+    // Today's group rows lead with what the row is ("FIRST In Michigan") and demote the shared
+    // "Happening Now" marker to a quieter suffix, so a stack of today rows scans by group name.
+    val group =
+        when (this) {
+            RowTitle.HappeningNow -> stringResource(R.string.section_happening_now)
+            RowTitle.Upcoming -> stringResource(R.string.section_upcoming)
+            RowTitle.Recent -> stringResource(R.string.section_recent)
+            RowTitle.Championship -> stringResource(R.string.group_championship)
+            is RowTitle.District -> displayName
+            RowTitle.Regionals -> stringResource(R.string.group_regionals)
+            RowTitle.MoreEvents -> stringResource(R.string.group_more_events)
+            RowTitle.Offseason -> stringResource(R.string.group_offseason)
+        }
+    val isTodayGroup =
+        this != RowTitle.HappeningNow && this != RowTitle.Upcoming && this != RowTitle.Recent
+    if (!isTodayGroup) return AnnotatedString(group)
+    val suffix = stringResource(R.string.section_happening_now)
+    val suffixStyle =
+        SpanStyle(
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Normal,
+        )
+    return buildAnnotatedString {
+        append(group)
+        withStyle(suffixStyle) { append("  ·  $suffix") }
     }
+}
+
+/**
+ * The feed's one-shot focus guards. The caller hoists this above the feed <-> About swap: the feed's
+ * composition is disposed while About shows, so guards remembered inside it would reset and snap
+ * focus back to the first card on return. Plain (non-saveable) state on purpose — after a process
+ * death restore there is no focus to return to, so the first card should take initial focus again.
+ */
+@Stable
+class FeedFocusState {
+    /** False until the first card has taken initial focus. */
+    internal val initialFocusDone = mutableStateOf(false)
+
+    /** False while focus owes a return to the ⓘ button that opened About. */
+    internal val aboutFocusDone = mutableStateOf(true)
+
+    internal fun onAboutOpened() {
+        // Back must land on ⓘ, not on a first card that loaded while About was showing.
+        initialFocusDone.value = true
+    }
+
+    /**
+     * Call when leaving About so ⓘ takes focus as soon as the rebuilt feed places it. Armed here
+     * rather than on open: the outgoing feed stays composed while it fades out, and an armed ⓘ
+     * re-placed mid-fade would steal focus back from About.
+     */
+    fun onAboutClosed() {
+        aboutFocusDone.value = false
+    }
+}
 
 @Composable
 fun EventsScreen(
     viewModel: EventsViewModel,
+    focusState: FeedFocusState,
     onAboutClick: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val aboutFocusDone = focusState.aboutFocusDone
+    val openAbout = {
+        focusState.onAboutOpened()
+        onAboutClick()
+    }
     val context = LocalContext.current
     var pickerEvent by remember { mutableStateOf<Event?>(null) }
 
@@ -140,24 +253,36 @@ fun EventsScreen(
             EventsUiState.Loading ->
                 WithFixedHeader(
                     usingMockData = false,
-                    onAboutClick = onAboutClick,
+                    onAboutClick = openAbout,
+                    aboutFocusDone = aboutFocusDone,
                 ) {
                     LoadingSkeleton()
                 }
             is EventsUiState.Error ->
-                WithFixedHeader(usingMockData = false, onAboutClick = onAboutClick) {
+                WithFixedHeader(
+                    usingMockData = false,
+                    onAboutClick = openAbout,
+                    aboutFocusDone = aboutFocusDone,
+                ) {
                     CenteredMessage { ErrorContent(s.messageRes, viewModel::refresh) }
                 }
             is EventsUiState.Success ->
                 if (s.feed.isEmpty) {
-                    WithFixedHeader(usingMockData = s.usingMockData, onAboutClick = onAboutClick) {
+                    WithFixedHeader(
+                        usingMockData = s.usingMockData,
+                        onAboutClick = openAbout,
+                        aboutFocusDone = aboutFocusDone,
+                    ) {
                         CenteredMessage { EmptyContent() }
                     }
                 } else {
                     EventFeedContent(
                         feed = s.feed,
+                        today = s.today,
                         usingMockData = s.usingMockData,
-                        onAboutClick = onAboutClick,
+                        initialFocusDone = focusState.initialFocusDone,
+                        onAboutClick = openAbout,
+                        aboutFocusDone = aboutFocusDone,
                         onEventClick = { event ->
                             if (event.webcasts.size ==
                                 1
@@ -172,9 +297,13 @@ fun EventsScreen(
         }
     }
 
-    pickerEvent?.let { event ->
+    // The picker only opens from a card, so there's always a Success state to date it against.
+    val picking = pickerEvent
+    val today = (state as? EventsUiState.Success)?.today
+    if (picking != null && today != null) {
         WebcastPicker(
-            event = event,
+            event = picking,
+            today = today,
             onPick = { webcast ->
                 pickerEvent = null
                 WebcastLauncher.launch(context, webcast)
@@ -188,6 +317,7 @@ fun EventsScreen(
 private fun Header(
     usingMockData: Boolean,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     modifier: Modifier = Modifier,
 ) {
     // Top-align so the lamp shares its top edge with the "The Blue Alliance" wordmark.
@@ -220,18 +350,23 @@ private fun Header(
             )
         }
         Spacer(Modifier.weight(1f))
-        AboutButton(onClick = onAboutClick)
+        AboutButton(onClick = onAboutClick, focusDone = aboutFocusDone)
     }
 }
 
 /** Circular ⓘ in the top-right that opens the About screen (licenses + contributor thanks). */
 @Composable
-private fun AboutButton(onClick: () -> Unit) {
+private fun AboutButton(
+    onClick: () -> Unit,
+    // One-shot guard: when false, this button takes focus as soon as it is placed (Back from About).
+    focusDone: MutableState<Boolean>,
+) {
     val aboutLabel = stringResource(R.string.about)
     Surface(
         onClick = onClick,
         modifier =
             Modifier
+                .focusOnInitialVisibility(focusDone)
                 .size(TbaIconButtonSize)
                 .semantics { contentDescription = aboutLabel },
         shape = ClickableSurfaceDefaults.shape(CircleShape),
@@ -239,25 +374,15 @@ private fun AboutButton(onClick: () -> Unit) {
             ClickableSurfaceDefaults.colors(
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                focusedContainerColor = MaterialTheme.colorScheme.primary,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 focusedContentColor = MaterialTheme.colorScheme.onSurface,
             ),
         // This button hugs the top of the (vertically-clipping) header, so a focus scale or glow
-        // would bloom past the clip line and shear off. A border is painted inside the bounds, so
-        // it reads as focus without clipping — the same bright-border language as the feed cards.
+        // would bloom past the clip line and shear off. The cards' ring is painted inside the bounds
+        // instead, over a dark fill (the library's default focused fill is a light inverseSurface,
+        // which would swallow the ring).
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        border =
-            ClickableSurfaceDefaults.border(
-                focusedBorder =
-                    Border(
-                        border =
-                            BorderStroke(
-                                TbaFocusBorderWidth,
-                                MaterialTheme.colorScheme.secondary,
-                            ),
-                        shape = CircleShape,
-                    ),
-            ),
+        border = ClickableSurfaceDefaults.border(focusedBorder = insideFocusBorder(CircleShape)),
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
@@ -277,6 +402,7 @@ private fun AboutButton(onClick: () -> Unit) {
 private fun WithFixedHeader(
     usingMockData: Boolean,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     content: @Composable () -> Unit,
 ) {
     // These states don't scroll, so the overscan-safe top margin lives here as outer padding.
@@ -285,6 +411,7 @@ private fun WithFixedHeader(
         Header(
             usingMockData = usingMockData,
             onAboutClick = onAboutClick,
+            aboutFocusDone = aboutFocusDone,
             modifier = Modifier.padding(horizontal = TbaScreenHPadding),
         )
         Spacer(Modifier.height(20.dp))
@@ -295,15 +422,19 @@ private fun WithFixedHeader(
 @Composable
 private fun EventFeedContent(
     feed: EventFeed,
+    today: LocalDate,
     usingMockData: Boolean,
+    // Initial focus lands on the very first card exactly once. The guard is hoisted (not on the
+    // card) so recycling cards as the user scrolls never re-fires the request — which would snap
+    // focus and scroll back to the top of the feed.
+    initialFocusDone: MutableState<Boolean>,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     onEventClick: (Event) -> Unit,
 ) {
-    val rows = feed.rowSections()
-    // Initial focus lands on the very first card exactly once. The hoisted guard lives here (not on
-    // the card) so recycling cards as the user scrolls never re-fires the request — which would snap
-    // focus and scroll back to the top of the feed.
-    val initialFocusDone = remember { mutableStateOf(false) }
+    val rows = remember(feed) { feed.rows() }
+    // Once per feed load, so Twitch previews refresh on reload but not on every recomposition.
+    val thumbnailBucket = remember(feed) { WebcastThumbnails.cacheBucket(Instant.now()) }
 
     // Pivot focused cards/rows inward so D-pad focus never sits flush against the viewport
     // edge — there's always a peek of the neighbour (canonical TvMaterialCatalog pattern).
@@ -326,36 +457,43 @@ private fun EventFeedContent(
                 Header(
                     usingMockData = usingMockData,
                     onAboutClick = onAboutClick,
+                    aboutFocusDone = aboutFocusDone,
                     modifier = Modifier.padding(horizontal = TbaScreenHPadding),
                 )
             }
-            itemsIndexed(rows, key = { _, s -> s.titleRes }) { sIndex, section ->
-                Column {
+            itemsIndexed(rows, key = { _, row -> row.key }) { rowIndex, row ->
+                // Extra air above the first post-today row closes off the today block without a rule.
+                Column(Modifier.ifElse(row.startsAfterToday, Modifier.padding(top = 16.dp))) {
                     Text(
-                        stringResource(section.titleRes),
-                        style = MaterialTheme.typography.titleLarge,
+                        row.title.text(),
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = TbaScreenHPadding),
+                        modifier =
+                            Modifier
+                                .padding(start = TbaScreenHPadding)
+                                .semantics { heading() },
                     )
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(RowTitleGap))
                     // Content padding gives the focus-scale "bloom" room so it isn't clipped by
                     // the row viewport. focusRestorer returns focus to the last-focused card when
                     // you move up/down to another row and come back.
                     LazyRow(
                         modifier = Modifier.focusRestorer(),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(TbaCardSpacing),
                         contentPadding =
                             PaddingValues(
                                 horizontal = TbaScreenHPadding,
-                                vertical = 12.dp,
+                                vertical = CardRowVerticalPadding,
                             ),
                     ) {
-                        itemsIndexed(section.events, key = { _, e -> e.key }) { eIndex, event ->
+                        itemsIndexed(row.events, key = { _, e -> e.key }) { eIndex, event ->
                             EventCard(
                                 event = event,
+                                status = event.statusLabel(today),
+                                thumbnailUrl = WebcastThumbnails.url(event, today, thumbnailBucket),
                                 onClick = { onEventClick(event) },
                                 modifier =
-                                    if (sIndex == 0 && eIndex == 0) {
+                                    if (rowIndex == 0 && eIndex == 0) {
                                         Modifier.focusOnInitialVisibility(initialFocusDone)
                                     } else {
                                         Modifier
@@ -369,12 +507,53 @@ private fun EventFeedContent(
     }
 }
 
+// The card uses tv-material's own focus defaults (Google's TV focus-system and cards guides). These
+// mirror CardDefaults.scale() (focused 1.1, pressed = rest 1.0) and CardDefaults.border() (a 3dp
+// stroke centred on the art's edge, pressed = focused), which keep the values internal, so the text
+// slide below can be computed from them.
+private val LibraryCardFocusedScale = 1.1f
+private val LibraryCardPressedScale = 1f
+private val LibraryCardBorderWidth = 3.dp
+private val CardArtHeight = TbaCardWidth / TbaCardArtAspectRatio
+
+// How far the focus ring's outer edge reaches past the art's resting edge at [scale]: half the
+// stroke sits outside the edge, and the ring is drawn inside the card's scale layer.
+private fun cardFocusReach(scale: Float): Dp =
+    (CardArtHeight / 2 + LibraryCardBorderWidth / 2) * scale - CardArtHeight / 2
+
+// StandardCardContainer doesn't move the title on focus, so the text block slides down by the
+// ring's reach itself; otherwise the scaled art would overlap it. The card's own height reserves that
+// slide; the row's vertical content padding covers the same reach (~9dp at 1.1x) above the art.
+private val CardFocusedReach = cardFocusReach(LibraryCardFocusedScale)
+private val CardPressedReach = cardFocusReach(LibraryCardPressedScale)
+private val CardRowVerticalPadding = 12.dp
+private val RowTitleGap = 8.dp
+
+// Same art for every event (no per-district/type colour — product decision): a lit TBA-blue corner
+// fading diagonally (top-left to bottom-right) to near the page background.
+private val PlaceholderBrush = Brush.linearGradient(listOf(TbaArtGradientStart, TbaArtGradientEnd))
+
+// Bottom scrim, drawn on the placeholder too so overlays layered over the lower art later
+// look identical whether or not a stream thumbnail has loaded.
+private val ArtScrimFraction = 0.45f
+private val ArtScrimBrush =
+    Brush.verticalGradient(
+        listOf(Color.Transparent, Color.Black.copy(alpha = 0.35f)),
+    )
+
+private val WatermarkAlpha = 0.10f
+private val LampAspectRatio = 72f / 112f // ic_tba_lamp's viewport
+
+/** Android TV "standard card": a focusable 16:9 art tile with a left-aligned text block below it. */
 @Composable
 private fun EventCard(
     event: Event,
+    status: EventStatus,
+    thumbnailUrl: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val statusText = status.text()
     val platforms =
         event.webcasts
             .map { it.type.label }
@@ -382,96 +561,217 @@ private fun EventCard(
             .joinToString(" and ")
     val description =
         buildString {
-            append(event.displayName)
+            append(event.name)
             event.location?.let { append(", ").append(it) }
-            append(", ").append(event.dateRangeLabel())
+            append(", ").append(statusText)
             if (platforms.isNotBlank()) append(", on ").append(platforms)
         }
-    Surface(
-        onClick = onClick,
-        modifier =
-            modifier
-                .width(320.dp)
-                .height(180.dp) // 16:9 — the canonical Android TV ratio
-                .semantics(mergeDescendants = true) { contentDescription = description },
-        shape = ClickableSurfaceDefaults.shape(TbaCardShape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedContentColor = MaterialTheme.colorScheme.onSurface,
-            ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.08f),
-        glow =
-            ClickableSurfaceDefaults.glow(
-                focusedGlow =
-                    Glow(
-                        elevationColor = MaterialTheme.colorScheme.secondary,
-                        elevation = 10.dp,
-                    ),
-            ),
-        border =
-            ClickableSurfaceDefaults.border(
-                focusedBorder =
-                    Border(
-                        border =
-                            BorderStroke(
-                                TbaFocusBorderWidth,
-                                MaterialTheme.colorScheme.secondary,
-                            ),
-                        shape = TbaCardShape,
-                    ),
-            ),
-    ) {
-        Column(Modifier.fillMaxSize().padding(18.dp)) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    val pressed by interactionSource.collectIsPressedAsState()
+    val textShift by animateDpAsState(
+        targetValue =
+            when {
+                pressed -> CardPressedReach
+                focused -> CardFocusedReach
+                else -> 0.dp
+            },
+        label = "card-text-shift",
+    )
+    // Cards in a row stay the same height whether a title takes one line or two, and whether or not
+    // the card is focused. The reservation goes on the whole card (not the title) so spare space falls
+    // below the subtitle instead of between title and subtitle. Sized from the styles CardContent
+    // gives the slots, plus the focus slide.
+    val typography = MaterialTheme.typography
+    val minHeight =
+        with(LocalDensity.current) {
+            TbaCardWidth / TbaCardArtAspectRatio + TbaCardTextGap + CardFocusedReach +
+                (typography.titleMedium.lineHeight * 2).toDp() +
+                typography.bodySmall.lineHeight.toDp()
+        }
+    // The slot Texts fill the width because StandardCardContainer centres narrower text under the art.
+    // They're cleared from semantics: the card's contentDescription already says all of this.
+    val slotModifier = Modifier.fillMaxWidth().clearAndSetSemantics {}
+    // StandardCardContainer scales and borders only the art; the text below stays crisp at 1x. Text
+    // styles, colours and the subtitle's 0.6 alpha are the library's CardContent defaults.
+    StandardCardContainer(
+        modifier = modifier.width(TbaCardWidth).heightIn(min = minHeight),
+        interactionSource = interactionSource,
+        imageCard = { source ->
+            Card(
+                onClick = onClick,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(TbaCardArtAspectRatio)
+                        .semantics { contentDescription = description },
+                interactionSource = source,
+            ) {
+                EventArt(event, status, statusText, thumbnailUrl)
+            }
+        },
+        // The full official name, not the short name already on the art: it adds information and
+        // still identifies the event once a stream thumbnail covers the art.
+        title = {
             Text(
-                event.displayName,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                event.name,
+                // The text slides down by the art's focus bloom as real layout (not an offset), so it
+                // stays inside the card's reserved height instead of being clipped below it.
+                modifier = slotModifier.padding(top = TbaCardTextGap + textShift),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(Modifier.height(10.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                event.webcasts.map { it.type }.distinct().take(2).forEach { type ->
-                    PlatformDot(type)
-                    Spacer(Modifier.width(6.dp))
-                }
-            }
-            Spacer(Modifier.weight(1f))
-            event.location?.let {
-                Text(
-                    it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+        },
+        subtitle = {
             Text(
-                event.dateRangeLabel(),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                listOfNotNull(event.location, event.dateRangeLabel()).joinToString(" · "),
+                modifier = slotModifier,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+            )
+        },
+    )
+}
+
+/**
+ * The card's 16:9 art. The branded placeholder always draws; a stream thumbnail layers over it
+ * (between the placeholder and the scrim) so a missing or failed load still leaves a finished tile.
+ */
+@Composable
+private fun EventArt(
+    event: Event,
+    status: EventStatus,
+    statusText: String,
+    thumbnailUrl: String?,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier
+            .fillMaxSize()
+            .background(PlaceholderBrush)
+            .clearAndSetSemantics {},
+    ) {
+        // Brand-tinted lamp watermark, just kissing the bottom-right edge (clipped by the card shape).
+        Image(
+            painter = painterResource(R.drawable.ic_tba_lamp),
+            contentDescription = null,
+            alpha = WatermarkAlpha,
+            colorFilter = ColorFilter.tint(TbaArtWatermark),
+            modifier =
+                Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(x = 12.dp, y = 8.dp)
+                    .height(96.dp)
+                    .aspectRatio(LampAspectRatio),
+        )
+        // The short name as the art's "poster" text. Vertically centred: two 30sp lines start ~41dp
+        // from the top, clear of the top-left date badge (10–34dp) and the top-right platform label.
+        // Shrinks rather than ellipsizing so long names stay whole. Division names break at their
+        // " - " so the second line reads "Apollo", not "- Apollo".
+        BasicText(
+            text = event.displayName.replace(" - ", "\n"),
+            style = TbaArtTitleStyle.copy(color = Color.White.copy(alpha = 0.7f)),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            autoSize =
+                TextAutoSize.StepBased(
+                    minFontSize = 22.sp,
+                    maxFontSize = TbaArtTitleStyle.fontSize,
+                    stepSize = 1.sp,
+                ),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+        )
+        thumbnailUrl?.let { StreamThumbnail(it) }
+        Box(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .fillMaxHeight(ArtScrimFraction)
+                .background(ArtScrimBrush),
+        )
+        StatusBadge(statusText, Modifier.align(Alignment.TopStart).padding(ArtOverlayInset))
+        // Monochrome on purpose: brand-coloured chips were the loudest thing on screen.
+        if (event.streamPlatforms.isNotEmpty()) {
+            // Same dark pill as the date badge: bare white text vanished on bright stream stills.
+            StatusBadge(
+                event.streamPlatforms.joinToString(" · ") { it.label },
+                Modifier.align(Alignment.TopEnd).padding(ArtOverlayInset),
             )
         }
     }
 }
 
+private val ThumbnailFadeMs = 250
+
+/**
+ * A YouTube/Twitch still over the placeholder. It stays invisible until it loads *and* passes the
+ * missing-art checks, so errors, offline channels and YouTube's grey or black slates all leave the
+ * placeholder.
+ */
 @Composable
-private fun PlatformDot(type: WebcastType) {
-    val (background, content) =
-        when (type) {
-            WebcastType.YOUTUBE -> YouTubeRed.copy(alpha = 0.20f) to YouTubeOnChip
-            WebcastType.TWITCH -> TwitchPurple.copy(alpha = 0.20f) to TwitchOnChip
-            WebcastType.OTHER ->
-                MaterialTheme.colorScheme.surfaceVariant to
-                    MaterialTheme.colorScheme.onSurfaceVariant
+private fun StreamThumbnail(url: String) {
+    val context = LocalPlatformContext.current
+    // Decode at the source size so the art check sees the CDN's real pixels, not a downsample.
+    val request =
+        remember(url) {
+            ImageRequest
+                .Builder(context)
+                .data(url)
+                .size(Size.ORIGINAL)
+                .transformations(MissingArtCheck)
+                .build()
         }
-    Chip(type.label, background, content)
+    val painter = rememberAsyncImagePainter(request)
+    val state by painter.state.collectAsState()
+    val success = state as? AsyncImagePainter.State.Success
+    val alpha = remember(url) { Animatable(0f) }
+    LaunchedEffect(success) {
+        when {
+            success == null -> alpha.snapTo(0f)
+            // Already in memory (scrolling back to a card): show it at once rather than re-fading.
+            success.result.dataSource == DataSource.MEMORY_CACHE -> alpha.snapTo(1f)
+            else -> alpha.animateTo(1f, tween(ThumbnailFadeMs))
+        }
+    }
+    Image(
+        painter = painter,
+        contentDescription = null,
+        // hqdefault is a letterboxed 4:3 frame; a 16:9 centre crop removes the bars exactly.
+        contentScale = ContentScale.Crop,
+        alpha = alpha.value,
+        modifier = Modifier.fillMaxSize(),
+    )
+}
+
+// The art is ~151dp tall and the badge ends 34dp down, so a vertically centred title of up to two
+// 36sp lines (~39–111dp) clears it.
+private val ArtOverlayInset = 10.dp
+private val StatusBadgeHeight = 24.dp
+private val StatusBadgeShape = RoundedCornerShape(6.dp)
+
+/**
+ * Date status pill, top-left on the art. A dark translucent fill with a faint light edge reads the
+ * same on the placeholder and over a bright stream thumbnail. Never red: red means verified LIVE.
+ */
+@Composable
+private fun StatusBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier
+            .height(StatusBadgeHeight)
+            .background(Color.Black.copy(alpha = 0.60f), StatusBadgeShape)
+            .border(1.dp, Color.White.copy(alpha = 0.15f), StatusBadgeShape)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text, style = MaterialTheme.typography.labelSmall, color = Color.White, maxLines = 1)
+    }
 }
 
 @Composable
@@ -510,6 +810,7 @@ private fun LoadingSkeleton() {
         label = "skeleton-alpha",
     )
     val shimmer = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = alpha)
+    val barShape = RoundedCornerShape(4.dp)
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(28.dp),
@@ -519,22 +820,35 @@ private fun LoadingSkeleton() {
                 Box(
                     Modifier
                         .padding(start = TbaScreenHPadding)
-                        .height(22.dp)
+                        .height(20.dp)
                         .width(160.dp)
                         .background(shimmer, RoundedCornerShape(6.dp)),
                 )
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(RowTitleGap))
+                // Unbounded so the 4th card runs off the right edge as a peek, like the real row.
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
-                    modifier = Modifier.padding(horizontal = TbaScreenHPadding, vertical = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(TbaCardSpacing),
+                    modifier =
+                        Modifier
+                            .wrapContentWidth(Alignment.Start, unbounded = true)
+                            .padding(
+                                horizontal = TbaScreenHPadding,
+                                vertical = CardRowVerticalPadding,
+                            ),
                 ) {
                     repeat(4) {
-                        Box(
-                            Modifier
-                                .width(320.dp)
-                                .height(180.dp)
-                                .background(shimmer, TbaCardShape),
-                        )
+                        Column(Modifier.width(TbaCardWidth)) {
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(TbaCardArtAspectRatio)
+                                    .background(shimmer, TbaCardShape),
+                            )
+                            Spacer(Modifier.height(TbaCardTextGap))
+                            Box(Modifier.height(16.dp).width(180.dp).background(shimmer, barShape))
+                            Spacer(Modifier.height(8.dp))
+                            Box(Modifier.height(14.dp).width(120.dp).background(shimmer, barShape))
+                        }
                     }
                 }
             }
@@ -567,12 +881,12 @@ private fun ErrorContent(
 @Composable
 private fun WebcastPicker(
     event: Event,
+    today: LocalDate,
     onPick: (Webcast) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val firstButton = remember { FocusRequester() }
     // Bias initial focus to today's stream when a cast is split by day; otherwise the first option.
-    val today = remember { LocalDate.now() }
     val focusIndex = event.webcasts.indexOfFirst { it.date == today }.coerceAtLeast(0)
     Dialog(
         onDismissRequest = onDismiss,
