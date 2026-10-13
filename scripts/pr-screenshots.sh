@@ -20,8 +20,16 @@
 #       [--row "Other"  before2.png after2.png] ... \
 #       [--shot "Label" single.png] ...
 #
-#   --row LABEL BEFORE AFTER   A before/after pair (renders a 2-col table row).
-#   --shot LABEL FILE          A single image.
+#   --row LABEL BEFORE AFTER   A before/after pair. Renders one table row:
+#                              Before | After | Diff. The diff is computed here
+#                              (changed pixels in magenta over a dimmed "after")
+#                              with the % of pixels changed under it, so every
+#                              visual claim carries its proof in the same row.
+#                              Before and after must be the same size — a
+#                              mismatched crop is not a valid comparison.
+#   --shot LABEL FILE          A single image (e.g. a state with no "before").
+#   --no-diff                  Skip the Diff column (needs python3 + Pillow
+#                              otherwise: `pip3 install Pillow`).
 #   --pr N                     Also rewrite PR #N's body with a Screenshots
 #                              section (between markers, so re-runs replace it).
 #                              Omit to just print the markdown to stdout.
@@ -39,6 +47,7 @@ set -euo pipefail
 
 BRANCH="screenshot-assets"
 PR=""
+DIFF=true
 declare -a KINDS=() LABELS=() FILES_A=() FILES_B=()
 
 die() { echo "error: $*" >&2; exit 1; }
@@ -47,13 +56,14 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --pr)     PR="${2:?--pr needs a number}"; shift 2 ;;
     --branch) BRANCH="${2:?--branch needs a value}"; shift 2 ;;
+    --no-diff) DIFF=false; shift ;;
     --row)
       LABELS+=("${2:?--row needs LABEL}"); FILES_A+=("${3:?--row needs BEFORE}")
       FILES_B+=("${4:?--row needs AFTER}"); KINDS+=("row"); shift 4 ;;
     --shot)
       LABELS+=("${2:?--shot needs LABEL}"); FILES_A+=("${3:?--shot needs FILE}")
       FILES_B+=(""); KINDS+=("shot"); shift 3 ;;
-    -h|--help) sed -n '2,40p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,46p' "$0"; exit 0 ;;
     *) die "unknown argument: $1" ;;
   esac
 done
@@ -61,6 +71,10 @@ done
 [[ ${#KINDS[@]} -gt 0 ]] || die "nothing to upload — pass at least one --row or --shot"
 command -v gh >/dev/null || die "gh CLI not found"
 command -v git >/dev/null || die "git not found"
+if $DIFF; then
+  python3 -c 'import PIL' 2>/dev/null \
+    || die "the Diff column needs python3 + Pillow (pip3 install Pillow), or pass --no-diff"
+fi
 
 REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
 SLUG="$(git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -c 'a-zA-Z0-9._-' '-' | sed 's/-\{2,\}/-/g;s/^-//;s/-$//')"
@@ -73,7 +87,8 @@ SLUG="$(git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -c 'a-zA-Z0-9._-' '-' |
 export GIT_INDEX_FILE
 GIT_INDEX_FILE="$(mktemp -t tba-shots-idx.XXXXXX)"
 rm -f "$GIT_INDEX_FILE"
-trap 'rm -f "$GIT_INDEX_FILE"' EXIT
+DIFF_DIR="$(mktemp -d -t tba-shots-diff.XXXXXX)"
+trap 'rm -f "$GIT_INDEX_FILE"; rm -rf "$DIFF_DIR"' EXIT
 
 # Resolve the existing asset branch (if any) so images accumulate over time.
 PARENT=""
@@ -97,23 +112,60 @@ stage() {
   echo "https://raw.githubusercontent.com/${REPO}/${BRANCH}/${relpath}"
 }
 
+# Write a diff image of BEFORE vs AFTER to OUT; echo the % of pixels changed.
+# A pixel counts as changed when its luminance difference exceeds 16/255, which
+# ignores compression noise but catches any real rendering change.
+make_diff() {
+  python3 - "$1" "$2" "$3" <<'PY'
+import sys
+from PIL import Image, ImageChops
+b, a, out = sys.argv[1:4]
+B, A = Image.open(b).convert("RGB"), Image.open(a).convert("RGB")
+if B.size != A.size:
+    sys.exit(f"error: size mismatch {B.size} vs {A.size}: {b} / {a} (crop both the same way)")
+mask = ImageChops.difference(B, A).convert("L").point(lambda v: 255 if v > 16 else 0)
+changed = mask.histogram()[255]
+diff = Image.blend(Image.new("RGB", A.size), A, 0.25)
+diff.paste(Image.new("RGB", A.size, (255, 0, 200)), mask=mask)
+diff.save(out, format="PNG")
+print(f"{100 * changed / (A.size[0] * A.size[1]):.1f}%")
+PY
+}
+
 echo "Staging ${#KINDS[@]} item(s) for branch '${BRANCH}'…" >&2
 
-MD="## Screenshots"$'\n'
-HAVE_TABLE=false
+# Rows render as one table and single shots follow it, whatever order the flags
+# came in: a shot between two rows would otherwise split the markdown table.
+TABLE=""; SHOTS=""
 for i in "${!KINDS[@]}"; do
   label="${LABELS[$i]}"
   if [[ "${KINDS[$i]}" == "row" ]]; then
     b="$(stage "${FILES_A[$i]}")"; a="$(stage "${FILES_B[$i]}")"
-    if ! $HAVE_TABLE; then
-      MD+=$'\n'"| | Before | After |"$'\n'"|---|---|---|"$'\n'; HAVE_TABLE=true
+    if $DIFF; then
+      after_name="$(basename "${FILES_B[$i]}")"
+      diff_path="${DIFF_DIR}/${after_name%.*}_diff.png"
+      pct="$(make_diff "${FILES_A[$i]}" "${FILES_B[$i]}" "$diff_path")" || die "diff failed for: ${label}"
+      d="$(stage "$diff_path")"
+      TABLE+="| **${label}** | <img src=\"${b}\" width=\"240\"> | <img src=\"${a}\" width=\"240\"> | <img src=\"${d}\" width=\"240\"><br><sub>${pct} of pixels changed</sub> |"$'\n'
+    else
+      TABLE+="| **${label}** | <img src=\"${b}\" width=\"300\"> | <img src=\"${a}\" width=\"300\"> |"$'\n'
     fi
-    MD+="| **${label}** | <img src=\"${b}\" width=\"300\"> | <img src=\"${a}\" width=\"300\"> |"$'\n'
   else
     u="$(stage "${FILES_A[$i]}")"
-    MD+=$'\n'"**${label}**"$'\n\n'"<img src=\"${u}\" width=\"320\">"$'\n'
+    SHOTS+=$'\n'"**${label}**"$'\n\n'"<img src=\"${u}\" width=\"320\">"$'\n'
   fi
 done
+
+MD="## Screenshots"$'\n'
+if [[ -n "$TABLE" ]]; then
+  if $DIFF; then
+    MD+=$'\n'"| | Before | After | Diff |"$'\n'"|---|---|---|---|"$'\n'
+  else
+    MD+=$'\n'"| | Before | After |"$'\n'"|---|---|---|"$'\n'
+  fi
+  MD+="$TABLE"
+fi
+MD+="$SHOTS"
 
 # Commit the staged tree and push just that ref. Orphan (no parent) on first
 # use; otherwise parented on the current tip so history accumulates.
