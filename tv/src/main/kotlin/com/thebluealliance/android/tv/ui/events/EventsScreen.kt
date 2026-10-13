@@ -40,6 +40,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -168,12 +170,47 @@ private fun RowTitle.text(): AnnotatedString {
     }
 }
 
+/**
+ * The feed's one-shot focus guards. The caller hoists this above the feed <-> About swap: the feed's
+ * composition is disposed while About shows, so guards remembered inside it would reset and snap
+ * focus back to the first card on return. Plain (non-saveable) state on purpose — after a process
+ * death restore there is no focus to return to, so the first card should take initial focus again.
+ */
+@Stable
+class FeedFocusState {
+    /** False until the first card has taken initial focus. */
+    internal val initialFocusDone = mutableStateOf(false)
+
+    /** False while focus owes a return to the ⓘ button that opened About. */
+    internal val aboutFocusDone = mutableStateOf(true)
+
+    internal fun onAboutOpened() {
+        // Back must land on ⓘ, not on a first card that loaded while About was showing.
+        initialFocusDone.value = true
+    }
+
+    /**
+     * Call when leaving About so ⓘ takes focus as soon as the rebuilt feed places it. Armed here
+     * rather than on open: the outgoing feed stays composed while it fades out, and an armed ⓘ
+     * re-placed mid-fade would steal focus back from About.
+     */
+    fun onAboutClosed() {
+        aboutFocusDone.value = false
+    }
+}
+
 @Composable
 fun EventsScreen(
     viewModel: EventsViewModel,
+    focusState: FeedFocusState,
     onAboutClick: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val aboutFocusDone = focusState.aboutFocusDone
+    val openAbout = {
+        focusState.onAboutOpened()
+        onAboutClick()
+    }
     val context = LocalContext.current
     var pickerEvent by remember { mutableStateOf<Event?>(null) }
 
@@ -186,24 +223,35 @@ fun EventsScreen(
             EventsUiState.Loading ->
                 WithFixedHeader(
                     usingMockData = false,
-                    onAboutClick = onAboutClick,
+                    onAboutClick = openAbout,
+                    aboutFocusDone = aboutFocusDone,
                 ) {
                     LoadingSkeleton()
                 }
             is EventsUiState.Error ->
-                WithFixedHeader(usingMockData = false, onAboutClick = onAboutClick) {
+                WithFixedHeader(
+                    usingMockData = false,
+                    onAboutClick = openAbout,
+                    aboutFocusDone = aboutFocusDone,
+                ) {
                     CenteredMessage { ErrorContent(s.messageRes, viewModel::refresh) }
                 }
             is EventsUiState.Success ->
                 if (s.feed.isEmpty) {
-                    WithFixedHeader(usingMockData = s.usingMockData, onAboutClick = onAboutClick) {
+                    WithFixedHeader(
+                        usingMockData = s.usingMockData,
+                        onAboutClick = openAbout,
+                        aboutFocusDone = aboutFocusDone,
+                    ) {
                         CenteredMessage { EmptyContent() }
                     }
                 } else {
                     EventFeedContent(
                         feed = s.feed,
                         usingMockData = s.usingMockData,
-                        onAboutClick = onAboutClick,
+                        initialFocusDone = focusState.initialFocusDone,
+                        onAboutClick = openAbout,
+                        aboutFocusDone = aboutFocusDone,
                         onEventClick = { event ->
                             if (event.webcasts.size ==
                                 1
@@ -234,6 +282,7 @@ fun EventsScreen(
 private fun Header(
     usingMockData: Boolean,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     modifier: Modifier = Modifier,
 ) {
     // Top-align so the lamp shares its top edge with the "The Blue Alliance" wordmark.
@@ -266,18 +315,23 @@ private fun Header(
             )
         }
         Spacer(Modifier.weight(1f))
-        AboutButton(onClick = onAboutClick)
+        AboutButton(onClick = onAboutClick, focusDone = aboutFocusDone)
     }
 }
 
 /** Circular ⓘ in the top-right that opens the About screen (licenses + contributor thanks). */
 @Composable
-private fun AboutButton(onClick: () -> Unit) {
+private fun AboutButton(
+    onClick: () -> Unit,
+    // One-shot guard: when false, this button takes focus as soon as it is placed (Back from About).
+    focusDone: MutableState<Boolean>,
+) {
     val aboutLabel = stringResource(R.string.about)
     Surface(
         onClick = onClick,
         modifier =
             Modifier
+                .focusOnInitialVisibility(focusDone)
                 .size(TbaIconButtonSize)
                 .semantics { contentDescription = aboutLabel },
         shape = ClickableSurfaceDefaults.shape(CircleShape),
@@ -313,6 +367,7 @@ private fun AboutButton(onClick: () -> Unit) {
 private fun WithFixedHeader(
     usingMockData: Boolean,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     content: @Composable () -> Unit,
 ) {
     // These states don't scroll, so the overscan-safe top margin lives here as outer padding.
@@ -321,6 +376,7 @@ private fun WithFixedHeader(
         Header(
             usingMockData = usingMockData,
             onAboutClick = onAboutClick,
+            aboutFocusDone = aboutFocusDone,
             modifier = Modifier.padding(horizontal = TbaScreenHPadding),
         )
         Spacer(Modifier.height(20.dp))
@@ -332,14 +388,15 @@ private fun WithFixedHeader(
 private fun EventFeedContent(
     feed: EventFeed,
     usingMockData: Boolean,
+    // Initial focus lands on the very first card exactly once. The guard is hoisted (not on the
+    // card) so recycling cards as the user scrolls never re-fires the request — which would snap
+    // focus and scroll back to the top of the feed.
+    initialFocusDone: MutableState<Boolean>,
     onAboutClick: () -> Unit,
+    aboutFocusDone: MutableState<Boolean>,
     onEventClick: (Event) -> Unit,
 ) {
     val rows = remember(feed) { feed.rows() }
-    // Initial focus lands on the very first card exactly once. The hoisted guard lives here (not on
-    // the card) so recycling cards as the user scrolls never re-fires the request — which would snap
-    // focus and scroll back to the top of the feed.
-    val initialFocusDone = remember { mutableStateOf(false) }
 
     // Pivot focused cards/rows inward so D-pad focus never sits flush against the viewport
     // edge — there's always a peek of the neighbour (canonical TvMaterialCatalog pattern).
@@ -362,6 +419,7 @@ private fun EventFeedContent(
                 Header(
                     usingMockData = usingMockData,
                     onAboutClick = onAboutClick,
+                    aboutFocusDone = aboutFocusDone,
                     modifier = Modifier.padding(horizontal = TbaScreenHPadding),
                 )
             }
