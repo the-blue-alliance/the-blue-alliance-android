@@ -448,6 +448,24 @@ class EventLogicTest {
         assertNull(event("k", today, city = null, stateProv = null, country = null).location)
     }
 
+    @Test fun streamPlatforms_distinctInEnumOrderWithoutOther() {
+        val e =
+            event(
+                "k",
+                today,
+                webcasts =
+                    listOf(
+                        Webcast(WebcastType.TWITCH, "a"),
+                        Webcast(WebcastType.OTHER, "b"),
+                        Webcast(WebcastType.YOUTUBE, "c"),
+                        Webcast(WebcastType.TWITCH, "d"),
+                    ),
+            )
+        assertEquals(listOf(WebcastType.YOUTUBE, WebcastType.TWITCH), e.streamPlatforms)
+        val otherOnly = event("k", today, webcasts = listOf(Webcast(WebcastType.OTHER, "x")))
+        assertTrue(otherOnly.streamPlatforms.isEmpty())
+    }
+
     @Test fun feed_isEmptyWhenNothingHasWebcasts() {
         val feed = EventFeed.from(listOf(event("b", today, webcasts = emptyList())), today)
         assertTrue(feed.isEmpty)

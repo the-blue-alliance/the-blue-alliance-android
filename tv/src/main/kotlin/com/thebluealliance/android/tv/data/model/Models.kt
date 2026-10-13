@@ -127,6 +127,18 @@ data class Event(
                 (stateProv ?: country)?.takeIf { it.isNotBlank() },
             ).joinToString(", ").ifBlank { null }
 
+    /**
+     * Native-app platforms this event streams on, in enum order. OTHER is left out: it has no TV app,
+     * so advertising it on the card would promise something a click can't deliver.
+     */
+    val streamPlatforms: List<WebcastType>
+        get() =
+            webcasts
+                .map { it.type }
+                .filter { it != WebcastType.OTHER }
+                .distinct()
+                .sorted()
+
     fun sectionFor(today: LocalDate): EventSection =
         when {
             !today.isBefore(startDate) && !today.isAfter(endDate) -> EventSection.LIVE
