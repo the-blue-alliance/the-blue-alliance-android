@@ -51,9 +51,9 @@ class NotificationBuilder
         ): Notification {
             val intent =
                 Intent(context, MainActivity::class.java).apply {
-                    // NEW_TASK + CLEAR_TASK routes the tap through onCreate (with the
-                    // synthetic back stack) even when the app is already running —
-                    // SINGLE_TOP landed in onNewIntent, which dropped the tap. Same
+                    // NEW_TASK + CLEAR_TASK opens the tap on a synthetic back stack when
+                    // the app is not already running. When it is running, the tap reaches
+                    // MainActivity.onNewIntent, which navigates the live back stack. Same
                     // pattern as TeamTrackingWidgetOpenAction.
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     // Unique data URI so PendingIntents for different notifications never
