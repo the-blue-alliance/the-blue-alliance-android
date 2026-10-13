@@ -3,7 +3,6 @@
 package com.thebluealliance.android.tv.ui.about
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
@@ -36,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
@@ -47,9 +45,11 @@ import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
+import com.thebluealliance.android.tv.ui.common.insideFocusBorder
 import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
+import com.thebluealliance.android.tv.ui.theme.TbaRowRadius
 import com.thebluealliance.android.tv.ui.theme.TbaRowShape
 
 private data class OssLicense(
@@ -255,11 +255,16 @@ private fun Hint(text: String) {
     )
 }
 
+// The ring's centreline sits half a stroke inside the row, so its radius shrinks by the same amount
+// to keep the ring's outer edge on the row's corners.
+private val InfoRowRingShape = RoundedCornerShape(TbaRowRadius - TbaFocusBorderWidth / 2)
+
 /**
  * A focusable, non-actionable list row. The onClick is intentionally empty: rows need to take
  * D-pad focus so the list scrolls, but they must not open anything (the app never launches a
- * web browser — TV-WB). Focus shows as a filled highlight + bright border, no scale (a
- * full-width scale would clip at the viewport edges) — the same border language as the feed cards.
+ * web browser — TV-WB). Focus shows as a filled highlight + the feed cards' ring, drawn inside
+ * the row with no scale: a full-width row has no room to bloom past the viewport edges. The fill is
+ * dark, not the library's light inverseSurface default, so the ring stays visible on it.
  */
 @Composable
 private fun InfoRow(
@@ -281,15 +286,7 @@ private fun InfoRow(
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         border =
             ClickableSurfaceDefaults.border(
-                focusedBorder =
-                    Border(
-                        border =
-                            BorderStroke(
-                                TbaFocusBorderWidth,
-                                MaterialTheme.colorScheme.secondary,
-                            ),
-                        shape = TbaRowShape,
-                    ),
+                focusedBorder = insideFocusBorder(InfoRowRingShape),
             ),
     ) {
         Row(
