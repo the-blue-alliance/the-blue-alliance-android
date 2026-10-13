@@ -3,6 +3,7 @@
 package com.thebluealliance.android.tv.ui.events
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
@@ -12,6 +13,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -40,8 +42,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +59,7 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -87,12 +92,21 @@ import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.compose.rememberAsyncImagePainter
+import coil3.decode.DataSource
+import coil3.request.ImageRequest
+import coil3.request.transformations
+import coil3.size.Size
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
 import com.thebluealliance.android.tv.data.model.EventFeed
+import com.thebluealliance.android.tv.data.model.EventStatus
 import com.thebluealliance.android.tv.data.model.RowTitle
 import com.thebluealliance.android.tv.data.model.Webcast
+import com.thebluealliance.android.tv.data.model.WebcastThumbnails
 import com.thebluealliance.android.tv.data.model.WebcastType
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
@@ -118,12 +132,28 @@ import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
 import com.thebluealliance.android.tv.ui.theme.TbaScreenHPadding
 import com.thebluealliance.android.tv.ui.theme.TwitchPurple
 import com.thebluealliance.android.tv.ui.theme.YouTubeRed
+import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 private val MonthDay: DateTimeFormatter = DateTimeFormatter.ofPattern("MMM d")
 private val DayOnly: DateTimeFormatter = DateTimeFormatter.ofPattern("d")
 private val WebcastDay: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE, MMM d")
+private val Weekday: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE")
+
+@Composable
+private fun EventStatus.text(): String =
+    when (this) {
+        EventStatus.Today -> stringResource(R.string.status_today)
+        is EventStatus.Running -> stringResource(R.string.status_day_of, day, totalDays)
+        EventStatus.StartsTomorrow -> stringResource(R.string.status_starts_tomorrow)
+        is EventStatus.StartsThisWeek ->
+            stringResource(R.string.status_starts, date.format(Weekday))
+        is EventStatus.StartsOn -> stringResource(R.string.status_starts, date.format(MonthDay))
+        EventStatus.EndedYesterday -> stringResource(R.string.status_ended_yesterday)
+        is EventStatus.EndedThisWeek -> stringResource(R.string.status_ended, date.format(Weekday))
+        is EventStatus.EndedOn -> stringResource(R.string.status_ended, date.format(MonthDay))
+    }
 
 private fun Event.dateRangeLabel(): String =
     when {
@@ -248,6 +278,7 @@ fun EventsScreen(
                 } else {
                     EventFeedContent(
                         feed = s.feed,
+                        today = s.today,
                         usingMockData = s.usingMockData,
                         initialFocusDone = focusState.initialFocusDone,
                         onAboutClick = openAbout,
@@ -266,9 +297,13 @@ fun EventsScreen(
         }
     }
 
-    pickerEvent?.let { event ->
+    // The picker only opens from a card, so there's always a Success state to date it against.
+    val picking = pickerEvent
+    val today = (state as? EventsUiState.Success)?.today
+    if (picking != null && today != null) {
         WebcastPicker(
-            event = event,
+            event = picking,
+            today = today,
             onPick = { webcast ->
                 pickerEvent = null
                 WebcastLauncher.launch(context, webcast)
@@ -387,6 +422,7 @@ private fun WithFixedHeader(
 @Composable
 private fun EventFeedContent(
     feed: EventFeed,
+    today: LocalDate,
     usingMockData: Boolean,
     // Initial focus lands on the very first card exactly once. The guard is hoisted (not on the
     // card) so recycling cards as the user scrolls never re-fires the request — which would snap
@@ -397,6 +433,8 @@ private fun EventFeedContent(
     onEventClick: (Event) -> Unit,
 ) {
     val rows = remember(feed) { feed.rows() }
+    // Once per feed load, so Twitch previews refresh on reload but not on every recomposition.
+    val thumbnailBucket = remember(feed) { WebcastThumbnails.cacheBucket(Instant.now()) }
 
     // Pivot focused cards/rows inward so D-pad focus never sits flush against the viewport
     // edge — there's always a peek of the neighbour (canonical TvMaterialCatalog pattern).
@@ -451,6 +489,8 @@ private fun EventFeedContent(
                         itemsIndexed(row.events, key = { _, e -> e.key }) { eIndex, event ->
                             EventCard(
                                 event = event,
+                                status = event.statusLabel(today),
+                                thumbnailUrl = WebcastThumbnails.url(event, today, thumbnailBucket),
                                 onClick = { onEventClick(event) },
                                 modifier =
                                     if (rowIndex == 0 && eIndex == 0) {
@@ -493,7 +533,7 @@ private val RowTitleGap = 8.dp
 // fading diagonally (top-left to bottom-right) to near the page background.
 private val PlaceholderBrush = Brush.linearGradient(listOf(TbaArtGradientStart, TbaArtGradientEnd))
 
-// Bottom scrim, drawn on the placeholder too so badges/progress layered over the lower art later
+// Bottom scrim, drawn on the placeholder too so overlays layered over the lower art later
 // look identical whether or not a stream thumbnail has loaded.
 private val ArtScrimFraction = 0.45f
 private val ArtScrimBrush =
@@ -508,9 +548,12 @@ private val LampAspectRatio = 72f / 112f // ic_tba_lamp's viewport
 @Composable
 private fun EventCard(
     event: Event,
+    status: EventStatus,
+    thumbnailUrl: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val statusText = status.text()
     val platforms =
         event.webcasts
             .map { it.type.label }
@@ -520,7 +563,7 @@ private fun EventCard(
         buildString {
             append(event.name)
             event.location?.let { append(", ").append(it) }
-            append(", ").append(event.dateRangeLabel())
+            append(", ").append(statusText)
             if (platforms.isNotBlank()) append(", on ").append(platforms)
         }
     val interactionSource = remember { MutableInteractionSource() }
@@ -564,7 +607,7 @@ private fun EventCard(
                         .semantics { contentDescription = description },
                 interactionSource = source,
             ) {
-                EventArt(event)
+                EventArt(event, status, statusText, thumbnailUrl)
             }
         },
         // The full official name, not the short name already on the art: it adds information and
@@ -591,12 +634,15 @@ private fun EventCard(
 }
 
 /**
- * The card's 16:9 art. Today it's always the branded placeholder; stream thumbnails will layer over
- * it (between the placeholder and the scrim) so a failed load still leaves a finished tile.
+ * The card's 16:9 art. The branded placeholder always draws; a stream thumbnail layers over it
+ * (between the placeholder and the scrim) so a missing or failed load still leaves a finished tile.
  */
 @Composable
 private fun EventArt(
     event: Event,
+    status: EventStatus,
+    statusText: String,
+    thumbnailUrl: String?,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -605,13 +651,6 @@ private fun EventArt(
             .background(PlaceholderBrush)
             .clearAndSetSemantics {},
     ) {
-        Box(
-            Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .fillMaxHeight(ArtScrimFraction)
-                .background(ArtScrimBrush),
-        )
         // Brand-tinted lamp watermark, just kissing the bottom-right edge (clipped by the card shape).
         Image(
             painter = painterResource(R.drawable.ic_tba_lamp),
@@ -646,16 +685,92 @@ private fun EventArt(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
         )
+        thumbnailUrl?.let { StreamThumbnail(it) }
+        Box(
+            Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .fillMaxHeight(ArtScrimFraction)
+                .background(ArtScrimBrush),
+        )
+        StatusBadge(statusText, Modifier.align(Alignment.TopStart).padding(ArtOverlayInset))
         // Monochrome on purpose: brand-coloured chips were the loudest thing on screen.
         if (event.streamPlatforms.isNotEmpty()) {
-            Text(
+            // Same dark pill as the date badge: bare white text vanished on bright stream stills.
+            StatusBadge(
                 event.streamPlatforms.joinToString(" · ") { it.label },
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.White.copy(alpha = 0.8f),
-                maxLines = 1,
-                modifier = Modifier.align(Alignment.TopEnd).padding(top = 10.dp, end = 10.dp),
+                Modifier.align(Alignment.TopEnd).padding(ArtOverlayInset),
             )
         }
+    }
+}
+
+private val ThumbnailFadeMs = 250
+
+/**
+ * A YouTube/Twitch still over the placeholder. It stays invisible until it loads *and* passes the
+ * missing-art checks, so errors, offline channels and YouTube's grey or black slates all leave the
+ * placeholder.
+ */
+@Composable
+private fun StreamThumbnail(url: String) {
+    val context = LocalPlatformContext.current
+    // Decode at the source size so the art check sees the CDN's real pixels, not a downsample.
+    val request =
+        remember(url) {
+            ImageRequest
+                .Builder(context)
+                .data(url)
+                .size(Size.ORIGINAL)
+                .transformations(MissingArtCheck)
+                .build()
+        }
+    val painter = rememberAsyncImagePainter(request)
+    val state by painter.state.collectAsState()
+    val success = state as? AsyncImagePainter.State.Success
+    val alpha = remember(url) { Animatable(0f) }
+    LaunchedEffect(success) {
+        when {
+            success == null -> alpha.snapTo(0f)
+            // Already in memory (scrolling back to a card): show it at once rather than re-fading.
+            success.result.dataSource == DataSource.MEMORY_CACHE -> alpha.snapTo(1f)
+            else -> alpha.animateTo(1f, tween(ThumbnailFadeMs))
+        }
+    }
+    Image(
+        painter = painter,
+        contentDescription = null,
+        // hqdefault is a letterboxed 4:3 frame; a 16:9 centre crop removes the bars exactly.
+        contentScale = ContentScale.Crop,
+        alpha = alpha.value,
+        modifier = Modifier.fillMaxSize(),
+    )
+}
+
+// The art is ~151dp tall and the badge ends 34dp down, so a vertically centred title of up to two
+// 36sp lines (~39–111dp) clears it.
+private val ArtOverlayInset = 10.dp
+private val StatusBadgeHeight = 24.dp
+private val StatusBadgeShape = RoundedCornerShape(6.dp)
+
+/**
+ * Date status pill, top-left on the art. A dark translucent fill with a faint light edge reads the
+ * same on the placeholder and over a bright stream thumbnail. Never red: red means verified LIVE.
+ */
+@Composable
+private fun StatusBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier
+            .height(StatusBadgeHeight)
+            .background(Color.Black.copy(alpha = 0.60f), StatusBadgeShape)
+            .border(1.dp, Color.White.copy(alpha = 0.15f), StatusBadgeShape)
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text, style = MaterialTheme.typography.labelSmall, color = Color.White, maxLines = 1)
     }
 }
 
@@ -766,12 +881,12 @@ private fun ErrorContent(
 @Composable
 private fun WebcastPicker(
     event: Event,
+    today: LocalDate,
     onPick: (Webcast) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val firstButton = remember { FocusRequester() }
     // Bias initial focus to today's stream when a cast is split by day; otherwise the first option.
-    val today = remember { LocalDate.now() }
     val focusIndex = event.webcasts.indexOfFirst { it.date == today }.coerceAtLeast(0)
     Dialog(
         onDismissRequest = onDismiss,

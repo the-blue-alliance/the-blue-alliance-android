@@ -1,6 +1,7 @@
 package com.thebluealliance.android.tv.data.model
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 /** Webcast platforms we can deep-link into on TV. Everything else has no native TV app. */
 enum class WebcastType(
@@ -145,6 +146,66 @@ data class Event(
             startDate.isAfter(today) -> EventSection.UPCOMING
             else -> EventSection.RECENT
         }
+
+    /** Where the event stands relative to [today], by dates alone — we never know if a stream is up. */
+    fun statusLabel(today: LocalDate): EventStatus {
+        val untilStart = ChronoUnit.DAYS.between(today, startDate)
+        val sinceEnd = ChronoUnit.DAYS.between(endDate, today)
+        val window = EventStatus.WEEKDAY_WINDOW_DAYS
+        return when {
+            untilStart == 1L -> EventStatus.StartsTomorrow
+            untilStart in 2..window -> EventStatus.StartsThisWeek(startDate)
+            untilStart > window -> EventStatus.StartsOn(startDate)
+            sinceEnd == 1L -> EventStatus.EndedYesterday
+            sinceEnd in 2..window -> EventStatus.EndedThisWeek(endDate)
+            sinceEnd > window -> EventStatus.EndedOn(endDate)
+            startDate == endDate -> EventStatus.Today
+            else ->
+                EventStatus.Running(
+                    day = ChronoUnit.DAYS.between(startDate, today).toInt() + 1,
+                    totalDays = ChronoUnit.DAYS.between(startDate, endDate).toInt() + 1,
+                )
+        }
+    }
+}
+
+/** An event's date-based status for its card badge; the UI turns it into localized text. */
+sealed interface EventStatus {
+    /** A single-day event happening today. */
+    data object Today : EventStatus
+
+    /** A multi-day event running today, on its 1-based [day] of [totalDays]. */
+    data class Running(
+        val day: Int,
+        val totalDays: Int,
+    ) : EventStatus
+
+    data object StartsTomorrow : EventStatus
+
+    /** Starts within [WEEKDAY_WINDOW_DAYS], so a weekday name ("Starts Sat") is unambiguous. */
+    data class StartsThisWeek(
+        val date: LocalDate,
+    ) : EventStatus
+
+    data class StartsOn(
+        val date: LocalDate,
+    ) : EventStatus
+
+    data object EndedYesterday : EventStatus
+
+    /** Ended within [WEEKDAY_WINDOW_DAYS], so a weekday name ("Ended Sun") is unambiguous. */
+    data class EndedThisWeek(
+        val date: LocalDate,
+    ) : EventStatus
+
+    data class EndedOn(
+        val date: LocalDate,
+    ) : EventStatus
+
+    companion object {
+        // A week out, a weekday name would collide with today's, so switch to month + day there.
+        const val WEEKDAY_WINDOW_DAYS = 6L
+    }
 }
 
 /** Events grouped into the sections the UI renders. */
