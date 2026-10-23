@@ -26,7 +26,7 @@ datastore = "1.2.1"
 coil = "3.6.3"
 aboutlibraries = "15.3.0"
 
-firebase-bom = "34.19.0"
+firebase-bom = "35.0.0"
 google-services = "4.5.0"
 firebase-crashlytics-plugin = "3.0.8"
 credentials = "1.6.0"
@@ -139,7 +139,7 @@ core-splashscreen = { group = "androidx.core", name = "core-splashscreen", versi
 # Android TV
 androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tv-material" }
 
-# Core library desugaring (java.time on minSdk 23)
+# Core library desugaring (java.time on minSdk 24)
 desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar-jdk-libs" }
 
 # Datastore
