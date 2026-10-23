@@ -14,7 +14,7 @@ fragment = "1.9.1"
 core-ktx = "1.19.1"
 shortcuts = "1.1.0"
 coroutines = "1.11.0"
-serialization = "1.11.0"
+serialization = "1.12.0"
 
 retrofit = "3.0.0"
 okhttp = "5.5.0"
