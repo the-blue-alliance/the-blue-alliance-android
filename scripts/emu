@@ -14,7 +14,10 @@ Subcommands:
   launch <package/activity>  Force-stop + start activity
   swipe <left|right>         Swipe home screen page
   swipe-xy <x1> <y1> <x2> <y2> [ms]  Swipe between coordinates
-  long-press <x> <y> [ms]   Long press at coordinates (default 2000ms)
+  long-press <text> | <x> <y> [ms]
+                             Long press an element or coordinate (default 2000ms)
+  top                        Print the resumed (foreground) activity and its task
+  qs [--close]               Expand (or collapse) the Quick Settings panel
   list [--raw]               Dump UI hierarchy as readable tree
 
 All reported and accepted coordinates are physical display pixels — the space
@@ -406,14 +409,15 @@ def cmd_find(args):
         print_match(m, i)
 
 
-def cmd_tap(args):
+def find_unique(query):
+    """The one element matching query, with parseable bounds; exits listing candidates otherwise."""
     root = dump_ui_tree()
-    matches = find_elements(root, args.text)
+    matches = find_elements(root, query)
     if len(matches) == 0:
-        print(f"No elements matching \"{args.text}\"", file=sys.stderr)
+        print(f"No elements matching \"{query}\"", file=sys.stderr)
         sys.exit(1)
     if len(matches) > 1:
-        print(f"Ambiguous: {len(matches)} elements match \"{args.text}\". Refine your query:", file=sys.stderr)
+        print(f"Ambiguous: {len(matches)} elements match \"{query}\". Refine your query:", file=sys.stderr)
         for i, m in enumerate(matches):
             print_match(m, i)
         sys.exit(1)
@@ -421,6 +425,15 @@ def cmd_tap(args):
     if not m["center"]:
         print("Matched element has no parseable bounds", file=sys.stderr)
         sys.exit(1)
+    return m
+
+
+def is_int(s):
+    return s.lstrip("-").isdigit()
+
+
+def cmd_tap(args):
+    m = find_unique(args.text)
     cx, cy = m["center"]
     adb_check("shell", "input", "tap", str(cx), str(cy))
     print(f"Tapped ({cx}, {cy})")
@@ -446,25 +459,12 @@ def cmd_hover(args):
 
     described = None
     if args.y is not None:
-        if not args.target.lstrip("-").isdigit():
+        if not is_int(args.target):
             print(f"hover got a y but \"{args.target}\" is not an x coordinate", file=sys.stderr)
             sys.exit(1)
         x, y = int(args.target), args.y
     else:
-        root = dump_ui_tree()
-        matches = find_elements(root, args.target)
-        if len(matches) == 0:
-            print(f"No elements matching \"{args.target}\"", file=sys.stderr)
-            sys.exit(1)
-        if len(matches) > 1:
-            print(f"Ambiguous: {len(matches)} elements match \"{args.target}\". Refine your query:", file=sys.stderr)
-            for i, m in enumerate(matches):
-                print_match(m, i)
-            sys.exit(1)
-        described = matches[0]
-        if not described["center"]:
-            print("Matched element has no parseable bounds", file=sys.stderr)
-            sys.exit(1)
+        described = find_unique(args.target)
         x, y = described["center"]
 
     hover_at(x, y, args.hold)
@@ -532,9 +532,66 @@ def cmd_swipe_xy(args):
 
 
 def cmd_long_press(args):
-    duration = args.ms or 2000
-    adb_check("shell", "input", "touchscreen", "swipe", str(args.x), str(args.y), str(args.x), str(args.y), str(duration))
-    print(f"Long-pressed ({args.x}, {args.y}) for {duration}ms")
+    # `long-press X Y [ms]` (as before) or `long-press TEXT [ms]`. As with hover, a number
+    # is an x coordinate only when a y follows it; alone, it's searched as text.
+    rest = args.rest
+    if not all(is_int(r) for r in rest):
+        print(f"long-press: expected integers after the target, got {' '.join(rest)}", file=sys.stderr)
+        sys.exit(1)
+    described = None
+    if is_int(args.target) and rest:
+        if len(rest) > 2:
+            print("long-press with coordinates takes: x y [ms]", file=sys.stderr)
+            sys.exit(1)
+        x, y = int(args.target), int(rest[0])
+        ms = rest[1] if len(rest) == 2 else None
+    else:
+        if len(rest) > 1:
+            print("long-press with an element query takes: text [ms]", file=sys.stderr)
+            sys.exit(1)
+        described = find_unique(args.target)
+        x, y = described["center"]
+        ms = rest[0] if rest else None
+    duration = int(ms) if ms else 2000
+    adb_check("shell", "input", "touchscreen", "swipe", str(x), str(y), str(x), str(y), str(duration))
+    print(f"Long-pressed ({x}, {y}) for {duration}ms")
+    if described:
+        print_match(described)
+
+
+def cmd_top(args):
+    out = adb_check("shell", "dumpsys", "activity", "activities").stdout
+    # topResumedActivity on Android 10+; mResumedActivity on older releases.
+    m = re.search(r"(?:topResumedActivity|mResumedActivity)=ActivityRecord\{\S+ u\d+ (\S+) t(-?\d+)", out)
+    if not m:
+        print("No resumed activity (screen off, or the shade/keyguard has focus?)", file=sys.stderr)
+        sys.exit(1)
+    print(f"{m.group(1)} (task {m.group(2)})")
+
+
+def cmd_qs(args):
+    if args.close:
+        adb_check("shell", "cmd", "statusbar", "collapse")
+        print("Collapsed Quick Settings")
+        return
+    adb_check("shell", "cmd", "statusbar", "expand-settings")
+    # The request can land seconds late (e.g. just after an app-to-home transition), and a
+    # dump taken before then is still the app underneath. Wait for the shade to take focus,
+    # then for its expand animation, so a following find/tap sees the tiles in place.
+    deadline = time.time() + args.timeout
+    while not shade_focused():
+        if time.time() > deadline:
+            print(f"Quick Settings didn't take focus within {args.timeout}s", file=sys.stderr)
+            sys.exit(1)
+        time.sleep(0.2)
+    time.sleep(args.settle)
+    print("Expanded Quick Settings")
+
+
+def shade_focused():
+    out = adb_check("shell", "dumpsys", "window").stdout
+    m = re.search(r"mCurrentFocus=(.*)", out)
+    return bool(m and "NotificationShade" in m.group(1))
 
 
 def cmd_list(args):
@@ -622,10 +679,20 @@ def main():
     p.add_argument("y2", type=int)
     p.add_argument("ms", type=int, nargs="?", default=200, help="Duration in ms (default 200)")
 
-    p = sub.add_parser("long-press", help="Long press at coordinates")
-    p.add_argument("x", type=int)
-    p.add_argument("y", type=int)
-    p.add_argument("ms", type=int, nargs="?", default=2000, help="Duration in ms (default 2000)")
+    p = sub.add_parser("long-press", help="Long press an element (by text/desc) or coordinates",
+                       usage="emu long-press (TEXT | X Y) [MS]")
+    p.add_argument("target", help="Substring to match (must be unique), or an x coordinate")
+    p.add_argument("rest", nargs="*", metavar="Y/MS",
+                   help="y (when target is x), then optional duration in ms (default 2000)")
+
+    sub.add_parser("top", help="Print the resumed activity and its task")
+
+    p = sub.add_parser("qs", help="Expand the Quick Settings panel")
+    p.add_argument("--close", action="store_true", help="Collapse the shade instead")
+    p.add_argument("--timeout", type=float, default=5.0,
+                   help="Seconds to wait for the shade to take focus (default 5)")
+    p.add_argument("--settle", type=float, default=0.5,
+                   help="Seconds to wait after that for the expand animation (default 0.5)")
 
     p = sub.add_parser("list", help="Dump UI hierarchy tree")
     p.add_argument("--raw", action="store_true", help=RAW_HELP)
@@ -650,6 +717,8 @@ def main():
         "swipe": cmd_swipe,
         "swipe-xy": cmd_swipe_xy,
         "long-press": cmd_long_press,
+        "top": cmd_top,
+        "qs": cmd_qs,
         "list": cmd_list,
     }
     handlers[args.command](args)
