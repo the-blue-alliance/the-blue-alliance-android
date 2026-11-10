@@ -19,6 +19,10 @@ mkdir -p artifacts
 scripts/emu screenshot artifacts/<name>.png
 ```
 
+`scripts/emu -h` lists the rest: `find`/`tap`/`long-press` by text or content-desc,
+`top` to confirm which activity is in front, `qs` to open Quick Settings (it waits
+until the shade has focus, so a following `find` sees the tiles).
+
 ### Parallel worktrees (fan-out)
 
 When several worktree agents verify at once, each drives its **own** read-only
