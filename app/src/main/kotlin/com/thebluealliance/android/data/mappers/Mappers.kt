@@ -31,6 +31,7 @@ import com.thebluealliance.android.data.remote.dto.RankingItemDto
 import com.thebluealliance.android.data.remote.dto.RankingResponseDto
 import com.thebluealliance.android.data.remote.dto.RankingSortOrderDto
 import com.thebluealliance.android.data.remote.dto.RegionalRankingDto
+import com.thebluealliance.android.data.remote.dto.SponsorDto
 import com.thebluealliance.android.data.remote.dto.TeamDto
 import com.thebluealliance.android.data.remote.dto.WebcastDto
 import com.thebluealliance.android.domain.model.Alliance
@@ -46,11 +47,13 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.Media
+import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.domain.model.RegionalEventPoints
 import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.domain.model.SponsorLogoStyle
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.domain.model.Webcast
 import kotlinx.serialization.json.Json
@@ -518,4 +521,15 @@ fun EventInsightsEntity.toDomain() =
     EventInsights(
         qual = qualInsights,
         playoff = playoffInsights,
+    )
+
+// ── Sponsors ──
+
+fun SponsorDto.toDomain() =
+    PlatinumSponsor(
+        name = name,
+        url = url,
+        logoOnLight = logoUrl,
+        logoOnDark = logoUrlDark,
+        logoStyle = if (logoStyle == "mark") SponsorLogoStyle.Mark else SponsorLogoStyle.Wordmark,
     )

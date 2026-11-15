@@ -31,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.paddedClickable
 
@@ -43,6 +44,7 @@ fun MoreScreen(
     onNavigateToAbout: () -> Unit,
     onNavigateToThanks: () -> Unit,
     onNavigateToSearch: () -> Unit,
+    sponsors: List<PlatinumSponsor> = emptyList(),
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
@@ -128,6 +130,8 @@ fun MoreScreen(
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 )
             }
+
+            SponsorCredits(sponsors = sponsors, modifier = Modifier.padding(top = 8.dp))
 
             Spacer(modifier = Modifier.height(12.dp))
         }
