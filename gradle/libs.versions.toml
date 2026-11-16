@@ -27,7 +27,7 @@ coil = "3.6.3"
 aboutlibraries = "15.3.0"
 
 firebase-bom = "34.19.0"
-google-services = "4.5.0"
+google-services = "4.6.0"
 firebase-crashlytics-plugin = "3.0.8"
 credentials = "1.6.0"
 googleid = "1.2.1"
