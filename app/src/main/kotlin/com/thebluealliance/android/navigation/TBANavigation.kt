@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -36,6 +38,7 @@ import com.thebluealliance.android.ui.matches.MatchDetailScreen
 import com.thebluealliance.android.ui.matches.MatchDetailViewModel
 import com.thebluealliance.android.ui.more.AboutScreen
 import com.thebluealliance.android.ui.more.MoreScreen
+import com.thebluealliance.android.ui.more.MoreViewModel
 import com.thebluealliance.android.ui.more.ThanksScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
 import com.thebluealliance.android.ui.regional.RegionalAdvancementScreen
@@ -195,6 +198,8 @@ fun TBANavigation(
                             entry<Screen.More>(
                                 metadata = Transitions.topLevelTransitionSpec,
                             ) {
+                                val moreViewModel: MoreViewModel = hiltViewModel()
+                                val sponsors by moreViewModel.sponsors.collectAsStateWithLifecycle()
                                 MoreScreen(
                                     onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
                                     onNavigateToRegionalAdvancement = {
@@ -206,6 +211,7 @@ fun TBANavigation(
                                     onNavigateToAbout = { navigator.navigate(Screen.About) },
                                     onNavigateToThanks = { navigator.navigate(Screen.Thanks) },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                                    sponsors = sponsors,
                                 )
                             }
                             entry<Screen.MyTBA>(
