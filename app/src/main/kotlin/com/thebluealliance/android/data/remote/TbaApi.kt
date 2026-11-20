@@ -14,6 +14,7 @@ import com.thebluealliance.android.data.remote.dto.MediaDto
 import com.thebluealliance.android.data.remote.dto.RankingResponseDto
 import com.thebluealliance.android.data.remote.dto.RegionalAdvancementDto
 import com.thebluealliance.android.data.remote.dto.RegionalRankingDto
+import com.thebluealliance.android.data.remote.dto.SponsorsResponseDto
 import com.thebluealliance.android.data.remote.dto.TeamDto
 import com.thebluealliance.android.data.remote.dto.TeamEventStatusDto
 import kotlinx.serialization.json.JsonObject
@@ -24,6 +25,10 @@ interface TbaApi {
     // Status
     @GET("api/v3/status")
     suspend fun getStatus(): ApiStatusDto
+
+    // Platinum sponsors credited on the More tab
+    @GET("api/v3/sponsors")
+    suspend fun getSponsors(): SponsorsResponseDto
 
     // Teams
     @GET("api/v3/teams/{page_num}")
