@@ -1,0 +1,185 @@
+package com.thebluealliance.android.navigation
+
+import android.net.Uri
+import androidx.navigation3.runtime.deeplink.DeepLinkRequest
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.net.URLDecoder
+
+class TbaDeepLinksTest {
+    private lateinit var deepLinks: TbaDeepLinks
+
+    @BeforeEach
+    fun setUp() {
+        // android.net.Uri is a stub in JVM tests; Navigation 3's matchers parse both the patterns
+        // and the requests through it.
+        mockkStatic(Uri::class)
+        every { Uri.parse(any()) } answers { fakeUri(firstArg()) }
+        every { Uri.decode(any()) } answers { decode(firstArg()) }
+        deepLinks = TbaDeepLinks()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        unmockkAll()
+    }
+
+    private fun match(url: String) = deepLinks.match(DeepLinkRequest(url))
+
+    @Test
+    fun `event pitmap deeplink maps to pit map screen under its event`() {
+        assertEquals(
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2026miket"),
+                Screen.EventPitMap("2026miket", "frc254,frc1678"),
+            ),
+            match("https://www.thebluealliance.com/event/2026miket/pitmap?teams=frc254,frc1678"),
+        )
+    }
+
+    @Test
+    fun `event pitmap deeplink without teams has empty csv`() {
+        assertEquals(
+            Screen.EventPitMap("2026miket", ""),
+            match("https://www.thebluealliance.com/event/2026miket/pitmap")?.last(),
+        )
+    }
+
+    @Test
+    fun `event detail deeplink sits on the events list`() {
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2026miket")),
+            match("https://www.thebluealliance.com/event/2026miket"),
+        )
+    }
+
+    @Test
+    fun `event subpages and fragments open the event`() {
+        assertEquals(
+            Screen.EventDetail("2026miket"),
+            match("https://www.thebluealliance.com/event/2026miket/teams")?.last(),
+        )
+        assertEquals(
+            Screen.EventDetail("2026miket"),
+            match("https://www.thebluealliance.com/event/2026miket#rankings")?.last(),
+        )
+    }
+
+    @Test
+    fun `bare host is accepted`() {
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2026miket")),
+            match("https://thebluealliance.com/event/2026miket"),
+        )
+    }
+
+    @Test
+    fun `team deeplink sits on the teams list`() {
+        assertEquals(
+            listOf(Screen.Teams, Screen.TeamDetail("frc254")),
+            match("https://www.thebluealliance.com/team/frc254"),
+        )
+        assertEquals(
+            Screen.TeamDetail("frc254"),
+            match("https://www.thebluealliance.com/team/frc254/2024")?.last(),
+        )
+    }
+
+    @Test
+    fun `match deeplink sits on its event's matches tab`() {
+        assertEquals(
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2024micmp4", initialTab = EventDetailTab.MATCHES),
+                Screen.MatchDetail("2024micmp4_f1m1"),
+            ),
+            match("https://www.thebluealliance.com/match/2024micmp4_f1m1"),
+        )
+    }
+
+    @Test
+    fun `events deeplinks honor an optional year`() {
+        assertEquals(listOf(Screen.Events()), match("https://www.thebluealliance.com/events"))
+        assertEquals(
+            listOf(Screen.Events(2024)),
+            match("https://www.thebluealliance.com/events/2024"),
+        )
+        assertEquals(
+            listOf(Screen.Events(2024)),
+            match("https://www.thebluealliance.com/events/2024/district"),
+        )
+        assertEquals(listOf(Screen.Events()), match("https://www.thebluealliance.com/events/abc"))
+    }
+
+    @Test
+    fun `teams deeplinks ignore the page`() {
+        assertEquals(listOf(Screen.Teams), match("https://www.thebluealliance.com/teams"))
+        assertEquals(listOf(Screen.Teams), match("https://www.thebluealliance.com/teams/2"))
+    }
+
+    @Test
+    fun `regional advancement deeplinks sit under more`() {
+        val expected = listOf(Screen.More, Screen.RegionalAdvancement)
+        assertEquals(expected, match("https://www.thebluealliance.com/regional_advancement"))
+        assertEquals(
+            expected,
+            match("https://www.thebluealliance.com/regional_advancement/2026/rankings"),
+        )
+    }
+
+    @Test
+    fun `unknown urls do not match`() {
+        assertNull(match("https://www.thebluealliance.com"))
+        assertNull(match("https://www.thebluealliance.com/districts"))
+        assertNull(match("https://www.thebluealliance.com/event/"))
+        assertNull(match("https://www.thebluealliance.com/team/"))
+        assertNull(match("https://www.example.com/event/2026miket"))
+    }
+
+    private fun decode(s: String): String = URLDecoder.decode(s.replace("+", "%2B"), Charsets.UTF_8)
+
+    /** A lenient `scheme://authority/path?query#fragment` parser mirroring android.net.Uri. */
+    private fun fakeUri(s: String): Uri {
+        val fragmentPart = if ('#' in s) s.substringAfter('#') else null
+        val beforeFragment = s.substringBefore('#')
+        val queryPart = if ('?' in beforeFragment) beforeFragment.substringAfter('?') else null
+        val hierarchy = beforeFragment.substringBefore('?')
+        val schemePart = hierarchy.substringBefore("://")
+        val rest = hierarchy.substringAfter("://")
+        val params =
+            queryPart
+                ?.split('&')
+                ?.filter { it.isNotEmpty() }
+                ?.map { decode(it.substringBefore('=')) to decode(it.substringAfter('=', "")) }
+                .orEmpty()
+        return mockk {
+            every { this@mockk.toString() } returns s
+            every { scheme } returns schemePart
+            every { authority } returns rest.substringBefore('/')
+            every { pathSegments } returns
+                rest
+                    .substringAfter('/', "")
+                    .split('/')
+                    .filter { it.isNotEmpty() }
+                    .map(::decode)
+            every { query } returns queryPart?.let(::decode)
+            every { fragment } returns fragmentPart?.let(::decode)
+            every { isHierarchical } returns true
+            every { queryParameterNames } returns
+                params.map { it.first }.toCollection(LinkedHashSet())
+            every { getQueryParameters(any()) } answers {
+                val key = firstArg<String>()
+                params.filter { it.first == key }.map { it.second }
+            }
+        }
+    }
+}

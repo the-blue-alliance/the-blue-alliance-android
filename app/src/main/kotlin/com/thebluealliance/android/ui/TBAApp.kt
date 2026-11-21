@@ -29,13 +29,13 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TBAApp(
-    startRoute: NavKey,
+    launchBackStack: List<NavKey>,
     isNewTask: Boolean,
     themePreferences: ThemePreferences? = null,
 ) {
     val navState =
         rememberNavigationState(
-            startRoute = startRoute,
+            launchBackStack = launchBackStack,
             topLevelRoutes = TOP_LEVEL_DESTINATIONS.map { it.key },
             startTopLevelRoute = TOP_LEVEL_DESTINATIONS.first().key,
             isNewTask = isNewTask,
