@@ -10,9 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +35,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +123,7 @@ fun SearchScreen(
                         trailingIcon = {
                             if (viewModel.queryState.text.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.queryState.clearText() }) {
-                                    Icon(Icons.Default.Clear, contentDescription = "Clear")
+                                    Icon(TbaIcons.Close, contentDescription = "Clear")
                                 }
                             }
                         },
@@ -133,7 +131,7 @@ fun SearchScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(TbaIcons.ArrowBack, contentDescription = "Back")
                     }
                 },
             )

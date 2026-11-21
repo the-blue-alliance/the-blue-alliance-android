@@ -16,8 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -32,6 +30,7 @@ import coil3.compose.AsyncImage
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 
 /**
@@ -118,7 +117,7 @@ fun MediaItem(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    Icons.Outlined.PlayCircle,
+                    TbaIcons.PlayCircle,
                     contentDescription = "Play video",
                     tint = Color.White,
                     modifier = Modifier.size(48.dp),

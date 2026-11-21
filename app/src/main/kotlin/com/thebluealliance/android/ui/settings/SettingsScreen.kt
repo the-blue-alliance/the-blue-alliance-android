@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -36,6 +33,7 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +53,7 @@ fun SettingsScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = TbaIcons.ArrowBack,
                             contentDescription = "Back",
                         )
                     }
@@ -63,7 +61,7 @@ fun SettingsScreen(
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = TbaIcons.Search,
                             contentDescription = "Search",
                         )
                     }

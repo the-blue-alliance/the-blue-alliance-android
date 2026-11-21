@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -55,6 +51,7 @@ import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,7 +80,7 @@ fun MatchDetailScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = TbaIcons.ArrowBack,
                             contentDescription = "Back",
                         )
                     }
@@ -91,7 +88,7 @@ fun MatchDetailScreen(
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = TbaIcons.Search,
                             contentDescription = "Search",
                         )
                     }
@@ -105,7 +102,7 @@ fun MatchDetailScreen(
                             )
                         }) {
                             Icon(
-                                imageVector = Icons.Filled.Share,
+                                imageVector = TbaIcons.Share,
                                 contentDescription = "Share",
                             )
                         }

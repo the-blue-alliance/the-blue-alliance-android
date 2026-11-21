@@ -23,12 +23,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
@@ -67,6 +61,7 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -134,7 +129,7 @@ fun MyTBAScreen(
                     if (onNavigateUp != null) {
                         IconButton(onClick = onNavigateUp) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -143,7 +138,7 @@ fun MyTBAScreen(
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(
-                            imageVector = Icons.Default.Search,
+                            imageVector = TbaIcons.Search,
                             contentDescription = "Search",
                         )
                     }
@@ -178,7 +173,7 @@ fun MyTBAScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val personIcon = rememberVectorPainter(Icons.Default.Person)
+                val personIcon = rememberVectorPainter(TbaIcons.Person)
                 AsyncImage(
                     model = uiState.userPhotoUrl,
                     contentDescription = "Profile photo",
@@ -208,7 +203,7 @@ fun MyTBAScreen(
                 Box {
                     IconButton(onClick = { menuExpanded = true }) {
                         Icon(
-                            imageVector = Icons.Default.MoreVert,
+                            imageVector = TbaIcons.MoreVert,
                             contentDescription = "More options",
                         )
                     }
@@ -412,7 +407,7 @@ private fun FavoriteItem(
         Box {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
+                    imageVector = TbaIcons.MoreVert,
                     contentDescription = "More options",
                 )
             }
@@ -439,7 +434,7 @@ private fun FavoriteItem(
                     text = { Text("Remove") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Delete,
+                            imageVector = TbaIcons.Delete,
                             contentDescription = null,
                         )
                     },
@@ -537,7 +532,7 @@ private fun SubscriptionItem(
         Box {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
+                    imageVector = TbaIcons.MoreVert,
                     contentDescription = "More options",
                 )
             }
@@ -549,7 +544,7 @@ private fun SubscriptionItem(
                     text = { Text("Remove") },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Delete,
+                            imageVector = TbaIcons.Delete,
                             contentDescription = null,
                         )
                     },

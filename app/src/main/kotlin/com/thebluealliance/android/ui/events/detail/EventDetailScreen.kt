@@ -9,14 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.NotificationsNone
-import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -61,6 +53,7 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventInsightsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventRankingsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
 enum class EventDetailTab(
@@ -158,7 +151,7 @@ fun EventDetailScreen(
                     navigationIcon = {
                         IconButton(onClick = onNavigateUp) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -175,9 +168,9 @@ fun EventDetailScreen(
                             Icon(
                                 imageVector =
                                     if (hasSubscription) {
-                                        Icons.Filled.Notifications
+                                        TbaIcons.Notifications
                                     } else {
-                                        Icons.Outlined.NotificationsNone
+                                        TbaIcons.NotificationsOutlined
                                     },
                                 contentDescription = "Notification preferences",
                             )
@@ -186,9 +179,9 @@ fun EventDetailScreen(
                             Icon(
                                 imageVector =
                                     if (isFavorite) {
-                                        Icons.Filled.Star
+                                        TbaIcons.Star
                                     } else {
-                                        Icons.Outlined.StarBorder
+                                        TbaIcons.StarOutlined
                                     },
                                 contentDescription =
                                     if (isFavorite) {
@@ -202,7 +195,7 @@ fun EventDetailScreen(
                         Box {
                             IconButton(onClick = { menuExpanded = true }) {
                                 Icon(
-                                    imageVector = Icons.Default.MoreVert,
+                                    imageVector = TbaIcons.MoreVert,
                                     contentDescription = "More options",
                                 )
                             }
@@ -215,7 +208,7 @@ fun EventDetailScreen(
                                         text = { Text("Share") },
                                         leadingIcon = {
                                             Icon(
-                                                Icons.Filled.Share,
+                                                TbaIcons.Share,
                                                 contentDescription = null,
                                             )
                                         },

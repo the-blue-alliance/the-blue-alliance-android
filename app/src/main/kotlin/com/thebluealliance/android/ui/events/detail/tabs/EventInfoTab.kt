@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,6 +29,7 @@ import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 
 /**
@@ -137,7 +134,7 @@ fun EventInfoTab(
                     },
                     icon = {
                         Icon(
-                            Icons.Outlined.LocationOn,
+                            TbaIcons.LocationOn,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp),
@@ -155,7 +152,7 @@ fun EventInfoTab(
                     onClick = { context.openUrl(event.website) },
                     icon = {
                         Icon(
-                            Icons.Outlined.Language,
+                            TbaIcons.Language,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = Modifier.size(18.dp),
@@ -207,7 +204,7 @@ fun EventInfoTab(
                         onClick = { context.openUrl(url) },
                         icon = {
                             Icon(
-                                Icons.Outlined.PlayCircle,
+                                TbaIcons.PlayCircle,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp),

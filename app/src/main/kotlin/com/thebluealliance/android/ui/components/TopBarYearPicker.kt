@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -24,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.TbaIcons
 
 private val HORIZONTAL_TARGET_PADDING = 12.dp
 
@@ -63,7 +62,7 @@ fun TopBarYearPicker(
                     color = contentColor,
                 )
                 Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
+                    imageVector = TbaIcons.ArrowDropDown,
                     contentDescription = "Select year",
                     modifier = Modifier.size(16.dp),
                     tint = contentColor,

@@ -18,10 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,6 +48,7 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.serialization.json.Json
@@ -467,7 +464,7 @@ private fun InsightsView(
                     modifier = Modifier.padding(0.dp),
                 ) {
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
+                        imageVector = TbaIcons.MoreVert,
                         contentDescription = "Select stat type",
                         tint = Color.White,
                     )
@@ -845,7 +842,7 @@ private fun InsightsTableHeaderRow(
         ) {
             IconButton(onClick = onShowStatSelector) {
                 Icon(
-                    imageVector = Icons.Default.MoreVert,
+                    imageVector = TbaIcons.MoreVert,
                     contentDescription = "Select stat type",
                     tint = Color.White,
                 )
@@ -947,7 +944,7 @@ private fun RowScope.TableDataCell(
 @Composable
 private fun SortIndicator(ascending: Boolean) {
     Icon(
-        imageVector = if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+        imageVector = if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
         contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
         tint = Color.White,
     )
