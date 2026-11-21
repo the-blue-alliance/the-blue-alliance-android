@@ -46,6 +46,8 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.theme.BrandHeaderContainer
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.util.teamNumber
@@ -441,20 +443,20 @@ private fun InsightsView(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
+                        .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = insightHeader,
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = OnBrand,
                     modifier = Modifier.weight(1.5f),
                 )
                 Text(
                     text = "Value",
                     style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    color = OnBrand,
                     modifier = Modifier.weight(1f),
                 )
                 IconButton(
@@ -464,7 +466,7 @@ private fun InsightsView(
                     Icon(
                         imageVector = TbaIcons.MoreVert,
                         contentDescription = "Select stat type",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = OnBrand,
                     )
                 }
             }
@@ -823,7 +825,7 @@ private fun InsightsTableHeaderRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(BrandHeaderContainer)
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -842,7 +844,7 @@ private fun InsightsTableHeaderRow(
                 Icon(
                     imageVector = TbaIcons.MoreVert,
                     contentDescription = "Select stat type",
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                    tint = OnBrand,
                 )
             }
         }
@@ -913,7 +915,7 @@ private fun RowScope.TableHeaderCell(
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = OnBrand,
         )
         if (sorted && !column.numeric) {
             SortIndicator(ascending)
@@ -944,6 +946,6 @@ private fun SortIndicator(ascending: Boolean) {
     Icon(
         imageVector = if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
         contentDescription = if (ascending) "Sorted Ascending" else "Sorted Descending",
-        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+        tint = OnBrand,
     )
 }

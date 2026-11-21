@@ -42,6 +42,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thebluealliance.android.R
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBATheme
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
@@ -95,13 +96,13 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 Icon(
                                     painter = painterResource(R.drawable.tba_lamp),
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    tint = OnBrand,
                                     modifier = Modifier.size(20.dp),
                                 )
                                 Text(
                                     text = "Team Tracker",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    color = OnBrand,
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
                                 IconButton(
@@ -111,7 +112,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     Icon(
                                         imageVector = TbaIcons.Close,
                                         contentDescription = "Close",
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        tint = OnBrand,
                                     )
                                 }
                             }

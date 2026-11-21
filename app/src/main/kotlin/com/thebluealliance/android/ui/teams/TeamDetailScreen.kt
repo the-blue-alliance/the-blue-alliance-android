@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -51,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.R
+import com.thebluealliance.android.core.theme.TbaAllianceColors
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
@@ -371,7 +371,12 @@ private fun InfoTab(
                         }
                     if (bitmap != null) {
                         var showRed by remember { mutableStateOf(false) }
-                        val bgColor = if (showRed) FrcRed else FrcBlue
+                        val bgColor =
+                            if (showRed) {
+                                TbaAllianceColors.AvatarRed
+                            } else {
+                                TbaAllianceColors.AvatarBlue
+                            }
                         Box(
                             modifier =
                                 Modifier
@@ -465,6 +470,3 @@ private fun EventsTab(
         }
     }
 }
-
-private val FrcBlue = Color(0xFF0066B3)
-private val FrcRed = Color(0xFFED1C24)

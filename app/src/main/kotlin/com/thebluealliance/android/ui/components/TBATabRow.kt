@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.OnBrand
 
 @Composable
 fun TBATabRow(
@@ -24,18 +25,18 @@ fun TBATabRow(
         selectedTabIndex = selectedTabIndex,
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentColor = OnBrand,
         edgePadding = 0.dp,
         divider = {
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.12f),
+                color = OnBrand.copy(alpha = 0.12f),
             )
         },
         indicator = {
             SecondaryIndicator(
                 modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
                 height = 3.dp,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                color = OnBrand,
             )
         },
         tabs = tabs,
@@ -54,8 +55,8 @@ fun TBATab(
         selected = selected,
         onClick = onClick,
         modifier = modifier,
-        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        unselectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+        selectedContentColor = OnBrand,
+        unselectedContentColor = OnBrand.copy(alpha = 0.7f),
         text = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

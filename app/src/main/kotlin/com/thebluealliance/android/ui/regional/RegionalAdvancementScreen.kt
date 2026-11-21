@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
@@ -310,7 +309,6 @@ private fun AdvancementBadge(
             Text(
                 text = method,
                 style = MaterialTheme.typography.labelSmall,
-                fontSize = 10.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color =

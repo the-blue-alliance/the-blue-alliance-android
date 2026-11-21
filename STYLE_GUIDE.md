@@ -47,65 +47,49 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 
 ## Brand colors
 
-These match the TBA web server CSS variables (`tba_variables.less`).
+These match the TBA web server CSS variables (`tba_variables.less`). In code they live in
+`TbaBrandColors` (`:core-theme`), shared by the phone, Wear and TV apps.
 
-| Name           | Hex       | Usage                                      |
-|----------------|-----------|---------------------------------------------|
-| TBA Blue       | `#3F51B5` | Primary brand color, launcher background    |
-| TBA Blue Dark  | `#303F9F` | Darker variant                              |
-| TBA Red        | `#770000` | Debug/beta builds, launcher background      |
-| TBA Red Dark   | `#440000` | Darker variant                              |
+| Name             | Hex       | Usage                                                        |
+|------------------|-----------|--------------------------------------------------------------|
+| TBA Blue         | `#3F51B5` | Canonical brand color (Material Indigo 500): app bar, tab row, launcher and shortcut icons, color-scheme seed |
+| TBA Header Blue  | `#5C6BC0` | Section and table headers (Material Indigo 400), a step lighter than the app bar |
+| TBA Red          | `#770000` | Debug/beta builds, launcher background                       |
+| TBA Red Dark     | `#440000` | Darker variant                                               |
 
-### Indigo tonal scale
+Content on TBA Blue and TBA Header Blue is white, in both light and dark mode.
 
-All brand blues are drawn from the Material Design Indigo scale:
+### Color scheme
 
-| Shade | Hex       | Token              | Usage                                    |
-|-------|-----------|--------------------|------------------------------------------|
-| 50    | `#E8EAF6` | —                  | Reserved (not currently used)            |
-| 100   | `#C5CAE9` | `TBAPastelBlue`    | Light-mode `primaryContainer`            |
-| 200   | `#9FA8DA` | `TBABlueLight`     | Dark-mode `primary`                      |
-| 300   | `#7986CB` | —                  | Reserved                                 |
-| 400   | `#5C6BC0` | —                  | Section headers (lighter than TopAppBar) |
-| 500   | `#3F51B5` | `TBABlue`          | Canonical brand color, TopAppBar         |
-| 600   | `#3949AB` | —                  | Reserved                                 |
-| 700   | `#303F9F` | `TBABlueDark`      | Dark-mode `primaryContainer`             |
-| 800   | `#283593` | —                  | Reserved                                 |
-| 900   | `#1A237E` | `TBAIndigo900`     | Light-mode `onPrimaryContainer`          |
+Every Material 3 color role (all three apps) is generated from TBA Blue with Material Color
+Utilities, the library behind Material Theme Builder ("fidelity" / color-match scheme). The
+generated tokens and the generator live in `:core-theme`; see `core-theme/README.md` to regenerate.
+Don't hand-pick role colors: change the seed and regenerate instead.
 
-### Material 3 color role mappings
+Key roles:
 
-**Light scheme:**
+| Role                 | Light     | Dark      |
+|----------------------|-----------|-----------|
+| `primary`            | `#24389C` | `#BAC3FF` |
+| `onPrimary`          | `#FFFFFF` | `#08218A` |
+| `primaryContainer`   | `#3F51B5` | `#3F51B5` |
+| `background`         | `#FBF8FF` | `#121319` |
 
-| Role                 | Value       | Source        |
-|----------------------|-------------|---------------|
-| `primary`            | `#3F51B5`   | Indigo 500    |
-| `onPrimary`          | `White`     |               |
-| `primaryContainer`   | `#C5CAE9`   | Indigo 100    |
-| `onPrimaryContainer` | `#1A237E`   | Indigo 900    |
-| `surfaceTint`        | `#3F51B5`   | Indigo 500    |
-| Other roles          | M3 defaults |               |
-
-**Dark scheme:**
-
-| Role                 | Value       | Source        |
-|----------------------|-------------|---------------|
-| `primary`            | `#9FA8DA`   | Indigo 200    |
-| `onPrimary`          | `#00174D`   |               |
-| `primaryContainer`   | `#303F9F`   | Indigo 700    |
-| `onPrimaryContainer` | `#C5CAE9`   | Indigo 100    |
-| `surfaceTint`        | `#9FA8DA`   | Indigo 200    |
-| Other roles          | M3 defaults |               |
-
-**TopAppBar** uses `TBABlue` (`#3F51B5`) with white content in both light and dark mode via `TBATopAppBar`.
+`primaryContainer` is exactly TBA Blue in both modes, so brand bars use it. Brand surfaces
+(bars, headers) use white content rather than `onPrimaryContainer`, for contrast.
 
 ### Accessibility (WCAG contrast ratios)
 
-| Foreground          | Background          | Ratio  | Passes         |
-|---------------------|---------------------|--------|----------------|
-| White on `#3F51B5`  | TopAppBar text      | 4.57:1 | AA normal text |
-| White on `#5C6BC0`  | Section header text | 3.9:1  | AA large text  |
-| `#1A237E` on `#C5CAE9` | Container text   | 8.84:1 | AAA            |
-| `#9FA8DA` on dark surface | Dark-mode primary | 6.5:1 | AA          |
+| Foreground            | Background         | Ratio   | Where                          |
+|-----------------------|--------------------|---------|--------------------------------|
+| White                 | `#3F51B5`          | 6.87:1  | App bar, tab row, week chips   |
+| White                 | `#5C6BC0`          | 4.86:1  | Section and table headers      |
+| `#24389C` (primary)   | `#FBF8FF`          | 9.42:1  | Light-mode links and buttons   |
+| White                 | `#24389C`          | 9.90:1  | Light-mode filled button text  |
+| `#BAC3FF` (primary)   | `#121319`          | 10.89:1 | Dark-mode links and buttons    |
+| `#08218A` (onPrimary) | `#BAC3FF`          | 7.74:1  | Dark-mode filled button text   |
 
-Dynamic colors (Material You) are **disabled** — the app always uses TBA brand colors.
+All pass WCAG AA for normal text (4.5:1).
+
+Dynamic colors (Material You) are **disabled** in the app, which always uses TBA colors. The
+home-screen widget follows the wallpaper on Android 12+, the norm for widgets.

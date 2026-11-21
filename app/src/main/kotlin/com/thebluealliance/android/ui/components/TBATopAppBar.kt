@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
+import com.thebluealliance.android.ui.theme.OnBrand
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,9 +28,9 @@ fun TBATopAppBar(
     colors: TopAppBarColors =
         TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            titleContentColor = OnBrand,
+            navigationIconContentColor = OnBrand,
+            actionIconContentColor = OnBrand,
         ),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     showLamp: Boolean = false,
@@ -47,7 +48,7 @@ fun TBATopAppBar(
                             painter = painterResource(id = R.drawable.tba_lamp),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            tint = OnBrand,
                         )
                     }
                 }

@@ -8,13 +8,28 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.core.theme.TbaDarkColorTokens as Dark
 import com.thebluealliance.android.core.theme.TbaLightColorTokens as Light
 
 // The shared TBA scheme (:core-theme), the same one the TV and Wear apps use: every Material 3
 // role, generated from the brand seed #3F51B5. The brand blue itself is primaryContainer in both
 // light and dark, which is what the top app bar and tab row use.
+
+/**
+ * Brand surfaces use fixed TBA brand colors with white content in both light and dark mode:
+ * - The bars (top app bar, tab row, events week chips, widget-config header) are primaryContainer,
+ *   which the generated scheme makes exactly TBA Blue #3F51B5 in both modes.
+ * - Section and table headers are [BrandHeaderContainer], TBA's Indigo 400 header blue.
+ * - Content on either is [OnBrand], white. onPrimaryContainer / secondaryContainer are muted by
+ *   design and read with less contrast on these surfaces.
+ */
+val BrandHeaderContainer: Color = TbaBrandColors.HeaderBlue
+val OnBrand: Color = TbaBrandColors.OnBlue
+
 internal val TbaLightColorScheme =
     lightColorScheme(
         primary = Light.Primary,
@@ -135,8 +150,12 @@ fun TBATheme(
             else -> TbaLightColorScheme
         }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content,
-    )
+    CompositionLocalProvider(
+        LocalAllianceColors provides if (darkTheme) DarkAllianceColors else LightAllianceColors,
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content,
+        )
+    }
 }

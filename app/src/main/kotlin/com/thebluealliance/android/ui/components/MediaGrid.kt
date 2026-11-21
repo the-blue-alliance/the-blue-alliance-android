@@ -113,7 +113,10 @@ fun MediaItem(
                     Modifier
                         .align(Alignment.Center)
                         .size(48.dp)
-                        .background(Color.Black.copy(alpha = 0.5f), CircleShape),
+                        .background(
+                            MaterialTheme.colorScheme.scrim.copy(alpha = 0.5f),
+                            CircleShape,
+                        ),
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(

@@ -56,6 +56,7 @@ import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -348,26 +349,26 @@ private fun WeekFilterChips(
     //    hover elevation otherwise renders as a dark blotch across the chip;
     //  - `contentColorFor(Color.Transparent)` is unspecified, so the hover/press state layers
     //    inherit the ambient content color (near-black onSurface) and darken the chip. The
-    //    onPrimaryContainer LocalContentColor below makes them lighten it, as TBATabRow's tabs do.
+    //    OnBrand LocalContentColor below makes them lighten it, as TBATabRow's tabs do.
     // Read here: the fade below draws in a DrawScope, which can't read the theme.
     val barColor = MaterialTheme.colorScheme.primaryContainer
     val weekChipColors =
         FilterChipDefaults.filterChipColors(
             containerColor = Color.Transparent,
-            labelColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-            selectedContainerColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            labelColor = OnBrand.copy(alpha = 0.7f),
+            selectedContainerColor = OnBrand,
             selectedLabelColor = MaterialTheme.colorScheme.primaryContainer,
         )
     val weekChipBorder =
         FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = false,
-            borderColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
+            borderColor = OnBrand.copy(alpha = 0.5f),
             selectedBorderColor = Color.Transparent,
         )
 
     CompositionLocalProvider(
-        LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer,
+        LocalContentColor provides OnBrand,
     ) {
         Row(
             modifier =
@@ -407,7 +408,7 @@ private fun WeekFilterChips(
                             .height(24.dp)
                             .width(1.dp)
                             .background(
-                                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f),
+                                OnBrand.copy(alpha = 0.3f),
                             ),
                 )
             }
@@ -473,7 +474,7 @@ private fun SubSectionHeader(label: String) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Text(
