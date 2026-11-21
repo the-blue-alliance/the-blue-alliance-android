@@ -121,7 +121,7 @@ class Navigator(
          * can build the synthetic backStack starting from the deeplink key all the way up to the
          * root key.
          *
-         * See [buildBackStack] for building synthetic backStack.
+         * See [launchStacks] for building synthetic backStack.
          */
         if (deeplinkKey != null) {
             intent.data = "https://thebluealliance.com".toUri()
