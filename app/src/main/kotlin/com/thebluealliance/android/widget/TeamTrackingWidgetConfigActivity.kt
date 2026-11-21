@@ -14,8 +14,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
@@ -26,10 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -125,7 +124,8 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 modifier = Modifier.padding(16.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
-                                var teamNumber by remember { mutableStateOf("") }
+                                val teamNumberState = rememberTextFieldState()
+                                val teamNumber = teamNumberState.text.toString()
 
                                 LaunchedEffect(Unit) {
                                     try {
@@ -141,7 +141,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                                 glanceId,
                                             )
                                         state[TeamTrackingWidgetKeys.TEAM_NUMBER]?.let {
-                                            teamNumber = it
+                                            teamNumberState.setTextAndPlaceCursorAtEnd(it)
                                         }
                                     } catch (_: Exception) {
                                         // New widget — no existing state
@@ -149,8 +149,8 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 }
 
                                 TextField(
-                                    value = teamNumber,
-                                    onValueChange = { teamNumber = it.filter { c -> c.isDigit() } },
+                                    state = teamNumberState,
+                                    inputTransformation = DigitsOnly,
                                     label = { Text("Team Number") },
                                     placeholder = { Text("e.g. 9180") },
                                     keyboardOptions =
@@ -158,15 +158,12 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                             keyboardType = KeyboardType.Number,
                                             imeAction = ImeAction.Done,
                                         ),
-                                    keyboardActions =
-                                        KeyboardActions(
-                                            onDone = {
-                                                if (teamNumber.isNotBlank()) {
-                                                    confirmWidget(appWidgetId, teamNumber)
-                                                }
-                                            },
-                                        ),
-                                    singleLine = true,
+                                    onKeyboardAction = {
+                                        if (teamNumber.isNotBlank()) {
+                                            confirmWidget(appWidgetId, teamNumber)
+                                        }
+                                    },
+                                    lineLimits = TextFieldLineLimits.SingleLine,
                                     modifier = Modifier.fillMaxWidth(),
                                 )
 
@@ -218,3 +215,9 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
         }
     }
 }
+
+/** Team numbers are digits only; rejects any edit that would add anything else. */
+private val DigitsOnly =
+    InputTransformation {
+        if (!asCharSequence().all(Char::isDigit)) revertAllChanges()
+    }
