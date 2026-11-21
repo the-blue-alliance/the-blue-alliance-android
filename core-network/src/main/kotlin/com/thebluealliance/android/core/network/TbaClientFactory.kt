@@ -3,8 +3,10 @@ package com.thebluealliance.android.core.network
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.io.File
@@ -69,11 +71,16 @@ object TbaClientFactory {
                     chain
                         .request()
                         .newBuilder()
-                        .addHeader("X-TBA-Auth-Key", apiKey())
+                        .addHeader(API_KEY_HEADER, apiKey())
                         .addHeader("Accept", "application/json")
                         .build()
                 chain.proceed(request)
-            }.addInterceptor(
+            }
+            // The key header is added before OkHttp follows redirects, and OkHttp only strips
+            // `Authorization` on a cross-host hop. Network interceptors see each hop, so drop the
+            // key on any request whose host isn't the one the call was made to.
+            .addNetworkInterceptor(::stripApiKeyOffHost)
+            .addInterceptor(
                 HttpLoggingInterceptor().apply {
                     level =
                         if (isDebug) {
@@ -86,6 +93,21 @@ object TbaClientFactory {
             .readTimeout(READ_TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .apply { callTimeoutSeconds?.let { callTimeout(it, TimeUnit.SECONDS) } }
             .build()
+
+    internal const val API_KEY_HEADER = "X-TBA-Auth-Key"
+
+    internal fun stripApiKeyOffHost(chain: Interceptor.Chain): Response {
+        val request = chain.request()
+        if (request.url.host ==
+            chain
+                .call()
+                .request()
+                .url.host
+        ) {
+            return chain.proceed(request)
+        }
+        return chain.proceed(request.newBuilder().removeHeader(API_KEY_HEADER).build())
+    }
 
     /** A Retrofit pointed at [baseUrl] using [client] and the canonical [json] converter. */
     fun retrofit(
