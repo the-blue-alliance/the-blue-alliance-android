@@ -168,6 +168,7 @@ configurations.configureEach {
 dependencies {
     // Modules
     implementation(project(":core-network"))
+    implementation(project(":core-theme"))
 
     // Wear OS Compose
     implementation(libs.wear.compose.material3)

@@ -4,15 +4,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material3.ColorScheme
 import androidx.wear.compose.material3.MaterialTheme
+import com.thebluealliance.android.core.theme.TbaPaletteTokens
 
 /**
- * TBA brand + alliance colors — a single source shared by the theme and the tracker UI, so the
- * palette isn't duplicated across files.
+ * Alliance game colors for the tracker UI. Fixed on purpose: red and blue are the FRC alliances,
+ * not theme roles, so they don't follow the TBA scheme.
  */
 object TbaColors {
     // Alliance accents used in match sections (light fill / strong avatar backdrop).
     val AllianceRed = Color(0xFFF2B8B5)
-    val AllianceBlue = Color(0xFF9FA8DA) // same indigo as the brand primary
+    val AllianceBlue = Color(0xFF9FA8DA) // Indigo 200
     val AllianceRedBg = Color(0xFFC62828) // Red 800
     val AllianceBlueBg = Color(0xFF1565C0) // Blue 800
 
@@ -21,35 +22,44 @@ object TbaColors {
 }
 
 /**
- * TBA brand theme for Wear. Wear renders dark-only, so this is the STYLE_GUIDE.md dark-scheme
- * mapping. Beyond the primary (indigo) family — which fills the EdgeButton — the secondary/tertiary
- * accents and the surface-container family are brand-tinted so the components that draw from
- * surface roles (FilledTonalButton and the config text field) carry the TBA indigo instead of a
- * neutral grey. Dynamic color (Material You) is disabled repo-wide.
+ * The shared TBA color scheme (`:core-theme`) on Wear. Every role uses the same palette tone as
+ * wear-compose-material3's default scheme (its `ColorTokens`), so only the palette differs.
+ * Wear is dark-only, and dynamic color (Material You) is disabled repo-wide.
  */
 private val TbaWearColorScheme =
-    ColorScheme(
-        primary = Color(0xFF9FA8DA), // Indigo 200
-        primaryDim = Color(0xFF7986CB), // Indigo 300
-        onPrimary = Color(0xFF00174D),
-        primaryContainer = Color(0xFF303F9F), // Indigo 700
-        onPrimaryContainer = Color(0xFFC5CAE9), // Indigo 100
-        // Secondary: muted indigo accent for tonal surfaces.
-        secondary = Color(0xFFB4B9E0),
-        secondaryDim = Color(0xFF8C93C4),
-        secondaryContainer = Color(0xFF283593), // Indigo 800
-        onSecondaryContainer = Color(0xFFC5CAE9), // Indigo 100
-        // Tertiary: TBA blue, complementary to the indigo primary.
-        tertiary = Color(0xFF90CAF9), // Blue 200
-        tertiaryDim = Color(0xFF64B5F6), // Blue 300
-        onTertiary = Color(0xFF002E5C),
-        tertiaryContainer = Color(0xFF1565C0), // Blue 800
-        onTertiaryContainer = Color(0xFFE3EEFF),
-        // Brand-tinted dark surfaces so buttons/fields read as indigo, not grey.
-        surfaceContainerLow = Color(0xFF15161F),
-        surfaceContainer = Color(0xFF232538),
-        surfaceContainerHigh = Color(0xFF2E3149),
-    )
+    with(TbaPaletteTokens) {
+        ColorScheme(
+            primary = Primary90,
+            primaryDim = Primary80,
+            primaryContainer = Primary30,
+            onPrimary = Primary10,
+            onPrimaryContainer = Primary95,
+            secondary = Secondary90,
+            secondaryDim = Secondary80,
+            secondaryContainer = Secondary30,
+            onSecondary = Secondary10,
+            onSecondaryContainer = Secondary95,
+            tertiary = Tertiary90,
+            tertiaryDim = Tertiary80,
+            tertiaryContainer = Tertiary30,
+            onTertiary = Tertiary10,
+            onTertiaryContainer = Tertiary95,
+            surfaceContainerLow = Neutral15,
+            surfaceContainer = Neutral20,
+            surfaceContainerHigh = Neutral30,
+            onSurface = Neutral95,
+            onSurfaceVariant = NeutralVariant80,
+            outline = NeutralVariant60,
+            outlineVariant = NeutralVariant40,
+            background = Neutral0,
+            onBackground = Neutral100,
+            error = Error80,
+            errorDim = Error70,
+            errorContainer = Error30,
+            onError = Error10,
+            onErrorContainer = Error95,
+        )
+    }
 
 @Composable
 fun TbaWearTheme(content: @Composable () -> Unit) {
