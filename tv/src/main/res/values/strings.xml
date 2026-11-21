@@ -34,8 +34,6 @@
     <string name="choose_webcast">Choose a webcast</string>
     <!-- %1$s is a platform name, e.g. YouTube. -->
     <string name="watch_on">Watch on %1$s</string>
-    <!-- %1$s platform name, %2$s the cast\'s day (e.g. Sat, May 30) when a webcast is split per day. -->
-    <string name="watch_on_dated">Watch on %1$s (%2$s)</string>
 
     <!-- Webcast launch failures (Toast) -->
     <string name="webcast_unsupported">This webcast type isn\'t supported on Android TV</string>
