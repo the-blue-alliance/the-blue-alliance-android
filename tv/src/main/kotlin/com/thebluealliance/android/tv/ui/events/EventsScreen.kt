@@ -77,7 +77,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Card
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
@@ -114,6 +113,7 @@ import com.thebluealliance.android.tv.ui.theme.TbaArtGradientEnd
 import com.thebluealliance.android.tv.ui.theme.TbaArtGradientStart
 import com.thebluealliance.android.tv.ui.theme.TbaArtTitleStyle
 import com.thebluealliance.android.tv.ui.theme.TbaArtWatermark
+import com.thebluealliance.android.tv.ui.theme.TbaBlue
 import com.thebluealliance.android.tv.ui.theme.TbaBlueBright
 import com.thebluealliance.android.tv.ui.theme.TbaCardArtAspectRatio
 import com.thebluealliance.android.tv.ui.theme.TbaCardShape
@@ -316,7 +316,8 @@ private fun Header(
         Box(
             Modifier
                 .size(40.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                // The brand mark keeps the fixed brand blue; it isn't a theme role.
+                .background(TbaBlue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
@@ -926,13 +927,6 @@ private fun WebcastPicker(
                                     index == focusIndex,
                                     Modifier.requestFocusOnFirstGainingVisibility(),
                                 ),
-                        colors =
-                            ButtonDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                                focusedContainerColor = MaterialTheme.colorScheme.secondary,
-                                focusedContentColor = MaterialTheme.colorScheme.onSecondary,
-                            ),
                     ) {
                         PlatformMark(webcast.type)
                         Spacer(Modifier.width(12.dp))

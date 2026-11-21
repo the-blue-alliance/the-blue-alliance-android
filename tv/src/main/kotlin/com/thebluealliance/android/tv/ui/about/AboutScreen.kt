@@ -51,6 +51,7 @@ import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
 import com.thebluealliance.android.tv.ui.common.ifElse
+import com.thebluealliance.android.tv.ui.theme.TbaBlue
 import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
@@ -154,7 +155,7 @@ fun AboutScreen(viewModel: AboutViewModel = viewModel(factory = AboutViewModel.F
                             Text(
                                 PROJECT_GITHUB_URL,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -236,7 +237,8 @@ private fun HeaderWordmark(modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .size(40.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                // The brand mark keeps the fixed brand blue; it isn't a theme role.
+                .background(TbaBlue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
