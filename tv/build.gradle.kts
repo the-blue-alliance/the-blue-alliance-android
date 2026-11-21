@@ -1,3 +1,5 @@
+import com.android.build.api.variant.ApplicationVariant
+import com.android.build.api.variant.BuildConfigField
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -8,6 +10,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.play.publisher)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 val localProperties =
@@ -154,6 +157,39 @@ android {
     }
 }
 
+// The Baseline Profile is generated on demand (`./gradlew :tv:generateBaselineProfile` with a TV
+// emulator or device attached) and committed to src/main/generated/baselineProfiles/. Release builds
+// only package the committed file, so they never need a device: generating during the release build
+// is what broke the phone app's first attempt (#1138, reverted in #1161).
+// To regenerate: copy tv/src/release/google-services.json into tv/src/nonMinifiedRelease/ (and
+// tv/src/benchmarkRelease/ for StartupBenchmark) — the Google Services plugin looks the file up per
+// build type, and it stays gitignored. Then attach a TV
+// emulator or device on API 33+, run the task, and commit the updated baseline-prof.txt.
+baselineProfile {
+    mergeIntoMain = true
+    saveInSrc = true
+    automaticGenerationDuringBuild = false
+    // No startup profile yet: it would steer R8's DEX layout for the minified release, but the
+    // generator doesn't collect one (includeInStartupProfile) and adding it needs a regeneration.
+    warnings { noStartupProfileRulesGenerated = false }
+}
+
+// The plugin profiles and benchmarks `nonMinifiedRelease` / `benchmarkRelease` copies of `release`.
+// Point them at the bundled sample feed so the journey needs no network or API key and always sees
+// the same deterministic rows, and sign them with the debug key so no release keystore is needed.
+androidComponents {
+    onVariants(selector().withBuildType("nonMinifiedRelease")) { it.useMockDataForProfiling() }
+    onVariants(selector().withBuildType("benchmarkRelease")) { it.useMockDataForProfiling() }
+}
+
+fun ApplicationVariant.useMockDataForProfiling() {
+    buildConfigFields?.put(
+        "USE_MOCK_DATA",
+        BuildConfigField("boolean", "true", "Baseline Profile journey: bundled sample feed"),
+    )
+    signingConfig.setConfig(android.signingConfigs.getByName("debug"))
+}
+
 play {
     serviceAccountCredentials.set(
         rootProject.file(
@@ -225,6 +261,10 @@ dependencies {
     // doesn't use fragments directly, but nothing else here requests a newer one (:app/:wear get
     // 1.5.x transitively), so :tv resolves to 1.1.0. Pin the transitive to the current stable.
     implementation(libs.fragment)
+
+    // Installs the bundled Baseline Profile on sideloaded / non-Play installs (Play does it itself).
+    implementation(libs.profileinstaller)
+    baselineProfile(project(":tv-baselineprofile"))
 
     // Core library desugaring (java.time on minSdk 24)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
