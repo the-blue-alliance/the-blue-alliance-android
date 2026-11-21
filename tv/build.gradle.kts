@@ -52,11 +52,11 @@ val computedVersionName =
         "$vMajor.$vMinor.$vPatch-dev.$commitDistance"
     }
 
-// TBA debug config mirrors the other modules. A blank debug key falls back to the
+// TBA debug config is resolved in the root build.gradle.kts (tba.debug.server, etc.). A blank debug key falls back to the
 // bundled sample events (USE_MOCK_DATA), so a fresh clone builds a working TV app
 // with no secrets configured.
-val tbaDebugKey: String = localProperties.getProperty("tba.api.key.debug", "")
-val tbaDebugUrl: String = localProperties.getProperty("tba.url.debug", "http://10.0.2.2:8080/")
+val tbaDebugKey: String = rootProject.extra["tbaDebugKey"] as String? ?: ""
+val tbaDebugUrl: String = rootProject.extra["tbaDebugUrl"] as String? ?: "http://10.0.2.2:8080/"
 val tbaProdUrl = "https://www.thebluealliance.com/"
 
 android {

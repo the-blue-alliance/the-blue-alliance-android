@@ -92,17 +92,12 @@ android {
             buildConfigField(
                 "String",
                 "TBA_BASE_URL",
-                "\"${
-                    localProperties.getProperty(
-                        "tba.url.debug",
-                        "http://10.0.2.2:8080/",
-                    )
-                }\"",
+                "\"${rootProject.extra["tbaDebugUrl"] as String? ?: "http://10.0.2.2:8080/"}\"",
             )
             buildConfigField(
                 "String",
                 "TBA_API_KEY",
-                "\"${localProperties.getProperty("tba.api.key.debug", "tba-dev-key")}\"",
+                "\"${rootProject.extra["tbaDebugKey"] as String? ?: "tba-dev-key"}\"",
             )
         }
         release {
