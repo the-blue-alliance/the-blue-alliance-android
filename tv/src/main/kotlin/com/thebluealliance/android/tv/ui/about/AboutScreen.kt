@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
+import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.tv.BuildConfig
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.repository.Sponsor
@@ -51,7 +52,6 @@ import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
 import com.thebluealliance.android.tv.ui.common.ifElse
-import com.thebluealliance.android.tv.ui.theme.TbaBlue
 import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
@@ -238,7 +238,7 @@ private fun HeaderWordmark(modifier: Modifier = Modifier) {
             Modifier
                 .size(40.dp)
                 // The brand mark keeps the fixed brand blue; it isn't a theme role.
-                .background(TbaBlue, RoundedCornerShape(8.dp)),
+                .background(TbaBrandColors.Blue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(

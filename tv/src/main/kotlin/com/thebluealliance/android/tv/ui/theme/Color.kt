@@ -2,8 +2,7 @@ package com.thebluealliance.android.tv.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Fixed brand and platform colors. Theme roles live in Theme.kt's generated scheme.
-val TbaBlue = Color(0xFF3F51B5)
+// TV-only fixed colors (card art, the generic webcast dot). Theme roles and the brand blue live in :core-theme.
 val TbaBlueBright = Color(0xFF5C6BC0)
 
 // Event placeholder art: a muted TBA-blue corner fading to just above the page background. The

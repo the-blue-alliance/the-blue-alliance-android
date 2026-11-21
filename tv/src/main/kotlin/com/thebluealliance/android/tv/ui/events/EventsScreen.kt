@@ -93,6 +93,7 @@ import coil3.decode.DataSource
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import coil3.size.Size
+import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
@@ -113,7 +114,6 @@ import com.thebluealliance.android.tv.ui.theme.TbaArtGradientEnd
 import com.thebluealliance.android.tv.ui.theme.TbaArtGradientStart
 import com.thebluealliance.android.tv.ui.theme.TbaArtTitleStyle
 import com.thebluealliance.android.tv.ui.theme.TbaArtWatermark
-import com.thebluealliance.android.tv.ui.theme.TbaBlue
 import com.thebluealliance.android.tv.ui.theme.TbaBlueBright
 import com.thebluealliance.android.tv.ui.theme.TbaCardArtAspectRatio
 import com.thebluealliance.android.tv.ui.theme.TbaCardShape
@@ -317,7 +317,7 @@ private fun Header(
             Modifier
                 .size(40.dp)
                 // The brand mark keeps the fixed brand blue; it isn't a theme role.
-                .background(TbaBlue, RoundedCornerShape(8.dp)),
+                .background(TbaBrandColors.Blue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
