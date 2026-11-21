@@ -192,6 +192,11 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
 
+    // Navigation 3 (feed ⇄ About). No lifecycle-viewmodel-navigation3: both ViewModels stay
+    // activity-scoped so neither screen reloads on a round-trip.
+    implementation(libs.navigation3.runtime)
+    implementation(libs.navigation3.ui)
+
     // Coroutines
     implementation(libs.coroutines.android)
 

@@ -1,6 +1,5 @@
 package com.thebluealliance.android.tv.ui.about
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -79,14 +78,9 @@ private val OssLicenses =
 private const val PROJECT_GITHUB_URL = "github.com/the-blue-alliance/the-blue-alliance-android"
 
 @Composable
-fun AboutScreen(
-    onBack: () -> Unit,
-    viewModel: AboutViewModel = viewModel(factory = AboutViewModel.Factory),
-) {
+fun AboutScreen(viewModel: AboutViewModel = viewModel(factory = AboutViewModel.Factory)) {
     // The remote's Back button is the only way out — there's no on-screen back arrow (the JetStream
-    // idiom for a secondary screen). Back returns to the feed, not the launcher.
-    BackHandler(onBack = onBack)
-
+    // idiom for a secondary screen). NavDisplay pops Back to the feed, not the launcher.
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val sponsors by viewModel.sponsors.collectAsStateWithLifecycle()
 
