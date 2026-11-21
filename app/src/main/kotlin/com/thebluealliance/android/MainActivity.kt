@@ -17,6 +17,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.NoCredentialException
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.deeplink.DeepLinkRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
@@ -25,8 +26,8 @@ import com.thebluealliance.android.config.ThemePreferences
 import com.thebluealliance.android.data.sync.DataSyncManager
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
-import com.thebluealliance.android.navigation.DeeplinkMatcher
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.navigation.TbaDeepLinks
 import com.thebluealliance.android.ui.TBAApp
 import com.thebluealliance.android.widget.TeamTrackingWidgetOpenAction
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var themePreferences: ThemePreferences
 
-    private val deepLinkHandler = DeeplinkMatcher()
+    private val deepLinks = TbaDeepLinks()
 
     /**
      * Destinations from intents delivered to an already-running Activity (see [onNewIntent]).
@@ -77,16 +78,15 @@ class MainActivity : ComponentActivity() {
             statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
         )
 
-        val flags = intent.flags
-        val isNewTask =
-            flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0 &&
-                flags and Intent.FLAG_ACTIVITY_CLEAR_TASK != 0
+        // A NEW_TASK launch roots its own Task, so back should walk the synthetic hierarchy
+        // rather than return straight to the app that sent the link.
+        val isNewTask = intent.flags and Intent.FLAG_ACTIVITY_NEW_TASK != 0
 
-        val startRoute = intent.destination() ?: Screen.Events()
+        val launchBackStack = intent.backStack() ?: listOf(Screen.Events())
 
         setContent {
             TBAApp(
-                startRoute = startRoute,
+                launchBackStack = launchBackStack,
                 isNewTask = isNewTask,
                 themePreferences = themePreferences,
             )
@@ -100,7 +100,15 @@ class MainActivity : ComponentActivity() {
     }
 
     /** The destination this intent targets: a notification/widget extra, or a deeplink URI. */
-    private fun Intent.destination(): NavKey? = notificationDestination() ?: deeplinkDestination()
+    private fun Intent.destination(): NavKey? = backStack()?.last()
+
+    /**
+     * The synthetic back stack for this intent, ending at its destination. Deep links carry their
+     * hierarchy (see [TbaDeepLinks]); notification/widget extras are a lone destination.
+     */
+    private fun Intent.backStack(): List<NavKey>? =
+        notificationDestination()?.let(::listOf)
+            ?: data?.let { deepLinks.match(DeepLinkRequest(it)) }
 
     private fun Intent.notificationDestination(): NavKey? {
         val matchKey = getStringExtra(NotificationBuilder.EXTRA_MATCH_KEY)
@@ -121,11 +129,6 @@ class MainActivity : ComponentActivity() {
             }
             else -> null
         }
-    }
-
-    private fun Intent.deeplinkDestination(): NavKey? {
-        val uri = data ?: return null
-        return deepLinkHandler.match(uri)
     }
 
     /**

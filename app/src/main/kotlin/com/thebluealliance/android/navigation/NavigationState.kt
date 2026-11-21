@@ -21,43 +21,37 @@ import androidx.savedstate.compose.serialization.serializers.MutableStateSeriali
 
 @Composable
 fun rememberNavigationState(
-    startRoute: NavKey,
+    launchBackStack: List<NavKey>,
     isNewTask: Boolean,
     topLevelRoutes: List<NavKey>,
     startTopLevelRoute: NavKey,
 ): NavigationState {
+    val launch =
+        remember(launchBackStack, isNewTask, topLevelRoutes, startTopLevelRoute) {
+            launchStacks(launchBackStack, isNewTask, topLevelRoutes, startTopLevelRoute)
+        }
+
     val topLevelRoute =
         rememberSerializable(
-            startRoute,
+            launchBackStack,
             topLevelRoutes,
             serializer = MutableStateSerializer(NavKeySerializer()),
         ) {
-            val startTopLevel =
-                when (startRoute) {
-                    in topLevelRoutes -> startRoute
-                    else -> startTopLevelRoute
-                }
-            mutableStateOf(startTopLevel)
+            mutableStateOf(launch.tab)
         }
 
     val backStacks =
         topLevelRoutes.associateWith { key ->
-            if (key == startTopLevelRoute && startRoute != startTopLevelRoute) {
-                val syntheticStack =
-                    buildBackStack(
-                        startKey = startRoute,
-                        parentRoute = startTopLevelRoute,
-                        buildFullPath = isNewTask,
-                    )
-                rememberNavBackStack(*syntheticStack.toTypedArray())
+            if (key == launch.tab) {
+                rememberNavBackStack(*launch.tabStack.toTypedArray())
             } else {
                 rememberNavBackStack(key)
             }
         }
 
-    return remember(startRoute, topLevelRoutes) {
+    return remember(launch, topLevelRoutes) {
         NavigationState(
-            startRoute = startRoute,
+            startRoute = launch.homeTab,
             topLevelRoute = topLevelRoute,
             backStacks = backStacks,
         )
@@ -65,40 +59,46 @@ fun rememberNavigationState(
 }
 
 /**
- * A function that build a synthetic backStack.
+ * How a launch seeds the tab back stacks.
  *
- * This helper returns one of two possible backStacks:
- *
- * 1. a backStack with only the deeplinked key if [buildFullPath] is false.
- * 2. a backStack containing the deeplinked key and its hierarchical parent keys
- * if [buildFullPath] is true.
- *
- * Generally speaking, [buildFullPath] is true if the deeplink intent has the
- * [android.content.Intent.FLAG_ACTIVITY_NEW_TASK] and [android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK]
- * flags.
- * These flags indicate that the deeplinked Activity was started as the root Activity of a new Task, in which case
- * a full synthetic backStack is required in order to support the proper, expected back button behavior.
- *
- * If those flags were not present, it means the deeplinked Activity was started
- * in the app that originally triggered the deeplink. In this case, that original app is assumed to
- * already have existing screens that users can system back into, therefore a synthetic backstack
- * is OPTIONAL.
- *
+ * @property tab the top-level tab shown first.
+ * @property tabStack the initial back stack of [tab].
+ * @property homeTab the tab that system back returns to from the root of any other tab.
  */
-internal fun buildBackStack(
-    startKey: NavKey,
-    parentRoute: NavKey,
+internal data class LaunchStacks(
+    val tab: NavKey,
+    val tabStack: List<NavKey>,
+    val homeTab: NavKey,
+)
+
+/**
+ * Seeds the tab back stacks from [launchBackStack], the synthetic back stack for the launch
+ * destination (its last key) — e.g. `[Events, EventDetail, MatchDetail]` from a deep link, or a
+ * lone key from a notification. Its root picks the tab; keys whose root isn't a tab live under
+ * [startTopLevelRoute].
+ *
+ * If [buildFullPath] is true the whole stack is used, so system back walks up the hierarchy and
+ * then to [startTopLevelRoute] before leaving the app. Generally speaking, [buildFullPath] is true
+ * when the intent has [android.content.Intent.FLAG_ACTIVITY_NEW_TASK]: the Activity is the root of
+ * its own Task, so a full synthetic back stack is required for proper, expected back behavior.
+ *
+ * Otherwise the Activity was started inside the Task of the app that triggered the link, which is
+ * assumed to have its own screens to go back to, so only the destination is shown and back from it
+ * leaves the app.
+ *
+ * See https://developer.android.com/guide/navigation/principles#deep-link
+ */
+internal fun launchStacks(
+    launchBackStack: List<NavKey>,
     buildFullPath: Boolean,
-): List<NavKey> {
-    if (!buildFullPath) return listOf(startKey)
-    /**
-     * iterate up the parents of the startKey until it reaches the root key (a key without a parent)
-     */
-    return listOf(
-        // In the future each NavKey could define its own parent if we need a more complex nav graph
-        parentRoute,
-        startKey,
-    )
+    topLevelRoutes: List<NavKey>,
+    startTopLevelRoute: NavKey,
+): LaunchStacks {
+    val root = launchBackStack.first()
+    val tab = topLevelRoutes.firstOrNull { it.isSameTab(root) } ?: startTopLevelRoute
+    if (!buildFullPath) return LaunchStacks(tab, listOf(launchBackStack.last()), homeTab = tab)
+    val tabStack = if (tab.isSameTab(root)) launchBackStack else listOf(tab) + launchBackStack
+    return LaunchStacks(tab, tabStack, homeTab = startTopLevelRoute)
 }
 
 class NavigationState(
