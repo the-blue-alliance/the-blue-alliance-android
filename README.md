@@ -67,6 +67,16 @@ tba.api.key.debug=YOUR_KEY_HERE
 
 Get an API key from the [TBA Account page](https://www.thebluealliance.com/account). Rebuild and you'll see real events, teams, and matches.
 
+### Switching between the two
+
+To keep both configured, put your production key in `tba.api.key.prod`. Debug builds use it whenever `tba.url.debug` points at thebluealliance.com, and use `tba.api.key.debug` otherwise, so switching servers means editing only the URL line:
+
+```properties
+tba.url.debug=http://10.0.2.2:8080/   # or https://www.thebluealliance.com/
+tba.api.key.debug=tba-dev-key         # local backend's key
+tba.api.key.prod=YOUR_KEY_HERE        # used when tba.url.debug is prod
+```
+
 ### Option B: Run the local backend (for backend development)
 
 The Android debug build defaults to `http://10.0.2.2:8080/` (the emulator's alias for the host's `localhost`), which is where the TBA server runs inside its Docker Compose stack. Follow the setup instructions in the [TBA backend repository](https://github.com/the-blue-alliance/the-blue-alliance) to start it; once Docker Compose is running, rebuild the Android app and you'll see local data.
