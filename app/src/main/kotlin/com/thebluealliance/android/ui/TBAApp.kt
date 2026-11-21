@@ -58,7 +58,8 @@ fun TBAApp(
     val activity = LocalActivity.current as? ComponentActivity
     LaunchedEffect(darkTheme) {
         // Keep system bars in sync with the in-app theme override, not just the system
-        // night mode; the status bar stays dark-style because the top bar is always TBABlue.
+        // night mode; the status bar stays dark-style because the top bar is primaryContainer, the brand
+        // blue (#3F51B5) in both light and dark.
         // enableEdgeToEdge is a one-shot call with no teardown, so there's nothing to dispose.
         activity?.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),

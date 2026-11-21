@@ -22,10 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 data class SectionHeaderInfo(
@@ -42,7 +40,7 @@ fun SectionHeader(
 ) {
     SectionHeaderRow(
         label = label,
-        modifier = modifier.background(TBAIndigo400),
+        modifier = modifier.background(MaterialTheme.colorScheme.secondaryContainer),
         trailingContent = trailingContent,
     )
 }
@@ -60,7 +58,7 @@ fun SectionHeader(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(TBAIndigo400)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
                 .clickable(enabled = isStuck) { menuExpanded = true },
     ) {
         SectionHeaderRow(
@@ -72,7 +70,7 @@ fun SectionHeader(
                         Icon(
                             imageVector = TbaIcons.ArrowDropDown,
                             contentDescription = "Jump to section",
-                            tint = Color.White,
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
                             modifier = Modifier.size(20.dp),
                         )
                     }
@@ -128,7 +126,7 @@ private fun SectionHeaderRow(
         Text(
             text = label,
             style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
         trailingContent?.invoke(this)
     }

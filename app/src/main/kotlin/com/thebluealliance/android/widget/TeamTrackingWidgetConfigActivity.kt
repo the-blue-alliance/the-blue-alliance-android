@@ -29,7 +29,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -43,7 +42,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thebluealliance.android.R
-import com.thebluealliance.android.ui.theme.TBABlue
 import com.thebluealliance.android.ui.theme.TBATheme
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
@@ -85,7 +83,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 modifier =
                                     Modifier
                                         .fillMaxWidth()
-                                        .background(TBABlue)
+                                        .background(MaterialTheme.colorScheme.primaryContainer)
                                         .padding(
                                             start = 16.dp,
                                             end = 4.dp,
@@ -97,13 +95,13 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 Icon(
                                     painter = painterResource(R.drawable.tba_lamp),
                                     contentDescription = null,
-                                    tint = Color.White,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.size(20.dp),
                                 )
                                 Text(
                                     text = "Team Tracker",
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
                                 IconButton(
@@ -113,7 +111,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     Icon(
                                         imageVector = TbaIcons.Close,
                                         contentDescription = "Close",
-                                        tint = Color.White,
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                     )
                                 }
                             }

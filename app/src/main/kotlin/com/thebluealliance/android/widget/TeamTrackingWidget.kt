@@ -5,6 +5,7 @@ package com.thebluealliance.android.widget
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.util.Base64
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
@@ -26,6 +27,8 @@ import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
+import androidx.glance.color.ColorProviders
+import androidx.glance.color.DynamicThemeColorProviders
 import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -37,6 +40,7 @@ import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
+import androidx.glance.material3.ColorProviders
 import androidx.glance.preview.ExperimentalGlancePreviewApi
 import androidx.glance.preview.Preview
 import androidx.glance.state.GlanceStateDefinition
@@ -47,6 +51,8 @@ import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.thebluealliance.android.R
+import com.thebluealliance.android.ui.theme.TbaDarkColorScheme
+import com.thebluealliance.android.ui.theme.TbaLightColorScheme
 import com.thebluealliance.android.util.teamNumber
 
 /**
@@ -87,7 +93,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         id: GlanceId,
     ) {
         provideContent {
-            GlanceTheme {
+            GlanceTheme(colors = tbaWidgetColors()) {
                 val prefs = currentState<androidx.datastore.preferences.core.Preferences>()
                 val forcedSize = prefs[TeamTrackingWidgetKeys.DEBUG_FORCED_SIZE]
                 WidgetContent(readWidgetData(), forcedSize)
@@ -100,7 +106,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         widgetCategory: Int,
     ) {
         provideContent {
-            GlanceTheme {
+            GlanceTheme(colors = tbaWidgetColors()) {
                 WidgetContent(WidgetData.sampleData())
             }
         }
@@ -1348,3 +1354,14 @@ private fun formatTimeWithEstimate(
     if (time.isEmpty()) return ""
     return if (isEstimate) "~$time" else time
 }
+
+/**
+ * Android 12+ widgets follow the wallpaper (dynamic color), the system norm for home-screen
+ * widgets. Earlier versions get the shared TBA scheme instead of Glance's baseline purple.
+ */
+private fun tbaWidgetColors(): ColorProviders =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        DynamicThemeColorProviders
+    } else {
+        ColorProviders(light = TbaLightColorScheme, dark = TbaDarkColorScheme)
+    }
