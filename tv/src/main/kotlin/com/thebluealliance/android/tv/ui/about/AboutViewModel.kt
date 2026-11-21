@@ -11,6 +11,8 @@ import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.TbaTvApplication
 import com.thebluealliance.android.tv.data.repository.Contributor
 import com.thebluealliance.android.tv.data.repository.ContributorRepository
+import com.thebluealliance.android.tv.data.repository.Sponsor
+import com.thebluealliance.android.tv.data.repository.SponsorRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,12 +35,19 @@ sealed interface ThanksUiState {
 
 class AboutViewModel(
     private val repository: ContributorRepository,
+    private val sponsorRepository: SponsorRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ThanksUiState>(ThanksUiState.Loading)
     val uiState: StateFlow<ThanksUiState> = _uiState.asStateFlow()
 
+    private val _sponsors = MutableStateFlow<List<Sponsor>>(emptyList())
+
+    /** Platinum sponsors to credit; stays empty while loading or if the fetch fails. */
+    val sponsors: StateFlow<List<Sponsor>> = _sponsors.asStateFlow()
+
     init {
         load()
+        loadSponsors()
     }
 
     fun retry() = load()
@@ -53,6 +62,12 @@ class AboutViewModel(
                     ThanksUiState.Error(friendlyError(e))
                 }
         }
+    }
+
+    // The credit is a nicety, not the screen's job: the repository serves its cache and swallows a
+    // failed refresh, so there's no error row here — no sponsors just means no section.
+    private fun loadSponsors() {
+        viewModelScope.launch { sponsorRepository.sponsors().collect { _sponsors.value = it } }
     }
 
     /** Turn network/parse exceptions into a calm, 10-foot-readable line. */
@@ -70,7 +85,10 @@ class AboutViewModel(
             viewModelFactory {
                 initializer {
                     val app = this[APPLICATION_KEY] as TbaTvApplication
-                    AboutViewModel(repository = app.container.contributorRepository)
+                    AboutViewModel(
+                        repository = app.container.contributorRepository,
+                        sponsorRepository = app.container.sponsorRepository,
+                    )
                 }
             }
     }
