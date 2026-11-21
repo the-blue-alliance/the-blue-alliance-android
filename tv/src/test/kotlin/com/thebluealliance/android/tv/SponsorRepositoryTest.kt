@@ -4,6 +4,7 @@ import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.data.remote.dto.SponsorDto
 import com.thebluealliance.android.data.remote.dto.SponsorsResponseDto
 import com.thebluealliance.android.tv.data.api.TbaApi
+import com.thebluealliance.android.tv.data.repository.MAX_SPONSORS
 import com.thebluealliance.android.tv.data.repository.NetworkSponsorRepository
 import com.thebluealliance.android.tv.data.repository.NetworkSponsorRepository.Companion.CACHE_TTL_MILLIS
 import com.thebluealliance.android.tv.data.repository.SponsorCache
@@ -107,5 +108,11 @@ class SponsorRepositoryTest {
         val api = FakeApi { revRobotics }
         names(api, FakeCache(andyMark to now + 1))
         assertEquals(1, api.calls)
+    }
+
+    @Test
+    fun `caps how many sponsors are shown`() {
+        val many = SponsorsResponseDto((1..20).map { SponsorDto("S$it", "https://x/$it") })
+        assertEquals(listOf((1..MAX_SPONSORS).map { "S$it" }), names(FakeApi { many }, FakeCache()))
     }
 }

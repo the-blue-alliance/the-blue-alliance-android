@@ -40,4 +40,24 @@ class SponsorMappingTest {
         assertEquals(SponsorLogoStyle.Wordmark, dto(style = null).toDomain().logoStyle)
         assertEquals(SponsorLogoStyle.Wordmark, dto(style = "banner").toDomain().logoStyle)
     }
+
+    @Test
+    fun `only https logos are kept, so a server value can't point Coil at local files`() {
+        assertEquals(
+            null,
+            dto(
+                light = "file:///data/data/x/shared_prefs/api_config.xml",
+                dark = null,
+            ).toDomain().logoUrl,
+        )
+        assertEquals(null, dto(light = "/dev/zero", dark = "content://x/y").toDomain().logoUrl)
+        assertEquals(
+            null,
+            dto(light = "http://x/a.png", dark = "data:image/png;base64,AAAA").toDomain().logoUrl,
+        )
+        assertEquals(
+            "https://x/a.png",
+            dto(light = "https://x/a.png", dark = "android.resource://x/1").toDomain().logoUrl,
+        )
+    }
 }

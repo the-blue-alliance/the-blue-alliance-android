@@ -29,9 +29,21 @@ enum class SponsorLogoStyle { Wordmark, Mark }
 fun SponsorDto.toDomain() =
     Sponsor(
         name = name,
-        logoUrl = logoUrlDark ?: logoUrl,
+        logoUrl = httpsOrNull(logoUrlDark) ?: httpsOrNull(logoUrl),
         logoStyle = if (logoStyle == "mark") SponsorLogoStyle.Mark else SponsorLogoStyle.Wordmark,
     )
+
+/**
+ * Logo URLs come from the server (and a cache that could be tampered with). Coil's default
+ * fetchers also read file://, content://, android.resource:// and data: URIs and bare paths, so
+ * anything that isn't an https URL is dropped and the sponsor's name is drawn instead.
+ */
+private fun httpsOrNull(url: String?): String? =
+    url?.takeIf { it.startsWith("https://", ignoreCase = true) }
+
+/** A row of logos, not a list: more than a handful wouldn't fit, and a huge response shouldn't
+ * start a load per entry. */
+const val MAX_SPONSORS = 6
 
 interface SponsorRepository {
     /** Sponsors in display order: the cached list first (if any), then a fresher one if fetched. */
@@ -81,7 +93,7 @@ class NetworkSponsorRepository(
             if (fresh != cached?.first) emit(fresh.toDomain())
         }
 
-    private fun SponsorsResponseDto.toDomain() = sponsors.map { it.toDomain() }
+    private fun SponsorsResponseDto.toDomain() = sponsors.take(MAX_SPONSORS).map { it.toDomain() }
 
     companion object {
         const val CACHE_TTL_MILLIS = 24L * 60 * 60 * 1000
