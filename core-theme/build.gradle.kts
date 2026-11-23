@@ -4,11 +4,13 @@ plugins {
 
 android {
     namespace = "com.thebluealliance.android.core.theme"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
-        // The floor across consumers (:tv minSdk = 23). Plain Color constants, no platform APIs.
-        minSdk = 23
+        // The floor across consumers (:tv minSdk = 24). Plain Color constants, no platform APIs.
+        minSdk = 24
     }
 
     compileOptions {

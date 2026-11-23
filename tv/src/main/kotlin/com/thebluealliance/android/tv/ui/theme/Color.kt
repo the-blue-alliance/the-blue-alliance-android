@@ -12,4 +12,3 @@ val TbaArtGradientEnd = Color(0xFF10141C)
 
 // Lamp watermark tint on the art: a light TBA indigo so it reads as brand, not a grey shape.
 val TbaArtWatermark = Color(0xFF7986CB)
-
