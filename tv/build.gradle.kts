@@ -174,6 +174,7 @@ play {
 dependencies {
     // Shared modules
     implementation(project(":core-network"))
+    implementation(project(":core-theme"))
 
     // Compose
     implementation(platform(libs.compose.bom))

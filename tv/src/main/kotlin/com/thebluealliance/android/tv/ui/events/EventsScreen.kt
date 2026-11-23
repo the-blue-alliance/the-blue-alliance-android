@@ -77,7 +77,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Card
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
@@ -94,6 +93,7 @@ import coil3.decode.DataSource
 import coil3.request.ImageRequest
 import coil3.request.transformations
 import coil3.size.Size
+import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.deeplink.WebcastLauncher
 import com.thebluealliance.android.tv.data.model.Event
@@ -316,7 +316,8 @@ private fun Header(
         Box(
             Modifier
                 .size(40.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                // The brand mark keeps the fixed brand blue; it isn't a theme role.
+                .background(TbaBrandColors.Blue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
@@ -926,13 +927,6 @@ private fun WebcastPicker(
                                     index == focusIndex,
                                     Modifier.requestFocusOnFirstGainingVisibility(),
                                 ),
-                        colors =
-                            ButtonDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                                contentColor = MaterialTheme.colorScheme.onSurface,
-                                focusedContainerColor = MaterialTheme.colorScheme.secondary,
-                                focusedContentColor = MaterialTheme.colorScheme.onSecondary,
-                            ),
                     ) {
                         PlatformMark(webcast.type)
                         Spacer(Modifier.width(12.dp))

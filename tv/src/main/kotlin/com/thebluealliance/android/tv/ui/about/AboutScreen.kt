@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
+import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.tv.BuildConfig
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.data.repository.Sponsor
@@ -154,7 +155,7 @@ fun AboutScreen(viewModel: AboutViewModel = viewModel(factory = AboutViewModel.F
                             Text(
                                 PROJECT_GITHUB_URL,
                                 style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.primary,
                             )
                         }
                     }
@@ -236,7 +237,8 @@ private fun HeaderWordmark(modifier: Modifier = Modifier) {
         Box(
             Modifier
                 .size(40.dp)
-                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                // The brand mark keeps the fixed brand blue; it isn't a theme role.
+                .background(TbaBrandColors.Blue, RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center,
         ) {
             Image(

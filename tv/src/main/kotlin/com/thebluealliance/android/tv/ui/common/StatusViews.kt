@@ -11,14 +11,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.thebluealliance.android.tv.R
 
 /**
- * The single retry affordance shared by every load-failure state. A filled button, so focus is a
- * fill change (primary → secondary), matching the webcast picker's buttons rather than the card ring.
+ * The single retry affordance shared by every load-failure state. Stock Compose for TV button
+ * colors, like the webcast picker's buttons: focus is a fill change rather than the card ring.
  */
 @Composable
 fun RetryButton(
@@ -28,13 +27,6 @@ fun RetryButton(
     Button(
         onClick = onRetry,
         modifier = modifier,
-        colors =
-            ButtonDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                focusedContainerColor = MaterialTheme.colorScheme.secondary,
-                focusedContentColor = MaterialTheme.colorScheme.onSecondary,
-            ),
     ) {
         Text(stringResource(R.string.retry))
     }
