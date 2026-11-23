@@ -18,18 +18,21 @@ class TbaClientFactoryTest {
 
     private val tba = MockWebServer()
     private val elsewhere = MockWebServer()
+    private val otherPort = MockWebServer()
 
     @BeforeEach
     fun start() {
         // Same machine, different host names: the client must treat them as different hosts.
         tba.start(InetAddress.getByName("localhost"), 0)
         elsewhere.start(InetAddress.getByName("127.0.0.1"), 0)
+        otherPort.start(InetAddress.getByName("localhost"), 0)
     }
 
     @AfterEach
     fun stop() {
         tba.close()
         elsewhere.close()
+        otherPort.close()
     }
 
     private fun client() =
@@ -86,5 +89,22 @@ class TbaClientFactoryTest {
 
         tba.takeRequest()
         assertEquals("secret-key", tba.takeRequest().headers["X-TBA-Auth-Key"])
+    }
+
+    @Test
+    fun `drops the key when a same-host redirect changes port`() {
+        tba.enqueue(
+            MockResponse
+                .Builder()
+                .code(302)
+                .addHeader("Location", "http://localhost:${otherPort.port}/steal")
+                .build(),
+        )
+        otherPort.enqueue(MockResponse(code = 200, body = "[]"))
+
+        assertEquals(200, get("/api/v3/status"))
+
+        assertEquals("secret-key", tba.takeRequest().headers["X-TBA-Auth-Key"])
+        assertNull(otherPort.takeRequest().headers["X-TBA-Auth-Key"])
     }
 }

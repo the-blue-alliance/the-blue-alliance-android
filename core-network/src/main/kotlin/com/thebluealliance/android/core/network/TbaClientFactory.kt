@@ -77,8 +77,8 @@ object TbaClientFactory {
                 chain.proceed(request)
             }
             // The key header is added before OkHttp follows redirects, and OkHttp only strips
-            // `Authorization` on a cross-host hop. Network interceptors see each hop, so drop the
-            // key on any request whose host isn't the one the call was made to.
+            // `Authorization` (not custom headers) on a cross-origin hop. Network interceptors see
+            // each hop, so drop the key on any request whose origin isn't the call's.
             .addNetworkInterceptor(::stripApiKeyOffHost)
             .addInterceptor(
                 HttpLoggingInterceptor().apply {
@@ -96,14 +96,18 @@ object TbaClientFactory {
 
     internal const val API_KEY_HEADER = "X-TBA-Auth-Key"
 
+    /**
+     * Keeps the key only when the hop's scheme, host and port all match the original call — the
+     * same origin rule OkHttp uses to strip `Authorization` — so a same-host https→http downgrade
+     * or port change never carries it.
+     */
     internal fun stripApiKeyOffHost(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        if (request.url.host ==
-            chain
-                .call()
-                .request()
-                .url.host
-        ) {
+        val original = chain.call().request().url
+        val url = request.url
+        val sameOrigin =
+            url.scheme == original.scheme && url.host == original.host && url.port == original.port
+        if (sameOrigin) {
             return chain.proceed(request)
         }
         return chain.proceed(request.newBuilder().removeHeader(API_KEY_HEADER).build())
