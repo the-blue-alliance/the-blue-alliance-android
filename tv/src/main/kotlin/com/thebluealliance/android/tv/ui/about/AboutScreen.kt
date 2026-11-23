@@ -5,7 +5,10 @@ package com.thebluealliance.android.tv.ui.about
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,29 +30,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.thebluealliance.android.tv.BuildConfig
 import com.thebluealliance.android.tv.R
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
-import com.thebluealliance.android.tv.ui.common.insideFocusBorder
+import com.thebluealliance.android.tv.ui.common.ifElse
 import com.thebluealliance.android.tv.ui.theme.TbaFocusBorderWidth
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
-import com.thebluealliance.android.tv.ui.theme.TbaRowRadius
 import com.thebluealliance.android.tv.ui.theme.TbaRowShape
 
 private data class OssLicense(
@@ -119,17 +120,14 @@ fun AboutScreen(
                 // The header (logo + wordmark) rides as the first list item, not a pinned bar: pressing
                 // UP from the top row scrolls the whole list back to offset 0, bringing the title fully
                 // into view.
+                // One focus stop with the version under it, so TalkBack reads the app name and
+                // version as the screen's heading when About opens.
                 item(key = "header") {
-                    AboutHeader(Modifier.focusOnInitialVisibility(initialFocusDone).focusable())
-                }
-
-                // The version sits up here, above Thanks, so it's visible without scrolling.
-                item(key = "version") {
-                    Text(
-                        stringResource(R.string.about_version, BuildConfig.VERSION_NAME),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 16.dp, top = 4.dp),
+                    AboutHeader(
+                        Modifier
+                            .focusOnInitialVisibility(initialFocusDone)
+                            .focusable()
+                            .semantics(mergeDescendants = true) { heading() },
                     )
                 }
 
@@ -138,19 +136,22 @@ fun AboutScreen(
                 ) { SectionHeader(stringResource(R.string.thanks_header)) }
                 // Sits directly under the section header — the same note-under-header shape as the
                 // "Open-source licenses" section below.
+                // Focusable like the rows below, or D-pad (and TalkBack, which follows it) skips it.
                 item(key = "oss-thanks") {
-                    Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                        Text(
-                            stringResource(R.string.thanks_blurb),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            PROJECT_GITHUB_URL,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.secondary,
-                        )
+                    ReadOnlyRow {
+                        Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                            Text(
+                                stringResource(R.string.thanks_blurb),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                PROJECT_GITHUB_URL,
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        }
                     }
                 }
                 when (val s = state) {
@@ -190,7 +191,7 @@ fun AboutScreen(
                     SectionHeader(stringResource(R.string.licenses_header))
                 }
                 item(key = "licenses-note") {
-                    Hint(stringResource(R.string.licenses_note))
+                    ReadOnlyRow { Hint(stringResource(R.string.licenses_note)) }
                 }
                 itemsIndexed(OssLicenses, key = { _, l -> l.library }) { _, l ->
                     InfoRow(l.library, l.license)
@@ -209,8 +210,22 @@ fun AboutScreen(
  */
 @Composable
 private fun AboutHeader(modifier: Modifier = Modifier) {
+    Column(modifier.padding(start = 16.dp)) {
+        HeaderWordmark(Modifier.padding(bottom = 20.dp))
+        // The version sits up here, above Thanks, so it's visible without scrolling.
+        Text(
+            stringResource(R.string.about_version, BuildConfig.VERSION_NAME),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
+}
+
+@Composable
+private fun HeaderWordmark(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.padding(start = 16.dp, bottom = 20.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.Top,
     ) {
         Box(
@@ -241,7 +256,10 @@ private fun SectionHeader(text: String) {
         text,
         style = MaterialTheme.typography.titleLarge,
         color = MaterialTheme.colorScheme.onSurface,
-        modifier = Modifier.padding(start = 16.dp, top = 24.dp, bottom = 8.dp),
+        modifier =
+            Modifier
+                .padding(start = 16.dp, top = 24.dp, bottom = 8.dp)
+                .semantics { heading() },
     )
 }
 
@@ -255,40 +273,41 @@ private fun Hint(text: String) {
     )
 }
 
-// The ring's centreline sits half a stroke inside the row, so its radius shrinks by the same amount
-// to keep the ring's outer edge on the row's corners.
-private val InfoRowRingShape = RoundedCornerShape(TbaRowRadius - TbaFocusBorderWidth / 2)
-
 /**
- * A focusable, non-actionable list row. The onClick is intentionally empty: rows need to take
- * D-pad focus so the list scrolls, but they must not open anything (the app never launches a
- * web browser — TV-WB). Focus shows as a filled highlight + the feed cards' ring, drawn inside
- * the row with no scale: a full-width row has no room to bloom past the viewport edges. The fill is
- * dark, not the library's light inverseSurface default, so the ring stays visible on it.
+ * A focusable, non-actionable list row. Rows take D-pad focus so the list scrolls (and TalkBack,
+ * which follows focus on TV, reads them), but they open nothing: the app never launches a web
+ * browser (TV-WB). It's a plain focusable rather than a clickable Surface so accessibility services
+ * don't announce an action that does nothing. Focus shows as a filled highlight plus the feed
+ * cards' ring, drawn inside the row with no scale: a full-width row has no room to bloom.
  */
+@Composable
+private fun ReadOnlyRow(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val focused by interactionSource.collectIsFocusedAsState()
+    Box(
+        modifier
+            .fillMaxWidth()
+            .ifElse(
+                focused,
+                Modifier
+                    .background(MaterialTheme.colorScheme.surfaceVariant, TbaRowShape)
+                    .border(TbaFocusBorderWidth, MaterialTheme.colorScheme.border, TbaRowShape),
+            ).focusable(interactionSource = interactionSource)
+            .semantics(mergeDescendants = true) {},
+    ) {
+        content()
+    }
+}
+
 @Composable
 private fun InfoRow(
     primary: String,
     secondary: String,
-    modifier: Modifier = Modifier,
 ) {
-    Surface(
-        onClick = {},
-        modifier = modifier.fillMaxWidth(),
-        shape = ClickableSurfaceDefaults.shape(TbaRowShape),
-        colors =
-            ClickableSurfaceDefaults.colors(
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedContentColor = MaterialTheme.colorScheme.onSurface,
-            ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        border =
-            ClickableSurfaceDefaults.border(
-                focusedBorder = insideFocusBorder(InfoRowRingShape),
-            ),
-    ) {
+    ReadOnlyRow {
         Row(
             Modifier
                 .fillMaxWidth()
