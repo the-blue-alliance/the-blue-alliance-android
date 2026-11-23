@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -95,10 +97,9 @@ fun SearchScreen(
             TBATopAppBar(
                 title = {
                     TextField(
-                        value = uiState.query,
-                        onValueChange = viewModel::onQueryChanged,
+                        state = viewModel.queryState,
                         placeholder = { Text("Search teams & events") },
-                        singleLine = true,
+                        lineLimits = TextFieldLineLimits.SingleLine,
                         modifier =
                             Modifier
                                 .fillMaxWidth()
@@ -122,8 +123,8 @@ fun SearchScreen(
                                     MaterialTheme.colorScheme.onSurfaceVariant,
                             ),
                         trailingIcon = {
-                            if (uiState.query.isNotEmpty()) {
-                                IconButton(onClick = { viewModel.onQueryChanged("") }) {
+                            if (viewModel.queryState.text.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.queryState.clearText() }) {
                                     Icon(Icons.Default.Clear, contentDescription = "Clear")
                                 }
                             }

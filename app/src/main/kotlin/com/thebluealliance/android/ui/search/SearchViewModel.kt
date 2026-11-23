@@ -1,12 +1,13 @@
 package com.thebluealliance.android.ui.search
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -24,7 +25,12 @@ class SearchViewModel
         private val teamRepository: TeamRepository,
         private val eventRepository: EventRepository,
     ) : ViewModel() {
-        private val query = MutableStateFlow("")
+        /** Owned here so the query survives configuration changes alongside the results. */
+        val queryState = TextFieldState()
+
+        private val query =
+            snapshotFlow { queryState.text.toString() }
+                .stateIn(viewModelScope, SharingStarted.Eagerly, "")
 
         private val debouncedQuery = query.debounce(300)
 
@@ -60,8 +66,4 @@ class SearchViewModel
                     events = events,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
-
-        fun onQueryChanged(newQuery: String) {
-            query.value = newQuery
-        }
     }
