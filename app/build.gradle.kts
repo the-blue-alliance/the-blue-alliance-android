@@ -63,7 +63,9 @@ val computedVersionName =
 
 android {
     namespace = "com.thebluealliance.android"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
         applicationId = "com.thebluealliance.androidclient"

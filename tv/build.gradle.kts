@@ -61,11 +61,13 @@ val tbaProdUrl = "https://www.thebluealliance.com/"
 
 android {
     namespace = "com.thebluealliance.android.tv"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
         applicationId = "com.thebluealliance.androidclient"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 37
         versionCode = computedVersionCode
         versionName = computedVersionName
@@ -220,7 +222,7 @@ dependencies {
     // 1.5.x transitively), so :tv resolves to 1.1.0. Pin the transitive to the current stable.
     implementation(libs.fragment)
 
-    // Core library desugaring (java.time on minSdk 23)
+    // Core library desugaring (java.time on minSdk 24)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     // Testing (JUnit 5 / Jupiter, matching :app)

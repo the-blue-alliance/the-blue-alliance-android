@@ -5,12 +5,14 @@ plugins {
 
 android {
     namespace = "com.thebluealliance.android.core.network"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
-        // 23 is the floor across consumers (:tv minSdk = 23, :app = 26, :wear = 30). This module
+        // 24 is the floor across consumers (:tv minSdk = 24, :app = 26, :wear = 30). This module
         // is pure kotlinx-serialization data classes with no version-dependent Android APIs.
-        minSdk = 23
+        minSdk = 24
     }
 
     compileOptions {
