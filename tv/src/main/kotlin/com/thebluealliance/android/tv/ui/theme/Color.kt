@@ -20,8 +20,6 @@ val TbaSurfaceVariant = Color(0xFF252B3A)
 val LiveRed = Color(0xFFFF3B30)
 val TextPrimary = Color(0xFFFFFFFF)
 val TextSecondary = Color(0xFFB0B6C0)
-val YouTubeRed = Color(0xFFFF0000)
-val TwitchPurple = Color(0xFF9146FF)
 
 // Brightened brand tint used for badge *text* on dark translucent fills, so the small label clears
 // WCAG AA contrast (the full-saturation brand colors do not at 13sp).

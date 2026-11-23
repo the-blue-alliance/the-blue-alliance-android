@@ -125,8 +125,6 @@ import com.thebluealliance.android.tv.ui.theme.TbaIconSize
 import com.thebluealliance.android.tv.ui.theme.TbaListBottomPadding
 import com.thebluealliance.android.tv.ui.theme.TbaOverscanTopPadding
 import com.thebluealliance.android.tv.ui.theme.TbaScreenHPadding
-import com.thebluealliance.android.tv.ui.theme.TwitchPurple
-import com.thebluealliance.android.tv.ui.theme.YouTubeRed
 import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -936,13 +934,8 @@ private fun WebcastPicker(
                                 focusedContentColor = MaterialTheme.colorScheme.onSecondary,
                             ),
                     ) {
-                        Box(
-                            Modifier
-                                .size(
-                                    10.dp,
-                                ).background(platformColor(webcast.type), CircleShape),
-                        )
-                        Spacer(Modifier.width(10.dp))
+                        PlatformMark(webcast.type)
+                        Spacer(Modifier.width(12.dp))
                         Column {
                             Text(webcast.pickerTitle(), maxLines = 1)
                             webcast.date?.let { day ->
@@ -962,11 +955,24 @@ private fun WebcastPicker(
     }
 }
 
-// Platform-identity colours for the webcast dot: brand constants, not theme tokens. OTHER falls
-// back to our accent blue.
-private fun platformColor(type: WebcastType): Color =
-    when (type) {
-        WebcastType.YOUTUBE -> YouTubeRed
-        WebcastType.TWITCH -> TwitchPurple
-        WebcastType.OTHER -> TbaBlueBright
+/**
+ * The platform's own logo ahead of a picker label. Decorative: the label already names the platform.
+ * Brand marks keep their own colours, so they aren't tinted with the button's content colour. OTHER
+ * has no mark, so it keeps a dot in our accent blue, centred in the same 24dp slot.
+ */
+@Composable
+private fun PlatformMark(type: WebcastType) {
+    val logo =
+        when (type) {
+            WebcastType.YOUTUBE -> R.drawable.ic_youtube
+            WebcastType.TWITCH -> R.drawable.ic_twitch
+            WebcastType.OTHER -> null
+        }
+    if (logo != null) {
+        Image(painterResource(logo), contentDescription = null, modifier = Modifier.size(24.dp))
+    } else {
+        Box(Modifier.size(24.dp), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(10.dp).background(TbaBlueBright, CircleShape))
+        }
     }
+}

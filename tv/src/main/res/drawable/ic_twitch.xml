@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Twitch "Glitch" icon. Path data from Simple Icons 16.38.0 (CC0-1.0, simpleicons.org), with a
+     white face behind the cut-out, as in Twitch's purple Glitch. The logo is a Twitch trademark: keep
+     its colours and proportions as-is (Twitch brand guidelines). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M20.571,11.143l-3.428,3.428h-3.429l-3,3v-3H6.857V1.714h13.714Z" />
+    <path
+        android:fillColor="#FF9146FF"
+        android:pathData="M11.571,4.714h1.715v5.143H11.57zM16.286,4.714H18v5.143h-1.714zM6,0L1.714,4.286v15.428h5.143V24l4.286,-4.286h3.428L22.286,12V0zM20.571,11.143l-3.428,3.428h-3.429l-3,3v-3H6.857V1.714h13.714Z" />
+</vector>
