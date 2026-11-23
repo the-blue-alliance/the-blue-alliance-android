@@ -1,11 +1,32 @@
 package com.thebluealliance.android.util
 
+import android.net.Uri
 import com.thebluealliance.android.domain.model.Webcast
+import io.mockk.every
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URLEncoder
 
 class WebcastLinksTest {
+    // android.net.Uri is a stub in JVM tests; stand in for Uri.encode with a percent-encoder.
+    @BeforeEach
+    fun mockUriEncode() {
+        mockkStatic(Uri::class)
+        every { Uri.encode(any()) } answers {
+            URLEncoder.encode(firstArg<String>(), Charsets.UTF_8).replace("+", "%20")
+        }
+    }
+
+    @AfterEach
+    fun unmockUriEncode() {
+        unmockkStatic(Uri::class)
+    }
+
     private fun webcast(
         type: String,
         channel: String,
@@ -39,6 +60,22 @@ class WebcastLinksTest {
     }
 
     @Test
+    fun `webcast urls encode the channel`() {
+        assertEquals(
+            "https://twitch.tv/first%20inspires%2Fx%3Fy",
+            webcastUrl(webcast("twitch", "first inspires/x?y")),
+        )
+        assertEquals(
+            "https://youtube.com/watch?v=abc%26list%3Dx",
+            webcastUrl(webcast("youtube", "abc&list=x")),
+        )
+        assertEquals(
+            "https://livestream.com/accounts/1%2F2/events/3%3F4",
+            webcastUrl(webcast("livestream", "1/2", file = "3?4")),
+        )
+    }
+
+    @Test
     fun `unknown webcast type has no url`() {
         assertNull(webcastUrl(webcast("direct_link", "https://example.com/stream")))
     }
@@ -50,6 +87,14 @@ class WebcastLinksTest {
         assertEquals(
             "twitch://stream/firstinspires",
             webcastAppUri(webcast("twitch", "firstinspires")),
+        )
+    }
+
+    @Test
+    fun `twitch deep link encodes the channel`() {
+        assertEquals(
+            "twitch://stream/first%20inspires%2Fx%3Fy",
+            webcastAppUri(webcast("twitch", "first inspires/x?y")),
         )
     }
 

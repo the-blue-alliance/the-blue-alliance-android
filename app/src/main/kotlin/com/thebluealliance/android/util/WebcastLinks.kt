@@ -3,18 +3,26 @@ package com.thebluealliance.android.util
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.core.net.toUri
 import com.thebluealliance.android.domain.model.Webcast
 
-/** The web URL for a webcast, or `null` for types we don't know how to link out to. */
-fun webcastUrl(webcast: Webcast): String? =
-    when (webcast.type) {
-        "twitch" -> "https://twitch.tv/${webcast.channel}"
-        "youtube" -> "https://youtube.com/watch?v=${webcast.channel}"
+/**
+ * The web URL for a webcast, or `null` for types we don't know how to link out to.
+ *
+ * Channel and file are server-supplied, so they're encoded to stay a single path segment or query
+ * value, matching :tv's WebcastLauncher.
+ */
+fun webcastUrl(webcast: Webcast): String? {
+    val channel = Uri.encode(webcast.channel)
+    return when (webcast.type) {
+        "twitch" -> "https://twitch.tv/$channel"
+        "youtube" -> "https://youtube.com/watch?v=$channel"
         "livestream" ->
-            "https://livestream.com/accounts/${webcast.channel}/events/${webcast.file ?: ""}"
+            "https://livestream.com/accounts/$channel/events/${Uri.encode(webcast.file ?: "")}"
         else -> null
     }
+}
 
 /**
  * A native-app deep link for a webcast, or `null` when we have none for the type.
@@ -27,7 +35,7 @@ fun webcastUrl(webcast: Webcast): String? =
 fun webcastAppUri(webcast: Webcast): String? =
     when {
         webcast.type == "twitch" && webcast.channel.isNotBlank() ->
-            "twitch://stream/${webcast.channel}"
+            "twitch://stream/${Uri.encode(webcast.channel)}"
         else -> null
     }
 
