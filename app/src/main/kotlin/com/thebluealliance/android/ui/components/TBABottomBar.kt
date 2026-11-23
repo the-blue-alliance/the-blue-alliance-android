@@ -6,6 +6,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.navigation.Screen
@@ -40,7 +42,10 @@ fun TBABottomBar(
                     },
                 icon = {
                     Icon(
-                        imageVector = if (selected) dest.selectedIcon else dest.unselectedIcon,
+                        imageVector =
+                            ImageVector.vectorResource(
+                                if (selected) dest.selectedIcon else dest.unselectedIcon,
+                            ),
                         contentDescription = dest.label,
                     )
                 },

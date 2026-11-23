@@ -19,8 +19,6 @@ import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -47,6 +45,7 @@ import androidx.work.WorkManager
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.TBABlue
 import com.thebluealliance.android.ui.theme.TBATheme
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
 class TeamTrackingWidgetConfigActivity : ComponentActivity() {
@@ -112,7 +111,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     modifier = Modifier.size(36.dp),
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Close,
+                                        imageVector = TbaIcons.Close,
                                         contentDescription = "Close",
                                         tint = Color.White,
                                     )

@@ -20,14 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.NotificationsNone
-import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -74,6 +66,7 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
 enum class TeamDetailTab(
@@ -186,7 +179,7 @@ fun TeamDetailScreen(
                     navigationIcon = {
                         IconButton(onClick = onNavigateUp) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -203,9 +196,9 @@ fun TeamDetailScreen(
                             Icon(
                                 imageVector =
                                     if (hasSubscription) {
-                                        Icons.Filled.Notifications
+                                        TbaIcons.Notifications
                                     } else {
-                                        Icons.Outlined.NotificationsNone
+                                        TbaIcons.NotificationsOutlined
                                     },
                                 contentDescription = "Notification preferences",
                             )
@@ -214,9 +207,9 @@ fun TeamDetailScreen(
                             Icon(
                                 imageVector =
                                     if (isFavorite) {
-                                        Icons.Filled.Star
+                                        TbaIcons.Star
                                     } else {
-                                        Icons.Outlined.StarBorder
+                                        TbaIcons.StarOutlined
                                     },
                                 contentDescription =
                                     if (isFavorite) {
@@ -229,7 +222,7 @@ fun TeamDetailScreen(
                         var menuExpanded by remember { mutableStateOf(false) }
                         Box {
                             IconButton(onClick = { menuExpanded = true }) {
-                                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+                                Icon(TbaIcons.MoreVert, contentDescription = "More options")
                             }
                             DropdownMenu(
                                 expanded = menuExpanded,
@@ -240,7 +233,7 @@ fun TeamDetailScreen(
                                         text = { Text("Share") },
                                         leadingIcon = {
                                             Icon(
-                                                Icons.Filled.Share,
+                                                TbaIcons.Share,
                                                 contentDescription = null,
                                             )
                                         },

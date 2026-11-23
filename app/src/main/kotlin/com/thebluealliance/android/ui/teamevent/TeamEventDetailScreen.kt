@@ -17,10 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -65,6 +61,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 import kotlinx.coroutines.launch
 
@@ -152,14 +149,14 @@ fun TeamEventDetailScreen(
                     navigationIcon = {
                         IconButton(onClick = onNavigateUp) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
                     },
                     actions = {
                         IconButton(onClick = onNavigateToSearch) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                            Icon(imageVector = TbaIcons.Search, contentDescription = "Search")
                         }
                     },
                 )
@@ -548,7 +545,7 @@ private fun InfoRow(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            imageVector = TbaIcons.KeyboardArrowRight,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )

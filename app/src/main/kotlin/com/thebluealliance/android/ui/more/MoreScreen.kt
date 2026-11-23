@@ -14,11 +14,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +49,7 @@ fun MoreScreen(
                 title = { Text("More") },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(TbaIcons.Search, contentDescription = "Search")
                     }
                 },
                 showLamp = true,
@@ -67,16 +63,16 @@ fun MoreScreen(
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
         ) {
-            MoreItem(icon = Icons.Filled.Star, label = "myTBA", onClick = onNavigateToMyTBA)
+            MoreItem(icon = TbaIcons.Star, label = "myTBA", onClick = onNavigateToMyTBA)
             HorizontalDivider()
             MoreItem(
-                icon = Icons.Filled.EmojiEvents,
+                icon = TbaIcons.EmojiEvents,
                 label = "Regional Advancement",
                 onClick = onNavigateToRegionalAdvancement,
             )
             HorizontalDivider()
             MoreItem(
-                icon = Icons.Filled.Settings,
+                icon = TbaIcons.Settings,
                 label = "Settings",
                 onClick = onNavigateToSettings,
             )

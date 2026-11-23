@@ -19,10 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,6 +45,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.theme.TBAIndigo400
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
+import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
 
@@ -342,7 +339,7 @@ private fun RankingHeaderItem(
 private fun SortCaret(ascending: Boolean) {
     Icon(
         imageVector =
-            if (ascending) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+            if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
         contentDescription =
             if (ascending) "Sorted Ascending" else "Sorted Descending",
         tint = Color.White,
@@ -431,7 +428,7 @@ private fun RankingItem(
             )
 
             Icon(
-                imageVector = Icons.Default.KeyboardArrowDown,
+                imageVector = TbaIcons.KeyboardArrowDown,
                 contentDescription = if (expanded) "Collapse" else "Expand",
                 modifier =
                     Modifier
