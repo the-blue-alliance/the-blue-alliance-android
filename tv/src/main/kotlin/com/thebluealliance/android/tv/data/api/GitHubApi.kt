@@ -3,6 +3,7 @@ package com.thebluealliance.android.tv.data.api
 import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.thebluealliance.android.core.network.TbaClientFactory
+import com.thebluealliance.android.tv.BuildConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.Cache
@@ -52,7 +53,13 @@ object GitHubApiFactory {
                     chain.proceed(request)
                 }.addInterceptor(
                     HttpLoggingInterceptor().apply {
-                        level = HttpLoggingInterceptor.Level.BASIC
+                        // Request lines only, and only in debug: release builds don't log traffic.
+                        level =
+                            if (BuildConfig.DEBUG) {
+                                HttpLoggingInterceptor.Level.BASIC
+                            } else {
+                                HttpLoggingInterceptor.Level.NONE
+                            }
                     },
                 ).build()
 

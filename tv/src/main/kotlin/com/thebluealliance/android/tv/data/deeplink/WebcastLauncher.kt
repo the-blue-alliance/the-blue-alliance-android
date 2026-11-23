@@ -19,6 +19,7 @@ object WebcastLauncher {
     private const val YOUTUBE_TV_PKG = "com.google.android.youtube.tv"
     private const val YOUTUBE_PKG = "com.google.android.youtube"
     private const val TWITCH_PKG = "tv.twitch.android.app"
+    private const val PLAY_STORE_PKG = "com.android.vending"
 
     fun launch(
         context: Context,
@@ -42,7 +43,9 @@ object WebcastLauncher {
     private fun candidatesFor(webcast: Webcast): List<Intent> =
         when (webcast.type) {
             WebcastType.YOUTUBE -> {
-                val id = webcast.channel
+                // Server-supplied: encode it so it can only ever be a single query value or path
+                // segment, never extra URI structure.
+                val id = Uri.encode(webcast.channel)
                 val watch = "https://www.youtube.com/watch?v=$id".toUri()
                 listOf(
                     view(watch).setPackage(YOUTUBE_TV_PKG),
@@ -52,7 +55,7 @@ object WebcastLauncher {
                 )
             }
             WebcastType.TWITCH -> {
-                val channel = webcast.channel
+                val channel = Uri.encode(webcast.channel)
                 val web = "https://www.twitch.tv/$channel".toUri()
                 listOf(
                     view("twitch://stream/$channel".toUri()).setPackage(TWITCH_PKG),
@@ -67,7 +70,10 @@ object WebcastLauncher {
     private fun view(uri: Uri): Intent =
         Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-    private fun playStore(pkg: String): Intent = view("market://details?id=$pkg".toUri())
+    // Pinned to the Play Store, so a device without it shows the in-app message rather than
+    // letting some other market:// handler (possibly a browser) take it (TV-WB).
+    private fun playStore(pkg: String): Intent =
+        view("market://details?id=$pkg".toUri()).setPackage(PLAY_STORE_PKG)
 
     private fun tryStart(
         context: Context,

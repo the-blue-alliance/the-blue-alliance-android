@@ -34,6 +34,7 @@ dependencies {
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.junit.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
+    testImplementation(libs.okhttp.mockwebserver)
 
     // ApiKeyProvider + TbaClientFactory live here (RFC 0004 network unification, #1393).
     // FirebaseRemoteConfig, Retrofit and OkHttpClient appear in their public signatures, so
