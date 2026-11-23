@@ -8,7 +8,9 @@ plugins {
 
 android {
     namespace = "com.thebluealliance.android.tv.baselineprofile"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
         // Baseline Profile capture without root needs API 33+; Macrobenchmark itself needs 28+.
