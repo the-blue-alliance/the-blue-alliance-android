@@ -36,8 +36,9 @@ val tbaLocalProperties =
 // The existing properties are read raw, exactly as the modules always did (an empty
 // tba.api.key.debug stays empty, e.g. the TV app's mock-data mode).
 val tbaDebugUrl: String? = tbaLocalProperties.getProperty("tba.url.debug")
+val tbaDebugHost: String? = tbaDebugUrl?.let { runCatching { java.net.URI(it).host }.getOrNull() }
 val tbaUrlIsProd =
-    tbaDebugUrl?.let { runCatching { java.net.URI(it).host }.getOrNull()?.endsWith("thebluealliance.com") } == true
+    tbaDebugHost == "thebluealliance.com" || tbaDebugHost?.endsWith(".thebluealliance.com") == true
 extra["tbaDebugUrl"] = tbaDebugUrl
 extra["tbaDebugKey"] =
     tbaLocalProperties.getProperty("tba.api.key.prod")?.takeIf { tbaUrlIsProd && it.isNotBlank() }
