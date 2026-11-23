@@ -2,7 +2,15 @@
 
 ## Local Backend
 
-The TBA web server (backend + frontend) is checked out at `~/codez/the-blue-alliance-2026` with its Docker container running. When the app targets the local dev server (e.g. `http://10.0.2.2:8080` in the emulator), requests go to that container.
+The TBA web server (backend + frontend) is checked out at `~/code2/the-blue-alliance` (start it with `docker compose up -d` there). When the app targets the local dev server (e.g. `http://10.0.2.2:8080` in the emulator), requests go to that container. Point the debug build at it with `tba.url.debug=http://10.0.2.2:8080/` and `tba.api.key.debug=tba-dev-key` in `local.properties`.
+
+**Seeding data.** The backend's `/local/bootstrap` dev tool copies data from prod; it needs a prod read key (thebluealliance.com/account). A plain `GET localhost:8080/local/bootstrap` also creates the `tba-dev-key` read key. Then POST one key at a time (`frc254`, `2024micmp4`, a match key, or a whole year like `2026`):
+```bash
+curl -X POST localhost:8080/local/bootstrap --data-urlencode bootstrap_key=2026 --data-urlencode apiv3_key=<prod-read-key>
+```
+A full year queues thousands of tasks and takes ~25 min to drain (watch http://localhost:8000/taskqueue); API responses stay stale until the `cache-clearing` queue empties. It pegs the `tba` container's CPU and memory, so don't run Gradle builds while it drains.
+
+**Persistence gotcha.** dev_appserver keeps the datastore in SQLite at `/tmp/appengine.demo-test.root` *inside the `tba` container*, not in the `datastore` service's volume. `stop`/`start` keeps it, but anything that recreates the container (`down`, `up --build`, config changes) wipes it. To keep it, mount a named volume there with a local, untracked `docker-compose.override.yml`. The volume root must be mode `700`, or dev_appserver silently falls back to an unpersisted `…root.1` dir.
 
 ## Testing Signed-In Features Locally
 
@@ -79,7 +87,7 @@ The script never touches your working tree, index, or current branch (pure git p
 into the asset branch). Each filename is content-hashed so GitHub's image proxy can't
 serve a stale cached copy.
 
-**Getting real data for the shots.** The local backend has no competition data, so point
+**Getting real data for the shots.** Use the seeded local backend (see Local Backend), or point
 the *debug* build at prod with a personal read key (thebluealliance.com/account) in
 `local.properties`, then rebuild:
 ```
