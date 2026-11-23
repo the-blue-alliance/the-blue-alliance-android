@@ -123,7 +123,7 @@ fun SearchScreen(
                                     MaterialTheme.colorScheme.onSurfaceVariant,
                             ),
                         trailingIcon = {
-                            if (uiState.query.isNotEmpty()) {
+                            if (viewModel.queryState.text.isNotEmpty()) {
                                 IconButton(onClick = { viewModel.queryState.clearText() }) {
                                     Icon(Icons.Default.Clear, contentDescription = "Clear")
                                 }
