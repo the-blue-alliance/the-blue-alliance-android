@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalTvMaterial3Api::class, ExperimentalComposeUiApi::class)
-
 package com.thebluealliance.android.tv.ui.events
 
 import androidx.annotation.StringRes
@@ -51,10 +49,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -85,8 +80,8 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Card
 import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
+import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.StandardCardContainer
 import androidx.tv.material3.Surface
@@ -166,9 +161,7 @@ private fun Event.dateRangeLabel(): String =
 
 /** Picker button label; day-specific casts disambiguate with their date, e.g. "Watch on YouTube (Sat, May 30)". */
 @Composable
-private fun Webcast.pickerLabel(): String =
-    date?.let { stringResource(R.string.watch_on_dated, type.label, it.format(WebcastDay)) }
-        ?: stringResource(R.string.watch_on, type.label)
+private fun Webcast.pickerTitle(): String = stringResource(R.string.watch_on, type.label)
 
 @Composable
 private fun RowTitle.text(): AnnotatedString {
@@ -763,8 +756,9 @@ private fun StatusBadge(
     modifier: Modifier = Modifier,
 ) {
     Box(
+        // A floor, not a fixed height, so the label grows instead of clipping at large font scales.
         modifier
-            .height(StatusBadgeHeight)
+            .heightIn(min = StatusBadgeHeight)
             .background(Color.Black.copy(alpha = 0.60f), StatusBadgeShape)
             .border(1.dp, Color.White.copy(alpha = 0.15f), StatusBadgeShape)
             .padding(horizontal = 8.dp),
@@ -885,7 +879,6 @@ private fun WebcastPicker(
     onPick: (Webcast) -> Unit,
     onDismiss: () -> Unit,
 ) {
-    val firstButton = remember { FocusRequester() }
     // Bias initial focus to today's stream when a cast is split by day; otherwise the first option.
     val focusIndex = event.webcasts.indexOfFirst { it.date == today }.coerceAtLeast(0)
     Dialog(
@@ -922,19 +915,25 @@ private fun WebcastPicker(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(20.dp))
+                // TV guidance keeps button labels to one line, so a day-split cast puts its date on a
+                // subtitle line (the wide-button pattern). tv-material's WideButton itself isn't
+                // used: in 1.1.0 its fill hugs the content instead of the row's full width.
                 event.webcasts.forEachIndexed { index, webcast ->
                     Button(
                         onClick = { onPick(webcast) },
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .ifElse(index == focusIndex, Modifier.focusRequester(firstButton)),
+                                .ifElse(
+                                    index == focusIndex,
+                                    Modifier.requestFocusOnFirstGainingVisibility(),
+                                ),
                         colors =
                             ButtonDefaults.colors(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                                 contentColor = MaterialTheme.colorScheme.onSurface,
                                 focusedContainerColor = MaterialTheme.colorScheme.secondary,
-                                focusedContentColor = MaterialTheme.colorScheme.onSurface,
+                                focusedContentColor = MaterialTheme.colorScheme.onSecondary,
                             ),
                     ) {
                         Box(
@@ -944,16 +943,23 @@ private fun WebcastPicker(
                                 ).background(platformColor(webcast.type), CircleShape),
                         )
                         Spacer(Modifier.width(10.dp))
-                        Text(webcast.pickerLabel())
+                        Column {
+                            Text(webcast.pickerTitle(), maxLines = 1)
+                            webcast.date?.let { day ->
+                                Text(
+                                    day.format(WebcastDay),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = LocalContentColor.current.copy(alpha = 0.8f),
+                                    maxLines = 1,
+                                )
+                            }
+                        }
                     }
                     if (index != event.webcasts.lastIndex) Spacer(Modifier.height(12.dp))
                 }
             }
         }
     }
-    androidx.compose.runtime.LaunchedEffect(
-        event.key,
-    ) { runCatching { firstButton.requestFocus() } }
 }
 
 // Platform-identity colours for the webcast dot: brand constants, not theme tokens. OTHER falls

@@ -181,8 +181,8 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.graphics)
     implementation(libs.compose.ui.tooling.preview)
-    implementation(libs.compose.material3)
-    // Compose for TV (focus-aware Material components for the 10-foot UI)
+    // Compose for TV (focus-aware Material components for the 10-foot UI). Used instead of
+    // compose-material3, not alongside it: mixing the two gives two MaterialThemes.
     implementation(libs.androidx.tv.material)
     debugImplementation(libs.compose.ui.tooling)
 
