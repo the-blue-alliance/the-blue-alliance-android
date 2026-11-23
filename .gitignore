@@ -51,3 +51,8 @@ screenshots/
 
 # Generated compliance reports / audit artifacts
 artifacts/
+
+# Signing material and service-account keys, wherever they're put
+*.p12
+*.pem
+*service-account*.json
