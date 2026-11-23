@@ -30,6 +30,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -42,8 +46,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import coil3.compose.AsyncImage
 import com.thebluealliance.android.tv.BuildConfig
 import com.thebluealliance.android.tv.R
+import com.thebluealliance.android.tv.data.repository.Sponsor
+import com.thebluealliance.android.tv.data.repository.SponsorLogoStyle
 import com.thebluealliance.android.tv.ui.common.PositionFocusedItemInLazyLayout
 import com.thebluealliance.android.tv.ui.common.RetryButton
 import com.thebluealliance.android.tv.ui.common.focusOnInitialVisibility
@@ -84,6 +91,7 @@ fun AboutScreen(
     BackHandler(onBack = onBack)
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val sponsors by viewModel.sponsors.collectAsStateWithLifecycle()
 
     // The screen opens at rest: focus parks on the header, which is focusable but draws no highlight,
     // so nothing looks selected and the branding stays at the top (item 0 clamps the list at offset
@@ -129,6 +137,12 @@ fun AboutScreen(
                             .focusable()
                             .semantics(mergeDescendants = true) { heading() },
                     )
+                }
+
+                // Sponsors ride with the version, above the fold, so the credit is seen at rest.
+                if (sponsors.isNotEmpty()) {
+                    // Focusable like the rows below, or D-pad (and TalkBack, which follows it) skips it.
+                    item(key = "sponsors") { ReadOnlyRow { SponsorCredits(sponsors) } }
                 }
 
                 item(
@@ -248,6 +262,67 @@ private fun HeaderWordmark(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurface,
         )
     }
+}
+
+/**
+ * "Thanks to our platinum sponsor(s)" over a row of logos. A credit, not a link (the app never opens
+ * a browser — TV-WB); the caller wraps it in a [ReadOnlyRow] so TalkBack, which follows D-pad focus,
+ * stops on it.
+ * The on-dark logos are white; modulating by onSurfaceVariant keeps them from outshining the text.
+ */
+@Composable
+private fun SponsorCredits(sponsors: List<Sponsor>) {
+    val ink = MaterialTheme.colorScheme.onSurfaceVariant
+    val logoFilter = ColorFilter.tint(ink, BlendMode.Modulate)
+    Column(Modifier.padding(start = 16.dp, top = 16.dp)) {
+        Text(
+            pluralStringResource(R.plurals.sponsor_credit, sponsors.size),
+            style = MaterialTheme.typography.labelMedium,
+            color = ink,
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(32.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            sponsors.forEach { sponsor ->
+                val logo = sponsor.logoUrl
+                when {
+                    logo == null -> SponsorName(sponsor.name, ink)
+                    sponsor.logoStyle == SponsorLogoStyle.Mark ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            AsyncImage(
+                                model = logo,
+                                contentDescription = null,
+                                contentScale = ContentScale.Fit,
+                                colorFilter = logoFilter,
+                                modifier = Modifier.size(SponsorLogoHeight),
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            SponsorName(sponsor.name, ink)
+                        }
+                    else ->
+                        AsyncImage(
+                            model = logo,
+                            contentDescription = sponsor.name,
+                            contentScale = ContentScale.Fit,
+                            colorFilter = logoFilter,
+                            modifier = Modifier.height(SponsorLogoHeight),
+                        )
+                }
+            }
+        }
+    }
+}
+
+private val SponsorLogoHeight = 28.dp
+
+@Composable
+private fun SponsorName(
+    name: String,
+    color: Color,
+) {
+    Text(name, style = MaterialTheme.typography.titleMedium, color = color)
 }
 
 @Composable

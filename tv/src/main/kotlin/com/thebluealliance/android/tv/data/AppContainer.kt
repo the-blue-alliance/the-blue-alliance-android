@@ -17,6 +17,10 @@ import com.thebluealliance.android.tv.data.repository.ContributorRepository
 import com.thebluealliance.android.tv.data.repository.EventRepository
 import com.thebluealliance.android.tv.data.repository.NetworkContributorRepository
 import com.thebluealliance.android.tv.data.repository.NetworkEventRepository
+import com.thebluealliance.android.tv.data.repository.NetworkSponsorRepository
+import com.thebluealliance.android.tv.data.repository.NoSponsorRepository
+import com.thebluealliance.android.tv.data.repository.PrefsSponsorCache
+import com.thebluealliance.android.tv.data.repository.SponsorRepository
 import okhttp3.OkHttpClient
 import okio.Path.Companion.toOkioPath
 import java.io.IOException
@@ -25,6 +29,7 @@ import java.io.IOException
 interface AppContainer {
     val eventRepository: EventRepository
     val contributorRepository: ContributorRepository
+    val sponsorRepository: SponsorRepository
     val apiKeyProvider: ApiKeyProvider
     val usingMockData: Boolean
 
@@ -57,22 +62,35 @@ class DefaultAppContainer(
         )
     }
 
+    // One TBA client (and HTTP cache) shared by every TBA-backed repository.
+    private val tbaApi: TbaApi by lazy {
+        val client =
+            TbaClientFactory.okHttpClient(
+                apiKey = { apiKeyProvider.apiKey },
+                cacheDir = appContext.cacheDir.resolve("tba_http"),
+                cacheSizeBytes = tbaCacheSizeBytes,
+                isDebug = BuildConfig.DEBUG,
+                callTimeoutSeconds = tbaCallTimeoutSeconds,
+            )
+        TbaClientFactory
+            .retrofit(BuildConfig.TBA_BASE_URL, client)
+            .create(TbaApi::class.java)
+    }
+
     override val eventRepository: EventRepository by lazy {
+        if (usingMockData) AssetEventRepository(appContext) else NetworkEventRepository(tbaApi)
+    }
+
+    override val sponsorRepository: SponsorRepository by lazy {
         if (usingMockData) {
-            AssetEventRepository(appContext)
+            NoSponsorRepository
         } else {
-            val client =
-                TbaClientFactory.okHttpClient(
-                    apiKey = { apiKeyProvider.apiKey },
-                    cacheDir = appContext.cacheDir.resolve("tba_http"),
-                    cacheSizeBytes = tbaCacheSizeBytes,
-                    isDebug = BuildConfig.DEBUG,
-                    callTimeoutSeconds = tbaCallTimeoutSeconds,
-                )
-            NetworkEventRepository(
-                TbaClientFactory
-                    .retrofit(BuildConfig.TBA_BASE_URL, client)
-                    .create(TbaApi::class.java),
+            NetworkSponsorRepository(
+                api = tbaApi,
+                cache =
+                    PrefsSponsorCache(
+                        appContext.getSharedPreferences("sponsors", Context.MODE_PRIVATE),
+                    ),
             )
         }
     }

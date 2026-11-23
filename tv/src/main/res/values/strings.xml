@@ -51,6 +51,10 @@
     <!-- About screen -->
     <!-- %1$s is the app version name, e.g. 1.2.3. -->
     <string name="about_version">The Blue Alliance for Android TV · Version %1$s</string>
+    <plurals name="sponsor_credit">
+        <item quantity="one">Thanks to our platinum sponsor</item>
+        <item quantity="other">Thanks to our platinum sponsors</item>
+    </plurals>
     <string name="thanks_header">Thanks</string>
     <string name="thanks_blurb">The Blue Alliance is open source. Thank you to everyone who has contributed.</string>
     <string name="thanks_loading">Loading contributors…</string>
