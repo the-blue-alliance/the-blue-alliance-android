@@ -101,9 +101,8 @@ android {
         }
         release {
             signingConfig = signingConfigs.getByName("release")
-            // R8 + resource shrinking stay off for the first TV release until a minified
-            // build is verified on a TV device; the unminified APK is already small.
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
