@@ -27,6 +27,7 @@ import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -58,166 +59,168 @@ fun EventInfoTab(
         return
     }
     val context = LocalContext.current
-    LazyColumn(
-        // Only the vertical margin is on the list: the horizontal one is applied per item (see
-        // CONTENT_INSET) so the link rows can bleed to the panel's edges.
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(vertical = CONTENT_INSET),
-        contentPadding = innerPadding,
-    ) {
-        item {
-            Text(
-                event.name,
-                style = MaterialTheme.typography.headlineSmall,
-                modifier = Modifier.padding(horizontal = CONTENT_INSET),
-            )
-        }
-        val location = listOfNotNull(event.city, event.state, event.country).joinToString(", ")
-        if (location.isNotEmpty()) {
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            // Only the vertical margin is on the list: the horizontal one is applied per item (see
+            // CONTENT_INSET) so the link rows can bleed to the panel's edges.
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(vertical = CONTENT_INSET),
+            contentPadding = readingPadding,
+        ) {
             item {
                 Text(
-                    text = location,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
-                )
-            }
-        }
-        val dateRange = formatEventDateRange(event.startDate, event.endDate)
-        if (dateRange != null) {
-            item {
-                Text(
-                    text = dateRange,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
-                )
-            }
-        }
-        val week = event.week
-        if (week != null) {
-            item {
-                Text(
-                    text = weekLabel(event.year, week),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
-                )
-            }
-        }
-        if (event.district != null) {
-            item {
-                val districtLabel = districtDisplayName ?: event.district
-                EventInfoLinkRow(
-                    text = "District: $districtLabel",
-                    onClickLabel = "View district",
-                    onClick = { onNavigateToDistrict(event.district) },
-                )
-            }
-        }
-
-        if (event.locationName != null) {
-            item {
-                Text(
-                    text = event.locationName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
-        // Address (tappable → opens Google Maps)
-        if (event.address != null) {
-            item {
-                EventInfoLinkRow(
-                    text = event.address,
-                    onClickLabel = "Open in Maps",
-                    onClick = {
-                        val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
-                        context.openUrl(url)
-                    },
-                    icon = {
-                        Icon(
-                            TbaIcons.LocationOn,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    },
-                )
-            }
-        }
-
-        // Website (clickable)
-        if (event.website != null) {
-            item {
-                EventInfoLinkRow(
-                    text = event.website,
-                    onClickLabel = "Open in browser",
-                    onClick = { context.openUrl(event.website) },
-                    icon = {
-                        Icon(
-                            TbaIcons.Language,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    },
-                )
-            }
-        }
-
-        // Pit Map link (shown when any team has a pit location)
-        if (pitLocations.isNotEmpty()) {
-            item {
-                EventInfoLinkRow(
-                    text = "Pit Map",
-                    onClickLabel = "View pit map",
-                    onClick = { onNavigateToPitMap(event.key, favoriteTeamKeys) },
-                    icon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_nexus_logo),
-                            contentDescription = "FRC Nexus",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(18.dp),
-                        )
-                    },
-                )
-            }
-        }
-
-        // Webcasts
-        if (event.webcasts.isNotEmpty()) {
-            item {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = "Webcasts",
-                    style = MaterialTheme.typography.titleSmall,
+                    event.name,
+                    style = MaterialTheme.typography.headlineSmall,
                     modifier = Modifier.padding(horizontal = CONTENT_INSET),
                 )
             }
-            itemsIndexed(event.webcasts, key = {
-                index,
-                it,
-                ->
-                "${it.type}_${it.channel}_$index"
-            }) { _, webcast ->
-                val url = webcastUrl(webcast)
-                val label = webcastLabel(webcast)
-                if (url != null) {
+            val location = listOfNotNull(event.city, event.state, event.country).joinToString(", ")
+            if (location.isNotEmpty()) {
+                item {
+                    Text(
+                        text = location,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
+                    )
+                }
+            }
+            val dateRange = formatEventDateRange(event.startDate, event.endDate)
+            if (dateRange != null) {
+                item {
+                    Text(
+                        text = dateRange,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 8.dp),
+                    )
+                }
+            }
+            val week = event.week
+            if (week != null) {
+                item {
+                    Text(
+                        text = weekLabel(event.year, week),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
+                    )
+                }
+            }
+            if (event.district != null) {
+                item {
+                    val districtLabel = districtDisplayName ?: event.district
                     EventInfoLinkRow(
-                        text = label,
-                        onClickLabel = "Watch webcast",
-                        onClick = { context.openWebcast(webcast, url) },
+                        text = "District: $districtLabel",
+                        onClickLabel = "View district",
+                        onClick = { onNavigateToDistrict(event.district) },
+                    )
+                }
+            }
+
+            if (event.locationName != null) {
+                item {
+                    Text(
+                        text = event.locationName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            // Address (tappable → opens Google Maps)
+            if (event.address != null) {
+                item {
+                    EventInfoLinkRow(
+                        text = event.address,
+                        onClickLabel = "Open in Maps",
+                        onClick = {
+                            val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
+                            context.openUrl(url)
+                        },
                         icon = {
                             Icon(
-                                TbaIcons.PlayCircle,
+                                TbaIcons.LocationOn,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp),
                             )
                         },
                     )
+                }
+            }
+
+            // Website (clickable)
+            if (event.website != null) {
+                item {
+                    EventInfoLinkRow(
+                        text = event.website,
+                        onClickLabel = "Open in browser",
+                        onClick = { context.openUrl(event.website) },
+                        icon = {
+                            Icon(
+                                TbaIcons.Language,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        },
+                    )
+                }
+            }
+
+            // Pit Map link (shown when any team has a pit location)
+            if (pitLocations.isNotEmpty()) {
+                item {
+                    EventInfoLinkRow(
+                        text = "Pit Map",
+                        onClickLabel = "View pit map",
+                        onClick = { onNavigateToPitMap(event.key, favoriteTeamKeys) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_nexus_logo),
+                                contentDescription = "FRC Nexus",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(18.dp),
+                            )
+                        },
+                    )
+                }
+            }
+
+            // Webcasts
+            if (event.webcasts.isNotEmpty()) {
+                item {
+                    Spacer(Modifier.height(12.dp))
+                    Text(
+                        text = "Webcasts",
+                        style = MaterialTheme.typography.titleSmall,
+                        modifier = Modifier.padding(horizontal = CONTENT_INSET),
+                    )
+                }
+                itemsIndexed(event.webcasts, key = {
+                    index,
+                    it,
+                    ->
+                    "${it.type}_${it.channel}_$index"
+                }) { _, webcast ->
+                    val url = webcastUrl(webcast)
+                    val label = webcastLabel(webcast)
+                    if (url != null) {
+                        EventInfoLinkRow(
+                            text = label,
+                            onClickLabel = "Watch webcast",
+                            onClick = { context.openWebcast(webcast, url) },
+                            icon = {
+                                Icon(
+                                    TbaIcons.PlayCircle,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp),
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }

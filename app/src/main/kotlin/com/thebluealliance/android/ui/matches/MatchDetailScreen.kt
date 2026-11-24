@@ -54,6 +54,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
@@ -146,107 +147,116 @@ fun MatchDetailScreen(
                     )
                 }
             } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = innerPadding,
-                ) {
-                    // Event name + match time
-                    item(key = "event_info") {
-                        EventInfo(
-                            eventName = uiState.eventName,
-                            eventKey = uiState.eventKey,
-                            formattedTime = uiState.formattedTime,
-                            onNavigateToEvent = onNavigateToEvent,
-                        )
-                    }
+                ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = readingPadding,
+                    ) {
+                        // Event name + match time
+                        item(key = "event_info") {
+                            EventInfo(
+                                eventName = uiState.eventName,
+                                eventKey = uiState.eventKey,
+                                formattedTime = uiState.formattedTime,
+                                onNavigateToEvent = onNavigateToEvent,
+                            )
+                        }
 
-                    // Score summary
-                    item(key = "score_header") {
-                        ScoreSummary(match, uiState.playoffType)
-                    }
+                        // Score summary
+                        item(key = "score_header") {
+                            ScoreSummary(match, uiState.playoffType)
+                        }
 
-                    item(key = "divider_teams") {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                    }
-
-                    // Teams
-                    item(key = "alliance_teams") {
-                        AllianceTeams(
-                            redTeamKeys = match.redTeamKeys,
-                            blueTeamKeys = match.blueTeamKeys,
-                            redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
-                            bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
-                            onTeamClick = { teamKey ->
-                                val ek = uiState.eventKey
-                                if (ek != null) onNavigateToTeamEvent(teamKey, ek)
-                            },
-                        )
-                    }
-
-                    // Media
-                    val mediaItems =
-                        uiState.videos
-                            .filter { mediaUrl(it.type, it.key) != null }
-                            .map { MediaGridItem(type = it.type, foreignKey = it.key) }
-                    if (mediaItems.isNotEmpty()) {
-                        item(key = "media_header") {
+                        item(key = "divider_teams") {
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            Text(
-                                text = "Match Video",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            )
                         }
-                        item(key = "media_grid") {
-                            MediaGridRow(
-                                items = mediaItems,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            )
-                        }
-                    }
 
-                    // Score breakdown
-                    val breakdown = uiState.scoreBreakdown
-                    if (breakdown != null) {
-                        item(key = "breakdown_header") {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                            Text(
-                                text = "Score Breakdown",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier =
-                                    Modifier
-                                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                                        .semantics { heading() },
+                        // Teams
+                        item(key = "alliance_teams") {
+                            AllianceTeams(
+                                redTeamKeys = match.redTeamKeys,
+                                blueTeamKeys = match.blueTeamKeys,
+                                redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
+                                bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
+                                onTeamClick = { teamKey ->
+                                    val ek = uiState.eventKey
+                                    if (ek != null) onNavigateToTeamEvent(teamKey, ek)
+                                },
                             )
                         }
 
-                        val redAllianceTitle = match.redPlayoffAlliance?.displayTitle
-                        val blueAllianceTitle = match.bluePlayoffAlliance?.displayTitle
-                        val redBreakdown = breakdown["red"] ?: emptyMap()
-                        val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                        val orderedFields =
-                            getOrderedBreakdownFields(
-                                year = uiState.year,
-                                redBreakdown = redBreakdown,
-                                blueBreakdown = blueBreakdown,
-                            )
+                        // Media
+                        val mediaItems =
+                            uiState.videos
+                                .filter { mediaUrl(it.type, it.key) != null }
+                                .map { MediaGridItem(type = it.type, foreignKey = it.key) }
+                        if (mediaItems.isNotEmpty()) {
+                            item(key = "media_header") {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Match Video",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier =
+                                        Modifier.padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp,
+                                        ),
+                                )
+                            }
+                            item(key = "media_grid") {
+                                MediaGridRow(
+                                    items = mediaItems,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                )
+                            }
+                        }
 
-                        items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
-                            BreakdownRow(
-                                redPlayoffAllianceTitle = redAllianceTitle,
-                                bluePlayoffAllianceTitle = blueAllianceTitle,
-                                label = label,
-                                redValue =
-                                    formatBreakdownValue(
-                                        apiKey,
-                                        redBreakdown[apiKey] ?: "-",
-                                    ),
-                                blueValue =
-                                    formatBreakdownValue(
-                                        apiKey,
-                                        blueBreakdown[apiKey] ?: "-",
-                                    ),
-                            )
+                        // Score breakdown
+                        val breakdown = uiState.scoreBreakdown
+                        if (breakdown != null) {
+                            item(key = "breakdown_header") {
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                Text(
+                                    text = "Score Breakdown",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier =
+                                        Modifier
+                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                            .semantics { heading() },
+                                )
+                            }
+
+                            val redAllianceTitle = match.redPlayoffAlliance?.displayTitle
+                            val blueAllianceTitle = match.bluePlayoffAlliance?.displayTitle
+                            val redBreakdown = breakdown["red"] ?: emptyMap()
+                            val blueBreakdown = breakdown["blue"] ?: emptyMap()
+                            val orderedFields =
+                                getOrderedBreakdownFields(
+                                    year = uiState.year,
+                                    redBreakdown = redBreakdown,
+                                    blueBreakdown = blueBreakdown,
+                                )
+
+                            items(
+                                orderedFields,
+                                key = { "breakdown_${it.first}" },
+                            ) { (apiKey, label) ->
+                                BreakdownRow(
+                                    redPlayoffAllianceTitle = redAllianceTitle,
+                                    bluePlayoffAllianceTitle = blueAllianceTitle,
+                                    label = label,
+                                    redValue =
+                                        formatBreakdownValue(
+                                            apiKey,
+                                            redBreakdown[apiKey] ?: "-",
+                                        ),
+                                    blueValue =
+                                        formatBreakdownValue(
+                                            apiKey,
+                                            blueBreakdown[apiKey] ?: "-",
+                                        ),
+                                )
+                            }
                         }
                     }
                 }

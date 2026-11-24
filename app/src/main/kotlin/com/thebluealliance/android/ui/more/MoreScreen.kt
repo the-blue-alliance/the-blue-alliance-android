@@ -30,6 +30,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
@@ -60,6 +61,7 @@ fun MoreScreen(
             modifier =
                 Modifier
                     .padding(innerPadding)
+                    .readingWidth()
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
         ) {
