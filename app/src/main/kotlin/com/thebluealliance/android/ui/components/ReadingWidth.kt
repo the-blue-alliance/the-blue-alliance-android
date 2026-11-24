@@ -42,7 +42,6 @@ internal fun readingInset(
 /**
  * Lays out a full-width scrolling list whose content is centered at [maxWidth]: [content]
  * receives [contentPadding] widened by the side inset. Dragging in the side margins still scrolls.
- * Tabs that page beside tables pass [TABLE_MAX_WIDTH], so every tab shares one start edge.
  */
 @Composable
 fun ReadingWidthBox(

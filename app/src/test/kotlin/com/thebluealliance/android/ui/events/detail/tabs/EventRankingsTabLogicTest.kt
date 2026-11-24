@@ -145,10 +145,10 @@ class EventRankingsTabLogicTest {
 
     @Test
     fun `wide windows scroll rows that overflow the capped table width`() {
-        val minWidths = listOf(40.dp, 100.dp, 100.dp, 200.dp, 200.dp, 60.dp)
+        val minWidths = listOf(40.dp, 100.dp, 100.dp, 260.dp, 260.dp, 60.dp)
         val layout = rankingColumnLayout(1024.dp, minWidths)
         assertEquals(minWidths, layout.columnWidths)
-        assertEquals(572.dp, layout.rowWidth)
+        assertEquals(692.dp, layout.rowWidth)
     }
 
     @Test

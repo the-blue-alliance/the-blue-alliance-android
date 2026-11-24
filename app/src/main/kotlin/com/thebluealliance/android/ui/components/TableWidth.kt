@@ -25,8 +25,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 
-/** Widest a data table grows; beyond it, weighted columns spread too far apart to scan. */
-val TABLE_MAX_WIDTH = 720.dp
+/** Widest a data table grows: the reading column, so tables start where other content does. */
+val TABLE_MAX_WIDTH = ReadingMaxWidth
 
 /**
  * Fills the available width up to [TABLE_MAX_WIDTH], centered. Apply it to a table's header and
@@ -38,10 +38,6 @@ fun Modifier.tableWidth(): Modifier =
         .wrapContentWidth(Alignment.CenterHorizontally)
         .widthIn(max = TABLE_MAX_WIDTH)
         .fillMaxWidth()
-
-/** Side inset that centers a [TABLE_MAX_WIDTH] column in [availableWidth]; zero when narrower. */
-internal fun tableInset(availableWidth: Dp): Dp =
-    ((availableWidth - TABLE_MAX_WIDTH) / 2).coerceAtLeast(0.dp)
 
 /**
  * Column widths for a table of [available] width whose columns are [weights] shares but must be at

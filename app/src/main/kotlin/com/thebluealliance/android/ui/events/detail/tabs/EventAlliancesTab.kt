@@ -31,8 +31,9 @@ import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.model.playoffSummary
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
 import com.thebluealliance.android.ui.components.paddedClickable
-import com.thebluealliance.android.ui.components.tableInset
+import com.thebluealliance.android.ui.components.readingInset
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.util.teamNumber
 
@@ -65,7 +66,7 @@ fun EventAlliancesTab(
                 innerPadding.calculateEndPadding(direction)
         if (alliancesUseGrid(contentWidth)) {
             // Two columns inside the table cap; the side margins stay part of the scrolling grid.
-            val inset = tableInset(contentWidth)
+            val inset = readingInset(contentWidth, TABLE_MAX_WIDTH)
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.fillMaxSize(),

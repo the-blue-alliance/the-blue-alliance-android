@@ -40,9 +40,8 @@ class ReadingWidthTest {
     }
 
     @Test
-    fun `a table-width column centers at the table cap`() {
-        assertEquals(0.dp, readingInset(720.dp, TABLE_MAX_WIDTH))
-        assertEquals(tableInset(1024.dp - 80.dp), readingInset(1024.dp - 80.dp, TABLE_MAX_WIDTH))
-        assertEquals(112.dp, readingInset(1024.dp - 80.dp, TABLE_MAX_WIDTH))
+    fun `a table column beside the rail starts with the reading column`() {
+        assertEquals(readingInset(1024.dp - 80.dp), readingInset(1024.dp - 80.dp, TABLE_MAX_WIDTH))
+        assertEquals(0.dp, readingInset(839.dp, TABLE_MAX_WIDTH))
     }
 }
