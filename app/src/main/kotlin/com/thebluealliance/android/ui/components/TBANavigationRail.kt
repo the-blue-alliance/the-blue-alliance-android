@@ -23,11 +23,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 
-/** Side-rail counterpart of [TBABottomBar] for medium and expanded window widths. */
+/**
+ * Side-rail counterpart of [TBABottomBar] for medium and expanded window widths. Unlike the bar it
+ * also shows on detail screens, where it marks [stackRoot], the tab the screen was opened from.
+ */
 @Composable
 fun TBANavigationRail(
     modifier: Modifier = Modifier,
     currentRoute: NavKey,
+    stackRoot: NavKey,
+    onTopLevelScreen: Boolean,
     onNavigate: (NavKey) -> Unit,
     onReselect: () -> Unit,
 ) {
@@ -49,7 +54,7 @@ fun TBANavigationRail(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 TOP_LEVEL_DESTINATIONS.forEach { dest ->
-                    val selected = dest.isSelectedFor(currentRoute)
+                    val selected = dest.isRailSelectedFor(currentRoute, stackRoot, onTopLevelScreen)
                     NavigationRailItem(
                         selected = selected,
                         onClick =

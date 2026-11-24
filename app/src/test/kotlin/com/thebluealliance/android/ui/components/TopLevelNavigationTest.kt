@@ -57,4 +57,33 @@ class TopLevelNavigationTest {
             assertEquals(listOf("More"), selectedLabels(it))
         }
     }
+
+    private fun railSelectedLabels(
+        route: androidx.navigation3.runtime.NavKey,
+        stackRoot: androidx.navigation3.runtime.NavKey,
+        onTopLevelScreen: Boolean,
+    ) = TOP_LEVEL_DESTINATIONS
+        .filter { it.isRailSelectedFor(route, stackRoot, onTopLevelScreen) }
+        .map { it.label }
+
+    @Test
+    fun `rail matches the bottom bar on top-level screens`() {
+        assertEquals(listOf("More"), railSelectedLabels(Screen.MyTBA, Screen.More, true))
+        assertEquals(
+            listOf("More"),
+            railSelectedLabels(Screen.RegionalAdvancement, Screen.More, true),
+        )
+    }
+
+    @Test
+    fun `rail marks the owning tab on detail screens`() {
+        assertEquals(
+            listOf("Events"),
+            railSelectedLabels(Screen.EventDetail("2026casj"), Screen.Events(), false),
+        )
+        assertEquals(
+            listOf("More"),
+            railSelectedLabels(Screen.TeamDetail("frc254"), Screen.More, false),
+        )
+    }
 }
