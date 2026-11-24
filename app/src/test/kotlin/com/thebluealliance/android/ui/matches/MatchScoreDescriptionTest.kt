@@ -137,4 +137,15 @@ class MatchScoreDescriptionTest {
             ),
         )
     }
+
+    @Test
+    fun `team link names its colour alliance`() {
+        assertEquals("Red alliance, team 254", allianceTeamDescription(null, "red", "254"))
+        assertEquals("Blue alliance, team 1114", allianceTeamDescription(null, "blue", "1114"))
+    }
+
+    @Test
+    fun `team link names its playoff alliance`() {
+        assertEquals("Alliance 1, team 254", allianceTeamDescription("Alliance 1", "red", "254"))
+    }
 }

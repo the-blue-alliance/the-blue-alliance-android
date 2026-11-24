@@ -76,3 +76,16 @@ internal fun spokenBreakdownValue(value: String): String {
         else -> value
     }
 }
+
+/**
+ * Spoken label for a team link, naming its alliance since only colour shows it: the playoff
+ * alliance when there is one, otherwise the [alliance] colour.
+ */
+internal fun allianceTeamDescription(
+    playoffAllianceTitle: String?,
+    alliance: String,
+    teamNumber: String,
+): String {
+    val label = playoffAllianceTitle ?: "${alliance.replaceFirstChar { it.titlecase() }} alliance"
+    return "$label, team $teamNumber"
+}

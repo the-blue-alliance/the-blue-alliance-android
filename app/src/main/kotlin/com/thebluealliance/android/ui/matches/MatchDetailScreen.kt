@@ -173,6 +173,8 @@ fun MatchDetailScreen(
                         AllianceTeams(
                             redTeamKeys = match.redTeamKeys,
                             blueTeamKeys = match.blueTeamKeys,
+                            redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
+                            bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
                             onTeamClick = { teamKey ->
                                 val ek = uiState.eventKey
                                 if (ek != null) onNavigateToTeamEvent(teamKey, ek)
@@ -426,6 +428,8 @@ private fun ScoreSummary(
 private fun AllianceTeams(
     redTeamKeys: List<String>,
     blueTeamKeys: List<String>,
+    redPlayoffAllianceTitle: String?,
+    bluePlayoffAllianceTitle: String?,
     onTeamClick: (String) -> Unit,
 ) {
     Row(
@@ -444,12 +448,21 @@ private fun AllianceTeams(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.allianceColors.red,
                     modifier =
-                        Modifier.paddedClickable(
-                            MaterialTheme.shapes.small,
-                            horizontal = 12.dp,
-                            vertical = 4.dp,
-                            onClickLabel = "View team ${key.teamNumber}",
-                        ) { onTeamClick(key) },
+                        Modifier
+                            .paddedClickable(
+                                MaterialTheme.shapes.small,
+                                horizontal = 12.dp,
+                                vertical = 4.dp,
+                                onClickLabel = "View team ${key.teamNumber}",
+                            ) { onTeamClick(key) }
+                            .semantics {
+                                contentDescription =
+                                    allianceTeamDescription(
+                                        redPlayoffAllianceTitle,
+                                        "red",
+                                        key.teamNumber,
+                                    )
+                            },
                 )
             }
         }
@@ -475,12 +488,21 @@ private fun AllianceTeams(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.allianceColors.blue,
                     modifier =
-                        Modifier.paddedClickable(
-                            MaterialTheme.shapes.small,
-                            horizontal = 12.dp,
-                            vertical = 4.dp,
-                            onClickLabel = "View team ${key.teamNumber}",
-                        ) { onTeamClick(key) },
+                        Modifier
+                            .paddedClickable(
+                                MaterialTheme.shapes.small,
+                                horizontal = 12.dp,
+                                vertical = 4.dp,
+                                onClickLabel = "View team ${key.teamNumber}",
+                            ) { onTeamClick(key) }
+                            .semantics {
+                                contentDescription =
+                                    allianceTeamDescription(
+                                        bluePlayoffAllianceTitle,
+                                        "blue",
+                                        key.teamNumber,
+                                    )
+                            },
                 )
             }
         }
