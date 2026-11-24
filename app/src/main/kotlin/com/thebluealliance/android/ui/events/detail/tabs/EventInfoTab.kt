@@ -28,6 +28,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
 import com.thebluealliance.android.ui.components.formatEventDateRange
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -59,7 +60,7 @@ fun EventInfoTab(
         return
     }
     val context = LocalContext.current
-    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize(), TABLE_MAX_WIDTH) { readingPadding ->
         LazyColumn(
             // Only the vertical margin is on the list: the horizontal one is applied per item (see
             // CONTENT_INSET) so the link rows can bleed to the panel's edges.
