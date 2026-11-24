@@ -11,50 +11,26 @@ import kotlin.coroutines.cancellation.CancellationException
 
 private const val TAG = "TBAShortcutManager"
 
-/** Runs [fetch] on the first [get] only, so one sync shares a single result; null on failure. */
-internal class FetchOnce<T : Any>(
-    private val fetch: suspend () -> T,
-) {
-    private var fetched = false
-    private var value: T? = null
-
-    suspend fun get(): T? {
-        if (!fetched) {
-            fetched = true
-            value =
-                try {
-                    fetch()
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (_: Exception) {
-                    null
-                }
-        }
-        return value
-    }
-}
-
 /**
  * The cached team and its avatar for [season], fetching only what the cache lacks. A team's
- * name and avatar rarely change, and its own screen refreshes them when opened.
+ * name and avatar rarely change, and its own screen refreshes them when opened. Falls back to
+ * last season's cached avatar while [season] has none.
  */
 internal suspend fun loadShortcutTeam(
     teamKey: String,
     teamRepository: TeamRepository,
-    season: FetchOnce<Int>,
+    season: Int,
 ): Pair<Team, Media?>? {
-    val year =
-        season.get() ?: run {
-            Log.w(TAG, "Failed to fetch current season")
-            return null
-        }
     if (teamRepository.observeTeam(teamKey).first() == null) {
         refreshQuietly(teamKey) { teamRepository.refreshTeam(teamKey) }
     }
-    var avatar = teamRepository.observeTeamMedia(teamKey, year).first().firstOrNull { it.isAvatar }
+
+    suspend fun cachedAvatar(year: Int) =
+        teamRepository.observeTeamMedia(teamKey, year).first().firstOrNull { it.isAvatar }
+    var avatar = cachedAvatar(season)
     if (avatar == null) {
-        refreshQuietly(teamKey) { teamRepository.refreshTeamMedia(teamKey, year) }
-        avatar = teamRepository.observeTeamMedia(teamKey, year).first().firstOrNull { it.isAvatar }
+        refreshQuietly(teamKey) { teamRepository.refreshTeamMedia(teamKey, season) }
+        avatar = cachedAvatar(season) ?: cachedAvatar(season - 1)
     }
     val team = teamRepository.observeTeam(teamKey).first() ?: return null
     return team to avatar

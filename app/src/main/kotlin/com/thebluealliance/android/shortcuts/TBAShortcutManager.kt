@@ -14,9 +14,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.thebluealliance.android.R
-import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Media
@@ -46,7 +46,7 @@ class TBAShortcutManager
         private val tbaRepository: MyTBARepository,
         private val eventRepository: EventRepository,
         private val teamRepository: TeamRepository,
-        private val tbaApi: TbaApi,
+        private val seasons: SeasonRepository,
         private val userMessages: UserMessageBus,
     ) {
         /**
@@ -67,7 +67,7 @@ class TBAShortcutManager
                     .collectLatest { favorites ->
                         withContext(Dispatchers.IO) {
                             purgeUnfavoritedShortcuts(favorites)
-                            val season = currentSeason()
+                            val season = seasons.defaultSeason()
 
                             val shortcuts =
                                 favorites
@@ -92,9 +92,7 @@ class TBAShortcutManager
             ShortcutManagerCompat.removeDynamicShortcuts(context, idsToRemove)
         }
 
-        private fun currentSeason() = FetchOnce { tbaApi.getStatus().currentSeason }
-
-        private suspend fun Favorite.getShortcutInfo(season: FetchOnce<Int>): ShortcutInfoCompat? =
+        private suspend fun Favorite.getShortcutInfo(season: Int): ShortcutInfoCompat? =
             when (modelType) {
                 ModelType.TEAM -> getTeamShortcut(modelKey, season)
                 ModelType.EVENT -> getEventShortcut(modelKey)
@@ -103,7 +101,7 @@ class TBAShortcutManager
 
         private suspend fun getTeamShortcut(
             teamKey: String,
-            season: FetchOnce<Int>,
+            season: Int,
         ): ShortcutInfoCompat? {
             val (team, avatar) = loadShortcutTeam(teamKey, teamRepository, season) ?: return null
             val label = "${team.number} ${team.nickname}"
@@ -162,7 +160,7 @@ class TBAShortcutManager
          * This will prompt the user with the system's pinned shortcut dialog.
          */
         suspend fun requestPinShortcut(favorite: Favorite) {
-            val shortcutInfo = favorite.getShortcutInfo(currentSeason())
+            val shortcutInfo = favorite.getShortcutInfo(seasons.defaultSeason())
             if (shortcutInfo == null) {
                 userMessages.show("Failed to create shortcut")
                 return

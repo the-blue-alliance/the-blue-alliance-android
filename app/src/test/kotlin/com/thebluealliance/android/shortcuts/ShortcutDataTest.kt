@@ -39,7 +39,7 @@ class ShortcutDataTest {
             every { teamRepository.observeTeam("frc254") } returns flowOf(team)
             every { teamRepository.observeTeamMedia("frc254", 2026) } returns flowOf(listOf(avatar))
 
-            val result = loadShortcutTeam("frc254", teamRepository, FetchOnce { 2026 })
+            val result = loadShortcutTeam("frc254", teamRepository, 2026)
 
             assertEquals(team to avatar, result)
             coVerify(exactly = 0) { teamRepository.refreshTeam(any()) }
@@ -54,7 +54,7 @@ class ShortcutDataTest {
             every { teamRepository.observeTeamMedia("frc254", 2026) } returnsMany
                 listOf(flowOf(emptyList()), flowOf(listOf(avatar)))
 
-            val result = loadShortcutTeam("frc254", teamRepository, FetchOnce { 2026 })
+            val result = loadShortcutTeam("frc254", teamRepository, 2026)
 
             assertEquals(team to avatar, result)
             coVerify(exactly = 1) { teamRepository.refreshTeam("frc254") }
@@ -65,43 +65,38 @@ class ShortcutDataTest {
     fun `failed refresh still uses the cache`() =
         runTest {
             every { teamRepository.observeTeam("frc254") } returns flowOf(team)
-            every { teamRepository.observeTeamMedia("frc254", 2026) } returns flowOf(emptyList())
+            every { teamRepository.observeTeamMedia("frc254", any()) } returns flowOf(emptyList())
             coEvery { teamRepository.refreshTeamMedia(any(), any()) } throws
                 RuntimeException("offline")
 
             assertEquals(
                 team to null,
-                loadShortcutTeam("frc254", teamRepository, FetchOnce { 2026 }),
+                loadShortcutTeam("frc254", teamRepository, 2026),
             )
         }
 
     @Test
-    fun `season is fetched once per sync`() =
+    fun `falls back to last season's cached avatar`() =
         runTest {
-            var calls = 0
-            val season = FetchOnce { ++calls + 2025 }
-            every { teamRepository.observeTeam(any()) } returns flowOf(team)
-            every { teamRepository.observeTeamMedia(any(), any()) } returns flowOf(listOf(avatar))
+            val lastYear = avatar.copy(year = 2025)
+            every { teamRepository.observeTeam("frc254") } returns flowOf(team)
+            every { teamRepository.observeTeamMedia("frc254", 2026) } returns flowOf(emptyList())
+            every { teamRepository.observeTeamMedia("frc254", 2025) } returns
+                flowOf(listOf(lastYear))
 
-            loadShortcutTeam("frc254", teamRepository, season)
-            loadShortcutTeam("frc1678", teamRepository, season)
-
-            assertEquals(1, calls)
+            assertEquals(team to lastYear, loadShortcutTeam("frc254", teamRepository, 2026))
+            coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2026) }
+            coVerify(exactly = 0) { teamRepository.refreshTeamMedia("frc254", 2025) }
         }
 
     @Test
-    fun `failed season fetch skips team shortcuts without retrying`() =
+    fun `fetched current avatar beats last season's`() =
         runTest {
-            var calls = 0
-            val season =
-                FetchOnce<Int> {
-                    calls++
-                    throw RuntimeException("offline")
-                }
+            every { teamRepository.observeTeam("frc254") } returns flowOf(team)
+            every { teamRepository.observeTeamMedia("frc254", 2026) } returnsMany
+                listOf(flowOf(emptyList()), flowOf(listOf(avatar)))
 
-            assertNull(loadShortcutTeam("frc254", teamRepository, season))
-            assertNull(loadShortcutTeam("frc1678", teamRepository, season))
-            assertEquals(1, calls)
+            assertEquals(team to avatar, loadShortcutTeam("frc254", teamRepository, 2026))
         }
 
     @Test
