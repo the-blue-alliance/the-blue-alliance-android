@@ -66,6 +66,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
+import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -187,14 +188,8 @@ fun TeamDetailScreen(
                     },
                     secondaryActions =
                         listOf(
-                            TopBarAction(
-                                label = "Notification preferences",
-                                icon =
-                                    if (subscription?.notifications?.isNotEmpty() == true) {
-                                        TbaIcons.Notifications
-                                    } else {
-                                        TbaIcons.NotificationsOutlined
-                                    },
+                            notificationPreferencesAction(
+                                notificationsOn = subscription?.notifications?.isNotEmpty() == true,
                                 onClick = {
                                     if (!viewModel.isSignedIn()) {
                                         showSignInDialog = true

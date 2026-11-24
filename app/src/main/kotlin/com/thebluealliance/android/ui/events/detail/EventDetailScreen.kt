@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
+import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
@@ -158,14 +159,8 @@ fun EventDetailScreen(
                     },
                     secondaryActions =
                         listOf(
-                            TopBarAction(
-                                label = "Notification preferences",
-                                icon =
-                                    if (subscription?.notifications?.isNotEmpty() == true) {
-                                        TbaIcons.Notifications
-                                    } else {
-                                        TbaIcons.NotificationsOutlined
-                                    },
+                            notificationPreferencesAction(
+                                notificationsOn = subscription?.notifications?.isNotEmpty() == true,
                                 onClick = {
                                     if (!viewModel.isSignedIn()) {
                                         showSignInDialog = true

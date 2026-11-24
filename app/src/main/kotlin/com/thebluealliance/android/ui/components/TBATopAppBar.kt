@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -37,13 +38,20 @@ import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 
-/** A top-bar icon button that moves into the overflow menu, as a labelled item, when space is short. */
+/**
+ * A top-bar icon button that moves into the overflow menu, as a labelled item, when space is short.
+ * [stateDescription] is announced in both places, for icons that show an on/off state.
+ */
 @Immutable
 data class TopBarAction(
     val label: String,
     val icon: ImageVector,
     val onClick: () -> Unit,
+    val stateDescription: String? = null,
 )
+
+private fun Modifier.actionState(action: TopBarAction): Modifier =
+    action.stateDescription?.let { state -> semantics { stateDescription = state } } ?: this
 
 /** Width of an icon button in the top bar, including its touch target. */
 internal val TopBarActionWidth = 48.dp
@@ -150,7 +158,10 @@ fun TBATopAppBar(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (!collapse) {
                         secondaryActions.forEach { action ->
-                            IconButton(onClick = action.onClick) {
+                            IconButton(
+                                onClick = action.onClick,
+                                modifier = Modifier.actionState(action),
+                            ) {
                                 Icon(action.icon, contentDescription = action.label)
                             }
                         }
@@ -184,6 +195,7 @@ private fun TopBarOverflowMenu(
                 DropdownMenuItem(
                     text = { Text(action.label) },
                     leadingIcon = { Icon(action.icon, contentDescription = null) },
+                    modifier = Modifier.actionState(action),
                     onClick = {
                         close()
                         action.onClick()

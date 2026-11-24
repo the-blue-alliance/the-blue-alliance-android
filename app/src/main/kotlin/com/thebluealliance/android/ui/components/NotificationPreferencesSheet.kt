@@ -41,9 +41,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.thebluealliance.android.domain.model.NotificationType
+import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
+/** What the top-bar bell announces: whether any notifications are on for the item. */
+internal fun notificationsStateDescription(notificationsOn: Boolean): String =
+    if (notificationsOn) "Notifications on" else "Notifications off"
+
+/** The top-bar bell that opens [NotificationPreferencesSheet], filled while [notificationsOn]. */
+@Composable
+fun notificationPreferencesAction(
+    notificationsOn: Boolean,
+    onClick: () -> Unit,
+): TopBarAction =
+    TopBarAction(
+        label = "Notification preferences",
+        icon = if (notificationsOn) TbaIcons.Notifications else TbaIcons.NotificationsOutlined,
+        onClick = onClick,
+        stateDescription = notificationsStateDescription(notificationsOn),
+    )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
