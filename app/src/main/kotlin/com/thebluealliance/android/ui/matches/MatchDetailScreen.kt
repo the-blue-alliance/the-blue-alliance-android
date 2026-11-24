@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -278,8 +279,9 @@ private fun EventInfo(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .clickable { onNavigateToEvent(eventKey) }
-                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                        .clickable(onClickLabel = "View event", role = Role.Button) {
+                            onNavigateToEvent(eventKey)
+                        }.padding(horizontal = 16.dp, vertical = 2.dp),
             )
         }
         if (formattedTime != null) {
