@@ -38,6 +38,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -101,11 +102,10 @@ fun RegionalAdvancementScreen(
                         }
                     }
                 },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(TbaIcons.Search, contentDescription = "Search")
-                    }
-                },
+                secondaryActions =
+                    listOf(
+                        TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                    ),
             )
         },
     ) { innerPadding ->

@@ -64,6 +64,7 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -136,24 +137,21 @@ fun MyTBAScreen(
                     },
                 isRefreshing = isRefreshing,
                 title = { TopBarTitle("myTBA") },
-                navigationIcon = {
-                    if (onNavigateUp != null) {
-                        IconButton(onClick = onNavigateUp) {
-                            Icon(
-                                imageVector = TbaIcons.ArrowBack,
-                                contentDescription = "Back",
-                            )
+                navigationIcon =
+                    onNavigateUp?.let { navigateUp ->
+                        {
+                            IconButton(onClick = navigateUp) {
+                                Icon(
+                                    imageVector = TbaIcons.ArrowBack,
+                                    contentDescription = "Back",
+                                )
+                            }
                         }
-                    }
-                },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(
-                            imageVector = TbaIcons.Search,
-                            contentDescription = "Search",
-                        )
-                    }
-                },
+                    },
+                secondaryActions =
+                    listOf(
+                        TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                    ),
             )
         },
     ) { innerPadding ->

@@ -33,6 +33,7 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
@@ -59,14 +60,10 @@ fun SettingsScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(
-                            imageVector = TbaIcons.Search,
-                            contentDescription = "Search",
-                        )
-                    }
-                },
+                secondaryActions =
+                    listOf(
+                        TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                    ),
             )
         },
     ) { innerPadding ->

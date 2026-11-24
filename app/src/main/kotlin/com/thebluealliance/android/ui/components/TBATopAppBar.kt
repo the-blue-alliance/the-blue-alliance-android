@@ -1,10 +1,15 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -13,31 +18,76 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.TbaIcons
+
+/** A top-bar icon button that moves into the overflow menu, as a labelled item, when space is short. */
+@Immutable
+data class TopBarAction(
+    val label: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit,
+)
+
+/** Width of an icon button in the top bar, including its touch target. */
+internal val TopBarActionWidth = 48.dp
+
+/** Narrowest the title may get before secondary actions collapse into the overflow menu. */
+internal val TopBarMinTitleWidth = 120.dp
+
+// TopAppBar's own inset before the navigation icon and after the actions.
+private val TopAppBarEdgePadding = 4.dp
 
 /**
- * The app's top bar. A plain-text [title] should be a [TopBarTitle], which makes it the heading. A
- * non-null [onRefresh] puts the Refresh accessibility action on the title, for screens whose
- * pull-to-refresh gesture has no semantic equivalent; it does nothing while [isRefreshing].
+ * Whether [secondaryCount] secondary actions should collapse into the overflow menu: they leave
+ * the title under [minTitleWidth] in a bar of [barWidth] with [fixedWidth] taken by everything
+ * else, and collapsing them saves space. With [hasOverflowMenu] false, collapsing adds the menu.
+ */
+internal fun topBarCollapsesActions(
+    barWidth: Dp,
+    fixedWidth: Dp,
+    secondaryCount: Int,
+    hasOverflowMenu: Boolean,
+    actionWidth: Dp = TopBarActionWidth,
+    minTitleWidth: Dp = TopBarMinTitleWidth,
+): Boolean {
+    if (secondaryCount == 0) return false
+    val buttons = secondaryCount + if (hasOverflowMenu) 1 else 0
+    return buttons > 1 && barWidth - fixedWidth - actionWidth * buttons < minTitleWidth
+}
+
+/**
+ * The app's top bar. Pass [navigationIcon] as null when there is none, so the bar's measurement
+ * reserves no room for it. A plain-text [title] should be a [TopBarTitle], which makes it the
+ * heading. A non-null [onRefresh] puts the Refresh accessibility action on the title, for screens
+ * whose pull-to-refresh gesture has no semantic equivalent; it does nothing while [isRefreshing].
+ *
+ * [secondaryActions] show as icon buttons, then a More options button opens [overflowMenu]. When
+ * the bar is too narrow to keep the title readable, the secondary actions move to the top of that
+ * menu.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TBATopAppBar(
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
+    navigationIcon: (@Composable () -> Unit)? = null,
     windowInsets: androidx.compose.foundation.layout.WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors =
         TopAppBarDefaults.topAppBarColors(
@@ -50,7 +100,10 @@ fun TBATopAppBar(
     showLamp: Boolean = false,
     onRefresh: (() -> Unit)? = null,
     isRefreshing: Boolean = false,
+    secondaryActions: List<TopBarAction> = emptyList(),
+    overflowMenu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)? = null,
 ) {
+    val hasNavigationIcon = showLamp || navigationIcon != null
     // The title's Refresh action ignores requests while busy, as pull-to-refresh does.
     val currentRefreshing by rememberUpdatedState(isRefreshing)
     val titleRefresh =
@@ -80,13 +133,66 @@ fun TBATopAppBar(
                     }
                 }
             } else {
-                navigationIcon
+                navigationIcon ?: {}
             },
-        actions = actions,
+        actions = {
+            // The actions slot spans the bar less its end padding, so this measures the bar.
+            BoxWithConstraints {
+                val collapse =
+                    topBarCollapsesActions(
+                        barWidth = maxWidth + TopAppBarEdgePadding,
+                        fixedWidth =
+                            TopAppBarEdgePadding * 2 +
+                                if (hasNavigationIcon) TopBarActionWidth else 0.dp,
+                        secondaryCount = secondaryActions.size,
+                        hasOverflowMenu = overflowMenu != null,
+                    )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (!collapse) {
+                        secondaryActions.forEach { action ->
+                            IconButton(onClick = action.onClick) {
+                                Icon(action.icon, contentDescription = action.label)
+                            }
+                        }
+                    }
+                    val menuActions = if (collapse) secondaryActions else emptyList()
+                    if (overflowMenu != null || menuActions.isNotEmpty()) {
+                        TopBarOverflowMenu(menuActions, overflowMenu)
+                    }
+                }
+            }
+        },
         windowInsets = windowInsets,
         colors = colors,
         scrollBehavior = scrollBehavior,
     )
+}
+
+@Composable
+private fun TopBarOverflowMenu(
+    actions: List<TopBarAction>,
+    menu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)?,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val close = { expanded = false }
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(TbaIcons.MoreVert, contentDescription = "More options")
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = close) {
+            actions.forEach { action ->
+                DropdownMenuItem(
+                    text = { Text(action.label) },
+                    leadingIcon = { Icon(action.icon, contentDescription = null) },
+                    onClick = {
+                        close()
+                        action.onClick()
+                    },
+                )
+            }
+            menu?.invoke(this, close)
+        }
+    }
 }
 
 /**

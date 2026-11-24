@@ -53,6 +53,7 @@ import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
@@ -93,29 +94,29 @@ fun MatchDetailScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(
-                            imageVector = TbaIcons.Search,
-                            contentDescription = "Search",
-                        )
-                    }
-                    uiState.match?.let { match ->
-                        IconButton(onClick = {
-                            val eventLabel =
-                                uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
-                            context.shareTbaUrl(
-                                title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
-                                url = "https://www.thebluealliance.com/match/${match.key}",
+                secondaryActions =
+                    listOfNotNull(
+                        TopBarAction(
+                            label = "Search",
+                            icon = TbaIcons.Search,
+                            onClick = onNavigateToSearch,
+                        ),
+                        uiState.match?.let { match ->
+                            TopBarAction(
+                                label = "Share",
+                                icon = TbaIcons.Share,
+                                onClick = {
+                                    val eventLabel =
+                                        uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                                    context.shareTbaUrl(
+                                        title =
+                                            "$eventLabel${match.getFullLabel(uiState.playoffType)}",
+                                        url = "https://www.thebluealliance.com/match/${match.key}",
+                                    )
+                                },
                             )
-                        }) {
-                            Icon(
-                                imageVector = TbaIcons.Share,
-                                contentDescription = "Share",
-                            )
-                        }
-                    }
-                },
+                        },
+                    ),
             )
         },
     ) { innerPadding ->

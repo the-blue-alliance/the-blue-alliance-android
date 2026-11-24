@@ -62,6 +62,7 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
@@ -177,11 +178,10 @@ fun TeamEventDetailScreen(
                             )
                         }
                     },
-                    actions = {
-                        IconButton(onClick = onNavigateToSearch) {
-                            Icon(imageVector = TbaIcons.Search, contentDescription = "Search")
-                        }
-                    },
+                    secondaryActions =
+                        listOf(
+                            TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                        ),
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {

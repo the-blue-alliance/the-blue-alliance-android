@@ -20,7 +20,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,6 +63,7 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -185,100 +185,83 @@ fun TeamDetailScreen(
                             )
                         }
                     },
-                    actions = {
-                        IconButton(onClick = {
-                            if (!viewModel.isSignedIn()) {
-                                showSignInDialog = true
-                            } else {
-                                showNotificationSheet = true
-                            }
-                        }) {
-                            val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                            Icon(
-                                imageVector =
-                                    if (hasSubscription) {
+                    secondaryActions =
+                        listOf(
+                            TopBarAction(
+                                label = "Notification preferences",
+                                icon =
+                                    if (subscription?.notifications?.isNotEmpty() == true) {
                                         TbaIcons.Notifications
                                     } else {
                                         TbaIcons.NotificationsOutlined
                                     },
-                                contentDescription = "Notification preferences",
-                            )
-                        }
-                        IconButton(onClick = viewModel::toggleFavorite) {
-                            Icon(
-                                imageVector =
-                                    if (isFavorite) {
-                                        TbaIcons.Star
+                                onClick = {
+                                    if (!viewModel.isSignedIn()) {
+                                        showSignInDialog = true
                                     } else {
-                                        TbaIcons.StarOutlined
-                                    },
-                                contentDescription =
-                                    if (isFavorite) {
-                                        "Remove from favorites"
-                                    } else {
-                                        "Add to favorites"
-                                    },
-                            )
-                        }
+                                        showNotificationSheet = true
+                                    }
+                                },
+                            ),
+                            TopBarAction(
+                                label =
+                                    if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
+                                onClick = viewModel::toggleFavorite,
+                            ),
+                        ),
+                    overflowMenu =
                         if (
                             hasDetailOverflowItems(
                                 entityLoaded = uiState.team != null,
                                 canPinShortcuts = viewModel.canPinShortcuts,
                             )
                         ) {
-                            var menuExpanded by remember { mutableStateOf(false) }
-                            Box {
-                                IconButton(onClick = { menuExpanded = true }) {
-                                    Icon(TbaIcons.MoreVert, contentDescription = "More options")
+                            { close ->
+                                uiState.team?.let { team ->
+                                    DropdownMenuItem(
+                                        text = { Text("Share") },
+                                        leadingIcon = {
+                                            Icon(
+                                                TbaIcons.Share,
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            close()
+                                            context.shareTbaUrl(
+                                                title =
+                                                    "Team ${team.number} - " +
+                                                        (team.nickname ?: ""),
+                                                url =
+                                                    "https://www.thebluealliance.com/team/" +
+                                                        "${team.number}",
+                                            )
+                                        },
+                                    )
                                 }
-                                DropdownMenu(
-                                    expanded = menuExpanded,
-                                    onDismissRequest = { menuExpanded = false },
-                                ) {
-                                    uiState.team?.let { team ->
-                                        DropdownMenuItem(
-                                            text = { Text("Share") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    TbaIcons.Share,
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                menuExpanded = false
-                                                context.shareTbaUrl(
-                                                    title =
-                                                        "Team ${team.number} - " +
-                                                            (team.nickname ?: ""),
-                                                    url =
-                                                        "https://www.thebluealliance.com/team/" +
-                                                            "${team.number}",
-                                                )
-                                            },
-                                        )
-                                    }
-                                    if (viewModel.canPinShortcuts) {
-                                        DropdownMenuItem(
-                                            text = { Text("Add to home screen") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    painter =
-                                                        painterResource(
-                                                            R.drawable.ic_add_to_home_screen,
-                                                        ),
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                menuExpanded = false
-                                                viewModel.requestPinShortcut()
-                                            },
-                                        )
-                                    }
+                                if (viewModel.canPinShortcuts) {
+                                    DropdownMenuItem(
+                                        text = { Text("Add to home screen") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter =
+                                                    painterResource(
+                                                        R.drawable.ic_add_to_home_screen,
+                                                    ),
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            close()
+                                            viewModel.requestPinShortcut()
+                                        },
+                                    )
                                 }
                             }
-                        }
-                    },
+                        } else {
+                            null
+                        },
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {

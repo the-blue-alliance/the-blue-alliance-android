@@ -23,6 +23,7 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -42,11 +43,10 @@ fun AboutScreen(
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")
                     }
                 },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(TbaIcons.Search, contentDescription = "Search")
-                    }
-                },
+                secondaryActions =
+                    listOf(
+                        TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                    ),
             )
         },
     ) { innerPadding ->
