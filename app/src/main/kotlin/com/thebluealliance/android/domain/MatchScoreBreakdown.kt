@@ -87,8 +87,9 @@ fun formatBreakdownValue(
     return when {
         apiKey == "rp" -> "$BREAKDOWN_RP_PREFIX$value$BREAKDOWN_RP_SUFFIX"
         apiKey in rpBonusFields -> if (value == "true") BREAKDOWN_RP_BONUS_MET else BREAKDOWN_NO
-        value == "true" -> BREAKDOWN_YES
-        value == "false" -> BREAKDOWN_NO
+        // 2022+ robot booleans such as autoLineRobot1 arrive as "Yes"/"No".
+        value == "true" || value == "Yes" -> BREAKDOWN_YES
+        value == "false" || value == "No" -> BREAKDOWN_NO
         apiKey == "foul_points" && value != "0" -> "$BREAKDOWN_FOUL_SIGN$value"
         enumValue.matches(value) -> enumValueToWords(value)
         else -> value

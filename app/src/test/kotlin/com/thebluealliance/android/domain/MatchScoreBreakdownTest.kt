@@ -101,8 +101,6 @@ class MatchScoreBreakdownTest {
     fun `single words, acronyms and non-enum values stay unchanged`() {
         listOf(
             "None",
-            "Yes",
-            "No",
             "Docked",
             "Parked",
             "LRL",
@@ -118,6 +116,8 @@ class MatchScoreBreakdownTest {
     fun `every boolean formats as check or cross`() {
         assertEquals("✗", formatBreakdownValue("g410Penalty", "false"))
         assertEquals("✓", formatBreakdownValue("rotor1Auto", "true"))
+        assertEquals("✓", formatBreakdownValue("autoLineRobot1", "Yes"))
+        assertEquals("✗", formatBreakdownValue("mobilityRobot1", "No"))
     }
 
     @Test
