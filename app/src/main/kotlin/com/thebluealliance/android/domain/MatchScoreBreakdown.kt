@@ -70,6 +70,25 @@ fun Match.rpBonuses(): AllianceRpBonuses? {
     }
 }
 
+/** Shown for a breakdown value the API left out. */
+const val BREAKDOWN_MISSING = "-"
+
+/** Shown for a met boolean breakdown field. */
+const val BREAKDOWN_YES = "✓"
+
+/** Shown for a missed boolean breakdown field. */
+const val BREAKDOWN_NO = "✗"
+
+/** Shown for a met RP bonus. */
+const val BREAKDOWN_RP_BONUS_MET = "$BREAKDOWN_YES (+1 RP)"
+
+/** Prefix and suffix around the count of a ranking points row, e.g. "+2 RP". */
+const val BREAKDOWN_RP_PREFIX = "+"
+const val BREAKDOWN_RP_SUFFIX = " RP"
+
+/** Sign before nonzero foul points, which count against the alliance. */
+const val BREAKDOWN_FOUL_SIGN = "−"
+
 /**
  * Formats a score breakdown value for display in the match detail screen.
  */
@@ -77,12 +96,12 @@ fun formatBreakdownValue(
     apiKey: String,
     value: String,
 ): String {
-    if (value == "-") return value
+    if (value == BREAKDOWN_MISSING) return value
     return when {
-        apiKey == "rp" -> "+$value RP"
-        apiKey in rpBonusFields -> if (value == "true") "✓ (+1 RP)" else "✗"
-        apiKey in booleanDisplayFields -> if (value == "true") "✓" else "✗"
-        apiKey == "foul_points" && value != "0" -> "−$value"
+        apiKey == "rp" -> "$BREAKDOWN_RP_PREFIX$value$BREAKDOWN_RP_SUFFIX"
+        apiKey in rpBonusFields -> if (value == "true") BREAKDOWN_RP_BONUS_MET else BREAKDOWN_NO
+        apiKey in booleanDisplayFields -> if (value == "true") BREAKDOWN_YES else BREAKDOWN_NO
+        apiKey == "foul_points" && value != "0" -> "$BREAKDOWN_FOUL_SIGN$value"
         else -> value
     }
 }
