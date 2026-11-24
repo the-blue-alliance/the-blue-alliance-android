@@ -50,4 +50,25 @@ class MatchScoreDescriptionTest {
     fun `colour label needs no description`() {
         assertNull(allianceLabelDescription(null, "red"))
     }
+
+    @Test
+    fun `breakdown row names each value's alliance`() {
+        assertEquals(
+            "Auto Leave Points: Red 12; Blue 6",
+            breakdownRowDescription("Auto Leave Points", "12", "6"),
+        )
+    }
+
+    @Test
+    fun `breakdown row reads a missing value as none`() {
+        assertEquals("Coral: Red none; Blue 3", breakdownRowDescription("Coral", "-", "3"))
+    }
+
+    @Test
+    fun `breakdown row names playoff alliances with their colour`() {
+        assertEquals(
+            "Foul Points: Alliance 1, Red 0; Alliance 4, Blue 5",
+            breakdownRowDescription("Foul Points", "0", "5", "Alliance 1", "Alliance 4"),
+        )
+    }
 }
