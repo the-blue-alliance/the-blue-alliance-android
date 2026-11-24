@@ -27,8 +27,6 @@ data class AllianceRpBonuses(
     val blue: List<Boolean>,
 )
 
-private val breakdownJson = Json { ignoreUnknownKeys = true }
-
 /**
  * Parses RP bonus achievements from the score breakdown for played qualification matches.
  * Returns null for non-qual matches, unplayed matches, or unsupported years.
@@ -39,7 +37,7 @@ fun Match.rpBonuses(): AllianceRpBonuses? {
     val fields = rpBonusFieldsByYear[year] ?: return null
     val breakdown = scoreBreakdown ?: return null
     return try {
-        val obj = breakdownJson.parseToJsonElement(breakdown) as? JsonObject ?: return null
+        val obj = Json.parseToJsonElement(breakdown) as? JsonObject ?: return null
 
         fun allianceBonuses(alliance: String): List<Boolean> {
             val allianceObj = obj[alliance] as? JsonObject ?: return fields.map { false }

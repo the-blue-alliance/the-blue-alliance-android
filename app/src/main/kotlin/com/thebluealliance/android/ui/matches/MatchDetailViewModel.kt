@@ -42,8 +42,6 @@ class MatchDetailViewModel
         private val eventKey: String = matchKey.substringBeforeLast("_")
         private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
-        private val json = Json { ignoreUnknownKeys = true }
-
         private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
 
         private val timeFormatter =
@@ -111,7 +109,7 @@ class MatchDetailViewModel
 
         private fun parseVideos(jsonString: String): List<MatchVideo> {
             return try {
-                val array = json.decodeFromString<JsonArray>(jsonString)
+                val array = Json.decodeFromString<JsonArray>(jsonString)
                 array.mapNotNull { element ->
                     val obj = element as? JsonObject ?: return@mapNotNull null
                     val type = obj["type"]?.jsonPrimitive?.content ?: return@mapNotNull null
@@ -129,12 +127,10 @@ class MatchDetailViewModel
         }
     }
 
-private val breakdownParser = Json { ignoreUnknownKeys = true }
-
 /** Per-alliance breakdown values as strings; null values are left out so they show as missing. */
 internal fun parseScoreBreakdown(jsonString: String): Map<String, Map<String, String>>? =
     try {
-        val obj = breakdownParser.decodeFromString<JsonObject>(jsonString)
+        val obj = Json.decodeFromString<JsonObject>(jsonString)
         val result = mutableMapOf<String, Map<String, String>>()
         for (alliance in listOf("red", "blue")) {
             val allianceObj = obj[alliance] as? JsonObject ?: continue
