@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -35,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -655,17 +657,19 @@ private fun StatsTab(
             if (hasOprData) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             val isDistrictEvent = event.district != null
             val points = advancementPoints
-            Text(
-                text = if (isDistrictEvent) "District Points" else "Regional Points",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = "${points.total} pts",
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Column(Modifier.semantics(mergeDescendants = true) { heading() }) {
+                Text(
+                    text = if (isDistrictEvent) "District Points" else "Regional Points",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = "${points.total} pts",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
-                    Row(modifier = Modifier.fillMaxWidth()) {
+                    Row(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
                         Text(
                             text = label,
                             style = MaterialTheme.typography.bodyMedium,
@@ -683,13 +687,20 @@ private fun StatsTab(
     }
 }
 
+/** Keeps a stat's value near its label in wide windows. */
+private val StatRowMaxWidth = 360.dp
+
 @Composable
 private fun StatRow(
     label: String,
     value: Double,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .widthIn(max = StatRowMaxWidth)
+                .fillMaxWidth()
+                .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
