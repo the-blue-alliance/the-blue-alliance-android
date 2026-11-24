@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectable
@@ -55,6 +56,7 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -436,7 +438,7 @@ private fun InsightsView(
             Row(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
+                        .tableWidth()
                         .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -467,7 +469,7 @@ private fun InsightsView(
         }
 
         items(insightsList) { insight ->
-            Column {
+            Column(modifier = Modifier.tableWidth()) {
                 Row(
                     modifier =
                         Modifier
@@ -498,6 +500,8 @@ private fun InsightsView(
                 color = MaterialTheme.colorScheme.primary,
                 modifier =
                     Modifier
+                        .tableWidth()
+                        .wrapContentWidth(Alignment.Start)
                         .clickable { onOpenOprLink() }
                         .padding(16.dp),
             )
@@ -680,7 +684,7 @@ private fun StandardOPRsView(
         }
 
         items(sortedTeams) { teamKey ->
-            Column {
+            Column(modifier = Modifier.tableWidth()) {
                 InsightsTableDataRow {
                     TableDataCell(text = teamKey.teamNumber, column = OPR_TEAM_COLUMN)
                     TableDataCell(
@@ -707,6 +711,8 @@ private fun StandardOPRsView(
                 color = MaterialTheme.colorScheme.primary,
                 modifier =
                     Modifier
+                        .tableWidth()
+                        .wrapContentWidth(Alignment.Start)
                         .clickable { onOpenOprLink() }
                         .padding(16.dp),
             )
@@ -780,7 +786,7 @@ private fun COPRView(
         }
 
         items(sortedTeams) { teamKey ->
-            Column {
+            Column(modifier = Modifier.tableWidth()) {
                 InsightsTableDataRow {
                     TableDataCell(text = teamKey.teamNumber, column = COPR_TEAM_COLUMN)
                     TableDataCell(
@@ -799,6 +805,8 @@ private fun COPRView(
                 color = MaterialTheme.colorScheme.primary,
                 modifier =
                     Modifier
+                        .tableWidth()
+                        .wrapContentWidth(Alignment.Start)
                         .clickable { onOpenOprLink() }
                         .padding(16.dp),
             )
@@ -818,7 +826,7 @@ private fun InsightsTableHeaderRow(
     Row(
         modifier =
             Modifier
-                .fillMaxWidth()
+                .tableWidth()
                 .background(BrandHeaderContainer)
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
                 // Header cells fill this height, so every sort band matches the tallest cell.
