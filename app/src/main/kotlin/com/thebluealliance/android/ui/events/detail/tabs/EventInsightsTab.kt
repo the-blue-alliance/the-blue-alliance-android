@@ -474,6 +474,7 @@ private fun InsightsView(
                     modifier =
                         Modifier
                             .fillMaxWidth()
+                            .semantics(mergeDescendants = true) {}
                             .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -862,6 +863,7 @@ private fun InsightsTableDataRow(cells: @Composable RowScope.() -> Unit) {
         modifier =
             Modifier
                 .fillMaxWidth()
+                .semantics(mergeDescendants = true) {}
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
