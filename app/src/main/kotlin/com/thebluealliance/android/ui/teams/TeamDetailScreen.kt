@@ -486,12 +486,14 @@ private fun EventsTab(
             action = emptyAction,
         )
     } else {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = innerPadding,
-        ) {
-            items(events, key = { it.key }) { event ->
-                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+        ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = readingPadding,
+            ) {
+                items(events, key = { it.key }) { event ->
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                }
             }
         }
     }

@@ -16,4 +16,19 @@ class ReadingWidthTest {
         assertEquals(92.dp, readingInset(1024.dp))
         assertEquals(220.dp, readingInset(1280.dp))
     }
+
+    @Test
+    fun `phone and rail-narrowed widths keep list padding unchanged`() {
+        listOf(
+            320.dp,
+            360.dp,
+            599.dp,
+            600.dp - 80.dp,
+        ).forEach { assertEquals(0.dp, readingInset(it)) }
+    }
+
+    @Test
+    fun `a 1024dp panel beside the rail centers the column`() {
+        assertEquals(52.dp, readingInset(1024.dp - 80.dp))
+    }
 }

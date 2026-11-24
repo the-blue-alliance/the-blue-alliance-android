@@ -231,27 +231,34 @@ fun MediaTab(
                 null
             }
         }
-    LazyVerticalGrid(
-        columns =
-            GridCells.Adaptive(
-                minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
-            ),
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = innerPadding,
-    ) {
-        itemsIndexed(gridItems, key = { _, it -> "${it.type}_${it.foreignKey}" }) { index, item ->
-            MediaItem(
-                type = item.type,
-                foreignKey = item.foreignKey,
-                index = index,
-                count = gridItems.size,
-                modifier = Modifier.fillMaxWidth(),
-            )
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyVerticalGrid(
+            columns =
+                GridCells.Adaptive(
+                    minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
+                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = readingPadding,
+        ) {
+            itemsIndexed(gridItems, key = {
+                _,
+                it,
+                ->
+                "${it.type}_${it.foreignKey}"
+            }) { index, item ->
+                MediaItem(
+                    type = item.type,
+                    foreignKey = item.foreignKey,
+                    index = index,
+                    count = gridItems.size,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }

@@ -61,6 +61,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.NotificationType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -332,24 +333,30 @@ private fun FavoritesTab(
         EmptyTabMessage(title = "No favorites yet")
         return
     }
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-        items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
-            FavoriteItem(
-                favorite = favorite,
-                displayName = displayNames[favorite.modelKey] ?: favorite.modelKey,
-                onClick = {
-                    when (favorite.modelType) {
-                        ModelType.TEAM -> onNavigateToTeam(favorite.modelKey)
-                        ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
-                        ModelType.MATCH -> onNavigateToMatch(favorite.modelKey)
-                        ModelType.EVENT_TEAM ->
-                            onNavigateToEvent(favorite.modelKey.substringBefore('_'))
-                    }
-                },
-                canPinShortcuts = canPinShortcuts,
-                onAddShortcut = { onAddShortcut(favorite) },
-                onRemove = { onRemoveFavorite(favorite) },
-            )
+    ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
+                FavoriteItem(
+                    favorite = favorite,
+                    displayName = displayNames[favorite.modelKey] ?: favorite.modelKey,
+                    onClick = {
+                        when (favorite.modelType) {
+                            ModelType.TEAM -> onNavigateToTeam(favorite.modelKey)
+                            ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
+                            ModelType.MATCH -> onNavigateToMatch(favorite.modelKey)
+                            ModelType.EVENT_TEAM ->
+                                onNavigateToEvent(favorite.modelKey.substringBefore('_'))
+                        }
+                    },
+                    canPinShortcuts = canPinShortcuts,
+                    onAddShortcut = { onAddShortcut(favorite) },
+                    onRemove = { onRemoveFavorite(favorite) },
+                )
+            }
         }
     }
 }
@@ -406,22 +413,28 @@ private fun NotificationsTab(
         EmptyTabMessage(title = "No notifications yet")
         return
     }
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-        items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
-            SubscriptionItem(
-                subscription = subscription,
-                displayName = displayNames[subscription.modelKey] ?: subscription.modelKey,
-                onClick = {
-                    when (subscription.modelType) {
-                        ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
-                        ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
-                        ModelType.MATCH -> onNavigateToMatch(subscription.modelKey)
-                        ModelType.EVENT_TEAM ->
-                            onNavigateToEvent(subscription.modelKey.substringBefore('_'))
-                    }
-                },
-                onRemove = { onRemoveSubscription(subscription) },
-            )
+    ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->
+                SubscriptionItem(
+                    subscription = subscription,
+                    displayName = displayNames[subscription.modelKey] ?: subscription.modelKey,
+                    onClick = {
+                        when (subscription.modelType) {
+                            ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
+                            ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
+                            ModelType.MATCH -> onNavigateToMatch(subscription.modelKey)
+                            ModelType.EVENT_TEAM ->
+                                onNavigateToEvent(subscription.modelKey.substringBefore('_'))
+                        }
+                    },
+                    onRemove = { onRemoveSubscription(subscription) },
+                )
+            }
         }
     }
 }

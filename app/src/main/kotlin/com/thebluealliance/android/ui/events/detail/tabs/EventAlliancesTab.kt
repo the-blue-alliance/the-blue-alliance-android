@@ -24,6 +24,7 @@ import com.thebluealliance.android.domain.model.playoffSummary
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -57,7 +58,7 @@ fun EventAlliancesTab(
             Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
+                        .tableWidth()
                         // 8.dp here + 8.dp on each child keeps content on the 16.dp margin
                         // while letting the pick slots' tap targets absorb the other half.
                         .padding(horizontal = 8.dp, vertical = 8.dp),

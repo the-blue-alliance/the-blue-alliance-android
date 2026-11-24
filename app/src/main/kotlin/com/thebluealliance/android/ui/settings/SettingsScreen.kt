@@ -35,6 +35,7 @@ import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
 
@@ -73,6 +74,8 @@ fun SettingsScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
+                    .readingWidth()
+                    .fillMaxWidth()
                     .padding(16.dp),
         ) {
             Text(

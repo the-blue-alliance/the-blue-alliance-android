@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TeamRow
 
 @Composable
@@ -32,17 +33,19 @@ fun EventTeamsTab(
         )
         return
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        items(teams, key = { it.key }) { team ->
-            val pitLocation = pitLocations[team.key]
-            TeamRow(
-                team = team,
-                onClick = { onNavigateToTeam(team.key) },
-                subtitlePrefix = pitLocation?.let { "Pit $it" },
-            )
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            items(teams, key = { it.key }) { team ->
+                val pitLocation = pitLocations[team.key]
+                TeamRow(
+                    team = team,
+                    onClick = { onNavigateToTeam(team.key) },
+                    subtitlePrefix = pitLocation?.let { "Pit $it" },
+                )
+            }
         }
     }
 }

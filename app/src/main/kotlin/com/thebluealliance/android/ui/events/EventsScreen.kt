@@ -53,6 +53,7 @@ import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
@@ -277,43 +278,49 @@ private fun EventsList(
         )
 
         FastScrollbar(listState = listState, modifier = Modifier.weight(1f)) {
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                // Top-level Favorites section
-                if (favoriteEvents.isNotEmpty()) {
-                    item(key = "favorites_header") {
-                        SectionHeader(label = "Favorites")
-                    }
-                    items(favoriteEvents, key = { "fav_top_${it.key}" }) { event ->
-                        EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
-                    }
-                }
-                // Week sections
-                sections.forEach { section ->
-                    val headerKey = "header_${section.label}"
-                    item(key = headerKey) {
-                        SectionHeader(label = section.label)
-                    }
-                    // Per-week favorites sub-section
-                    val sectionFavorites = section.events.filter { it.key in favoriteEventKeys }
-                    if (sectionFavorites.isNotEmpty()) {
-                        item(key = "${headerKey}_sub_Favorites") {
-                            SubSectionHeader(label = "Favorites")
+            ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = readingPadding,
+                ) {
+                    // Top-level Favorites section
+                    if (favoriteEvents.isNotEmpty()) {
+                        item(key = "favorites_header") {
+                            SectionHeader(label = "Favorites")
                         }
-                        items(
-                            sectionFavorites,
-                            key = { "fav_${section.label}_${it.key}" },
-                        ) { event ->
+                        items(favoriteEvents, key = { "fav_top_${it.key}" }) { event ->
                             EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                         }
                     }
-                    section.subSections.forEach { subSection ->
-                        if (subSection.label.isNotEmpty()) {
-                            item(key = "${headerKey}_sub_${subSection.label}") {
-                                SubSectionHeader(label = subSection.label)
+                    // Week sections
+                    sections.forEach { section ->
+                        val headerKey = "header_${section.label}"
+                        item(key = headerKey) {
+                            SectionHeader(label = section.label)
+                        }
+                        // Per-week favorites sub-section
+                        val sectionFavorites = section.events.filter { it.key in favoriteEventKeys }
+                        if (sectionFavorites.isNotEmpty()) {
+                            item(key = "${headerKey}_sub_Favorites") {
+                                SubSectionHeader(label = "Favorites")
+                            }
+                            items(
+                                sectionFavorites,
+                                key = { "fav_${section.label}_${it.key}" },
+                            ) { event ->
+                                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
                             }
                         }
-                        items(subSection.events, key = { it.key }) { event ->
-                            EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                        section.subSections.forEach { subSection ->
+                            if (subSection.label.isNotEmpty()) {
+                                item(key = "${headerKey}_sub_${subSection.label}") {
+                                    SubSectionHeader(label = subSection.label)
+                                }
+                            }
+                            items(subSection.events, key = { it.key }) { event ->
+                                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                            }
                         }
                     }
                 }

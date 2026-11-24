@@ -31,6 +31,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -155,46 +156,49 @@ fun SearchScreen(
                 EmptyBox(message = "No results for \"${uiState.query}\"")
                 return@Column
             }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                state = lazyListState,
-            ) {
-                if (uiState.teams.isNotEmpty()) {
-                    stickyHeader(key = "teams_header") {
-                        SectionHeader(
-                            label = "Teams",
-                            isStuck = stuckHeaderKey == "teams_header",
-                            allHeaders = headerInfos,
-                            onHeaderSelected = { info ->
-                                coroutineScope.launch {
-                                    lazyListState.animateScrollToItem(info.itemIndex)
-                                }
-                            },
-                        )
+            ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    state = lazyListState,
+                    contentPadding = readingPadding,
+                ) {
+                    if (uiState.teams.isNotEmpty()) {
+                        stickyHeader(key = "teams_header") {
+                            SectionHeader(
+                                label = "Teams",
+                                isStuck = stuckHeaderKey == "teams_header",
+                                allHeaders = headerInfos,
+                                onHeaderSelected = { info ->
+                                    coroutineScope.launch {
+                                        lazyListState.animateScrollToItem(info.itemIndex)
+                                    }
+                                },
+                            )
+                        }
+                        items(uiState.teams, key = { "team_${it.key}" }) { team ->
+                            TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
+                        }
                     }
-                    items(uiState.teams, key = { "team_${it.key}" }) { team ->
-                        TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
-                    }
-                }
-                if (uiState.events.isNotEmpty()) {
-                    stickyHeader(key = "events_header") {
-                        SectionHeader(
-                            label = "Events",
-                            isStuck = stuckHeaderKey == "events_header",
-                            allHeaders = headerInfos,
-                            onHeaderSelected = { info ->
-                                coroutineScope.launch {
-                                    lazyListState.animateScrollToItem(info.itemIndex)
-                                }
-                            },
-                        )
-                    }
-                    items(uiState.events, key = { "event_${it.key}" }) { event ->
-                        EventRow(
-                            event = event,
-                            onClick = { onNavigateToEvent(event.key) },
-                            showYear = true,
-                        )
+                    if (uiState.events.isNotEmpty()) {
+                        stickyHeader(key = "events_header") {
+                            SectionHeader(
+                                label = "Events",
+                                isStuck = stuckHeaderKey == "events_header",
+                                allHeaders = headerInfos,
+                                onHeaderSelected = { info ->
+                                    coroutineScope.launch {
+                                        lazyListState.animateScrollToItem(info.itemIndex)
+                                    }
+                                },
+                            )
+                        }
+                        items(uiState.events, key = { "event_${it.key}" }) { event ->
+                            EventRow(
+                                event = event,
+                                onClick = { onNavigateToEvent(event.key) },
+                                showYear = true,
+                            )
+                        }
                     }
                 }
             }
