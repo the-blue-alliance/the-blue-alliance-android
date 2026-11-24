@@ -27,6 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -299,8 +303,15 @@ private fun RowScope.AllianceScoreSummaryCol(
     val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
     val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
 
+    val scoreState = allianceScoreState(match.winningAlliance, alliance)
+    // One stop per alliance; the win is otherwise only bold.
     Column(
-        modifier = Modifier.weight(1f),
+        modifier =
+            Modifier
+                .weight(1f)
+                .semantics(mergeDescendants = true) {
+                    scoreState?.let { stateDescription = it }
+                },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -320,6 +331,7 @@ private fun RowScope.AllianceScoreSummaryCol(
                     FontWeight.Normal
                 },
             color = mainColor,
+            modifier = Modifier.semantics { contentDescription = scoreDescription(score) },
         )
         rpBonus?.let {
             RpDots(it, mainColor, Modifier.padding(top = 4.dp), dotSize = 8.dp, gap = 4.dp)
@@ -382,7 +394,10 @@ private fun ScoreSummary(
         Text(
             text = "-",
             style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .clearAndSetSemantics {},
         )
         AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "blue")
     }
@@ -425,7 +440,10 @@ private fun AllianceTeams(
             text = "-",
             style = MaterialTheme.typography.displaySmall,
             color = Color.Transparent,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .clearAndSetSemantics {},
         )
 
         Column(
