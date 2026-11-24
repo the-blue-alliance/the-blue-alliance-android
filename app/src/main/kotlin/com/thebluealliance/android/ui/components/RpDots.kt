@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ fun RpDots(
     dotSize: Dp = 6.dp,
     gap: Dp = 2.dp,
 ) {
+    val emptyColor = MaterialTheme.colorScheme.outline
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(gap),
@@ -35,7 +37,7 @@ fun RpDots(
                     )
                 } else {
                     drawCircle(
-                        color = Color(0xFF9CA3AF),
+                        color = emptyColor,
                         radius = size.minDimension / 2 - 1.dp.toPx(),
                         style = Stroke(width = 1.dp.toPx()),
                     )

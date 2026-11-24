@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -47,7 +46,8 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
-import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.ui.theme.BrandHeaderContainer
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
@@ -292,56 +292,56 @@ private fun RankingsTab(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .background(TBAIndigo400)
+                        .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = "Rank",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
                 Text(
                     text = "Team",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n1",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Event\n2",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "DCMP",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Rookie\nBonus",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
                 Text(
                     text = "Total\nPoints",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )

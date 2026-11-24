@@ -56,7 +56,7 @@ import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
-import com.thebluealliance.android.ui.theme.TBABlue
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -343,34 +343,38 @@ private fun WeekFilterChips(
         }
     }
 
-    // Flat chips drawn straight onto the blue app bar. Their transparent container has two
+    // Flat chips drawn straight onto the primaryContainer app bar. Their transparent container has two
     // consequences the call sites below opt out of:
     //  - a shadow shows through it, so the chips pass `elevation = null` — M3's default 1.dp
     //    hover elevation otherwise renders as a dark blotch across the chip;
     //  - `contentColorFor(Color.Transparent)` is unspecified, so the hover/press state layers
     //    inherit the ambient content color (near-black onSurface) and darken the chip. The
-    //    white LocalContentColor below makes them lighten it, as TBATabRow's tabs do.
+    //    OnBrand LocalContentColor below makes them lighten it, as TBATabRow's tabs do.
+    // Read here: the fade below draws in a DrawScope, which can't read the theme.
+    val barColor = MaterialTheme.colorScheme.primaryContainer
     val weekChipColors =
         FilterChipDefaults.filterChipColors(
             containerColor = Color.Transparent,
-            labelColor = Color.White.copy(alpha = 0.7f),
-            selectedContainerColor = Color.White,
-            selectedLabelColor = TBABlue,
+            labelColor = OnBrand.copy(alpha = 0.7f),
+            selectedContainerColor = OnBrand,
+            selectedLabelColor = MaterialTheme.colorScheme.primaryContainer,
         )
     val weekChipBorder =
         FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = false,
-            borderColor = Color.White.copy(alpha = 0.5f),
+            borderColor = OnBrand.copy(alpha = 0.5f),
             selectedBorderColor = Color.Transparent,
         )
 
-    CompositionLocalProvider(LocalContentColor provides Color.White) {
+    CompositionLocalProvider(
+        LocalContentColor provides OnBrand,
+    ) {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .background(TBABlue)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         val overlapPx = 4.dp.roundToPx()
@@ -403,7 +407,9 @@ private fun WeekFilterChips(
                             .padding(start = 8.dp, bottom = 4.dp)
                             .height(24.dp)
                             .width(1.dp)
-                            .background(Color.White.copy(alpha = 0.3f)),
+                            .background(
+                                OnBrand.copy(alpha = 0.3f),
+                            ),
                 )
             }
             val fadeWidth = 24.dp
@@ -424,8 +430,8 @@ private fun WeekFilterChips(
                                                 Brush.horizontalGradient(
                                                     colorStops =
                                                         arrayOf(
-                                                            0f to TBABlue,
-                                                            solidZone / totalWidth to TBABlue,
+                                                            0f to barColor,
+                                                            solidZone / totalWidth to barColor,
                                                             1f to Color.Transparent,
                                                         ),
                                                     endX = totalWidth,
@@ -468,7 +474,7 @@ private fun SubSectionHeader(label: String) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                 .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
         Text(

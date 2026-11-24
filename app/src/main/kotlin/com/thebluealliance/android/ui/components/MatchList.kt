@@ -36,6 +36,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
 
@@ -200,17 +201,17 @@ fun MatchItem(
                         shape = MaterialTheme.shapes.extraSmall,
                         color =
                             if (match.winningAlliance == "red") {
-                                MaterialTheme.colorScheme.error
+                                MaterialTheme.allianceColors.red
                             } else {
-                                MaterialTheme.colorScheme.errorContainer
+                                MaterialTheme.allianceColors.redContainer
                             },
                         contentColor =
                             if (match.winningAlliance ==
                                 "red"
                             ) {
-                                MaterialTheme.colorScheme.onError
+                                MaterialTheme.allianceColors.onRed
                             } else {
-                                MaterialTheme.colorScheme.onErrorContainer
+                                MaterialTheme.allianceColors.onRedContainer
                             },
                     ) {
                         Text(
@@ -231,7 +232,7 @@ fun MatchItem(
                         } else {
                             FontWeight.Normal
                         },
-                    color = MaterialTheme.colorScheme.error,
+                    color = MaterialTheme.allianceColors.red,
                 )
             }
 
@@ -246,17 +247,17 @@ fun MatchItem(
                             if (match.winningAlliance ==
                                 "blue"
                             ) {
-                                MaterialTheme.colorScheme.primary
+                                MaterialTheme.allianceColors.blue
                             } else {
-                                MaterialTheme.colorScheme.primaryContainer
+                                MaterialTheme.allianceColors.blueContainer
                             },
                         contentColor =
                             if (match.winningAlliance ==
                                 "blue"
                             ) {
-                                MaterialTheme.colorScheme.onPrimary
+                                MaterialTheme.allianceColors.onBlue
                             } else {
-                                MaterialTheme.colorScheme.onPrimaryContainer
+                                MaterialTheme.allianceColors.onBlueContainer
                             },
                     ) {
                         Text(
@@ -277,7 +278,7 @@ fun MatchItem(
                         } else {
                             FontWeight.Normal
                         },
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.allianceColors.blue,
                 )
             }
         }
@@ -289,12 +290,12 @@ fun MatchItem(
                 ) {
                     RpDots(
                         rpBonuses.red,
-                        MaterialTheme.colorScheme.error,
+                        MaterialTheme.allianceColors.red,
                         Modifier.padding(end = 3.dp),
                     )
                     RpDots(
                         rpBonuses.blue,
-                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.allianceColors.blue,
                         Modifier.padding(end = 3.dp),
                     )
                 }
@@ -314,7 +315,7 @@ fun MatchItem(
                         } else {
                             FontWeight.Normal
                         },
-                    color = MaterialTheme.colorScheme.error,
+                    color = MaterialTheme.allianceColors.red,
                 )
                 Text(
                     text = match.blueScore.toString(),
@@ -327,7 +328,7 @@ fun MatchItem(
                         } else {
                             FontWeight.Normal
                         },
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.allianceColors.blue,
                 )
             }
         } else {

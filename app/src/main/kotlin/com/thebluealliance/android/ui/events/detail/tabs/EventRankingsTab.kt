@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,7 +42,8 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.theme.TBAIndigo400
+import com.thebluealliance.android.ui.theme.BrandHeaderContainer
+import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -204,7 +204,7 @@ private fun RankingHeaderRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(TBAIndigo400)
+                .background(BrandHeaderContainer)
                 // 6.dp vertical here + 6.dp inside each sortable cell below: the sort targets get
                 // a full-height hover band without changing the header's height. The horizontal
                 // inset is the screen margin minus the cells' own COLUMN_GUTTER.
@@ -214,7 +214,7 @@ private fun RankingHeaderRow(
         Text(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
+            color = OnBrand,
             modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
@@ -228,7 +228,7 @@ private fun RankingHeaderRow(
         Text(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
+            color = OnBrand,
             modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
@@ -288,7 +288,7 @@ private fun RankingHeaderItem(
                 Text(
                     text = text,
                     style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
+                    color = OnBrand,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.End,
@@ -324,7 +324,7 @@ private fun RankingHeaderItem(
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleSmall,
-                color = Color.White,
+                color = OnBrand,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -342,7 +342,7 @@ private fun SortCaret(ascending: Boolean) {
             if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
         contentDescription =
             if (ascending) "Sorted Ascending" else "Sorted Descending",
-        tint = Color.White,
+        tint = OnBrand,
     )
 }
 

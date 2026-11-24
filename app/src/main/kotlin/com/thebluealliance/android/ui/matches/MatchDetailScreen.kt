@@ -52,6 +52,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
+import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -282,9 +283,9 @@ private fun RowScope.AllianceScoreSummaryCol(
         if (alliance ==
             "red"
         ) {
-            MaterialTheme.colorScheme.error
+            MaterialTheme.allianceColors.red
         } else {
-            MaterialTheme.colorScheme.primary
+            MaterialTheme.allianceColors.blue
         }
     val score = if (alliance == "red") match.redScore else match.blueScore
     val playoffAlliance =
@@ -407,7 +408,7 @@ private fun AllianceTeams(
                 Text(
                     text = key.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.error,
+                    color = MaterialTheme.allianceColors.red,
                     modifier =
                         Modifier.paddedClickable(
                             MaterialTheme.shapes.small,
@@ -434,7 +435,7 @@ private fun AllianceTeams(
                 Text(
                     text = key.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.allianceColors.blue,
                     modifier =
                         Modifier.paddedClickable(
                             MaterialTheme.shapes.small,
@@ -463,7 +464,7 @@ private fun BreakdownRow(
         Text(
             text = redValue,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error,
+            color = MaterialTheme.allianceColors.red,
             modifier = Modifier.weight(0.2f),
             textAlign = TextAlign.Center,
         )
@@ -476,7 +477,7 @@ private fun BreakdownRow(
         Text(
             text = blueValue,
             style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.allianceColors.blue,
             modifier = Modifier.weight(0.2f),
             textAlign = TextAlign.Center,
         )
