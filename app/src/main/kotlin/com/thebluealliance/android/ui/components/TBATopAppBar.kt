@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
@@ -37,7 +39,9 @@ fun TBATopAppBar(
     showLamp: Boolean = false,
 ) {
     TopAppBar(
-        title = title,
+        title = {
+            Box(modifier = Modifier.semantics(mergeDescendants = true) { heading() }) { title() }
+        },
         modifier = modifier,
         navigationIcon =
             if (showLamp) {

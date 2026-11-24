@@ -17,6 +17,7 @@ object TbaIcons {
     val ArrowBack: ImageVector @Composable get() = icon(R.drawable.ic_arrow_back)
     val ArrowDropDown: ImageVector @Composable get() = icon(R.drawable.ic_arrow_drop_down)
     val ArrowDropUp: ImageVector @Composable get() = icon(R.drawable.ic_arrow_drop_up)
+    val Check: ImageVector @Composable get() = icon(R.drawable.ic_check)
     val Close: ImageVector @Composable get() = icon(R.drawable.ic_close)
     val Delete: ImageVector @Composable get() = icon(R.drawable.ic_delete_filled)
     val EmojiEvents: ImageVector @Composable get() = icon(R.drawable.ic_emoji_events_filled)

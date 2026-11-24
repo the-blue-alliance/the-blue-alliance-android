@@ -21,6 +21,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -49,10 +54,14 @@ fun TopBarYearPicker(
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
-                    .clickable { yearDropdownExpanded = true }
+                    .clickable(onClickLabel = "Change year", role = Role.DropdownList) {
+                        yearDropdownExpanded = true
+                    }
                     .padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
         ) {
-            title()
+            // Its own heading node, so the button reads as the year and heading navigation
+            // still reaches the screen title.
+            Box(modifier = Modifier.semantics(mergeDescendants = true) { heading() }) { title() }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -63,7 +72,7 @@ fun TopBarYearPicker(
                 )
                 Icon(
                     imageVector = TbaIcons.ArrowDropDown,
-                    contentDescription = "Select year",
+                    contentDescription = null,
                     modifier = Modifier.size(16.dp),
                     tint = contentColor,
                 )
@@ -74,8 +83,21 @@ fun TopBarYearPicker(
             onDismissRequest = { yearDropdownExpanded = false },
         ) {
             years.forEach { year ->
+                val isSelected = year == selectedYear
                 DropdownMenuItem(
-                    text = { Text(year.toString()) },
+                    text = {
+                        Text(
+                            text = year.toString(),
+                            fontWeight = if (isSelected) FontWeight.Bold else null,
+                        )
+                    },
+                    trailingIcon =
+                        if (isSelected) {
+                            { Icon(imageVector = TbaIcons.Check, contentDescription = null) }
+                        } else {
+                            null
+                        },
+                    modifier = Modifier.semantics { selected = isSelected },
                     onClick = {
                         onYearSelected(year)
                         yearDropdownExpanded = false
