@@ -9,9 +9,11 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,17 +36,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
@@ -214,7 +224,10 @@ private fun RankingHeaderRow(
                 // 6.dp vertical here + 6.dp inside each sortable cell below: the sort targets get
                 // a full-height hover band without changing the header's height. The horizontal
                 // inset is the screen margin minus the cells' own COLUMN_GUTTER.
-                .padding(horizontal = TABLE_ROW_PADDING, vertical = 6.dp),
+                .padding(horizontal = TABLE_ROW_PADDING, vertical = 6.dp)
+                // Sortable cells fill this height, so a wrapped label doesn't leave its
+                // neighbours with shorter hover bands.
+                .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -277,8 +290,8 @@ private fun RankingHeaderItem(
     // the column below it.
     val cellModifier =
         modifier
-            .clip(MaterialTheme.shapes.small)
-            .clickable { onSortClick() }
+            .fillMaxHeight()
+            .sortableHeader(MaterialTheme.shapes.small, text, sorted, ascending, onSortClick)
             .padding(horizontal = COLUMN_GUTTER, vertical = 6.dp)
     if (numeric) {
         // Numeric column: right-align the label onto the values' shared right edge, with the sort
@@ -303,25 +316,8 @@ private fun RankingHeaderItem(
                     SortCaret(ascending)
                 }
             },
-        ) { measurables, constraints ->
-            val loose = constraints.copy(minWidth = 0, minHeight = 0)
-            // Reserve the carat's width up front, then measure the label in what's left, so a
-            // right-aligned (full-width) two-line label can't swallow the whole column and clip
-            // the carat off the cell's leading edge.
-            val caret = measurables.getOrNull(1)?.measure(loose)
-            val caretWidth = caret?.width ?: 0
-            val width = constraints.maxWidth
-            val labelMax = (width - caretWidth).coerceAtLeast(0)
-            val label = measurables[0].measure(loose.copy(maxWidth = labelMax))
-            val height = maxOf(label.height, caret?.height ?: 0)
-            // Right-anchor the label on the cell's right edge (the values' shared edge), then seat
-            // the carat directly to its left.
-            val labelLeft = (width - label.width).coerceAtLeast(caretWidth)
-            layout(width, height) {
-                label.place(labelLeft, (height - label.height) / 2)
-                caret?.place((labelLeft - caretWidth).coerceAtLeast(0), (height - caret.height) / 2)
-            }
-        }
+            measurePolicy = NumericHeaderMeasurePolicy,
+        )
     } else {
         Row(
             modifier = cellModifier,
@@ -341,13 +337,63 @@ private fun RankingHeaderItem(
     }
 }
 
+/**
+ * Lays out a numeric header cell: the label (child 0) right-anchored, the sort carat (optional
+ * child 1) just left of it. Intrinsic height mirrors measure, so an `IntrinsicSize.Min` header row
+ * gets the label's real wrapped height.
+ */
+private object NumericHeaderMeasurePolicy : MeasurePolicy {
+    override fun MeasureScope.measure(
+        measurables: List<Measurable>,
+        constraints: Constraints,
+    ): MeasureResult {
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        // Reserve the carat's width up front, then measure the label in what's left, so a
+        // right-aligned (full-width) two-line label can't swallow the whole column and clip
+        // the carat off the cell's leading edge.
+        val caret = measurables.getOrNull(1)?.measure(loose)
+        val caretWidth = caret?.width ?: 0
+        val width = constraints.maxWidth
+        val labelMax = (width - caretWidth).coerceAtLeast(0)
+        val label = measurables[0].measure(loose.copy(maxWidth = labelMax))
+        val height = maxOf(label.height, caret?.height ?: 0, constraints.minHeight)
+        // Right-anchor the label on the cell's right edge (the values' shared edge), then seat
+        // the carat directly to its left.
+        val labelLeft = (width - label.width).coerceAtLeast(caretWidth)
+        return layout(width, height) {
+            label.place(labelLeft, (height - label.height) / 2)
+            caret?.place((labelLeft - caretWidth).coerceAtLeast(0), (height - caret.height) / 2)
+        }
+    }
+
+    override fun IntrinsicMeasureScope.minIntrinsicHeight(
+        measurables: List<IntrinsicMeasurable>,
+        width: Int,
+    ): Int = intrinsicHeight(measurables, width)
+
+    override fun IntrinsicMeasureScope.maxIntrinsicHeight(
+        measurables: List<IntrinsicMeasurable>,
+        width: Int,
+    ): Int = intrinsicHeight(measurables, width)
+
+    private fun intrinsicHeight(
+        measurables: List<IntrinsicMeasurable>,
+        width: Int,
+    ): Int {
+        val caret = measurables.getOrNull(1)
+        val caretWidth = caret?.maxIntrinsicWidth(Constraints.Infinity) ?: 0
+        val labelHeight = measurables[0].minIntrinsicHeight((width - caretWidth).coerceAtLeast(0))
+        return maxOf(labelHeight, caret?.minIntrinsicHeight(caretWidth) ?: 0)
+    }
+}
+
 @Composable
 private fun SortCaret(ascending: Boolean) {
     Icon(
         imageVector =
             if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
-        contentDescription =
-            if (ascending) "Sorted Ascending" else "Sorted Descending",
+        // The header cell's stateDescription announces the sort.
+        contentDescription = null,
         tint = OnBrand,
     )
 }
