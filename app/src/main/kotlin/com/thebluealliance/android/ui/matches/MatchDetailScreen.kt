@@ -306,7 +306,7 @@ private fun RowScope.AllianceScoreSummaryCol(
     val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
     val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
 
-    val scoreState = allianceScoreState(match.winningAlliance, alliance)
+    val scoreState = allianceScoreState(match.winningAlliance, alliance, score)
     // One stop per alliance; the win is otherwise only bold.
     Column(
         modifier =
@@ -321,6 +321,10 @@ private fun RowScope.AllianceScoreSummaryCol(
             text = playoffAlliance?.displayTitle ?: alliance.replaceFirstChar { it.titlecase() },
             style = MaterialTheme.typography.titleSmall,
             color = mainColor,
+            modifier =
+                allianceLabelDescription(playoffAlliance?.displayTitle, alliance)?.let {
+                    Modifier.semantics { contentDescription = it }
+                } ?: Modifier,
         )
         Text(
             text = if (score < 0) "—" else score.toString(),

@@ -18,13 +18,36 @@ class MatchScoreDescriptionTest {
 
     @Test
     fun `only the winning alliance is marked`() {
-        assertEquals("Winner", allianceScoreState("red", "red"))
-        assertNull(allianceScoreState("red", "blue"))
+        assertEquals("Winner", allianceScoreState("red", "red", 120))
+        assertNull(allianceScoreState("red", "blue", 98))
     }
 
     @Test
-    fun `tie and unplayed mark neither alliance`() {
-        assertNull(allianceScoreState("", "red"))
-        assertNull(allianceScoreState(null, "blue"))
+    fun `played tie marks both alliances`() {
+        assertEquals("Tie", allianceScoreState("", "red", 100))
+        assertEquals("Tie", allianceScoreState("", "blue", 100))
+        assertEquals("Tie", allianceScoreState("", "red", 0))
+    }
+
+    @Test
+    fun `unplayed marks neither alliance`() {
+        assertNull(allianceScoreState("", "red", -1))
+        assertNull(allianceScoreState(null, "blue", -1))
+    }
+
+    @Test
+    fun `missing winner on a played match is not a tie`() {
+        assertNull(allianceScoreState(null, "red", 100))
+    }
+
+    @Test
+    fun `playoff alliance label also names the colour`() {
+        assertEquals("Alliance 1, Red", allianceLabelDescription("Alliance 1", "red"))
+        assertEquals("Alliance 8, Blue", allianceLabelDescription("Alliance 8", "blue"))
+    }
+
+    @Test
+    fun `colour label needs no description`() {
+        assertNull(allianceLabelDescription(null, "red"))
     }
 }
