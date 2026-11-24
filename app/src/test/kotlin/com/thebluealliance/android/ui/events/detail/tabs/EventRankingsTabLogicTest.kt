@@ -125,4 +125,19 @@ class EventRankingsTabLogicTest {
 
         assertEquals(listOf("frc2", "frc3", "frc1"), sorted.map { it.teamKey })
     }
+
+    @Test
+    fun `caret sits just left of a single-line label`() {
+        assertEquals(40, numericHeaderCaretX(labelLeft = 64, labelInkLeft = 0f, caretWidth = 24))
+    }
+
+    @Test
+    fun `caret sits beside a wrapped label's widest line, not the cell edge`() {
+        assertEquals(30, numericHeaderCaretX(labelLeft = 24, labelInkLeft = 30.4f, caretWidth = 24))
+    }
+
+    @Test
+    fun `caret never leaves the cell`() {
+        assertEquals(0, numericHeaderCaretX(labelLeft = 10, labelInkLeft = 0f, caretWidth = 24))
+    }
 }

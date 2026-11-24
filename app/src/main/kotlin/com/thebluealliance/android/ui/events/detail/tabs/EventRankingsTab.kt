@@ -50,6 +50,7 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
@@ -74,6 +75,7 @@ import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * Half of the gutter between two table columns, applied inside every cell of both the header and
@@ -488,6 +490,8 @@ private fun RankingHeaderItem(
         // measured at the cell's full width so it never ellipsizes, then right-anchored; the carat
         // (child 1) is placed just left of the label, spilling into the column's left slack rather
         // than stealing width from the label.
+        val labelLayout = remember { LabelLayoutHolder() }
+        val measurePolicy = remember(labelLayout) { NumericHeaderMeasurePolicy(labelLayout) }
         Layout(
             modifier = cellModifier,
             content = {
@@ -498,12 +502,13 @@ private fun RankingHeaderItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.End,
+                    onTextLayout = { labelLayout.layout = it },
                 )
                 if (sorted) {
                     SortCaret(ascending)
                 }
             },
-            measurePolicy = NumericHeaderMeasurePolicy,
+            measurePolicy = measurePolicy,
         )
     } else {
         Row(
@@ -524,12 +529,34 @@ private fun RankingHeaderItem(
     }
 }
 
+/** The numeric header label's latest text layout, set as the label measures. */
+private class LabelLayoutHolder {
+    var layout: TextLayoutResult? = null
+}
+
+/** Left edge of the widest line in [layout], which a wrapped label reports as its full width. */
+private fun inkLeft(layout: TextLayoutResult?): Float =
+    layout?.let { result -> (0 until result.lineCount).minOf { result.getLineLeft(it) } } ?: 0f
+
+/**
+ * X of a numeric header's sort caret: just left of the label's widest line, which starts
+ * [labelInkLeft] into a label placed at [labelLeft], so a wrapped label keeps the caret beside its
+ * text rather than at the cell's far edge.
+ */
+internal fun numericHeaderCaretX(
+    labelLeft: Int,
+    labelInkLeft: Float,
+    caretWidth: Int,
+): Int = (labelLeft + labelInkLeft.roundToInt() - caretWidth).coerceAtLeast(0)
+
 /**
  * Lays out a numeric header cell: the label (child 0) right-anchored, the sort carat (optional
- * child 1) just left of it. Intrinsic height mirrors measure, so an `IntrinsicSize.Min` header row
- * gets the label's real wrapped height.
+ * child 1) just left of its widest line. Intrinsic height mirrors measure, so an
+ * `IntrinsicSize.Min` header row gets the label's real wrapped height.
  */
-private object NumericHeaderMeasurePolicy : MeasurePolicy {
+private class NumericHeaderMeasurePolicy(
+    private val labelLayout: LabelLayoutHolder,
+) : MeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<Measurable>,
         constraints: Constraints,
@@ -545,11 +572,14 @@ private object NumericHeaderMeasurePolicy : MeasurePolicy {
         val label = measurables[0].measure(loose.copy(maxWidth = labelMax))
         val height = maxOf(label.height, caret?.height ?: 0, constraints.minHeight)
         // Right-anchor the label on the cell's right edge (the values' shared edge), then seat
-        // the carat directly to its left.
+        // the carat directly left of its text.
         val labelLeft = (width - label.width).coerceAtLeast(caretWidth)
         return layout(width, height) {
             label.place(labelLeft, (height - label.height) / 2)
-            caret?.place((labelLeft - caretWidth).coerceAtLeast(0), (height - caret.height) / 2)
+            caret?.place(
+                numericHeaderCaretX(labelLeft, inkLeft(labelLayout.layout), caretWidth),
+                (height - caret.height) / 2,
+            )
         }
     }
 
