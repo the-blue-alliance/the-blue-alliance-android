@@ -95,13 +95,9 @@ fun formatBreakdownValue(
     }
 }
 
-/** Label for a breakdown key with no curated label, e.g. "teleopPoints" -> "Teleop Points". */
+/** Label for a breakdown key with no curated label, e.g. "robot1Auto" -> "Robot 1 auto". */
 internal fun camelCaseToLabel(key: String): String =
-    key
-        .replace(Regex("([A-Z])"), " $1")
-        .replace("_", " ")
-        .trim()
-        .replaceFirstChar { it.uppercase() }
+    enumValueToWords(key.split('_').joinToString("") { it.replaceFirstChar(Char::uppercase) })
 
 /** A PascalCase API enum such as "DeepCage" or "Level3"; all-caps strings like "LRL" don't match. */
 private val enumValue = Regex("[A-Z][A-Za-z0-9]*[a-z][A-Za-z0-9]*")
@@ -109,11 +105,11 @@ private val enumValue = Regex("[A-Z][A-Za-z0-9]*[a-z][A-Za-z0-9]*")
 private val enumWordBoundary =
     Regex("(?<=[a-z])(?=[A-Z0-9])|(?<=[0-9])(?=[A-Za-z])|(?<=[A-Z])(?=[A-Z][a-z])")
 
-/** "DeepCage" -> "Deep cage", "Level3" -> "Level 3"; acronyms keep their capitals. */
+/** "DeepCage" -> "Deep cage", "Level3" -> "Level 3"; acronyms and lone capitals stay capitalized. */
 private fun enumValueToWords(value: String): String =
     value
         .split(enumWordBoundary)
         .mapIndexed { i, word -> if (i == 0 || word.isAcronym()) word else word.lowercase() }
         .joinToString(" ")
 
-private fun String.isAcronym(): Boolean = length > 1 && all { it.isUpperCase() }
+private fun String.isAcronym(): Boolean = isNotEmpty() && all { it.isUpperCase() }

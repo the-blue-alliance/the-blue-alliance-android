@@ -119,4 +119,13 @@ class MatchScoreBreakdownTest {
         assertEquals("✗", formatBreakdownValue("g410Penalty", "false"))
         assertEquals("✓", formatBreakdownValue("rotor1Auto", "true"))
     }
+
+    @Test
+    fun `uncurated keys become sentence case labels split at digits`() {
+        assertEquals("Auto coral count", camelCaseToLabel("autoCoralCount"))
+        assertEquals("G410 penalty", camelCaseToLabel("g410Penalty"))
+        assertEquals("Robot 1 auto", camelCaseToLabel("robot1Auto"))
+        assertEquals("Foul points", camelCaseToLabel("foul_points"))
+        assertEquals("Tower face A", camelCaseToLabel("towerFaceA"))
+    }
 }
