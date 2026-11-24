@@ -46,6 +46,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -101,6 +103,23 @@ private data class TableColumn(
 
 /** Every numeric cell shows two decimals, so right-aligned values line up digit for digit. */
 private fun formatStatValue(value: Double): String = "%.2f".format(value)
+
+/** Spoken summary of an OPR table row; the header labels are not in focus order. */
+internal fun oprRowDescription(
+    team: String,
+    opr: Double,
+    dpr: Double,
+    ccwm: Double,
+): String =
+    "Team $team, OPR ${formatStatValue(opr)}, DPR ${formatStatValue(dpr)}, " +
+        "CCWM ${formatStatValue(ccwm)}"
+
+/** Spoken summary of a COPR table row. */
+internal fun coprRowDescription(
+    team: String,
+    statName: String,
+    value: Double,
+): String = "Team $team, $statName ${formatStatValue(value)}"
 
 /** OpenType tabular figures: every digit takes the same advance, so the columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -686,20 +705,16 @@ private fun StandardOPRsView(
 
         items(sortedTeams) { teamKey ->
             Column(modifier = Modifier.tableWidth()) {
-                InsightsTableDataRow {
+                val opr = oprs.oprs[teamKey] ?: 0.0
+                val dpr = oprs.dprs[teamKey] ?: 0.0
+                val ccwm = oprs.ccwms[teamKey] ?: 0.0
+                InsightsTableDataRow(
+                    description = oprRowDescription(teamKey.teamNumber, opr, dpr, ccwm),
+                ) {
                     TableDataCell(text = teamKey.teamNumber, column = OPR_TEAM_COLUMN)
-                    TableDataCell(
-                        text = formatStatValue(oprs.oprs[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
-                    TableDataCell(
-                        text = formatStatValue(oprs.dprs[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
-                    TableDataCell(
-                        text = formatStatValue(oprs.ccwms[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
+                    TableDataCell(text = formatStatValue(opr), column = OPR_VALUE_COLUMN)
+                    TableDataCell(text = formatStatValue(dpr), column = OPR_VALUE_COLUMN)
+                    TableDataCell(text = formatStatValue(ccwm), column = OPR_VALUE_COLUMN)
                 }
                 HorizontalDivider()
             }
@@ -788,12 +803,12 @@ private fun COPRView(
 
         items(sortedTeams) { teamKey ->
             Column(modifier = Modifier.tableWidth()) {
-                InsightsTableDataRow {
+                val value = coprData[teamKey] ?: 0.0
+                InsightsTableDataRow(
+                    description = coprRowDescription(teamKey.teamNumber, statName, value),
+                ) {
                     TableDataCell(text = teamKey.teamNumber, column = COPR_TEAM_COLUMN)
-                    TableDataCell(
-                        text = formatStatValue(coprData[teamKey] ?: 0.0),
-                        column = COPR_VALUE_COLUMN,
-                    )
+                    TableDataCell(text = formatStatValue(value), column = COPR_VALUE_COLUMN)
                 }
                 HorizontalDivider()
             }
@@ -856,14 +871,20 @@ private fun InsightsTableHeaderRow(
     }
 }
 
-/** A data row of an insights table, reserving the same trailing slot as the header above it. */
+/**
+ * A data row of an insights table, reserving the same trailing slot as the header above it. It is
+ * one focus stop read as [description], since focus skips the sticky header's column labels.
+ */
 @Composable
-private fun InsightsTableDataRow(cells: @Composable RowScope.() -> Unit) {
+private fun InsightsTableDataRow(
+    description: String,
+    cells: @Composable RowScope.() -> Unit,
+) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .semantics(mergeDescendants = true) {}
+                .clearAndSetSemantics { contentDescription = description }
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
