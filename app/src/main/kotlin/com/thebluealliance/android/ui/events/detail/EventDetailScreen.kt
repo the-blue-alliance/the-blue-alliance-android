@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.common.showUserMessage
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -101,7 +101,7 @@ fun EventDetailScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.userMessage.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            context.showUserMessage(message)
         }
     }
     ReportShortcutVisitEffect(uiState.event?.key)

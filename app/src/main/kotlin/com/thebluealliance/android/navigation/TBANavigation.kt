@@ -24,6 +24,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
+import com.thebluealliance.android.ui.common.UserMessageHost
 import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
@@ -427,6 +428,8 @@ fun TBANavigation(
                         },
                 ),
         )
+
+        UserMessageHost(padNavigationBars = !showBottomBar)
 
         AnimatedVisibility(
             visible = showBottomBar,

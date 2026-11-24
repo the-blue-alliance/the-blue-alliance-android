@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.teams
 
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +58,7 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.common.showUserMessage
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -106,7 +106,7 @@ fun TeamDetailScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.userMessage.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            context.showUserMessage(message)
         }
     }
     ReportShortcutVisitEffect(uiState.team?.key)
