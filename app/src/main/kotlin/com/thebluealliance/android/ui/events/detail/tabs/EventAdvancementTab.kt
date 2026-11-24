@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -41,6 +40,7 @@ import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -129,7 +129,7 @@ private fun AdvancementPointsItem(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable { expanded = !expanded }
+                    .expandableRow(expanded) { expanded = !expanded }
                     // 8.dp here + 2.dp inside the team-number tap target below keeps the
                     // row's overall height unchanged while the nested target grows.
                     .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -175,7 +175,8 @@ private fun AdvancementPointsItem(
             Spacer(modifier = Modifier.width(4.dp))
             Icon(
                 imageVector = TbaIcons.KeyboardArrowDown,
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                // The row's stateDescription and click label already say this.
+                contentDescription = null,
                 modifier = Modifier.rotate(rotationAngle),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
