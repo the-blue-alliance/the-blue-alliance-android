@@ -64,6 +64,7 @@ fun SponsorCredits(
                         MaterialTheme.shapes.small,
                         horizontal = 0.dp,
                         vertical = 6.dp,
+                        onClickLabel = "Open in browser",
                         onClick = { context.openUrl(sponsor.url) },
                     )
                 if (logo != null && sponsor.logoStyle == SponsorLogoStyle.Mark) {

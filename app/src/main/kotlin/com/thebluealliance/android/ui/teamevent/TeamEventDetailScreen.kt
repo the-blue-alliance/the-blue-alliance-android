@@ -115,6 +115,7 @@ fun TeamEventDetailScreen(
                                             MaterialTheme.shapes.small,
                                             horizontal = 6.dp,
                                             vertical = 4.dp,
+                                            onClickLabel = "View team ${team.number}",
                                         ) { onNavigateToTeam(team.key) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
@@ -136,6 +137,7 @@ fun TeamEventDetailScreen(
                                                 MaterialTheme.shapes.small,
                                                 horizontal = 6.dp,
                                                 vertical = 4.dp,
+                                                onClickLabel = "View event",
                                             ) { onNavigateToEvent(event.key, EventDetailTab.INFO) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
@@ -599,7 +601,11 @@ private fun StatsTab(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .paddedClickable(MaterialTheme.shapes.small, vertical = 4.dp) {
+                        .paddedClickable(
+                            MaterialTheme.shapes.small,
+                            vertical = 4.dp,
+                            onClickLabel = "Open in browser",
+                        ) {
                             context.openUrl(
                                 "https://www.thebluealliance.com/opr",
                             )

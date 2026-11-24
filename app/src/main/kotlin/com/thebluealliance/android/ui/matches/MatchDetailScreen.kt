@@ -414,6 +414,7 @@ private fun AllianceTeams(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
                             vertical = 4.dp,
+                            onClickLabel = "View team ${key.teamNumber}",
                         ) { onTeamClick(key) },
                 )
             }
@@ -441,6 +442,7 @@ private fun AllianceTeams(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
                             vertical = 4.dp,
+                            onClickLabel = "View team ${key.teamNumber}",
                         ) { onTeamClick(key) },
                 )
             }

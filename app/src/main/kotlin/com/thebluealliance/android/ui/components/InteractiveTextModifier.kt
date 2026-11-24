@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -27,6 +28,9 @@ import androidx.compose.ui.unit.dp
  * Note that the padding is applied last, so it insets this element's *content* — chain any sizing
  * modifiers (`weight`, `fillMaxWidth`, ...) before this one, exactly as with the raw chain.
  *
+ * [role] and [onClickLabel] are forwarded to `clickable` for accessibility services, e.g.
+ * `onClickLabel = "View team 254"`.
+ *
  * This convenience form covers symmetric horizontal/vertical padding, which every current call
  * site uses. If a per-edge (start/top/end/bottom) site appears, add a `PaddingValues` overload.
  */
@@ -34,9 +38,11 @@ fun Modifier.paddedClickable(
     shape: Shape,
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
+    role: Role? = Role.Button,
+    onClickLabel: String? = null,
     onClick: () -> Unit,
 ): Modifier =
     this
         .clip(shape)
-        .clickable(onClick = onClick)
+        .clickable(onClickLabel = onClickLabel, role = role, onClick = onClick)
         .padding(horizontal = horizontal, vertical = vertical)
