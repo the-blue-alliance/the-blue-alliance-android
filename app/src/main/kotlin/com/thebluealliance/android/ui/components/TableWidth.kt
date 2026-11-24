@@ -1,11 +1,25 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 
 /** Widest a data table grows; beyond it, weighted columns spread too far apart to scan. */
@@ -55,4 +69,91 @@ internal fun fitColumnWidths(
         if (short.isEmpty()) return widths
         short.forEach { pinned[it] = true }
     }
+}
+
+/**
+ * Content width of the part of a table row that scrolls sideways, or null when [columnWidths] plus
+ * [rowPadding] on each side fit [viewport]. The first [frozenCount] columns and the start padding
+ * stay put; the scrolling part holds the remaining columns and the end padding. Only the rows
+ * scroll; anything else in the table, such as expanded details, stays at the viewport's width.
+ */
+internal fun sideScrollRowWidth(
+    viewport: Float,
+    columnWidths: List<Float>?,
+    rowPadding: Float,
+    frozenCount: Int,
+): Float? =
+    columnWidths
+        ?.takeIf { it.sum() + rowPadding * 2 > viewport }
+        ?.let { it.drop(frozenCount).sum() + rowPadding }
+
+/** Width of the edge shadow that hints a sideways-scrolling row has more columns past an edge. */
+private val SIDE_SCROLL_CUE = 16.dp
+
+/**
+ * Lays a table row out [rowWidth] wide and scrolls it sideways with [state], which the header and
+ * every row share so the columns move together. While more columns lie past either edge, that edge
+ * shades into [cueColor], visible even where the edge falls in a gap between columns. Drags that
+ * run past either edge stop there rather than carrying on to an enclosing pager.
+ */
+fun Modifier.tableSideScroll(
+    state: ScrollState,
+    rowWidth: Dp,
+    cueColor: Color,
+): Modifier =
+    this
+        .fillMaxWidth()
+        .drawWithContent {
+            drawContent()
+            val cue = SIDE_SCROLL_CUE.toPx()
+            val ltr = layoutDirection == LayoutDirection.Ltr
+            // Scroll-forward columns lie past the end edge: the right in LTR, the left in RTL.
+            if (state.canScrollForward) drawEdgeCue(cueColor, cue, atRight = ltr)
+            if (state.canScrollBackward) drawEdgeCue(cueColor, cue, atRight = !ltr)
+        }.nestedScroll(KeepSideScrollLeftover)
+        .horizontalScroll(state)
+        .width(rowWidth)
+
+/** Shades a [width]-wide strip at one edge, from transparent inward to [color] at the edge. */
+private fun DrawScope.drawEdgeCue(
+    color: Color,
+    width: Float,
+    atRight: Boolean,
+) {
+    val left = if (atRight) size.width - width else 0f
+    drawRect(
+        brush =
+            Brush.horizontalGradient(
+                colors =
+                    if (atRight) {
+                        listOf(
+                            Color.Transparent,
+                            color,
+                        )
+                    } else {
+                        listOf(color, Color.Transparent)
+                    },
+                startX = left,
+                endX = left + width,
+            ),
+        topLeft = Offset(left, 0f),
+        size = Size(width, size.height),
+    )
+}
+
+/**
+ * Keeps sideways drag and fling left over at a row's scroll edge from reaching an enclosing pager,
+ * which would otherwise turn the page mid-gesture.
+ */
+private object KeepSideScrollLeftover : NestedScrollConnection {
+    override fun onPostScroll(
+        consumed: Offset,
+        available: Offset,
+        source: NestedScrollSource,
+    ): Offset = Offset(available.x, 0f)
+
+    override suspend fun onPostFling(
+        consumed: Velocity,
+        available: Velocity,
+    ): Velocity = Velocity(available.x, 0f)
 }
