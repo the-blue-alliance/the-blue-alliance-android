@@ -46,7 +46,8 @@ fun TBABottomBar(
                             ImageVector.vectorResource(
                                 if (selected) dest.selectedIcon else dest.unselectedIcon,
                             ),
-                        contentDescription = dest.label,
+                        // The label already names the item.
+                        contentDescription = null,
                     )
                 },
                 label = { Text(dest.label) },
