@@ -31,6 +31,22 @@ class Navigator(
     }
 
     /**
+     * Opens the destination of a deep link or notification that reached the running app, in the
+     * tab a cold launch of [backStack] would use, rather than on top of whichever tab is showing.
+     */
+    fun navigateFromIntent(backStack: List<NavKey>) {
+        val destination = backStack.last()
+        // The first tab is the launch default.
+        val tab = launchTab(backStack.first(), state.topLevelRoutes, state.topLevelRoutes.first())
+        if (tab.isSameTab(destination)) {
+            navigate(destination)
+        } else {
+            state.topLevelRoute = tab
+            state.currentStack.add(destination)
+        }
+    }
+
+    /**
      * Navigate up. This should be used for all in-app "back" arrow navigation.
      *
      * It is subtly different from [goBack] in that if we were launched via deeplink and we are

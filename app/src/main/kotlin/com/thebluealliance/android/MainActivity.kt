@@ -51,18 +51,18 @@ class MainActivity : ComponentActivity() {
     private val deepLinks = TbaDeepLinks()
 
     /**
-     * Destinations from intents delivered to an already-running Activity (see [onNewIntent]).
+     * Back stacks from intents delivered to an already-running Activity (see [onNewIntent]).
      *
      * [onCreate] can only route the intent the Activity was launched with, so warm deep links —
      * browser links, notification taps, `am start` — need their own channel into the navigation
      * that [com.thebluealliance.android.navigation.TBANavigation] collects.
      */
     private val newIntentRoutes =
-        MutableSharedFlow<NavKey>(
+        MutableSharedFlow<List<NavKey>>(
             extraBufferCapacity = 1,
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
-    val intentRoutes: SharedFlow<NavKey> = newIntentRoutes.asSharedFlow()
+    val intentRoutes: SharedFlow<List<NavKey>> = newIntentRoutes.asSharedFlow()
 
     private val notificationPermissionLauncher =
         registerForActivityResult(
@@ -98,9 +98,6 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch { dataSyncManager.syncIfNeeded() }
     }
 
-    /** The destination this intent targets: a notification/widget extra, or a deeplink URI. */
-    private fun Intent.destination(): NavKey? = backStack()?.last()
-
     /**
      * The synthetic back stack for this intent, ending at its destination. Deep links carry their
      * hierarchy (see [TbaDeepLinks]); notification/widget extras are a lone destination.
@@ -134,17 +131,17 @@ class MainActivity : ComponentActivity() {
      * Routes intents that arrive while this Activity is already running.
      *
      * The Activity is `singleTop`, so a deeplink or notification tap aimed at the running app is
-     * delivered here instead of through a fresh [onCreate]. Publishing the destination on
+     * delivered here instead of through a fresh [onCreate]. Publishing its back stack on
      * [intentRoutes] navigates the live back stack, rather than dropping the intent.
      *
      * Overrides the one-argument form: the `ComponentCaller` overload is only called on API 35+.
      */
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val destination = intent.destination()
-        Log.d("MainActivity", "New intent: $intent -> $destination")
-        if (destination == null) return
-        newIntentRoutes.tryEmit(destination)
+        val backStack = intent.backStack()
+        Log.d("MainActivity", "New intent: $intent -> $backStack")
+        if (backStack == null) return
+        newIntentRoutes.tryEmit(backStack)
     }
 
     fun requestNotificationPermission() {
