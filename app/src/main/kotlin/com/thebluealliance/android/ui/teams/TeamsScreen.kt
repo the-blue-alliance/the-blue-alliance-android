@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -32,6 +31,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -60,7 +60,7 @@ fun TeamsScreen(
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refreshTeams,
-                title = { Text("Teams") },
+                title = { TopBarTitle("Teams") },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(TbaIcons.Search, contentDescription = "Search")

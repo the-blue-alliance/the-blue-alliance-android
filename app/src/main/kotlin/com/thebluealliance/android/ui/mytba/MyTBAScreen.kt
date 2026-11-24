@@ -64,6 +64,7 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -133,7 +134,7 @@ fun MyTBAScreen(
                     } else {
                         null
                     },
-                title = { Text("myTBA") },
+                title = { TopBarTitle("myTBA") },
                 navigationIcon = {
                     if (onNavigateUp != null) {
                         IconButton(onClick = onNavigateUp) {

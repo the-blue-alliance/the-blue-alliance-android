@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,7 +37,12 @@ fun TopBarYearPicker(
     title: @Composable () -> Unit,
 ) {
     if (years.isEmpty()) {
-        title()
+        Box(
+            modifier =
+                Modifier
+                    .semantics(mergeDescendants = true) {}
+                    .topBarTitleSemantics(LocalTopBarRefresh.current),
+        ) { title() }
         return
     }
 
@@ -56,12 +60,16 @@ fun TopBarYearPicker(
                     .clip(MaterialTheme.shapes.small)
                     .clickable(onClickLabel = "Change year", role = Role.DropdownList) {
                         yearDropdownExpanded = true
-                    }.refreshAction(onRefresh)
-                    .padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
+                    }.padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
         ) {
             // Its own heading node, so the button reads as the year and heading navigation
-            // still reaches the screen title.
-            Box(modifier = Modifier.semantics(mergeDescendants = true) { heading() }) { title() }
+            // still reaches the screen title, with its Refresh action.
+            Box(
+                modifier =
+                    Modifier
+                        .semantics(mergeDescendants = true) {}
+                        .topBarTitleSemantics(onRefresh),
+            ) { title() }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -46,7 +47,7 @@ fun MoreScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("More") },
+                title = { TopBarTitle("More") },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(TbaIcons.Search, contentDescription = "Search")

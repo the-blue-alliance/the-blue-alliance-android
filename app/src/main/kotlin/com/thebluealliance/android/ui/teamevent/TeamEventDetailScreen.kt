@@ -33,6 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +53,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.LocalTopBarRefresh
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
@@ -58,7 +62,9 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -111,26 +117,31 @@ fun TeamEventDetailScreen(
                             ) {
                                 // Both halves of the title are links: each gets a clipped,
                                 // padded tap target. Their 6.dp insets replace the spaces
-                                // that used to surround the "@" separator.
+                                // that used to surround the "@" separator. The team link owns
+                                // the heading and Refresh action; the event link reads "at".
                                 Text(
                                     text = "${team.number}",
                                     maxLines = 1,
                                     modifier =
-                                        Modifier.paddedClickable(
-                                            MaterialTheme.shapes.small,
-                                            horizontal = 6.dp,
-                                            vertical = 4.dp,
-                                            onClickLabel = "View team ${team.number}",
-                                        ) { onNavigateToTeam(team.key) },
+                                        Modifier
+                                            .topBarTitleSemantics(LocalTopBarRefresh.current)
+                                            .paddedClickable(
+                                                MaterialTheme.shapes.small,
+                                                horizontal = 6.dp,
+                                                vertical = 4.dp,
+                                                onClickLabel = "View team ${team.number}",
+                                            ) { onNavigateToTeam(team.key) },
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                                 Text(
                                     text = "@",
                                     maxLines = 1,
                                     style = MaterialTheme.typography.titleLarge,
+                                    modifier = Modifier.clearAndSetSemantics {},
                                 )
+                                val eventName = event.shortName ?: event.name
                                 Text(
-                                    text = event.shortName ?: event.name,
+                                    text = eventName,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     modifier =
@@ -138,6 +149,7 @@ fun TeamEventDetailScreen(
                                             // Unfilled, so the link hugs the name instead of
                                             // reaching across the empty bar to the actions.
                                             .weight(1f, fill = false)
+                                            .semantics { contentDescription = "at $eventName" }
                                             .paddedClickable(
                                                 MaterialTheme.shapes.small,
                                                 horizontal = 6.dp,
@@ -148,7 +160,7 @@ fun TeamEventDetailScreen(
                                 )
                             }
                         } else {
-                            Text(
+                            TopBarTitle(
                                 text = "Team @ Event",
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,

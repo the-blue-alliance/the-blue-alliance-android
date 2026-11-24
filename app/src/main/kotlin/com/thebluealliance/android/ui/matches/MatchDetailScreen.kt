@@ -53,6 +53,7 @@ import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -77,7 +78,7 @@ fun MatchDetailScreen(
             TBATopAppBar(
                 onRefresh = viewModel::refresh,
                 title = {
-                    Text(
+                    TopBarTitle(
                         text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

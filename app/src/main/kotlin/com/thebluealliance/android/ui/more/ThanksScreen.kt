@@ -39,6 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 
@@ -55,7 +56,7 @@ fun ThanksScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("Thanks") },
+                title = { TopBarTitle("Thanks") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")

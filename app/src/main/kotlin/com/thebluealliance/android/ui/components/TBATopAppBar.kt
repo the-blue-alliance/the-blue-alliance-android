@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
@@ -17,13 +18,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
 
 /**
- * The app's top bar. A non-null [onRefresh] adds the Refresh accessibility action to the title,
- * for screens whose pull-to-refresh gesture has no semantic equivalent.
+ * The app's top bar. A plain-text [title] should be a [TopBarTitle], which makes it the heading. A
+ * non-null [onRefresh] puts the Refresh accessibility action on the title, for screens whose
+ * pull-to-refresh gesture has no semantic equivalent.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,15 +49,9 @@ fun TBATopAppBar(
 ) {
     TopAppBar(
         title = {
-            // The Refresh action rides on the title, the node TalkBack focuses first.
-            CompositionLocalProvider(LocalTopBarRefresh provides onRefresh) {
-                Box(
-                    modifier =
-                        Modifier
-                            .semantics(mergeDescendants = true) { heading() }
-                            .refreshAction(onRefresh),
-                ) { title() }
-            }
+            // The title content owns its heading and Refresh action: TopBarTitle for plain text,
+            // and interactive titles read LocalTopBarRefresh for their own focus node.
+            CompositionLocalProvider(LocalTopBarRefresh provides onRefresh, content = title)
         },
         modifier = modifier,
         navigationIcon =
@@ -81,3 +78,26 @@ fun TBATopAppBar(
         scrollBehavior = scrollBehavior,
     )
 }
+
+/**
+ * A plain-text top-bar title: the screen's heading, carrying the bar's Refresh accessibility action
+ * when it has one.
+ */
+@Composable
+fun TopBarTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
+) {
+    Text(
+        text = text,
+        modifier = modifier.topBarTitleSemantics(LocalTopBarRefresh.current),
+        maxLines = maxLines,
+        overflow = overflow,
+    )
+}
+
+/** Marks the node that owns a top-bar title: the heading, with the bar's [onRefresh] action. */
+internal fun Modifier.topBarTitleSemantics(onRefresh: (() -> Unit)?): Modifier =
+    semantics { heading() }.refreshAction(onRefresh)
