@@ -27,6 +27,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
@@ -42,14 +45,15 @@ data class MediaGridItem(
 )
 
 /**
- * Returns a thumbnail URL for a media item, or null if the type isn't supported.
+ * Returns a thumbnail URL for a media item, or null if the type isn't supported. imgur tiles use
+ * its 640px "l" thumbnail rather than the full-size original, which [mediaLinkUrl] opens.
  */
 fun mediaUrl(
     type: String,
     foreignKey: String,
 ): String? =
     when (type) {
-        "imgur" -> "https://i.imgur.com/$foreignKey.png"
+        "imgur" -> "https://i.imgur.com/${foreignKey}l.jpg"
         "cdphotothread" -> "https://www.chiefdelphi.com/media/img/$foreignKey"
         "instagram-image" -> "https://www.instagram.com/p/$foreignKey/media/"
         "youtube" -> "https://img.youtube.com/vi/$foreignKey/hqdefault.jpg"
@@ -91,6 +95,7 @@ fun MediaItem(
             modifier
                 .aspectRatio(1f)
                 .clip(MaterialTheme.shapes.medium)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
                 .then(
                     if (linkUrl != null) {
                         Modifier.clickable {
@@ -102,7 +107,12 @@ fun MediaItem(
                 ),
     ) {
         AsyncImage(
-            model = url,
+            model =
+                ImageRequest
+                    .Builder(LocalPlatformContext.current)
+                    .data(url)
+                    .crossfade(true)
+                    .build(),
             contentDescription = "Media",
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
@@ -159,7 +169,7 @@ fun MediaGridRow(
 }
 
 /**
- * A full-screen tab that displays a team's media in a 2-column grid.
+ * A full-screen tab that displays a team's media in a grid of tiles at least 160dp wide.
  * Shared between Team detail and Team@Event detail screens.
  */
 @Composable
@@ -188,7 +198,7 @@ fun MediaTab(
             }
         }
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(minSize = 160.dp),
         modifier =
             Modifier
                 .fillMaxSize()
