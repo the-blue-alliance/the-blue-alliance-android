@@ -50,10 +50,10 @@ import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
+import com.thebluealliance.android.core.theme.TbaAllianceColors
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.AvatarConverter
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
-import com.thebluealliance.android.wear.ui.TbaColors
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 
@@ -325,9 +325,9 @@ private fun TeamHeader(state: TeamTrackerState) {
         if (bitmap != null) {
             val bgColor =
                 when (state.nextAlliance ?: state.lastAlliance) {
-                    Alliance.RED -> TbaColors.AllianceRedBg
-                    Alliance.BLUE -> TbaColors.AllianceBlueBg
-                    null -> TbaColors.AllianceNeutralBg
+                    Alliance.RED -> TbaAllianceColors.AvatarRed
+                    Alliance.BLUE -> TbaAllianceColors.AvatarBlue
+                    null -> MaterialTheme.colorScheme.surfaceContainerHigh
                 }
             Box(
                 modifier =
@@ -448,7 +448,7 @@ private fun MatchSection(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 AllianceRow(
-                    color = TbaColors.AllianceRed,
+                    color = TbaAllianceColors.Dark.Red,
                     teams = redTeams,
                     score = redScore,
                     isWinner = winningAlliance == Alliance.RED,
@@ -456,7 +456,7 @@ private fun MatchSection(
                     bonusRp = if (trackedAlliance == Alliance.RED) bonusRp else 0,
                 )
                 AllianceRow(
-                    color = TbaColors.AllianceBlue,
+                    color = TbaAllianceColors.Dark.Blue,
                     teams = blueTeams,
                     score = blueScore,
                     isWinner = winningAlliance == Alliance.BLUE,
