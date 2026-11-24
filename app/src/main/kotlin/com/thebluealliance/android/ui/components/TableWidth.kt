@@ -123,10 +123,11 @@ private val SIDE_SCROLL_CUE = 16.dp
 /**
  * Lays a table row out [rowWidth] wide and scrolls it sideways with [state], which the header and
  * every row share so the columns move together. While more columns lie past either edge, that edge
- * shades into [cueColor], visible even where the edge falls in a gap between columns. Drags that
- * run past either edge stop there rather than carrying on to an enclosing pager.
+ * shades into [cueColor], visible even where the edge falls in a gap between columns. Inside a
+ * pager it needs [tableSideDrag] on the enclosing row, which keeps drags past either edge from
+ * turning the page.
  */
-fun Modifier.tableSideScroll(
+internal fun Modifier.tableSideScroll(
     state: ScrollState,
     rowWidth: Dp,
     cueColor: Color,
@@ -140,15 +141,15 @@ fun Modifier.tableSideScroll(
             // Scroll-forward columns lie past the end edge: the right in LTR, the left in RTL.
             if (state.canScrollForward) drawEdgeCue(cueColor, cue, atRight = ltr)
             if (state.canScrollBackward) drawEdgeCue(cueColor, cue, atRight = !ltr)
-        }.nestedScroll(KeepSideScrollLeftover)
-        .horizontalScroll(state)
+        }.horizontalScroll(state)
         .width(rowWidth)
 
 /**
  * Lets sideways drags anywhere on a row, including its frozen cells, scroll [state] like the part
- * under [tableSideScroll] does, so they never turn an enclosing pager instead.
+ * under [tableSideScroll] does, and keeps drags past either edge, from any cell, from turning an
+ * enclosing pager.
  */
-fun Modifier.tableSideDrag(
+internal fun Modifier.tableSideDrag(
     state: ScrollState,
     layoutDirection: LayoutDirection,
 ): Modifier =
