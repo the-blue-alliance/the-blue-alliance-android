@@ -240,8 +240,8 @@ fun EventInfoTab(
 @Composable
 private fun EventInfoLinkRow(
     text: String,
+    onClickLabel: String,
     onClick: () -> Unit,
-    onClickLabel: String? = null,
     icon: (@Composable () -> Unit)? = null,
 ) {
     Row(
