@@ -63,7 +63,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
+import com.thebluealliance.android.ui.components.ReadingMaxWidth
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
@@ -269,7 +269,7 @@ internal fun rankingColumnLayout(
     windowWidth: Dp,
     minWidths: List<Dp>,
 ): RankingColumnLayout {
-    val viewport = minOf(windowWidth, TABLE_MAX_WIDTH)
+    val viewport = minOf(windowWidth, ReadingMaxWidth)
     val columnWidths =
         fitColumnWidths(
             (viewport - TABLE_ROW_PADDING * 2).value,

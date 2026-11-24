@@ -40,8 +40,7 @@ class ReadingWidthTest {
     }
 
     @Test
-    fun `a table column beside the rail starts with the reading column`() {
-        assertEquals(readingInset(1024.dp - 80.dp), readingInset(1024.dp - 80.dp, TABLE_MAX_WIDTH))
-        assertEquals(0.dp, readingInset(839.dp, TABLE_MAX_WIDTH))
+    fun `no inset just below the reading width`() {
+        assertEquals(0.dp, readingInset(839.dp))
     }
 }

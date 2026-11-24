@@ -6,11 +6,6 @@ import org.junit.jupiter.api.Test
 
 class TableWidthTest {
     @Test
-    fun `tables share the reading column's start edge`() {
-        assertEquals(ReadingMaxWidth, TABLE_MAX_WIDTH)
-    }
-
-    @Test
     fun `rows that fit don't scroll`() {
         assertNull(sideScrollRowWidth(360f, null, 12f, frozenCount = 0))
         assertNull(sideScrollRowWidth(360f, listOf(100f, 236f), 12f, frozenCount = 0))

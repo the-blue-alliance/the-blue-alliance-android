@@ -33,26 +33,22 @@ fun Modifier.readingWidth(): Modifier =
         .wrapContentWidth(Alignment.CenterHorizontally)
         .widthIn(max = ReadingMaxWidth)
 
-/** Side inset that centers a [maxWidth] column in [availableWidth]; zero when narrower. */
-internal fun readingInset(
-    availableWidth: Dp,
-    maxWidth: Dp = ReadingMaxWidth,
-): Dp = ((availableWidth - maxWidth) / 2).coerceAtLeast(0.dp)
+/** Side inset that centers the reading column in [availableWidth]; zero when narrower. */
+internal fun readingInset(availableWidth: Dp): Dp =
+    ((availableWidth - ReadingMaxWidth) / 2).coerceAtLeast(0.dp)
 
 /**
- * Lays out a full-width scrolling list whose content is centered at [maxWidth]: [content]
+ * Lays out a full-width scrolling list whose content is centered at [ReadingMaxWidth]: [content]
  * receives [contentPadding] widened by the side inset. Dragging in the side margins still scrolls.
  */
 @Composable
 fun ReadingWidthBox(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
-    maxWidth: Dp = ReadingMaxWidth,
     content: @Composable (PaddingValues) -> Unit,
 ) {
-    val columnWidth = maxWidth
     BoxWithConstraints(modifier) {
-        val inset = readingInset(this.maxWidth, columnWidth)
+        val inset = readingInset(this.maxWidth)
         val direction = LocalLayoutDirection.current
         content(
             PaddingValues(

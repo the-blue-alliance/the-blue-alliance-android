@@ -7,9 +7,6 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -25,19 +22,12 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 
-/** Widest a data table grows: the reading column, so tables start where other content does. */
-val TABLE_MAX_WIDTH = ReadingMaxWidth
-
 /**
- * Fills the available width up to [TABLE_MAX_WIDTH], centered. Apply it to a table's header and
- * to each of its rows so they share one column grid; it is a no-op on narrower windows.
+ * Fills the available width up to [ReadingMaxWidth], centered, so tables start where other content
+ * does. Apply it to a table's header and to each of its rows so they share one column grid; it is a
+ * no-op on narrower windows.
  */
-fun Modifier.tableWidth(): Modifier =
-    this
-        .fillMaxWidth()
-        .wrapContentWidth(Alignment.CenterHorizontally)
-        .widthIn(max = TABLE_MAX_WIDTH)
-        .fillMaxWidth()
+fun Modifier.tableWidth(): Modifier = this.readingWidth().fillMaxWidth()
 
 /**
  * Column widths for a table of [available] width whose columns are [weights] shares but must be at
