@@ -173,7 +173,8 @@ fun MyTBAScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        // End inset matches the list rows so the overflow buttons line up.
+                        .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val personIcon = rememberVectorPainter(TbaIcons.Person)
