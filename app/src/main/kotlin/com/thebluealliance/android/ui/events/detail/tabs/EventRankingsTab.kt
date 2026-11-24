@@ -353,7 +353,7 @@ private fun RankingItem(
     extraStatsInfo: List<RankingSortOrder>?,
     onTeamClick: (String) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable(ranking.teamKey) { mutableStateOf(false) }
     val rotationAngle by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,
         animationSpec = TBAMotionTokens.fastSpatialSpec(),

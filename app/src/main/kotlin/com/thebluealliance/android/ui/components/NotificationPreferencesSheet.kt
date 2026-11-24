@@ -23,8 +23,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,11 +54,10 @@ fun NotificationPreferencesSheet(
             enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
         )
     val availableTypes = NotificationType.forModelType(modelType)
+    // Saveable so a panel resize or rotation keeps unsaved toggles.
     val selectedNotifications =
-        remember {
-            mutableStateListOf<String>().apply { addAll(currentNotifications) }
-        }
-    val favoriteState = remember { androidx.compose.runtime.mutableStateOf(isFavorite) }
+        rememberSaveable(saver = StringStateListSaver) { currentNotifications.toMutableStateList() }
+    val favoriteState = rememberSaveable { mutableStateOf(isFavorite) }
     val context = LocalContext.current
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -136,6 +138,13 @@ fun NotificationPreferencesSheet(
         }
     }
 }
+
+// Not listSaver: it saves an empty list as null, which would restore the server values.
+internal val StringStateListSaver =
+    Saver<SnapshotStateList<String>, ArrayList<String>>(
+        save = { ArrayList(it) },
+        restore = { it.toMutableStateList() },
+    )
 
 /** A full-width row that toggles [checked]; the label and the switch are one target. */
 @Composable
