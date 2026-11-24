@@ -460,7 +460,7 @@ private fun SummaryTab(
             val teamAwards = awards
             if (teamAwards != null && teamAwards.isNotEmpty()) {
                 item(key = "summary_awards") {
-                    SummarySection(label = "Awards") {
+                    SummarySection(label = "Awards", mergeContent = true) {
                         teamAwards.forEach { award ->
                             Text(
                                 text = award.name,
@@ -542,6 +542,7 @@ private fun cmpAdvancementSummary(advancement: CmpAdvancement): String? =
 @Composable
 private fun SummarySection(
     label: String,
+    mergeContent: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -554,9 +555,14 @@ private fun SummarySection(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 4.dp),
+            modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
         )
-        content()
+        // The heading stays its own stop; only the content merges.
+        if (mergeContent) {
+            Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) { content() }
+        } else {
+            content()
+        }
     }
 }
 
