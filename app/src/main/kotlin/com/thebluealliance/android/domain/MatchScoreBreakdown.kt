@@ -22,19 +22,6 @@ val rpBonusFieldsByYear =
 /** All RP bonus field names across all supported years. */
 val rpBonusFields: Set<String> = rpBonusFieldsByYear.values.flatten().toSet()
 
-/** Boolean fields that should display as ✓/✗ (RP bonuses + other booleans). */
-val booleanDisplayFields: Set<String> =
-    rpBonusFields +
-        setOf(
-            "coopertitionBonusAchieved",
-            "coopertitionCriteriaMet",
-            "g206Penalty",
-            "robot_set",
-            "container_set",
-            "tote_set",
-            "tote_stack",
-        )
-
 data class AllianceRpBonuses(
     val red: List<Boolean>,
     val blue: List<Boolean>,
@@ -100,7 +87,8 @@ fun formatBreakdownValue(
     return when {
         apiKey == "rp" -> "$BREAKDOWN_RP_PREFIX$value$BREAKDOWN_RP_SUFFIX"
         apiKey in rpBonusFields -> if (value == "true") BREAKDOWN_RP_BONUS_MET else BREAKDOWN_NO
-        apiKey in booleanDisplayFields -> if (value == "true") BREAKDOWN_YES else BREAKDOWN_NO
+        value == "true" -> BREAKDOWN_YES
+        value == "false" -> BREAKDOWN_NO
         apiKey == "foul_points" && value != "0" -> "$BREAKDOWN_FOUL_SIGN$value"
         enumValue.matches(value) -> enumValueToWords(value)
         else -> value

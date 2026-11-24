@@ -111,7 +111,12 @@ class MatchScoreBreakdownTest {
             "A_ChevalDeFrise",
             "-5",
             "1.5",
-            "true",
         ).forEach { assertEquals(it, formatBreakdownValue("someKey", it)) }
+    }
+
+    @Test
+    fun `every boolean formats as check or cross`() {
+        assertEquals("✗", formatBreakdownValue("g410Penalty", "false"))
+        assertEquals("✓", formatBreakdownValue("rotor1Auto", "true"))
     }
 }
