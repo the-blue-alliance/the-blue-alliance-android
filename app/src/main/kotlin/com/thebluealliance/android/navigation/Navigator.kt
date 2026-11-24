@@ -26,7 +26,8 @@ class Navigator(
             }
             state.topLevelRoute = topLevelKey
         } else {
-            state.backStacks[state.topLevelRoute]?.add(route)
+            // A repeat of the top destination would share its saved state and ViewModel.
+            state.backStacks[state.topLevelRoute]?.takeIf { it.lastOrNull() != route }?.add(route)
         }
     }
 
@@ -42,7 +43,7 @@ class Navigator(
             navigate(destination)
         } else {
             state.topLevelRoute = tab
-            state.currentStack.add(destination)
+            if (state.currentStack.lastOrNull() != destination) state.currentStack.add(destination)
         }
     }
 

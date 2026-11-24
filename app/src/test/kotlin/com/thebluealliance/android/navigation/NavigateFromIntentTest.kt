@@ -48,4 +48,36 @@ class NavigateFromIntentTest {
         assertEquals(Screen.Teams, state.topLevelRoute)
         assertEquals(listOf<NavKey>(Screen.Teams), state.currentStack.toList())
     }
+
+    @Test
+    fun `destination already on top is not pushed again`() {
+        val state = stateOn(Screen.Events())
+        state.currentStack.add(Screen.EventDetail("2025hop"))
+        state.navigateFromIntent(listOf(Screen.EventDetail("2025hop")))
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2025hop")),
+            state.currentStack.toList(),
+        )
+    }
+
+    @Test
+    fun `destination on top of another tab is reopened without a copy`() {
+        val state = stateOn(Screen.More)
+        state.backStacks.getValue(Screen.Events()).add(Screen.EventDetail("2025hop"))
+        state.navigateFromIntent(listOf(Screen.EventDetail("2025hop")))
+        assertEquals(Screen.Events(), state.topLevelRoute)
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2025hop")),
+            state.currentStack.toList(),
+        )
+    }
+
+    @Test
+    fun `navigate does not repeat the top destination`() {
+        val state = stateOn(Screen.Teams)
+        val navigator = Navigator(state, mockk(relaxed = true))
+        navigator.navigate(Screen.TeamDetail("frc254"))
+        navigator.navigate(Screen.TeamDetail("frc254"))
+        assertEquals(listOf(Screen.Teams, Screen.TeamDetail("frc254")), state.currentStack.toList())
+    }
 }
