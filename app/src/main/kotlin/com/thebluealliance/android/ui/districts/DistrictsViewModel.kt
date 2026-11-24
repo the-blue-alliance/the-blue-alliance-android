@@ -8,6 +8,7 @@ import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -34,6 +35,8 @@ class DistrictsViewModel
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
         private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
+
+        private var hasUserSelectedYear = false
 
         val uiState: StateFlow<UiState<List<District>>> =
             _selectedYear
@@ -67,10 +70,13 @@ class DistrictsViewModel
             viewModelScope.launch {
                 try {
                     val status = tbaApi.getStatus()
-                    _maxYear.value = status.maxSeason
-                    if (_selectedYear.value < status.maxSeason) {
-                        _selectedYear.value = status.maxSeason
+                    _maxYear.value = maxOf(status.maxSeason, _selectedYear.value)
+                    // The picker reaches maxSeason, but the list opens on the season in play.
+                    if (!hasUserSelectedYear && _selectedYear.value != status.currentSeason) {
+                        showYear(status.currentSeason)
                     }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (_: Exception) {
                     // Fall back to calendar year (already set)
                 }
@@ -78,6 +84,11 @@ class DistrictsViewModel
         }
 
         fun selectYear(year: Int) {
+            hasUserSelectedYear = true
+            showYear(year)
+        }
+
+        private fun showYear(year: Int) {
             refreshOutcome.value = RefreshOutcome.PENDING
             _selectedYear.value = year
             refreshDistricts()
