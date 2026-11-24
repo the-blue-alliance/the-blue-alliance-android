@@ -8,10 +8,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,16 +47,22 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
 import com.thebluealliance.android.ui.components.expandableRow
+import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -74,6 +84,19 @@ private val TABLE_ROW_PADDING = 12.dp
 
 /** Vertical inset of each ranking-row cell; the team cell adds 4.dp more for a 48dp target. */
 private val ROW_CELL_PADDING = 8.dp
+
+/** Rank, Team, Record, primary sort, secondary sort, chevron. */
+private val COLUMN_WEIGHTS = listOf(0.11f, 0.22f, 0.15f, 0.23f, 0.19f, 0.10f)
+
+private const val TEAM_COLUMN = 1
+private const val PRIMARY_COLUMN = 3
+private const val SECONDARY_COLUMN = 4
+
+/** Width of a sort carat or the row chevron. */
+private val ICON_WIDTH = 24.dp
+
+/** Widest a 5-digit team number, in the team column's style, is likely to be. */
+private const val WIDEST_TEAM_NUMBER = "88888"
 
 /** OpenType tabular figures: every digit takes the same advance, so numeric columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -184,35 +207,117 @@ fun EventRankingsTab(
             sortRankings(rankings, sortState)
         }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        stickyHeader {
-            RankingHeaderRow(
-                primaryLabel = primaryLabel,
-                secondaryLabel = secondaryLabel,
-                sortState = sortState,
-                onSortSelected = { selectedColumn ->
-                    sortState = nextRankingSortState(sortState, selectedColumn)
+    // Narrow windows widen the columns whose header words would otherwise break, and scroll
+    // sideways if even that doesn't fit.
+    val minWidths = rankingColumnMinWidths(primaryLabel, secondaryLabel, sortState.column)
+    val sideScroll = rememberScrollState()
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val available = minOf(maxWidth, TABLE_MAX_WIDTH) - TABLE_ROW_PADDING * 2
+        val columnWidths =
+            fitColumnWidths(available.value, COLUMN_WEIGHTS, minWidths.map { it.value })
+                ?.map { it.dp }
+        val scrollWidth =
+            columnWidths
+                ?.fold(TABLE_ROW_PADDING * 2) { sum, width -> sum + width }
+                ?.takeIf { it > maxWidth }
+        LazyColumn(
+            modifier =
+                if (scrollWidth == null) {
+                    Modifier.fillMaxSize()
+                } else {
+                    Modifier.horizontalScroll(sideScroll).width(scrollWidth).fillMaxHeight()
                 },
-            )
-        }
-        items(sortedRankings, key = { "${it.eventKey}_${it.teamKey}" }) { ranking ->
-            RankingItem(
-                ranking = ranking,
-                sortOrders = rankingSortOrders,
-                extraStatsInfo = rankingExtraStatsInfo,
-                onTeamClick = onTeamClick,
-            )
+            contentPadding = innerPadding,
+        ) {
+            stickyHeader {
+                RankingHeaderRow(
+                    primaryLabel = primaryLabel,
+                    secondaryLabel = secondaryLabel,
+                    columnWidths = columnWidths,
+                    sortState = sortState,
+                    onSortSelected = { selectedColumn ->
+                        sortState = nextRankingSortState(sortState, selectedColumn)
+                    },
+                )
+            }
+            items(sortedRankings, key = { "${it.eventKey}_${it.teamKey}" }) { ranking ->
+                RankingItem(
+                    ranking = ranking,
+                    columnWidths = columnWidths,
+                    sortOrders = rankingSortOrders,
+                    extraStatsInfo = rankingExtraStatsInfo,
+                    onTeamClick = onTeamClick,
+                )
+            }
         }
     }
 }
+
+/** Narrowest each column can be without breaking a header word or the team number. */
+@Composable
+private fun rankingColumnMinWidths(
+    primaryLabel: String,
+    secondaryLabel: String,
+    sortColumn: RankingSortColumn,
+): List<Dp> {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val headerStyle = MaterialTheme.typography.titleSmall
+    val teamStyle = MaterialTheme.typography.titleMedium
+    return remember(
+        primaryLabel,
+        secondaryLabel,
+        sortColumn,
+        headerStyle,
+        teamStyle,
+        density,
+    ) {
+        fun widest(
+            text: String,
+            style: TextStyle,
+        ): Dp =
+            text.split(' ').maxOf { word ->
+                with(density) {
+                    measurer
+                        .measure(word, style, softWrap = false, maxLines = 1)
+                        .size.width
+                        .toDp()
+                }
+            }
+        val gutters = COLUMN_GUTTER * 2
+
+        fun caret(column: RankingSortColumn) = if (sortColumn == column) ICON_WIDTH else 0.dp
+        listOf(
+            widest("Rank", headerStyle) + gutters,
+            maxOf(
+                widest("Team", headerStyle) + caret(RankingSortColumn.TEAM),
+                widest(WIDEST_TEAM_NUMBER, teamStyle),
+            ) + gutters,
+            widest("Record", headerStyle) + gutters,
+            widest(primaryLabel, headerStyle) + caret(RankingSortColumn.PRIMARY) + gutters,
+            widest(secondaryLabel, headerStyle) + caret(RankingSortColumn.SECONDARY) + gutters,
+            ICON_WIDTH + gutters,
+        )
+    }
+}
+
+/** Sizes column [index] of [row]: its weight, or its fitted width from [columnWidths]. */
+private fun Modifier.rankingColumn(
+    row: RowScope,
+    index: Int,
+    columnWidths: List<Dp>?,
+): Modifier =
+    if (columnWidths == null) {
+        with(row) { weight(COLUMN_WEIGHTS[index]) }
+    } else {
+        width(columnWidths[index])
+    }
 
 @Composable
 private fun RankingHeaderRow(
     primaryLabel: String,
     secondaryLabel: String,
+    columnWidths: List<Dp>?,
     sortState: RankingSortState,
     onSortSelected: (RankingSortColumn) -> Unit,
 ) {
@@ -234,11 +339,17 @@ private fun RankingHeaderRow(
             text = "Rank",
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
-            modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
+            modifier =
+                Modifier
+                    .rankingColumn(
+                        this,
+                        0,
+                        columnWidths,
+                    ).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = "Team",
-            modifier = Modifier.weight(0.22f),
+            modifier = Modifier.rankingColumn(this, TEAM_COLUMN, columnWidths),
             sortColumn = RankingSortColumn.TEAM,
             currentSort = sortState.column,
             ascending = sortState.ascending,
@@ -248,11 +359,17 @@ private fun RankingHeaderRow(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
-            modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
+            modifier =
+                Modifier
+                    .rankingColumn(
+                        this,
+                        2,
+                        columnWidths,
+                    ).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = primaryLabel,
-            modifier = Modifier.weight(0.23f),
+            modifier = Modifier.rankingColumn(this, PRIMARY_COLUMN, columnWidths),
             numeric = true,
             sortColumn = RankingSortColumn.PRIMARY,
             currentSort = sortState.column,
@@ -261,7 +378,7 @@ private fun RankingHeaderRow(
         )
         RankingHeaderItem(
             text = secondaryLabel,
-            modifier = Modifier.weight(0.19f),
+            modifier = Modifier.rankingColumn(this, SECONDARY_COLUMN, columnWidths),
             numeric = true,
             sortColumn = RankingSortColumn.SECONDARY,
             currentSort = sortState.column,
@@ -269,7 +386,7 @@ private fun RankingHeaderRow(
             onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
         )
         // Spacer for chevron alignment
-        Spacer(modifier = Modifier.weight(0.10f))
+        Spacer(modifier = Modifier.rankingColumn(this, 5, columnWidths))
     }
 }
 
@@ -401,6 +518,7 @@ private fun SortCaret(ascending: Boolean) {
 @Composable
 private fun RankingItem(
     ranking: Ranking,
+    columnWidths: List<Dp>?,
     sortOrders: List<RankingSortOrder>?,
     extraStatsInfo: List<RankingSortOrder>?,
     onTeamClick: (String) -> Unit,
@@ -432,7 +550,7 @@ private fun RankingItem(
                 style = MaterialTheme.typography.labelLarge,
                 modifier =
                     Modifier
-                        .weight(0.11f)
+                        .rankingColumn(this, 0, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
             Text(
@@ -440,7 +558,7 @@ private fun RankingItem(
                 style = MaterialTheme.typography.titleMedium,
                 modifier =
                     Modifier
-                        .weight(0.22f)
+                        .rankingColumn(this, TEAM_COLUMN, columnWidths)
                         .clip(MaterialTheme.shapes.small)
                         .clickable(
                             onClickLabel = "View team ${ranking.teamKey.teamNumber}",
@@ -454,7 +572,7 @@ private fun RankingItem(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier =
                     Modifier
-                        .weight(0.15f)
+                        .rankingColumn(this, 2, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -473,7 +591,7 @@ private fun RankingItem(
                 textAlign = TextAlign.End,
                 modifier =
                     Modifier
-                        .weight(0.23f)
+                        .rankingColumn(this, PRIMARY_COLUMN, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -491,7 +609,7 @@ private fun RankingItem(
                 textAlign = TextAlign.End,
                 modifier =
                     Modifier
-                        .weight(0.19f)
+                        .rankingColumn(this, SECONDARY_COLUMN, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -502,7 +620,7 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rotate(rotationAngle)
-                        .weight(0.10f)
+                        .rankingColumn(this, 5, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
