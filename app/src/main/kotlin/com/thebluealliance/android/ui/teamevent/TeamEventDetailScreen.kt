@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -61,7 +60,6 @@ import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
-import com.thebluealliance.android.ui.components.StatRowMaxWidth
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -71,6 +69,7 @@ import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
+import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
@@ -692,7 +691,7 @@ private fun StatsTab(
             // The rows' own 2.dp vertical padding spaces them.
             Column {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
-                    AdvancementBreakdownRow(label, value, Modifier.widthIn(max = StatRowMaxWidth))
+                    AdvancementBreakdownRow(label, value, Modifier.statRowWidth())
                 }
             }
         }
@@ -708,7 +707,7 @@ private fun StatRow(
     Row(
         modifier =
             Modifier
-                .widthIn(max = StatRowMaxWidth)
+                .statRowWidth()
                 .fillMaxWidth()
                 .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.SpaceBetween,

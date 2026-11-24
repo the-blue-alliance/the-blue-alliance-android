@@ -43,4 +43,17 @@ class ReadingWidthTest {
     fun `no inset just below the reading width`() {
         assertEquals(0.dp, readingInset(839.dp))
     }
+
+    @Test
+    fun `stat rows fill every phone width`() {
+        listOf(320.dp, 328.dp, 372.dp, 380.dp, 440.dp, 600.dp).forEach {
+            assertEquals(it, statRowWidth(it))
+        }
+    }
+
+    @Test
+    fun `stat rows cap on wide panels`() {
+        assertEquals(StatRowMaxWidth, statRowWidth(601.dp))
+        assertEquals(StatRowMaxWidth, statRowWidth(984.dp))
+    }
 }

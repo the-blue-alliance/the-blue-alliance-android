@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -68,7 +67,6 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.components.StatRowMaxWidth
 import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
@@ -76,6 +74,7 @@ import com.thebluealliance.android.ui.components.rankingRowDescription
 import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
 import com.thebluealliance.android.ui.components.tableSpan
@@ -830,7 +829,7 @@ private fun RankingItem(
                         Row(
                             modifier =
                                 Modifier
-                                    .widthIn(max = StatRowMaxWidth)
+                                    .statRowWidth()
                                     .fillMaxWidth()
                                     .padding(vertical = 2.dp)
                                     .semantics(mergeDescendants = true) {},
@@ -855,7 +854,7 @@ private fun RankingItem(
                 if (ranking.extraStats.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     HorizontalDivider(
-                        modifier = Modifier.widthIn(max = StatRowMaxWidth).padding(vertical = 4.dp),
+                        modifier = Modifier.statRowWidth().padding(vertical = 4.dp),
                     )
                     Text(
                         text = "Additional Stats",
@@ -869,7 +868,7 @@ private fun RankingItem(
                         Row(
                             modifier =
                                 Modifier
-                                    .widthIn(max = StatRowMaxWidth)
+                                    .statRowWidth()
                                     .fillMaxWidth()
                                     .padding(vertical = 2.dp)
                                     .semantics(mergeDescendants = true) {},
