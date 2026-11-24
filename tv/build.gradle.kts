@@ -169,9 +169,8 @@ baselineProfile {
     mergeIntoMain = true
     saveInSrc = true
     automaticGenerationDuringBuild = false
-    // No startup profile yet: it would steer R8's DEX layout for the minified release, but the
-    // generator doesn't collect one (includeInStartupProfile) and adding it needs a regeneration.
-    warnings { noStartupProfileRulesGenerated = false }
+    // The generator's startup() test also writes startup-prof.txt, which R8 uses to lay out the
+    // minified release's DEX so cold-start code lands in the primary dex.
 }
 
 // The plugin profiles and benchmarks `nonMinifiedRelease` / `benchmarkRelease` copies of `release`.
