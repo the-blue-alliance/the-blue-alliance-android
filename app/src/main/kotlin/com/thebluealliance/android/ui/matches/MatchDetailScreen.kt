@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -35,8 +40,11 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,6 +74,7 @@ import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -169,6 +178,7 @@ fun MatchDetailScreen(
                             ),
                         videoCount = mediaItems.size,
                     )
+                val scoreSeparatorWidth = scoreSeparatorWidth()
                 val summary: @Composable () -> Unit = {
                     EventInfo(
                         eventName = uiState.eventName,
@@ -251,13 +261,20 @@ fun MatchDetailScreen(
                         // Score breakdown
                         val breakdown = uiState.scoreBreakdown
                         if (breakdown != null) {
+                            // Wide windows keep red and blue values near their scores.
+                            val breakdownWidth =
+                                when {
+                                    videoBesideScore -> Modifier.fillMaxWidth(0.5f)
+                                    wide -> Modifier.breakdownWidth()
+                                    else -> Modifier
+                                }
                             item(key = "breakdown_header") {
                                 HorizontalDivider(modifier = dividerModifier)
                                 Text(
                                     text = "Score Breakdown",
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier =
-                                        Modifier
+                                        breakdownWidth
                                             .padding(horizontal = 16.dp, vertical = 8.dp)
                                             .semantics { heading() },
                                 )
@@ -281,6 +298,10 @@ fun MatchDetailScreen(
                                 BreakdownRow(
                                     redPlayoffAllianceTitle = redAllianceTitle,
                                     bluePlayoffAllianceTitle = blueAllianceTitle,
+                                    modifier = breakdownWidth,
+                                    // Beside the video, each value sits under its score.
+                                    scoreSeparatorWidth =
+                                        scoreSeparatorWidth.takeIf { videoBesideScore },
                                     label = label,
                                     redValue =
                                         formatBreakdownValue(
@@ -439,6 +460,32 @@ private fun RowScope.AllianceScoreSummaryCol(
     }
 }
 
+private const val SCORE_SEPARATOR = "-"
+private val ScoreSeparatorPadding = 16.dp
+
+/** Width of the separator between the two scores in [ScoreSummary], padding included. */
+@Composable
+private fun scoreSeparatorWidth(): Dp {
+    val measurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.displaySmall
+    val textWidth =
+        remember(measurer, style) { measurer.measure(SCORE_SEPARATOR, style).size.width }
+    return with(LocalDensity.current) { textWidth.toDp() } + ScoreSeparatorPadding * 2
+}
+
+/**
+ * Horizontal centres of the red and blue score columns in a [ScoreSummary] row of [rowWidth], whose
+ * two equal columns flank a [separatorWidth] separator inside [padding] on each side.
+ */
+internal fun scoreColumnCenters(
+    rowWidth: Float,
+    separatorWidth: Float,
+    padding: Float,
+): Pair<Float, Float> {
+    val columnWidth = ((rowWidth - padding * 2 - separatorWidth) / 2).coerceAtLeast(0f)
+    return (padding + columnWidth / 2) to (rowWidth - padding - columnWidth / 2)
+}
+
 @Composable
 private fun ScoreSummary(
     match: Match,
@@ -462,11 +509,11 @@ private fun ScoreSummary(
     ) {
         AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "red")
         Text(
-            text = "-",
+            text = SCORE_SEPARATOR,
             style = MaterialTheme.typography.displaySmall,
             modifier =
                 Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = ScoreSeparatorPadding)
                     .clearAndSetSemantics {},
         )
         AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "blue")
@@ -554,6 +601,21 @@ private fun RowScope.AllianceTeamColumn(
     }
 }
 
+/** Widest the score breakdown grows on wide windows. */
+private val BreakdownMaxWidth = 560.dp
+
+/** Centers the breakdown at [BreakdownMaxWidth], so its value columns sit near the scores. */
+private fun Modifier.breakdownWidth(): Modifier =
+    fillMaxWidth()
+        .wrapContentWidth(Alignment.CenterHorizontally)
+        .widthIn(max = BreakdownMaxWidth)
+        .fillMaxWidth()
+
+/**
+ * One breakdown line: the red value, the label, then the blue value. With [scoreSeparatorWidth],
+ * the row spans a [ScoreSummary]'s width and centres each value under that alliance's score;
+ * otherwise it uses fixed shares.
+ */
 @Composable
 private fun BreakdownRow(
     label: String,
@@ -561,45 +623,136 @@ private fun BreakdownRow(
     blueValue: String,
     redPlayoffAllianceTitle: String? = null,
     bluePlayoffAllianceTitle: String? = null,
+    modifier: Modifier = Modifier,
+    scoreSeparatorWidth: Dp? = null,
 ) {
-    Row(
-        modifier =
-            Modifier
-                // One stop per row that says which value is whose.
-                .clearAndSetSemantics {
-                    contentDescription =
-                        breakdownRowDescription(
-                            label,
-                            redValue,
-                            blueValue,
-                            redPlayoffAllianceTitle,
-                            bluePlayoffAllianceTitle,
-                        )
-                }.fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    // One stop per row that says which value is whose.
+    val rowModifier =
+        modifier.clearAndSetSemantics {
+            contentDescription =
+                breakdownRowDescription(
+                    label,
+                    redValue,
+                    blueValue,
+                    redPlayoffAllianceTitle,
+                    bluePlayoffAllianceTitle,
+                )
+        }
+    val red: @Composable (Modifier) -> Unit = { cell ->
         Text(
             text = redValue,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.allianceColors.red,
-            modifier = Modifier.weight(0.2f),
+            modifier = cell,
             textAlign = TextAlign.Center,
         )
+    }
+    val centre: @Composable (Modifier) -> Unit = { cell ->
         Text(
             text = label,
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(0.6f),
+            modifier = cell,
             textAlign = TextAlign.Center,
         )
+    }
+    val blue: @Composable (Modifier) -> Unit = { cell ->
         Text(
             text = blueValue,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.allianceColors.blue,
-            modifier = Modifier.weight(0.2f),
+            modifier = cell,
             textAlign = TextAlign.Center,
         )
     }
+    if (scoreSeparatorWidth != null) {
+        UnderScoresRow(
+            separatorWidth = scoreSeparatorWidth,
+            modifier = rowModifier.fillMaxWidth().padding(vertical = 2.dp),
+            red = { red(Modifier) },
+            label = { centre(Modifier) },
+            blue = { blue(Modifier) },
+        )
+        return
+    }
+    Row(
+        modifier =
+            rowModifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        red(Modifier.weight(0.2f))
+        centre(Modifier.weight(0.6f))
+        blue(Modifier.weight(0.2f))
+    }
+}
+
+/**
+ * Centres [red] and [blue] at the score column centres of a [ScoreSummary] as wide as this row, and
+ * [label] between them. A label too long for the gap pushes the values outward rather than wrap,
+ * until the values reach the row's padding.
+ */
+@Composable
+private fun UnderScoresRow(
+    separatorWidth: Dp,
+    modifier: Modifier,
+    red: @Composable () -> Unit,
+    label: @Composable () -> Unit,
+    blue: @Composable () -> Unit,
+) {
+    Layout(contents = listOf(red, label, blue), modifier = modifier) { measurables, constraints ->
+        val rowWidth = constraints.maxWidth
+        val padding = 16.dp.toPx()
+        val gap = 8.dp.toPx()
+        val valueConstraints =
+            Constraints(maxWidth = (rowWidth / 2f - padding - gap).toInt().coerceAtLeast(0))
+        val redPlaceable = measurables[0].first().measure(valueConstraints)
+        val bluePlaceable = measurables[2].first().measure(valueConstraints)
+        val widestValue = maxOf(redPlaceable.width, bluePlaceable.width)
+        val labelMax = (rowWidth - (padding + widestValue + gap) * 2).toInt().coerceAtLeast(0)
+        val labelPlaceable = measurables[1].first().measure(Constraints(maxWidth = labelMax))
+        val (redCentre, blueCentre) =
+            breakdownValueCentres(
+                scoreCentres =
+                    scoreColumnCenters(
+                        rowWidth.toFloat(),
+                        separatorWidth.toPx(),
+                        padding,
+                    ),
+                rowWidth = rowWidth.toFloat(),
+                labelWidth = labelPlaceable.width.toFloat(),
+                redWidth = redPlaceable.width.toFloat(),
+                blueWidth = bluePlaceable.width.toFloat(),
+                gap = gap,
+            )
+        val rowHeight = maxOf(redPlaceable.height, labelPlaceable.height, bluePlaceable.height)
+        layout(rowWidth, rowHeight) {
+            fun Placeable.placeCentredAt(x: Float) =
+                placeRelative((x - this.width / 2f).roundToInt(), (rowHeight - this.height) / 2)
+            redPlaceable.placeCentredAt(redCentre)
+            labelPlaceable.placeCentredAt(rowWidth / 2f)
+            bluePlaceable.placeCentredAt(blueCentre)
+        }
+    }
+}
+
+/**
+ * Where a breakdown row centres its red and blue values: at [scoreCentres], or further out when a
+ * [labelWidth] label centred in [rowWidth] would come within [gap] of them.
+ */
+internal fun breakdownValueCentres(
+    scoreCentres: Pair<Float, Float>,
+    rowWidth: Float,
+    labelWidth: Float,
+    redWidth: Float,
+    blueWidth: Float,
+    gap: Float,
+): Pair<Float, Float> {
+    val labelStart = (rowWidth - labelWidth) / 2
+    val labelEnd = labelStart + labelWidth
+    val red = minOf(scoreCentres.first, labelStart - gap - redWidth / 2)
+    val blue = maxOf(scoreCentres.second, labelEnd + gap + blueWidth / 2)
+    return red to blue
 }
 
 internal fun getOrderedBreakdownFields(
