@@ -127,6 +127,12 @@ fun MyTBAScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh =
+                    if (uiState.isSignedIn) {
+                        { viewModel.refreshTab(MyTBATab.entries[pagerState.currentPage]) }
+                    } else {
+                        null
+                    },
                 title = { Text("myTBA") },
                 navigationIcon = {
                     if (onNavigateUp != null) {

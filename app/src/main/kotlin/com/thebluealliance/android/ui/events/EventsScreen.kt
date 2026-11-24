@@ -92,6 +92,7 @@ fun EventsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshEvents,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,

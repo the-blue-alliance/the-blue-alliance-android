@@ -98,6 +98,11 @@ fun TeamEventDetailScreen(
         topBar = {
             Column {
                 TBATopAppBar(
+                    onRefresh = {
+                        viewModel.refreshTab(
+                            TeamEventDetailTab.entries[pagerState.currentPage],
+                        )
+                    },
                     title = {
                         if (team != null && event != null) {
                             Row(

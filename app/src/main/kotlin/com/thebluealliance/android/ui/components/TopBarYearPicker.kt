@@ -44,6 +44,7 @@ fun TopBarYearPicker(
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
     val contentColor = LocalContentColor.current.copy(alpha = 0.85f)
+    val onRefresh = LocalTopBarRefresh.current
 
     // The padding below grows the touch/hover target around the text; the matching negative
     // offset cancels its horizontal contribution so the title keeps the same left edge as
@@ -55,7 +56,7 @@ fun TopBarYearPicker(
                     .clip(MaterialTheme.shapes.small)
                     .clickable(onClickLabel = "Change year", role = Role.DropdownList) {
                         yearDropdownExpanded = true
-                    }
+                    }.refreshAction(onRefresh)
                     .padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
         ) {
             // Its own heading node, so the button reads as the year and heading navigation

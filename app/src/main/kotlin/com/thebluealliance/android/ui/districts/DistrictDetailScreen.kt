@@ -80,6 +80,11 @@ fun DistrictDetailScreen(
         topBar = {
             Column {
                 TBATopAppBar(
+                    onRefresh = {
+                        viewModel.refreshTab(
+                            DistrictDetailTab.entries[pagerState.currentPage],
+                        )
+                    },
                     title = {
                         TopBarYearPicker(
                             selectedYear = selectedYear,

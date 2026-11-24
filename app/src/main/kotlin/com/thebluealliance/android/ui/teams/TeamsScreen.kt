@@ -59,6 +59,7 @@ fun TeamsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshTeams,
                 title = { Text("Teams") },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {

@@ -69,6 +69,7 @@ fun DistrictsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshDistricts,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,

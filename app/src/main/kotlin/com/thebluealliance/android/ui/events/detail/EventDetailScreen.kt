@@ -136,6 +136,11 @@ fun EventDetailScreen(
         topBar = {
             Column {
                 TBATopAppBar(
+                    onRefresh = {
+                        viewModel.refreshTab(
+                            EventDetailTab.entries[pagerState.currentPage],
+                        )
+                    },
                     title = {
                         Text(
                             text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",

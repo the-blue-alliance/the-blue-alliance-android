@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,6 +21,10 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
 
+/**
+ * The app's top bar. A non-null [onRefresh] adds the Refresh accessibility action to the title,
+ * for screens whose pull-to-refresh gesture has no semantic equivalent.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TBATopAppBar(
@@ -37,10 +42,19 @@ fun TBATopAppBar(
         ),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     showLamp: Boolean = false,
+    onRefresh: (() -> Unit)? = null,
 ) {
     TopAppBar(
         title = {
-            Box(modifier = Modifier.semantics(mergeDescendants = true) { heading() }) { title() }
+            // The Refresh action rides on the title, the node TalkBack focuses first.
+            CompositionLocalProvider(LocalTopBarRefresh provides onRefresh) {
+                Box(
+                    modifier =
+                        Modifier
+                            .semantics(mergeDescendants = true) { heading() }
+                            .refreshAction(onRefresh),
+                ) { title() }
+            }
         },
         modifier = modifier,
         navigationIcon =

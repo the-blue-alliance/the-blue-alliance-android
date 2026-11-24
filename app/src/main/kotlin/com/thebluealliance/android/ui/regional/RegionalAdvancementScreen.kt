@@ -73,6 +73,7 @@ fun RegionalAdvancementScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshRankings,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,
