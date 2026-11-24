@@ -307,7 +307,7 @@ fun EventDetailScreen(
                     .background(MaterialTheme.colorScheme.background),
         ) { page ->
             PullToRefreshBox(
-                isRefreshing = isRefreshing,
+                isRefreshing = isRefreshing && uiState.event != null,
                 onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
             ) {

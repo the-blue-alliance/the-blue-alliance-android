@@ -70,7 +70,9 @@ fun MatchDetailScreen(
     viewModel: MatchDetailViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val refreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    // LoadingBox already shows progress until the match first loads.
+    val isRefreshing = refreshing && (uiState.match != null || uiState.loadFailed)
     val context = LocalContext.current
 
     Scaffold(
