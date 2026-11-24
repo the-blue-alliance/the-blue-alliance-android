@@ -35,6 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,6 +61,9 @@ private val COLUMN_GUTTER = 4.dp
 
 /** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
 private val TABLE_ROW_PADDING = 12.dp
+
+/** Vertical inset of each ranking-row cell; the team cell adds 4.dp more for a 48dp target. */
+private val ROW_CELL_PADDING = 8.dp
 
 /** OpenType tabular figures: every digit takes the same advance, so numeric columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -367,17 +373,25 @@ private fun RankingItem(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable { expanded = !expanded }
-                    // 8.dp vertical here + 4.dp inside the team cell below keeps the row's height
-                    // and every child's position unchanged while the nested tap target grows. The
-                    // horizontal inset is the screen margin minus the cells' own COLUMN_GUTTER.
-                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp),
+                    .semantics { stateDescription = if (expanded) "Expanded" else "Collapsed" }
+                    .clickable(
+                        onClickLabel = if (expanded) "Collapse details" else "Expand details",
+                        role = Role.Button,
+                    ) { expanded = !expanded }
+                    // Vertical padding lives in the cells: ROW_CELL_PADDING on each plain cell and
+                    // ROW_CELL_PADDING + 4.dp inside the team cell, so the row keeps its height
+                    // while the nested team target spans 48dp. The horizontal inset is the screen
+                    // margin minus the cells' own COLUMN_GUTTER.
+                    .padding(horizontal = TABLE_ROW_PADDING),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = "#${ranking.rank}",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
+                modifier =
+                    Modifier
+                        .weight(0.11f)
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
             Text(
                 text = ranking.teamKey.teamNumber,
@@ -386,14 +400,20 @@ private fun RankingItem(
                     Modifier
                         .weight(0.22f)
                         .clip(MaterialTheme.shapes.small)
-                        .clickable { onTeamClick(ranking.teamKey) }
-                        .padding(horizontal = COLUMN_GUTTER, vertical = 4.dp),
+                        .clickable(
+                            onClickLabel = "View team ${ranking.teamKey.teamNumber}",
+                            role = Role.Button,
+                        ) { onTeamClick(ranking.teamKey) }
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING + 4.dp),
                 color = MaterialTheme.colorScheme.primary,
             )
             Text(
                 text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
+                modifier =
+                    Modifier
+                        .weight(0.15f)
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
             // Show first two sort order values (without labels, header has them)
@@ -409,7 +429,10 @@ private fun RankingItem(
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
                 textAlign = TextAlign.End,
-                modifier = Modifier.weight(0.23f).padding(horizontal = COLUMN_GUTTER),
+                modifier =
+                    Modifier
+                        .weight(0.23f)
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
             val secondarySortValue =
@@ -424,17 +447,21 @@ private fun RankingItem(
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
                 textAlign = TextAlign.End,
-                modifier = Modifier.weight(0.19f).padding(horizontal = COLUMN_GUTTER),
+                modifier =
+                    Modifier
+                        .weight(0.19f)
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
             Icon(
                 imageVector = TbaIcons.KeyboardArrowDown,
-                contentDescription = if (expanded) "Collapse" else "Expand",
+                // The row's stateDescription and click label already say this.
+                contentDescription = null,
                 modifier =
                     Modifier
                         .rotate(rotationAngle)
                         .weight(0.10f)
-                        .padding(horizontal = COLUMN_GUTTER),
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
