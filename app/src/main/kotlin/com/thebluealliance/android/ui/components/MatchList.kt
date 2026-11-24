@@ -28,8 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.getGroup
 import com.thebluealliance.android.domain.getShortLabel
 import com.thebluealliance.android.domain.model.Match
@@ -176,13 +182,35 @@ fun MatchItem(
     val isPlayed = match.redScore >= 0
 
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
+    val displayTime = match.predictedTime ?: match.time
+    val isEstimate =
+        match.predictedTime != null &&
+            match.time != null &&
+            kotlin.math.abs(match.predictedTime - match.time) > 60
+    val description =
+        remember(match, playoffType, rpBonuses) {
+            matchRowDescription(
+                match = match,
+                label = match.getFullLabel(playoffType),
+                rpBonuses = rpBonuses,
+                scheduledTime = displayTime?.let(::formatMatchTimeSpoken),
+                isEstimate = isEstimate,
+            )
+        }
 
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .clickable(onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 6.dp),
+                .clearAndSetSemantics {
+                    contentDescription = description
+                    role = Role.Button
+                    onClick(label = "View match details") {
+                        onClick()
+                        true
+                    }
+                }.padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -336,11 +364,6 @@ fun MatchItem(
                 modifier = Modifier.weight(0.15f),
                 horizontalAlignment = Alignment.End,
             ) {
-                val displayTime = match.predictedTime ?: match.time
-                val isEstimate =
-                    match.predictedTime != null &&
-                        match.time != null &&
-                        kotlin.math.abs(match.predictedTime - match.time) > 60
                 Text(
                     text = formatMatchTime(displayTime),
                     style = MaterialTheme.typography.bodyMedium,
@@ -370,6 +393,19 @@ private val matchTimeFormat =
     java.time.format.DateTimeFormatter.ofPattern(
         "EEE h:mma",
         java.util.Locale.US,
+    )
+
+private val spokenMatchTimeFormat =
+    java.time.format.DateTimeFormatter.ofPattern(
+        "EEEE h:mm a",
+        java.util.Locale.US,
+    )
+
+private fun formatMatchTimeSpoken(epochSeconds: Long): String =
+    spokenMatchTimeFormat.format(
+        java.time.Instant
+            .ofEpochSecond(epochSeconds)
+            .atZone(java.time.ZoneId.systemDefault()),
     )
 
 fun formatMatchTime(epochSeconds: Long?): String {
