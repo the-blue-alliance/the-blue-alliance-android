@@ -134,6 +134,7 @@ fun MyTBAScreen(
                     } else {
                         null
                     },
+                isRefreshing = isRefreshing,
                 title = { TopBarTitle("myTBA") },
                 navigationIcon = {
                     if (onNavigateUp != null) {

@@ -85,6 +85,8 @@ fun DistrictDetailScreen(
                             DistrictDetailTab.entries[pagerState.currentPage],
                         )
                     },
+                    isRefreshing =
+                        isRefreshing && uiState.eventSections != null && uiState.rankings != null,
                     title = {
                         TopBarYearPicker(
                             selectedYear = selectedYear,

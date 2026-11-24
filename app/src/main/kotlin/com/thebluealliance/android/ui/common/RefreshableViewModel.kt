@@ -14,10 +14,14 @@ enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
 
 /**
  * Base for screens that pull-to-refresh. Owns the shared [isRefreshing] flag and runs
- * refresh tasks concurrently, logging (instead of swallowing) any failure.
+ * refresh tasks concurrently, logging (instead of swallowing) any failure. Overlapping refreshes
+ * keep [isRefreshing] set until the last one finishes.
  */
 abstract class RefreshableViewModel : ViewModel() {
     private val _isRefreshing = MutableStateFlow(false)
+    private val inFlight =
+        java.util.concurrent.atomic
+            .AtomicInteger(0)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     /**
@@ -61,6 +65,7 @@ abstract class RefreshableViewModel : ViewModel() {
 
     protected fun refreshing(vararg tasks: suspend () -> Unit) {
         viewModelScope.launch {
+            inFlight.incrementAndGet()
             _isRefreshing.value = true
             try {
                 coroutineScope {
@@ -77,7 +82,7 @@ abstract class RefreshableViewModel : ViewModel() {
                     }
                 }
             } finally {
-                _isRefreshing.value = false
+                if (inFlight.decrementAndGet() == 0) _isRefreshing.value = false
             }
         }
     }

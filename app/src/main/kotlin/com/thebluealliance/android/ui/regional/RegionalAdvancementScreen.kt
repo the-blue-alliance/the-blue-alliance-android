@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.paddedClickable
@@ -74,6 +75,7 @@ fun RegionalAdvancementScreen(
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refreshRankings,
+                isRefreshing = isRefreshing && uiState !is UiState.Loading,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,

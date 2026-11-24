@@ -77,6 +77,7 @@ fun MatchDetailScreen(
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refresh,
+                isRefreshing = isRefreshing,
                 title = {
                     TopBarTitle(
                         text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",

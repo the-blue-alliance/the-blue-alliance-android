@@ -13,6 +13,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,7 +29,7 @@ import com.thebluealliance.android.ui.theme.OnBrand
 /**
  * The app's top bar. A plain-text [title] should be a [TopBarTitle], which makes it the heading. A
  * non-null [onRefresh] puts the Refresh accessibility action on the title, for screens whose
- * pull-to-refresh gesture has no semantic equivalent.
+ * pull-to-refresh gesture has no semantic equivalent; it does nothing while [isRefreshing].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,12 +49,19 @@ fun TBATopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     showLamp: Boolean = false,
     onRefresh: (() -> Unit)? = null,
+    isRefreshing: Boolean = false,
 ) {
+    // The title's Refresh action ignores requests while busy, as pull-to-refresh does.
+    val currentRefreshing by rememberUpdatedState(isRefreshing)
+    val titleRefresh =
+        onRefresh?.let { refresh ->
+            remember(refresh) { { if (!currentRefreshing) refresh() } }
+        }
     TopAppBar(
         title = {
             // The title content owns its heading and Refresh action: TopBarTitle for plain text,
             // and interactive titles read LocalTopBarRefresh for their own focus node.
-            CompositionLocalProvider(LocalTopBarRefresh provides onRefresh, content = title)
+            CompositionLocalProvider(LocalTopBarRefresh provides titleRefresh, content = title)
         },
         modifier = modifier,
         navigationIcon =

@@ -154,6 +154,7 @@ fun TeamDetailScreen(
                             TeamDetailTab.entries[pagerState.currentPage],
                         )
                     },
+                    isRefreshing = isRefreshing && uiState.team != null,
                     title = {
                         val team = uiState.team
                         TopBarYearPicker(

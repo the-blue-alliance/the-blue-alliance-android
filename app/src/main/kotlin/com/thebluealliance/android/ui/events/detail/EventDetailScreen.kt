@@ -142,6 +142,7 @@ fun EventDetailScreen(
                             EventDetailTab.entries[pagerState.currentPage],
                         )
                     },
+                    isRefreshing = isRefreshing && uiState.event != null,
                     title = {
                         TopBarTitle(
                             text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",

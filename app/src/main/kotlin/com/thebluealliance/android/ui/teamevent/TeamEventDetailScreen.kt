@@ -109,6 +109,8 @@ fun TeamEventDetailScreen(
                             TeamEventDetailTab.entries[pagerState.currentPage],
                         )
                     },
+                    isRefreshing =
+                        isRefreshing && uiState.matches != null && uiState.awards != null,
                     title = {
                         if (team != null && event != null) {
                             Row(
