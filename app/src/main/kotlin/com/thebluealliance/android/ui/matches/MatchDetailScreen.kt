@@ -440,34 +440,13 @@ private fun AllianceTeams(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            redTeamKeys.forEach { key ->
-                Text(
-                    text = key.teamNumber,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.allianceColors.red,
-                    modifier =
-                        Modifier
-                            .paddedClickable(
-                                MaterialTheme.shapes.small,
-                                horizontal = 12.dp,
-                                vertical = 4.dp,
-                                onClickLabel = "View team ${key.teamNumber}",
-                            ) { onTeamClick(key) }
-                            .semantics {
-                                contentDescription =
-                                    allianceTeamDescription(
-                                        redPlayoffAllianceTitle,
-                                        "red",
-                                        key.teamNumber,
-                                    )
-                            },
-                )
-            }
-        }
+        AllianceTeamColumn(
+            teamKeys = redTeamKeys,
+            color = MaterialTheme.allianceColors.red,
+            playoffAllianceTitle = redPlayoffAllianceTitle,
+            alliance = "red",
+            onTeamClick = onTeamClick,
+        )
 
         // Invisible separator to match ScoreSummary alignment
         Text(
@@ -480,33 +459,50 @@ private fun AllianceTeams(
                     .clearAndSetSemantics {},
         )
 
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            blueTeamKeys.forEach { key ->
-                Text(
-                    text = key.teamNumber,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.allianceColors.blue,
-                    modifier =
-                        Modifier
-                            .paddedClickable(
-                                MaterialTheme.shapes.small,
-                                horizontal = 12.dp,
-                                vertical = 4.dp,
-                                onClickLabel = "View team ${key.teamNumber}",
-                            ) { onTeamClick(key) }
-                            .semantics {
-                                contentDescription =
-                                    allianceTeamDescription(
-                                        bluePlayoffAllianceTitle,
-                                        "blue",
-                                        key.teamNumber,
-                                    )
-                            },
-                )
-            }
+        AllianceTeamColumn(
+            teamKeys = blueTeamKeys,
+            color = MaterialTheme.allianceColors.blue,
+            playoffAllianceTitle = bluePlayoffAllianceTitle,
+            alliance = "blue",
+            onTeamClick = onTeamClick,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.AllianceTeamColumn(
+    teamKeys: List<String>,
+    color: Color,
+    playoffAllianceTitle: String?,
+    alliance: String,
+    onTeamClick: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        teamKeys.forEach { key ->
+            Text(
+                text = key.teamNumber,
+                style = MaterialTheme.typography.bodyLarge,
+                color = color,
+                modifier =
+                    Modifier
+                        .paddedClickable(
+                            MaterialTheme.shapes.small,
+                            horizontal = 12.dp,
+                            vertical = 4.dp,
+                            onClickLabel = "View team ${key.teamNumber}",
+                        ) { onTeamClick(key) }
+                        .semantics {
+                            contentDescription =
+                                allianceTeamDescription(
+                                    playoffAllianceTitle,
+                                    alliance,
+                                    key.teamNumber,
+                                )
+                        },
+            )
         }
     }
 }
