@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -37,6 +39,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.thebluealliance.android.domain.model.NotificationType
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +62,7 @@ fun NotificationPreferencesSheet(
         rememberSaveable(saver = StringStateListSaver) { currentNotifications.toMutableStateList() }
     val favoriteState = rememberSaveable { mutableStateOf(isFavorite) }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
 
@@ -112,28 +116,41 @@ fun NotificationPreferencesSheet(
                 }
             }
 
-            TextButton(
-                onClick = {
-                    // Ask for POST_NOTIFICATIONS at the moment the user enables
-                    // notification-bearing preferences — the sign-in prompt is the only
-                    // other ask, and pushes are silently dropped without the grant.
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                        selectedNotifications.isNotEmpty() &&
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.POST_NOTIFICATIONS,
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    }
-                    onSave(favoriteState.value, selectedNotifications.toList())
-                },
+            // An explicit Cancel: on gaze input an empty spot to dismiss on is hard to find.
+            Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 24.dp),
+                horizontalArrangement =
+                    Arrangement.spacedBy(8.dp, Alignment.End),
             ) {
-                Text("Save")
+                TextButton(
+                    onClick = {
+                        scope.launch { sheetState.hide() }.invokeOnCompletion { onDismiss() }
+                    },
+                ) {
+                    Text("Cancel")
+                }
+                TextButton(
+                    onClick = {
+                        // Ask for POST_NOTIFICATIONS at the moment the user enables
+                        // notification-bearing preferences — the sign-in prompt is the only
+                        // other ask, and pushes are silently dropped without the grant.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                            selectedNotifications.isNotEmpty() &&
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.POST_NOTIFICATIONS,
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                        onSave(favoriteState.value, selectedNotifications.toList())
+                    },
+                ) {
+                    Text("Save")
+                }
             }
         }
     }
