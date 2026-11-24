@@ -215,7 +215,12 @@ fun MatchDetailScreen(
                             item(key = "media_grid") {
                                 MediaGridRow(
                                     items = mediaItems,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    // Wide windows keep the tiles on the 16dp text margin.
+                                    modifier =
+                                        Modifier.padding(
+                                            horizontal = if (wide) 16.dp else 8.dp,
+                                            vertical = 4.dp,
+                                        ),
                                     columns = matchVideoColumns(mediaItems.size, wide),
                                     aspectRatio = if (wide) 16f / 9f else 1f,
                                 )
