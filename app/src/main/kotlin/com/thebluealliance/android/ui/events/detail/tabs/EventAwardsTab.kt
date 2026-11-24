@@ -53,7 +53,9 @@ fun EventAwardsTab(
                         .fillMaxWidth()
                         .then(
                             if (award.teamKey.isNotEmpty()) {
-                                Modifier.clickable { onTeamClick(award.teamKey) }
+                                Modifier.clickable(
+                                    onClickLabel = "View team ${award.teamKey.teamNumber}",
+                                ) { onTeamClick(award.teamKey) }
                             } else {
                                 Modifier
                             },
