@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -53,6 +54,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -66,6 +68,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.StatRowMaxWidth
 import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
@@ -810,9 +813,9 @@ private fun RankingItem(
                 // Show all other sort orders (tiebreakers)
                 if (sortOrders != null && ranking.sortOrders.size > 2) {
                     Text(
-                        text = "Tiebreakers:",
+                        text = "Tiebreakers",
                         style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 4.dp),
+                        modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
                     )
 
                     for (i in 2 until minOf(ranking.sortOrders.size, sortOrders.size)) {
@@ -827,8 +830,10 @@ private fun RankingItem(
                         Row(
                             modifier =
                                 Modifier
+                                    .widthIn(max = StatRowMaxWidth)
                                     .fillMaxWidth()
-                                    .padding(vertical = 2.dp),
+                                    .padding(vertical = 2.dp)
+                                    .semantics(mergeDescendants = true) {},
                         ) {
                             Text(
                                 // Blank when a null sort_order_info element was coalesced to a
@@ -849,11 +854,13 @@ private fun RankingItem(
                 // Show extra stats if available
                 if (ranking.extraStats.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+                    HorizontalDivider(
+                        modifier = Modifier.widthIn(max = StatRowMaxWidth).padding(vertical = 4.dp),
+                    )
                     Text(
-                        text = "Additional Stats:",
+                        text = "Additional Stats",
                         style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier.padding(bottom = 4.dp),
+                        modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
                     )
                     ranking.extraStats.forEachIndexed { index, value ->
                         val info = extraStatsInfo?.getOrNull(index)
@@ -862,8 +869,10 @@ private fun RankingItem(
                         Row(
                             modifier =
                                 Modifier
+                                    .widthIn(max = StatRowMaxWidth)
                                     .fillMaxWidth()
-                                    .padding(vertical = 2.dp),
+                                    .padding(vertical = 2.dp)
+                                    .semantics(mergeDescendants = true) {},
                         ) {
                             Text(
                                 text = statName,

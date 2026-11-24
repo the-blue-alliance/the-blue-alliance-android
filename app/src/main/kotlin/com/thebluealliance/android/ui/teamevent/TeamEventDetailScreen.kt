@@ -61,6 +61,7 @@ import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
+import com.thebluealliance.android.ui.components.StatRowMaxWidth
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -698,9 +699,6 @@ private fun StatsTab(
         Spacer(modifier = Modifier.weight(1f))
     }
 }
-
-/** Keeps a stat's value near its label in wide windows. */
-private val StatRowMaxWidth = 360.dp
 
 @Composable
 private fun StatRow(

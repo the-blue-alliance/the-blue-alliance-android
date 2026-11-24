@@ -23,6 +23,9 @@ val ReadingMaxWidth = 840.dp
  */
 val ProseMaxWidth = 600.dp
 
+/** Widest a label-and-value stat row grows, so the value stays near its label. */
+val StatRowMaxWidth = 360.dp
+
 /**
  * Centers the content and caps it at [ReadingMaxWidth], so lines stay readable on wide windows.
  * Windows narrower than the cap lay out exactly as without it. For scrolling lists use
