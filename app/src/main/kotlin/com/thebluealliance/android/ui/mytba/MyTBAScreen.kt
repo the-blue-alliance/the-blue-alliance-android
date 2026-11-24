@@ -378,6 +378,7 @@ private fun FavoriteItem(
     MyTbaEntityRow(
         title = displayName,
         subtitle = modelTypeLabel(favorite.modelType),
+        onClickLabel = modelTypeClickLabel(favorite.modelType),
         onClick = onClick,
         onRemove = onRemove,
         onAddShortcut = if (canPinShortcuts) onAddShortcut else null,
@@ -436,6 +437,7 @@ private fun SubscriptionItem(
     MyTbaEntityRow(
         title = displayName,
         subtitle = "${modelTypeLabel(subscription.modelType)} · $notificationNames",
+        onClickLabel = modelTypeClickLabel(subscription.modelType),
         onClick = onClick,
         onRemove = onRemove,
     )
@@ -451,11 +453,21 @@ internal fun modelTypeLabel(modelType: Int): String =
         else -> "Other"
     }
 
+/** Names where tapping a myTBA row goes; Team @ Event rows open the event. */
+internal fun modelTypeClickLabel(modelType: Int): String? =
+    when (modelType) {
+        ModelType.EVENT, ModelType.EVENT_TEAM -> "View event"
+        ModelType.TEAM -> "View team"
+        ModelType.MATCH -> "View match"
+        else -> null
+    }
+
 /** A myTBA entity link with its overflow menu; the shortcut item shows only when [onAddShortcut] is set. */
 @Composable
 private fun MyTbaEntityRow(
     title: String,
     subtitle: String,
+    onClickLabel: String?,
     onClick: () -> Unit,
     onRemove: () -> Unit,
     onAddShortcut: (() -> Unit)? = null,
@@ -472,7 +484,7 @@ private fun MyTbaEntityRow(
                 Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .clickable(onClick = onClick)
+                    .clickable(onClickLabel = onClickLabel, onClick = onClick)
                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.Center,
         ) {
@@ -490,7 +502,7 @@ private fun MyTbaEntityRow(
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = TbaIcons.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = "More options for $title",
                 )
             }
             DropdownMenu(

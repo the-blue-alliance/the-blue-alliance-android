@@ -18,4 +18,21 @@ class MyTbaEntityRowTest {
     fun `labels unknown model types as other`() {
         assertEquals("Other", modelTypeLabel(-1))
     }
+
+    @Test
+    fun `click labels name the destination`() {
+        assertEquals("View team", modelTypeClickLabel(ModelType.TEAM))
+        assertEquals("View event", modelTypeClickLabel(ModelType.EVENT))
+        assertEquals("View match", modelTypeClickLabel(ModelType.MATCH))
+    }
+
+    @Test
+    fun `team at event rows open the event`() {
+        assertEquals("View event", modelTypeClickLabel(ModelType.EVENT_TEAM))
+    }
+
+    @Test
+    fun `rows without a destination keep the default click label`() {
+        assertEquals(null, modelTypeClickLabel(ModelType.DISTRICT))
+    }
 }
