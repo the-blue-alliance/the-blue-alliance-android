@@ -102,6 +102,30 @@ fun formatBreakdownValue(
         apiKey in rpBonusFields -> if (value == "true") BREAKDOWN_RP_BONUS_MET else BREAKDOWN_NO
         apiKey in booleanDisplayFields -> if (value == "true") BREAKDOWN_YES else BREAKDOWN_NO
         apiKey == "foul_points" && value != "0" -> "$BREAKDOWN_FOUL_SIGN$value"
+        enumValue.matches(value) -> enumValueToWords(value)
         else -> value
     }
 }
+
+/** Label for a breakdown key with no curated label, e.g. "teleopPoints" -> "Teleop Points". */
+internal fun camelCaseToLabel(key: String): String =
+    key
+        .replace(Regex("([A-Z])"), " $1")
+        .replace("_", " ")
+        .trim()
+        .replaceFirstChar { it.uppercase() }
+
+/** A PascalCase API enum such as "DeepCage" or "Level3"; all-caps strings like "LRL" don't match. */
+private val enumValue = Regex("[A-Z][A-Za-z0-9]*[a-z][A-Za-z0-9]*")
+
+private val enumWordBoundary =
+    Regex("(?<=[a-z])(?=[A-Z0-9])|(?<=[0-9])(?=[A-Za-z])|(?<=[A-Z])(?=[A-Z][a-z])")
+
+/** "DeepCage" -> "Deep cage", "Level3" -> "Level 3"; acronyms keep their capitals. */
+private fun enumValueToWords(value: String): String =
+    value
+        .split(enumWordBoundary)
+        .mapIndexed { i, word -> if (i == 0 || word.isAcronym()) word else word.lowercase() }
+        .joinToString(" ")
+
+private fun String.isAcronym(): Boolean = length > 1 && all { it.isUpperCase() }

@@ -125,4 +125,16 @@ class MatchScoreDescriptionTest {
     fun `plain numbers read unchanged`() {
         assertEquals("42", spokenBreakdownValue(formatBreakdownValue("totalPoints", "42")))
     }
+
+    @Test
+    fun `breakdown row reads endgame enums as words`() {
+        assertEquals(
+            "Endgame 1: Red Deep cage; Blue None",
+            breakdownRowDescription(
+                "Endgame 1",
+                formatBreakdownValue("endGameRobot1", "DeepCage"),
+                formatBreakdownValue("endGameRobot1", "None"),
+            ),
+        )
+    }
 }
