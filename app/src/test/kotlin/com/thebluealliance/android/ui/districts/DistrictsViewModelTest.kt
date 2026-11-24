@@ -1,12 +1,12 @@
 package com.thebluealliance.android.ui.districts
 
-import com.thebluealliance.android.data.remote.TbaApi
-import com.thebluealliance.android.data.remote.dto.ApiStatusDto
 import com.thebluealliance.android.data.repository.DistrictRepository
+import com.thebluealliance.android.data.repository.SeasonRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -21,14 +21,15 @@ import org.junit.jupiter.api.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class DistrictsViewModelTest {
     private val repository: DistrictRepository = mockk()
-    private val api: TbaApi = mockk()
+    private val seasons: SeasonRepository = mockk()
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         every { repository.observeDistrictsForYear(any()) } returns flowOf(emptyList())
         coEvery { repository.refreshDistrictsForYear(any()) } returns Unit
-        coEvery { api.getStatus() } returns ApiStatusDto(currentSeason = 2026, maxSeason = 2027)
+        coEvery { seasons.maxSeason() } returns 2027
+        coEvery { seasons.defaultSeason() } returns 2025
     }
 
     @AfterEach
@@ -37,23 +38,33 @@ class DistrictsViewModelTest {
     }
 
     @Test
-    fun `opens on the current season, not the max season`() {
-        val viewModel = DistrictsViewModel(repository, api)
-        assertEquals(2026, viewModel.selectedYear.value)
-        coVerify { repository.refreshDistrictsForYear(2026) }
+    fun `opens on the default season, not the max season`() {
+        val viewModel = DistrictsViewModel(repository, seasons)
+        assertEquals(2025, viewModel.selectedYear.value)
+        coVerify { repository.refreshDistrictsForYear(2025) }
     }
 
     @Test
     fun `picker reaches the max season`() {
-        val viewModel = DistrictsViewModel(repository, api)
+        val viewModel = DistrictsViewModel(repository, seasons)
         assertEquals(2027, viewModel.maxYear.value)
     }
 
     @Test
     fun `refreshes the selected year`() {
-        val viewModel = DistrictsViewModel(repository, api)
-        viewModel.selectYear(2025)
-        assertEquals(2025, viewModel.selectedYear.value)
-        coVerify { repository.refreshDistrictsForYear(2025) }
+        val viewModel = DistrictsViewModel(repository, seasons)
+        viewModel.selectYear(2019)
+        assertEquals(2019, viewModel.selectedYear.value)
+        coVerify { repository.refreshDistrictsForYear(2019) }
+    }
+
+    @Test
+    fun `a late default doesn't override the user's pick`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val viewModel = DistrictsViewModel(repository, seasons)
+        viewModel.selectYear(2019)
+        default.complete(2025)
+        assertEquals(2019, viewModel.selectedYear.value)
     }
 }

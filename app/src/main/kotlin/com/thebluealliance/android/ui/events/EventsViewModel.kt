@@ -1,11 +1,11 @@
 package com.thebluealliance.android.ui.events
 
 import androidx.lifecycle.viewModelScope
-import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
@@ -32,7 +32,7 @@ class EventsViewModel
         @Assisted navKey: Screen.Events,
         private val eventRepository: EventRepository,
         private val districtRepository: DistrictRepository,
-        private val tbaApi: TbaApi,
+        private val seasons: SeasonRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
     ) : RefreshableViewModel() {
@@ -104,12 +104,8 @@ class EventsViewModel
 
         private fun fetchMaxYear() {
             viewModelScope.launch {
-                try {
-                    val status = tbaApi.getStatus()
-                    _maxYear.value = status.maxSeason
-                } catch (_: Exception) {
-                    // Fall back to calendar year (already set)
-                }
+                // Falls back to the calendar year (already set) without a status.
+                seasons.maxSeason()?.let { _maxYear.value = it }
             }
         }
 

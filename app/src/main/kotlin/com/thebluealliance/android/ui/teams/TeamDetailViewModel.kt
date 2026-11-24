@@ -5,6 +5,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
@@ -12,6 +13,7 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.common.defaultSeason
 import dagger.assisted.Assisted
@@ -44,6 +46,7 @@ class TeamDetailViewModel
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
         private val tbaApi: TbaApi,
+        private val seasons: SeasonRepository,
         private val shortcutManager: TBAShortcutManager,
         private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
@@ -54,8 +57,8 @@ class TeamDetailViewModel
                 if (key.all { it.isDigit() }) "frc$key" else key
             }
 
-        private val _selectedYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
-        val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
+        private val selection = SeasonSelection(Calendar.getInstance().get(Calendar.YEAR))
+        val selectedYear: StateFlow<Int> = selection.year
 
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
@@ -63,10 +66,10 @@ class TeamDetailViewModel
         val uiState: StateFlow<TeamDetailUiState> =
             combine(
                 teamRepository.observeTeam(teamKey),
-                _selectedYear.flatMapLatest { year ->
+                selection.year.flatMapLatest { year ->
                     eventRepository.observeTeamEvents(teamKey, year)
                 },
-                _selectedYear.flatMapLatest { year ->
+                selection.year.flatMapLatest { year ->
                     teamRepository.observeTeamMedia(teamKey, year)
                 },
             ) { team, events, media ->
@@ -100,11 +103,8 @@ class TeamDetailViewModel
                 try {
                     val years = tbaApi.getTeamYearsParticipated(teamKey).sortedDescending()
                     _yearsParticipated.value = years
-                    val year = defaultSeason(years, currentSeason())
-                    if (year != null) {
-                        _selectedYear.value = year
-                        refreshYearData()
-                    }
+                    val year = defaultSeason(years, seasons.defaultSeason())
+                    if (year != null && selection.offerDefault(year)) refreshYearData()
                 } catch (e: CancellationException) {
                     throw e
                 } catch (_: Exception) {
@@ -114,15 +114,6 @@ class TeamDetailViewModel
             }
         }
 
-        private suspend fun currentSeason(): Int =
-            try {
-                tbaApi.getStatus().currentSeason
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                Calendar.getInstance().get(Calendar.YEAR)
-            }
-
         private fun buildYearsFromRookieYear() {
             viewModelScope.launch {
                 teamRepository.observeTeam(teamKey).collect { team ->
@@ -131,15 +122,14 @@ class TeamDetailViewModel
                         val maxYear = Calendar.getInstance().get(Calendar.YEAR)
                         val years = (maxYear downTo rookieYear).toList()
                         _yearsParticipated.value = years
-                        _selectedYear.value = years.first()
-                        refreshYearData()
+                        if (selection.offerDefault(years.first())) refreshYearData()
                     }
                 }
             }
         }
 
         fun selectYear(year: Int) {
-            _selectedYear.value = year
+            selection.pick(year)
             refreshYearData()
         }
 
@@ -192,7 +182,7 @@ class TeamDetailViewModel
         fun isSignedIn(): Boolean = authRepository.isSignedIn()
 
         fun refreshAll() {
-            val year = _selectedYear.value
+            val year = selection.year.value
             refreshing(
                 { teamRepository.refreshTeam(teamKey) },
                 { eventRepository.refreshTeamEvents(teamKey, year) },
@@ -201,7 +191,7 @@ class TeamDetailViewModel
         }
 
         fun refreshTab(tab: TeamDetailTab) {
-            val year = _selectedYear.value
+            val year = selection.year.value
             when (tab) {
                 TeamDetailTab.INFO ->
                     refreshing(
@@ -216,7 +206,7 @@ class TeamDetailViewModel
         }
 
         private fun refreshYearData() {
-            val year = _selectedYear.value
+            val year = selection.year.value
             refreshing(
                 { eventRepository.refreshTeamEvents(teamKey, year) },
                 { teamRepository.refreshTeamMedia(teamKey, year) },
