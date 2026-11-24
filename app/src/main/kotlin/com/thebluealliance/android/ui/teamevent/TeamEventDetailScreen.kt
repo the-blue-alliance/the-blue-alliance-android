@@ -69,6 +69,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
@@ -385,6 +386,9 @@ private fun SummaryTab(
                     InfoRow(
                         label = "Rank ${ranking.rank}",
                         value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                        valueDescription =
+                            recordDescription(ranking.wins, ranking.losses, ranking.ties),
+                        onClickLabel = "View rankings",
                         onClick = {
                             event?.let {
                                 onNavigateToEvent(
@@ -413,6 +417,7 @@ private fun SummaryTab(
                     InfoRow(
                         label = "Alliance ${teamAlliance.number}",
                         value = role,
+                        onClickLabel = "View alliances",
                         onClick = {
                             event?.let {
                                 onNavigateToEvent(
@@ -443,6 +448,7 @@ private fun SummaryTab(
                             )
                         },
                         value = pitLocation,
+                        onClickLabel = "View pit map",
                         onClick = {
                             onNavigateToPitMap(eventKey, listOf(teamKey))
                         },
@@ -559,13 +565,15 @@ private fun InfoRow(
     label: String,
     labelLeadingIcon: (@Composable () -> Unit)? = null,
     value: String,
+    valueDescription: String? = null,
+    onClickLabel: String,
     onClick: () -> Unit,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -586,6 +594,12 @@ private fun InfoRow(
             text = value,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier =
+                if (valueDescription != null) {
+                    Modifier.clearAndSetSemantics { contentDescription = valueDescription }
+                } else {
+                    Modifier
+                },
         )
         Icon(
             imageVector = TbaIcons.KeyboardArrowRight,

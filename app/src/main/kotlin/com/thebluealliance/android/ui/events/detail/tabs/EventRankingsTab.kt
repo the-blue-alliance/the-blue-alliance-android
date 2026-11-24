@@ -51,6 +51,9 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -66,6 +69,8 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
+import com.thebluealliance.android.ui.components.rankingRowDescription
+import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableSideDrag
@@ -673,6 +678,23 @@ private fun RankingItem(
         label = "chevron_rotation",
     )
 
+    // The first two sort order values, without labels (the header has them).
+    val (primaryValue, secondaryValue) =
+        (0..1).map { i ->
+            ranking.sortOrders.getOrNull(i)?.let { value ->
+                val precision = sortOrders?.getOrNull(i)?.precision ?: 2
+                String.format(Locale.US, "%.${precision}f", value)
+            }
+        }
+    val rowDescription =
+        rankingRowDescription(
+            rank = ranking.rank,
+            teamNumber = ranking.teamKey.teamNumber,
+            record = recordDescription(ranking.wins, ranking.losses, ranking.ties),
+            sortLabels = rankingHeaderLabels(sortOrders).toList(),
+            sortValues = listOf(primaryValue, secondaryValue),
+        )
+
     Column(
         modifier = Modifier.tableWidth(tableWidth),
     ) {
@@ -685,6 +707,9 @@ private fun RankingItem(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    // The cells below clear their own semantics, so the row reads as one stop with
+                    // column names; the team cell stays a separate target.
+                    .semantics { contentDescription = rowDescription }
                     .expandableRow(expanded) { expanded = !expanded },
             frozen = {
                 Text(
@@ -693,7 +718,8 @@ private fun RankingItem(
                     modifier =
                         Modifier
                             .rankingColumn(this, 0, columnWidths)
-                            .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
+                            .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING)
+                            .clearAndSetSemantics {},
                 )
                 Text(
                     text = ranking.teamKey.teamNumber,
@@ -720,18 +746,12 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rankingColumn(this, 2, columnWidths)
-                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING)
+                        .clearAndSetSemantics {},
             )
 
-            // Show first two sort order values (without labels, header has them)
-            val primarySortValue =
-                ranking.sortOrders.getOrNull(0)?.let { value ->
-                    val precision = sortOrders?.getOrNull(0)?.precision ?: 2
-                    String.format(Locale.US, "%.${precision}f", value)
-                } ?: "--"
-
             Text(
-                text = primarySortValue,
+                text = primaryValue ?: "--",
                 style =
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
@@ -739,17 +759,12 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rankingColumn(this, PRIMARY_COLUMN, columnWidths)
-                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING)
+                        .clearAndSetSemantics {},
             )
 
-            val secondarySortValue =
-                ranking.sortOrders.getOrNull(1)?.let { value ->
-                    val precision = sortOrders?.getOrNull(1)?.precision ?: 2
-                    String.format(Locale.US, "%.${precision}f", value)
-                } ?: "--"
-
             Text(
-                text = secondarySortValue,
+                text = secondaryValue ?: "--",
                 style =
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
@@ -757,7 +772,8 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rankingColumn(this, SECONDARY_COLUMN, columnWidths)
-                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
+                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING)
+                        .clearAndSetSemantics {},
             )
 
             Icon(
