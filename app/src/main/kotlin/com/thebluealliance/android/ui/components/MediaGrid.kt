@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -80,6 +81,17 @@ fun mediaLinkUrl(
         else -> null
     }
 
+/** Spoken label for the tile at zero-based [index] of [count], e.g. "Video 2 of 5". */
+internal fun mediaTileDescription(
+    type: String,
+    index: Int,
+    count: Int,
+): String = "${if (type == "youtube") "Video" else "Photo"} ${index + 1} of $count"
+
+/** Click label naming where tapping a tile goes. */
+internal fun mediaClickLabel(type: String): String =
+    if (type == "youtube") "Open in YouTube" else "Open full image"
+
 /**
  * A single media item with thumbnail, optional play overlay for YouTube, and click-to-open.
  */
@@ -87,6 +99,8 @@ fun mediaLinkUrl(
 fun MediaItem(
     type: String,
     foreignKey: String,
+    index: Int,
+    count: Int,
     modifier: Modifier = Modifier,
 ) {
     val url = mediaUrl(type, foreignKey) ?: return
@@ -101,9 +115,10 @@ fun MediaItem(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .then(
                     if (linkUrl != null) {
-                        Modifier.clickable {
-                            context.openUrl(linkUrl)
-                        }
+                        Modifier.clickable(
+                            onClickLabel = mediaClickLabel(type),
+                            role = Role.Button,
+                        ) { context.openUrl(linkUrl) }
                     } else {
                         Modifier
                     },
@@ -116,7 +131,7 @@ fun MediaItem(
                     .data(url)
                     .crossfade(true)
                     .build(),
-            contentDescription = "Media",
+            contentDescription = mediaTileDescription(type, index, count),
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
         )
@@ -134,7 +149,8 @@ fun MediaItem(
             ) {
                 Icon(
                     TbaIcons.PlayCircle,
-                    contentDescription = "Play video",
+                    // The tile's label already says it is a video.
+                    contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(48.dp),
                 )
@@ -152,15 +168,17 @@ fun MediaGridRow(
     items: List<MediaGridItem>,
     modifier: Modifier = Modifier,
 ) {
-    items.chunked(2).forEach { rowItems ->
+    items.chunked(2).forEachIndexed { rowIndex, rowItems ->
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            rowItems.forEach { item ->
+            rowItems.forEachIndexed { column, item ->
                 MediaItem(
                     type = item.type,
                     foreignKey = item.foreignKey,
+                    index = rowIndex * 2 + column,
+                    count = items.size,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -224,10 +242,12 @@ fun MediaTab(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = innerPadding,
     ) {
-        items(gridItems, key = { "${it.type}_${it.foreignKey}" }) { item ->
+        itemsIndexed(gridItems, key = { _, it -> "${it.type}_${it.foreignKey}" }) { index, item ->
             MediaItem(
                 type = item.type,
                 foreignKey = item.foreignKey,
+                index = index,
+                count = gridItems.size,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
