@@ -92,6 +92,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = 4.dp,
+                            onClickLabel = "Open About",
                             onClick = onNavigateToAbout,
                         ),
                 )
@@ -110,6 +111,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = 4.dp,
+                            onClickLabel = "Open Thanks",
                             onClick = onNavigateToThanks,
                         ),
                 )
