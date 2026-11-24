@@ -436,7 +436,10 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
             }
-            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
+            HorizontalDivider(
+                modifier = Modifier.tableWidth().padding(horizontal = 16.dp),
+                thickness = 0.5.dp,
+            )
         }
     }
 }
