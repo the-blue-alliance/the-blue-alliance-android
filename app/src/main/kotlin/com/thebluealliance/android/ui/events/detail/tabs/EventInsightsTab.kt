@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.EventCOPRs
@@ -292,65 +298,29 @@ private fun StatSelectorDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Stat Type") },
         text = {
-            LazyColumn {
+            LazyColumn(modifier = Modifier.selectableGroup()) {
                 item {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(StatType.StandardOPRs) }
-                                .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = currentSelection is StatType.StandardOPRs,
-                            onClick = { onSelect(StatType.StandardOPRs) },
-                        )
-                        Text(
-                            text = "OPRs (OPR / DPR / CCWM)",
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
+                    StatTypeOption(
+                        label = "OPRs (OPR / DPR / CCWM)",
+                        selected = currentSelection is StatType.StandardOPRs,
+                        onClick = { onSelect(StatType.StandardOPRs) },
+                    )
                 }
 
                 item {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(StatType.QualInsights) }
-                                .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = currentSelection is StatType.QualInsights,
-                            onClick = { onSelect(StatType.QualInsights) },
-                        )
-                        Text(
-                            text = "Qual Insights",
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
+                    StatTypeOption(
+                        label = "Qual Insights",
+                        selected = currentSelection is StatType.QualInsights,
+                        onClick = { onSelect(StatType.QualInsights) },
+                    )
                 }
 
                 item {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable { onSelect(StatType.PlayoffInsights) }
-                                .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        RadioButton(
-                            selected = currentSelection is StatType.PlayoffInsights,
-                            onClick = { onSelect(StatType.PlayoffInsights) },
-                        )
-                        Text(
-                            text = "Playoff Insights",
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
+                    StatTypeOption(
+                        label = "Playoff Insights",
+                        selected = currentSelection is StatType.PlayoffInsights,
+                        onClick = { onSelect(StatType.PlayoffInsights) },
+                    )
                 }
 
                 if (availableCoprStats.isNotEmpty()) {
@@ -359,30 +329,21 @@ private fun StatSelectorDialog(
                         Text(
                             text = "Component OPRs",
                             style = MaterialTheme.typography.titleSmall,
-                            modifier = Modifier.padding(vertical = 8.dp),
+                            modifier =
+                                Modifier
+                                    .padding(vertical = 8.dp)
+                                    .semantics { heading() },
                         )
                     }
 
                     items(availableCoprStats) { statName ->
-                        Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .clickable { onSelect(StatType.COPR(statName)) }
-                                    .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected =
-                                    currentSelection is StatType.COPR &&
-                                        currentSelection.statName == statName,
-                                onClick = { onSelect(StatType.COPR(statName)) },
-                            )
-                            Text(
-                                text = statName,
-                                modifier = Modifier.padding(start = 8.dp),
-                            )
-                        }
+                        StatTypeOption(
+                            label = statName,
+                            selected =
+                                currentSelection is StatType.COPR &&
+                                    currentSelection.statName == statName,
+                            onClick = { onSelect(StatType.COPR(statName)) },
+                        )
                     }
                 }
             }
@@ -393,6 +354,36 @@ private fun StatSelectorDialog(
             }
         },
     )
+}
+
+/**
+ * One radio row in [StatSelectorDialog]. The whole row is the single selectable target; the
+ * RadioButton only draws state, keeping its 48dp layout slot so the row height is unchanged.
+ */
+@Composable
+private fun StatTypeOption(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .selectable(selected = selected, onClick = onClick, role = Role.RadioButton)
+                .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        RadioButton(
+            selected = selected,
+            onClick = null,
+            modifier = Modifier.minimumInteractiveComponentSize(),
+        )
+        Text(
+            text = label,
+            modifier = Modifier.padding(start = 8.dp),
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
