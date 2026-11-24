@@ -280,13 +280,14 @@ private fun CmpAdvancementBadge(advancement: CmpAdvancement) {
 }
 
 @Composable
-private fun AdvancementBreakdownRow(
+internal fun AdvancementBreakdownRow(
     label: String,
     value: Int,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(vertical = 2.dp)
                 .semantics(mergeDescendants = true) {},

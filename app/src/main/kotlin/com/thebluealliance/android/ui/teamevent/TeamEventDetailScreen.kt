@@ -73,6 +73,7 @@ import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
+import com.thebluealliance.android.ui.events.detail.tabs.AdvancementBreakdownRow
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
@@ -687,19 +688,10 @@ private fun StatsTab(
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            // The rows' own 2.dp vertical padding spaces them.
+            Column {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
-                    Row(modifier = Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = value.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
+                    AdvancementBreakdownRow(label, value, Modifier.widthIn(max = StatRowMaxWidth))
                 }
             }
         }
