@@ -1,16 +1,17 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -41,9 +42,10 @@ fun TBATopAppBar(
         navigationIcon =
             if (showLamp) {
                 {
-                    // Use IconButton container (48dp) to match back button width in detail views,
-                    // so title text shares a consistent left edge across all screens.
-                    IconButton(onClick = {}, enabled = false) {
+                    // 48dp matches the back button's IconButton width in detail views, so title
+                    // text shares a consistent left edge across all screens. A plain Box keeps
+                    // the decorative lamp out of the semantics tree.
+                    Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                         Icon(
                             painter = painterResource(id = R.drawable.tba_lamp),
                             contentDescription = null,
