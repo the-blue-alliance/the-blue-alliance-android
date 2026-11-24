@@ -49,6 +49,7 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -67,6 +68,7 @@ import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -370,6 +372,7 @@ private fun RankingRow(
     Row(
         modifier =
             modifier
+                .tableSideDrag(rowScroll.state, LocalLayoutDirection.current)
                 .padding(start = TABLE_ROW_PADDING, top = verticalPadding, bottom = verticalPadding)
                 .then(contentModifier)
                 // Lets the scrolling part, and its edge cue, span the row's full height.

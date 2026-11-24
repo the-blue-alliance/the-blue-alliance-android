@@ -1,6 +1,9 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
@@ -113,6 +116,27 @@ fun Modifier.tableSideScroll(
         }.nestedScroll(KeepSideScrollLeftover)
         .horizontalScroll(state)
         .width(rowWidth)
+
+/**
+ * Lets sideways drags anywhere on a row, including its frozen cells, scroll [state] like the part
+ * under [tableSideScroll] does, so they never turn an enclosing pager instead.
+ */
+fun Modifier.tableSideDrag(
+    state: ScrollState,
+    layoutDirection: LayoutDirection,
+): Modifier =
+    this
+        .nestedScroll(KeepSideScrollLeftover)
+        .scrollable(
+            state,
+            Orientation.Horizontal,
+            reverseDirection =
+                ScrollableDefaults.reverseDirection(
+                    layoutDirection,
+                    Orientation.Horizontal,
+                    reverseScrolling = false,
+                ),
+        )
 
 /** Shades a [width]-wide strip at one edge, from transparent inward to [color] at the edge. */
 private fun DrawScope.drawEdgeCue(
