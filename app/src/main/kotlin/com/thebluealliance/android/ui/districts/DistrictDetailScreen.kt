@@ -48,6 +48,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
@@ -305,6 +306,7 @@ private fun RankingsTab(
                 modifier =
                     Modifier
                         .tableWidth()
+                        .blocksRowsBeneath()
                         .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
