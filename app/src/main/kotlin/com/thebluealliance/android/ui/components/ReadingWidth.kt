@@ -18,6 +18,12 @@ import androidx.compose.ui.unit.dp
 val ReadingMaxWidth = 840.dp
 
 /**
+ * Widest a running paragraph grows inside the reading column, for comfortable line lengths. No
+ * narrower than a compact window, so phone layout is unchanged.
+ */
+val ProseMaxWidth = 600.dp
+
+/**
  * Centers the content and caps it at [ReadingMaxWidth], so lines stay readable on wide windows.
  * Windows narrower than the cap lay out exactly as without it. For scrolling lists use
  * [ReadingWidthBox] instead, so the whole width still scrolls.

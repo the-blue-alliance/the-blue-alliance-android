@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.ui.unit.dp
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ReadingWidthTest {
@@ -30,5 +31,11 @@ class ReadingWidthTest {
     @Test
     fun `a 1024dp panel beside the rail centers the column`() {
         assertEquals(52.dp, readingInset(1024.dp - 80.dp))
+    }
+
+    @Test
+    fun `prose cap sits inside the column and above compact widths`() {
+        assertTrue(ProseMaxWidth < ReadingMaxWidth)
+        assertTrue(ProseMaxWidth >= 600.dp)
     }
 }
