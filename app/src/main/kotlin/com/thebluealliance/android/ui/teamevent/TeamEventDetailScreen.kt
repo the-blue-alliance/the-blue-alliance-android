@@ -129,7 +129,9 @@ fun TeamEventDetailScreen(
                                     overflow = TextOverflow.Ellipsis,
                                     modifier =
                                         Modifier
-                                            .weight(1f)
+                                            // Unfilled, so the link hugs the name instead of
+                                            // reaching across the empty bar to the actions.
+                                            .weight(1f, fill = false)
                                             .paddedClickable(
                                                 MaterialTheme.shapes.small,
                                                 horizontal = 6.dp,
