@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowSizeClass
 import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.MatchAdvancementMsgs
 import com.thebluealliance.android.domain.camelCaseToLabel
@@ -147,6 +149,13 @@ fun MatchDetailScreen(
                     )
                 }
             } else {
+                // Wide windows inset the dividers to the text margin and show video at 16:9.
+                val wide =
+                    currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
+                        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+                    )
+                val dividerModifier =
+                    Modifier.padding(horizontal = if (wide) 16.dp else 0.dp, vertical = 8.dp)
                 ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -168,7 +177,7 @@ fun MatchDetailScreen(
                         }
 
                         item(key = "divider_teams") {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            HorizontalDivider(modifier = dividerModifier)
                         }
 
                         // Teams
@@ -192,7 +201,7 @@ fun MatchDetailScreen(
                                 .map { MediaGridItem(type = it.type, foreignKey = it.key) }
                         if (mediaItems.isNotEmpty()) {
                             item(key = "media_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                HorizontalDivider(modifier = dividerModifier)
                                 Text(
                                     text = "Match Video",
                                     style = MaterialTheme.typography.titleMedium,
@@ -207,6 +216,8 @@ fun MatchDetailScreen(
                                 MediaGridRow(
                                     items = mediaItems,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    columns = matchVideoColumns(mediaItems.size, wide),
+                                    aspectRatio = if (wide) 16f / 9f else 1f,
                                 )
                             }
                         }
@@ -215,7 +226,7 @@ fun MatchDetailScreen(
                         val breakdown = uiState.scoreBreakdown
                         if (breakdown != null) {
                             item(key = "breakdown_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                HorizontalDivider(modifier = dividerModifier)
                                 Text(
                                     text = "Score Breakdown",
                                     style = MaterialTheme.typography.titleMedium,
@@ -746,3 +757,9 @@ private val breakdownFieldsByYear =
         2023 to breakdownFields2023,
         2015 to breakdownFields2015,
     )
+
+/** A lone match video spans the column on wide windows; otherwise videos pair up. */
+internal fun matchVideoColumns(
+    videoCount: Int,
+    wide: Boolean,
+): Int = if (wide && videoCount == 1) 1 else 2
