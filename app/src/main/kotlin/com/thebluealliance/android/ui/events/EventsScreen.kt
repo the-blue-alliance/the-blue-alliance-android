@@ -57,6 +57,8 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.OnBrandMuted
+import com.thebluealliance.android.ui.theme.OnBrandOutline
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -355,7 +357,7 @@ private fun WeekFilterChips(
     val weekChipColors =
         FilterChipDefaults.filterChipColors(
             containerColor = Color.Transparent,
-            labelColor = OnBrand.copy(alpha = 0.7f),
+            labelColor = OnBrandMuted,
             selectedContainerColor = OnBrand,
             selectedLabelColor = MaterialTheme.colorScheme.primaryContainer,
         )
@@ -363,7 +365,7 @@ private fun WeekFilterChips(
         FilterChipDefaults.filterChipBorder(
             enabled = true,
             selected = false,
-            borderColor = OnBrand.copy(alpha = 0.5f),
+            borderColor = OnBrandOutline,
             selectedBorderColor = Color.Transparent,
         )
 

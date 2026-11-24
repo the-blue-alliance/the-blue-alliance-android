@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.OnBrandMuted
 
 @Composable
 fun TBATabRow(
@@ -56,7 +57,7 @@ fun TBATab(
         onClick = onClick,
         modifier = modifier,
         selectedContentColor = OnBrand,
-        unselectedContentColor = OnBrand.copy(alpha = 0.7f),
+        unselectedContentColor = OnBrandMuted,
         text = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

@@ -15,4 +15,10 @@ object TbaBrandColors {
 
     /** Content on [Blue] and [HeaderBlue] (6.87:1 and 4.86:1). */
     val OnBlue = Color.White
+
+    /** Secondary content on [Blue], e.g. unselected tabs and chips (about 5.1:1, WCAG AA). */
+    val OnBlueMuted = Color.White.copy(alpha = 0.8f)
+
+    /** Outlines on [Blue], e.g. unselected chip borders (about 3.6:1, WCAG non-text 3:1). */
+    val OnBlueOutline = Color.White.copy(alpha = 0.6f)
 }
