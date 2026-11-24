@@ -109,6 +109,7 @@ fun EventInfoTab(
                 val districtLabel = districtDisplayName ?: event.district
                 EventInfoLinkRow(
                     text = "District: $districtLabel",
+                    onClickLabel = "View district",
                     onClick = { onNavigateToDistrict(event.district) },
                 )
             }
@@ -130,6 +131,7 @@ fun EventInfoTab(
             item {
                 EventInfoLinkRow(
                     text = event.address,
+                    onClickLabel = "Open in Maps",
                     onClick = {
                         val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
                         context.openUrl(url)
@@ -151,6 +153,7 @@ fun EventInfoTab(
             item {
                 EventInfoLinkRow(
                     text = event.website,
+                    onClickLabel = "Open in browser",
                     onClick = { context.openUrl(event.website) },
                     icon = {
                         Icon(
@@ -169,6 +172,7 @@ fun EventInfoTab(
             item {
                 EventInfoLinkRow(
                     text = "Pit Map",
+                    onClickLabel = "View pit map",
                     onClick = { onNavigateToPitMap(event.key, favoriteTeamKeys) },
                     icon = {
                         Icon(
@@ -203,6 +207,7 @@ fun EventInfoTab(
                 if (url != null) {
                     EventInfoLinkRow(
                         text = label,
+                        onClickLabel = "Watch webcast",
                         onClick = { context.openWebcast(webcast, url) },
                         icon = {
                             Icon(
@@ -236,13 +241,14 @@ fun EventInfoTab(
 private fun EventInfoLinkRow(
     text: String,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
     icon: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = CONTENT_INSET, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

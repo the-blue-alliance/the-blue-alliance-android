@@ -127,7 +127,7 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable {
+                .clickable(onClickLabel = "Open in browser") {
                     context.openUrl(contributor.htmlUrl)
                 }.padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
