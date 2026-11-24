@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -97,7 +96,7 @@ fun TopBarYearPicker(
                         } else {
                             null
                         },
-                    modifier = Modifier.semantics { selected = isSelected },
+                    modifier = Modifier.selectedIfCurrent(isSelected),
                     onClick = {
                         onYearSelected(year)
                         yearDropdownExpanded = false
