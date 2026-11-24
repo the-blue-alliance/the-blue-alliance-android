@@ -221,17 +221,7 @@ fun EventRankingsTab(
     val minWidths = rankingColumnMinWidths(primaryLabel, secondaryLabel, sortState.column)
     val sideScroll = rememberScrollState()
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val available = minOf(maxWidth, TABLE_MAX_WIDTH) - TABLE_ROW_PADDING * 2
-        val columnWidths =
-            fitColumnWidths(available.value, COLUMN_WEIGHTS, minWidths.map { it.value })
-                ?.map { it.dp }
-        val rowWidth =
-            sideScrollRowWidth(
-                maxWidth.value,
-                columnWidths?.map { it.value },
-                TABLE_ROW_PADDING.value,
-                frozenCount = FROZEN_COLUMNS,
-            )?.dp
+        val (columnWidths, rowWidth) = rankingColumnLayout(maxWidth, minWidths)
         // Only the header and row grids scroll, together, so expanded details stay on screen.
         // Rank and Team stay put, so every scrolled value keeps its team beside it.
         val cueColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.24f)
@@ -264,6 +254,34 @@ fun EventRankingsTab(
             }
         }
     }
+}
+
+/** Column widths, null when weighted, and the side-scrolling row width, null when rows fit. */
+internal data class RankingColumnLayout(
+    val columnWidths: List<Dp>?,
+    val rowWidth: Dp?,
+)
+
+/** Lays the columns out in the table's capped width within a [windowWidth]-wide window. */
+internal fun rankingColumnLayout(
+    windowWidth: Dp,
+    minWidths: List<Dp>,
+): RankingColumnLayout {
+    val viewport = minOf(windowWidth, TABLE_MAX_WIDTH)
+    val columnWidths =
+        fitColumnWidths(
+            (viewport - TABLE_ROW_PADDING * 2).value,
+            COLUMN_WEIGHTS,
+            minWidths.map { it.value },
+        )
+    val rowWidth =
+        sideScrollRowWidth(
+            viewport.value,
+            columnWidths,
+            TABLE_ROW_PADDING.value,
+            frozenCount = FROZEN_COLUMNS,
+        )
+    return RankingColumnLayout(columnWidths?.map { it.dp }, rowWidth?.dp)
 }
 
 /** Narrowest each column can be without breaking a header word or the team number. */
