@@ -20,8 +20,8 @@ class TopLevelNavigationTest {
 
     @Test
     fun `compact widths keep the bottom bar`() {
-        assertFalse(useNavigationRail(sizeClass(360f, 225f)))
         assertFalse(useNavigationRail(sizeClass(412f, 915f)))
+        assertFalse(useNavigationRail(sizeClass(360f, 480f)))
         assertFalse(useNavigationRail(sizeClass(599f, 800f)))
     }
 
@@ -31,6 +31,12 @@ class TopLevelNavigationTest {
         assertTrue(useNavigationRail(sizeClass(840f, 600f)))
         assertTrue(useNavigationRail(sizeClass(1024f, 640f)))
         assertTrue(useNavigationRail(sizeClass(1280f, 800f)))
+    }
+
+    @Test
+    fun `short windows use the rail at any width`() {
+        assertTrue(useNavigationRail(sizeClass(360f, 225f)))
+        assertTrue(useNavigationRail(sizeClass(599f, 479f)))
     }
 
     @Test

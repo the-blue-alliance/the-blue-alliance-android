@@ -18,9 +18,13 @@ private val MORE_SUB_SCREENS: Set<NavKey> =
 internal fun TopLevelDestination.isSelectedFor(currentRoute: NavKey): Boolean =
     key.isSameTab(currentRoute) || (key == Screen.More && currentRoute in MORE_SUB_SCREENS)
 
-/** Top-level navigation moves from the bottom bar to a side rail once the window is not compact. */
+/**
+ * Top-level navigation moves from the bottom bar to a side rail once the window is not compact in
+ * width, or is too short for a bottom bar to leave room for content.
+ */
 internal fun useNavigationRail(windowSizeClass: WindowSizeClass): Boolean =
-    windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) ||
+        !windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
 
 /** Tapping the current tab reselects it; any other tab navigates there. */
 @Composable
