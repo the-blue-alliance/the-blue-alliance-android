@@ -375,83 +375,13 @@ private fun FavoriteItem(
     onAddShortcut: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    val typeLabel =
-        when (favorite.modelType) {
-            ModelType.EVENT -> "Event"
-            ModelType.TEAM -> "Team"
-            ModelType.MATCH -> "Match"
-            ModelType.EVENT_TEAM -> "Team @ Event"
-            ModelType.DISTRICT -> "District"
-            else -> "Other"
-        }
-    var menuExpanded by remember { mutableStateOf(false) }
-
-    // The entity link stops short of the menu button so the two targets don't nest.
-    Row(
-        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(end = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable(onClick = onClick)
-                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = displayName,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = typeLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Box(modifier = Modifier.padding(vertical = 8.dp)) {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(
-                    imageVector = TbaIcons.MoreVert,
-                    contentDescription = "More options",
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-            ) {
-                if (canPinShortcuts) {
-                    DropdownMenuItem(
-                        text = { Text("Add shortcut to home screen") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            onAddShortcut()
-                        },
-                    )
-                }
-                DropdownMenuItem(
-                    text = { Text("Remove") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = TbaIcons.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        onRemove()
-                    },
-                )
-            }
-        }
-    }
+    MyTbaEntityRow(
+        title = displayName,
+        subtitle = modelTypeLabel(favorite.modelType),
+        onClick = onClick,
+        onRemove = onRemove,
+        onAddShortcut = if (canPinShortcuts) onAddShortcut else null,
+    )
 }
 
 @Composable
@@ -495,15 +425,41 @@ private fun SubscriptionItem(
     onClick: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    val typeLabel =
-        when (subscription.modelType) {
-            ModelType.EVENT -> "Event"
-            ModelType.TEAM -> "Team"
-            ModelType.MATCH -> "Match"
-            ModelType.EVENT_TEAM -> "Team @ Event"
-            ModelType.DISTRICT -> "District"
-            else -> "Other"
+    val notificationNames =
+        subscription.notifications.joinToString(", ") { serverKey ->
+            NotificationType
+                .fromServerKey(serverKey)
+                ?.displayName
+                ?.takeIf { it.isNotBlank() }
+                ?: serverKey
         }
+    MyTbaEntityRow(
+        title = displayName,
+        subtitle = "${modelTypeLabel(subscription.modelType)} · $notificationNames",
+        onClick = onClick,
+        onRemove = onRemove,
+    )
+}
+
+internal fun modelTypeLabel(modelType: Int): String =
+    when (modelType) {
+        ModelType.EVENT -> "Event"
+        ModelType.TEAM -> "Team"
+        ModelType.MATCH -> "Match"
+        ModelType.EVENT_TEAM -> "Team @ Event"
+        ModelType.DISTRICT -> "District"
+        else -> "Other"
+    }
+
+/** A myTBA entity link with its overflow menu; the shortcut item shows only when [onAddShortcut] is set. */
+@Composable
+private fun MyTbaEntityRow(
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit,
+    onRemove: () -> Unit,
+    onAddShortcut: (() -> Unit)? = null,
+) {
     var menuExpanded by remember { mutableStateOf(false) }
 
     // The entity link stops short of the menu button so the two targets don't nest.
@@ -520,20 +476,12 @@ private fun SubscriptionItem(
                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            val notificationNames =
-                subscription.notifications.joinToString(", ") { serverKey ->
-                    NotificationType
-                        .fromServerKey(serverKey)
-                        ?.displayName
-                        ?.takeIf { it.isNotBlank() }
-                        ?: serverKey
-                }
             Text(
-                text = displayName,
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = "$typeLabel · $notificationNames",
+                text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -549,6 +497,21 @@ private fun SubscriptionItem(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
+                if (onAddShortcut != null) {
+                    DropdownMenuItem(
+                        text = { Text("Add shortcut to home screen") },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onAddShortcut()
+                        },
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text("Remove") },
                     leadingIcon = {
