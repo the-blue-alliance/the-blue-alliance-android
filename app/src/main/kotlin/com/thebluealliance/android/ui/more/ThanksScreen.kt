@@ -134,7 +134,8 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
     ) {
         AsyncImage(
             model = contributor.avatarUrl,
-            contentDescription = contributor.login,
+            // Decorative: the login is read from the text beside it.
+            contentDescription = null,
             modifier = Modifier.size(40.dp).clip(CircleShape),
         )
         Spacer(modifier = Modifier.width(16.dp))
