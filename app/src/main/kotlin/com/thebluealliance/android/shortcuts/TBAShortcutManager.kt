@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import androidx.core.content.pm.ShortcutInfoCompat
@@ -25,7 +26,6 @@ import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -51,15 +51,23 @@ class TBAShortcutManager
     ) {
         /**
          * Start watching the favorites repository for changes, syncing favorites to Android's shortcuts
-         * system.
+         * system. Waits for the main thread's first idle so it does not compete with startup.
          */
         fun beginSyncingShortcuts() {
+            Looper.getMainLooper().queue.addIdleHandler {
+                startSyncing()
+                false
+            }
+        }
+
+        private fun startSyncing() {
             ProcessLifecycleOwner.get().lifecycleScope.launch {
                 tbaRepository
                     .observeFavorites()
                     .collectLatest { favorites ->
                         withContext(Dispatchers.IO) {
                             purgeUnfavoritedShortcuts(favorites)
+                            val season = currentSeason()
 
                             val shortcuts =
                                 favorites
@@ -67,7 +75,7 @@ class TBAShortcutManager
                                         ShortcutManagerCompat.getMaxShortcutCountPerActivity(
                                             context,
                                         ),
-                                    ).mapNotNull { it.getShortcutInfo() }
+                                    ).mapNotNull { it.getShortcutInfo(season) }
                             ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts)
                         }
                     }
@@ -84,37 +92,22 @@ class TBAShortcutManager
             ShortcutManagerCompat.removeDynamicShortcuts(context, idsToRemove)
         }
 
-        private suspend fun Favorite.getShortcutInfo(): ShortcutInfoCompat? =
+        private fun currentSeason() = FetchOnce { tbaApi.getStatus().currentSeason }
+
+        private suspend fun Favorite.getShortcutInfo(season: FetchOnce<Int>): ShortcutInfoCompat? =
             when (modelType) {
-                ModelType.TEAM -> getTeamShortcut(modelKey)
+                ModelType.TEAM -> getTeamShortcut(modelKey, season)
                 ModelType.EVENT -> getEventShortcut(modelKey)
                 else -> null
             }
 
-        private suspend fun getTeamShortcut(teamKey: String): ShortcutInfoCompat? {
-            val currentSeason: Int =
-                try {
-                    tbaApi.getStatus().currentSeason
-                } catch (_: Exception) {
-                    Log.w("TBAShortcutManager", "Failed to fetch current season")
-                    return null
-                }
-
-            // Start by ensuring we have the latest team info in the repository
-            // Particularly important for teams, as we don't start loading teams on app launch
-            try {
-                teamRepository.refreshTeam(teamKey)
-                teamRepository.refreshTeamMedia(teamKey, currentSeason)
-            } catch (_: Exception) {
-                Log.w("TBAShortcutManager", "Failed to refresh team $teamKey")
-            }
-
-            val team = teamRepository.observeTeam(teamKey).first() ?: return null
-            val media = teamRepository.observeTeamMedia(teamKey, currentSeason).first()
-
+        private suspend fun getTeamShortcut(
+            teamKey: String,
+            season: FetchOnce<Int>,
+        ): ShortcutInfoCompat? {
+            val (team, avatar) = loadShortcutTeam(teamKey, teamRepository, season) ?: return null
             val label = "${team.number} ${team.nickname}"
             val uri = "https://www.thebluealliance.com/team/${team.number}".toUri()
-            val avatar = media.firstOrNull { it.isAvatar }
 
             return ShortcutInfoCompat
                 .Builder(context, teamKey)
@@ -141,14 +134,7 @@ class TBAShortcutManager
         }
 
         private suspend fun getEventShortcut(eventKey: String): ShortcutInfoCompat? {
-            // Start by ensuring we have the latest event info in our repository
-            try {
-                eventRepository.refreshEvent(eventKey)
-            } catch (_: Exception) {
-                Log.w("TBAShortcutManager", "Failed to refresh event $eventKey")
-            }
-
-            val event = eventRepository.observeEvent(eventKey).first() ?: return null
+            val event = loadShortcutEvent(eventKey, eventRepository) ?: return null
             val label = "${event.year} ${event.name}"
             val uri = "https://www.thebluealliance.com/event/${event.key}".toUri()
 
@@ -176,7 +162,7 @@ class TBAShortcutManager
          * This will prompt the user with the system's pinned shortcut dialog.
          */
         suspend fun requestPinShortcut(favorite: Favorite) {
-            val shortcutInfo = favorite.getShortcutInfo()
+            val shortcutInfo = favorite.getShortcutInfo(currentSeason())
             if (shortcutInfo == null) {
                 userMessages.show("Failed to create shortcut")
                 return
