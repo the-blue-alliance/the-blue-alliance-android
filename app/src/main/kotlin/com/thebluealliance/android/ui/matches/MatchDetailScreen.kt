@@ -296,9 +296,9 @@ fun MatchDetailScreen(
                                 key = { "breakdown_${it.first}" },
                             ) { (apiKey, label) ->
                                 BreakdownRow(
+                                    modifier = breakdownWidth,
                                     redPlayoffAllianceTitle = redAllianceTitle,
                                     bluePlayoffAllianceTitle = blueAllianceTitle,
-                                    modifier = breakdownWidth,
                                     // Beside the video, each value sits under its score.
                                     scoreSeparatorWidth =
                                         scoreSeparatorWidth.takeIf { videoBesideScore },
@@ -621,9 +621,9 @@ private fun BreakdownRow(
     label: String,
     redValue: String,
     blueValue: String,
+    modifier: Modifier = Modifier,
     redPlayoffAllianceTitle: String? = null,
     bluePlayoffAllianceTitle: String? = null,
-    modifier: Modifier = Modifier,
     scoreSeparatorWidth: Dp? = null,
 ) {
     // One stop per row that says which value is whose.
