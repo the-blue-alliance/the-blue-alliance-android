@@ -43,6 +43,7 @@ import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
@@ -109,11 +110,10 @@ fun DistrictDetailScreen(
                             )
                         }
                     },
-                    actions = {
-                        IconButton(onClick = onNavigateToSearch) {
-                            Icon(imageVector = TbaIcons.Search, contentDescription = "Search")
-                        }
-                    },
+                    secondaryActions =
+                        listOf(
+                            TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                        ),
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {

@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -32,6 +30,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -63,11 +62,10 @@ fun TeamsScreen(
                 onRefresh = viewModel::refreshTeams,
                 isRefreshing = isRefreshing && uiState !is UiState.Loading,
                 title = { TopBarTitle("Teams") },
-                actions = {
-                    IconButton(onClick = onNavigateToSearch) {
-                        Icon(TbaIcons.Search, contentDescription = "Search")
-                    }
-                },
+                secondaryActions =
+                    listOf(
+                        TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                    ),
                 showLamp = true,
             )
         },

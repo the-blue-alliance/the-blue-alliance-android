@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.events.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -44,8 +41,10 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
+import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
@@ -158,101 +157,75 @@ fun EventDetailScreen(
                             )
                         }
                     },
-                    actions = {
-                        IconButton(onClick = {
-                            if (!viewModel.isSignedIn()) {
-                                showSignInDialog = true
-                            } else {
-                                showNotificationSheet = true
-                            }
-                        }) {
-                            val hasSubscription = subscription?.notifications?.isNotEmpty() == true
-                            Icon(
-                                imageVector =
-                                    if (hasSubscription) {
-                                        TbaIcons.Notifications
+                    secondaryActions =
+                        listOf(
+                            notificationPreferencesAction(
+                                notificationsOn = subscription?.notifications?.isNotEmpty() == true,
+                                onClick = {
+                                    if (!viewModel.isSignedIn()) {
+                                        showSignInDialog = true
                                     } else {
-                                        TbaIcons.NotificationsOutlined
-                                    },
-                                contentDescription = "Notification preferences",
-                            )
-                        }
-                        IconButton(onClick = viewModel::toggleFavorite) {
-                            Icon(
-                                imageVector =
-                                    if (isFavorite) {
-                                        TbaIcons.Star
-                                    } else {
-                                        TbaIcons.StarOutlined
-                                    },
-                                contentDescription =
-                                    if (isFavorite) {
-                                        "Remove from favorites"
-                                    } else {
-                                        "Add to favorites"
-                                    },
-                            )
-                        }
+                                        showNotificationSheet = true
+                                    }
+                                },
+                            ),
+                            TopBarAction(
+                                label =
+                                    if (isFavorite) "Remove from favorites" else "Add to favorites",
+                                icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
+                                onClick = viewModel::toggleFavorite,
+                            ),
+                        ),
+                    overflowMenu =
                         if (
                             hasDetailOverflowItems(
                                 entityLoaded = uiState.event != null,
                                 canPinShortcuts = viewModel.canPinShortcuts,
                             )
                         ) {
-                            var menuExpanded by remember { mutableStateOf(false) }
-                            Box {
-                                IconButton(onClick = { menuExpanded = true }) {
-                                    Icon(
-                                        imageVector = TbaIcons.MoreVert,
-                                        contentDescription = "More options",
+                            { close ->
+                                uiState.event?.let { event ->
+                                    DropdownMenuItem(
+                                        text = { Text("Share") },
+                                        leadingIcon = {
+                                            Icon(
+                                                TbaIcons.Share,
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            close()
+                                            context.shareTbaUrl(
+                                                title = "${event.year} ${event.name}",
+                                                url =
+                                                    "https://www.thebluealliance.com/event/" +
+                                                        event.key,
+                                            )
+                                        },
                                     )
                                 }
-                                DropdownMenu(
-                                    expanded = menuExpanded,
-                                    onDismissRequest = { menuExpanded = false },
-                                ) {
-                                    uiState.event?.let { event ->
-                                        DropdownMenuItem(
-                                            text = { Text("Share") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    TbaIcons.Share,
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                menuExpanded = false
-                                                context.shareTbaUrl(
-                                                    title = "${event.year} ${event.name}",
-                                                    url =
-                                                        "https://www.thebluealliance.com/event/" +
-                                                            event.key,
-                                                )
-                                            },
-                                        )
-                                    }
-                                    if (viewModel.canPinShortcuts) {
-                                        DropdownMenuItem(
-                                            text = { Text("Add to home screen") },
-                                            leadingIcon = {
-                                                Icon(
-                                                    painter =
-                                                        painterResource(
-                                                            R.drawable.ic_add_to_home_screen,
-                                                        ),
-                                                    contentDescription = null,
-                                                )
-                                            },
-                                            onClick = {
-                                                menuExpanded = false
-                                                viewModel.requestPinShortcut()
-                                            },
-                                        )
-                                    }
+                                if (viewModel.canPinShortcuts) {
+                                    DropdownMenuItem(
+                                        text = { Text("Add to home screen") },
+                                        leadingIcon = {
+                                            Icon(
+                                                painter =
+                                                    painterResource(
+                                                        R.drawable.ic_add_to_home_screen,
+                                                    ),
+                                                contentDescription = null,
+                                            )
+                                        },
+                                        onClick = {
+                                            close()
+                                            viewModel.requestPinShortcut()
+                                        },
+                                    )
                                 }
                             }
-                        }
-                    },
+                        } else {
+                            null
+                        },
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
