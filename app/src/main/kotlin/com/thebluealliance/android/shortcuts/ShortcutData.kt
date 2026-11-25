@@ -14,12 +14,15 @@ private const val TAG = "TBAShortcutManager"
 /**
  * The cached team and its avatar for [season], fetching only what the cache lacks. A team's
  * name and avatar rarely change, and its own screen refreshes them when opened. Falls back to
- * last season's cached avatar while [season] has none.
+ * last season's cached avatar while [season] has none. [attemptedMediaFetches] holds the
+ * (team, season) media fetches already tried this session, so a team without an avatar yet
+ * is fetched once per session rather than on every sync.
  */
 internal suspend fun loadShortcutTeam(
     teamKey: String,
     teamRepository: TeamRepository,
     season: Int,
+    attemptedMediaFetches: MutableSet<Pair<String, Int>>,
 ): Pair<Team, Media?>? {
     if (teamRepository.observeTeam(teamKey).first() == null) {
         refreshQuietly(teamKey) { teamRepository.refreshTeam(teamKey) }
@@ -29,8 +32,17 @@ internal suspend fun loadShortcutTeam(
         teamRepository.observeTeamMedia(teamKey, year).first().firstOrNull { it.isAvatar }
     var avatar = cachedAvatar(season)
     if (avatar == null) {
-        refreshQuietly(teamKey) { teamRepository.refreshTeamMedia(teamKey, season) }
-        avatar = cachedAvatar(season) ?: cachedAvatar(season - 1)
+        val fetch = teamKey to season
+        if (attemptedMediaFetches.add(fetch)) {
+            try {
+                refreshQuietly(teamKey) { teamRepository.refreshTeamMedia(teamKey, season) }
+            } catch (e: CancellationException) {
+                attemptedMediaFetches.remove(fetch)
+                throw e
+            }
+            avatar = cachedAvatar(season)
+        }
+        avatar = avatar ?: cachedAvatar(season - 1)
     }
     val team = teamRepository.observeTeam(teamKey).first() ?: return null
     return team to avatar

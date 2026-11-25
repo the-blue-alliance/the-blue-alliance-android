@@ -28,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,6 +50,8 @@ class TBAShortcutManager
         private val seasons: SeasonRepository,
         private val userMessages: UserMessageBus,
     ) {
+        private val attemptedMediaFetches = ConcurrentHashMap.newKeySet<Pair<String, Int>>()
+
         /**
          * Start watching the favorites repository for changes, syncing favorites to Android's shortcuts
          * system. Waits for the main thread's first idle so it does not compete with startup.
@@ -103,7 +106,9 @@ class TBAShortcutManager
             teamKey: String,
             season: Int,
         ): ShortcutInfoCompat? {
-            val (team, avatar) = loadShortcutTeam(teamKey, teamRepository, season) ?: return null
+            val (team, avatar) =
+                loadShortcutTeam(teamKey, teamRepository, season, attemptedMediaFetches)
+                    ?: return null
             val label = "${team.number} ${team.nickname}"
             val uri = "https://www.thebluealliance.com/team/${team.number}".toUri()
 

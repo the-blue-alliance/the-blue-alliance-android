@@ -39,7 +39,7 @@ class ShortcutDataTest {
             every { teamRepository.observeTeam("frc254") } returns flowOf(team)
             every { teamRepository.observeTeamMedia("frc254", 2026) } returns flowOf(listOf(avatar))
 
-            val result = loadShortcutTeam("frc254", teamRepository, 2026)
+            val result = loadShortcutTeam("frc254", teamRepository, 2026, mutableSetOf())
 
             assertEquals(team to avatar, result)
             coVerify(exactly = 0) { teamRepository.refreshTeam(any()) }
@@ -54,7 +54,7 @@ class ShortcutDataTest {
             every { teamRepository.observeTeamMedia("frc254", 2026) } returnsMany
                 listOf(flowOf(emptyList()), flowOf(listOf(avatar)))
 
-            val result = loadShortcutTeam("frc254", teamRepository, 2026)
+            val result = loadShortcutTeam("frc254", teamRepository, 2026, mutableSetOf())
 
             assertEquals(team to avatar, result)
             coVerify(exactly = 1) { teamRepository.refreshTeam("frc254") }
@@ -71,7 +71,7 @@ class ShortcutDataTest {
 
             assertEquals(
                 team to null,
-                loadShortcutTeam("frc254", teamRepository, 2026),
+                loadShortcutTeam("frc254", teamRepository, 2026, mutableSetOf()),
             )
         }
 
@@ -84,7 +84,10 @@ class ShortcutDataTest {
             every { teamRepository.observeTeamMedia("frc254", 2025) } returns
                 flowOf(listOf(lastYear))
 
-            assertEquals(team to lastYear, loadShortcutTeam("frc254", teamRepository, 2026))
+            assertEquals(
+                team to lastYear,
+                loadShortcutTeam("frc254", teamRepository, 2026, mutableSetOf()),
+            )
             coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2026) }
             coVerify(exactly = 0) { teamRepository.refreshTeamMedia("frc254", 2025) }
         }
@@ -96,7 +99,42 @@ class ShortcutDataTest {
             every { teamRepository.observeTeamMedia("frc254", 2026) } returnsMany
                 listOf(flowOf(emptyList()), flowOf(listOf(avatar)))
 
-            assertEquals(team to avatar, loadShortcutTeam("frc254", teamRepository, 2026))
+            assertEquals(
+                team to avatar,
+                loadShortcutTeam("frc254", teamRepository, 2026, mutableSetOf()),
+            )
+        }
+
+    @Test
+    fun `a team without an avatar is fetched once per session`() =
+        runTest {
+            val lastYear = avatar.copy(year = 2025)
+            val attempted = mutableSetOf<Pair<String, Int>>()
+            every { teamRepository.observeTeam("frc254") } returns flowOf(team)
+            every { teamRepository.observeTeamMedia("frc254", 2026) } returns flowOf(emptyList())
+            every { teamRepository.observeTeamMedia("frc254", 2025) } returns
+                flowOf(listOf(lastYear))
+
+            repeat(3) {
+                assertEquals(
+                    team to lastYear,
+                    loadShortcutTeam("frc254", teamRepository, 2026, attempted),
+                )
+            }
+
+            coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2026) }
+        }
+
+    @Test
+    fun `a new season is fetched even after last season was tried`() =
+        runTest {
+            val attempted = mutableSetOf("frc254" to 2025)
+            every { teamRepository.observeTeam("frc254") } returns flowOf(team)
+            every { teamRepository.observeTeamMedia("frc254", any()) } returns flowOf(emptyList())
+
+            loadShortcutTeam("frc254", teamRepository, 2026, attempted)
+
+            coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2026) }
         }
 
     @Test
