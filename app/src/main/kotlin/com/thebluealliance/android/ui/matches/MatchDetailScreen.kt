@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.MatchAdvancementMsgs
+import com.thebluealliance.android.domain.camelCaseToLabel
 import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getAdvancement
 import com.thebluealliance.android.domain.getFullLabel
@@ -533,13 +534,6 @@ private fun BreakdownRow(
         )
     }
 }
-
-private fun camelCaseToLabel(key: String): String =
-    key
-        .replace(Regex("([A-Z])"), " $1")
-        .replace("_", " ")
-        .trim()
-        .replaceFirstChar { it.uppercase() }
 
 internal fun getOrderedBreakdownFields(
     year: Int,

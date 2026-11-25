@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
@@ -41,8 +42,6 @@ class MatchDetailViewModel
         private val eventKey: String = matchKey.substringBeforeLast("_")
         private val year: Int = matchKey.substring(0, 4).toIntOrNull() ?: 0
 
-        private val json = Json { ignoreUnknownKeys = true }
-
         private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
 
         private val timeFormatter =
@@ -58,7 +57,7 @@ class MatchDetailViewModel
                 eventRepository.observeEventAlliances(eventKey),
                 refreshOutcome,
             ) { match, event, alliances, outcome ->
-                val breakdown = match?.scoreBreakdown?.let { parseBreakdown(it) }
+                val breakdown = match?.scoreBreakdown?.let { parseScoreBreakdown(it) }
                 val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
                 val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
                 val isEstimate =
@@ -110,7 +109,7 @@ class MatchDetailViewModel
 
         private fun parseVideos(jsonString: String): List<MatchVideo> {
             return try {
-                val array = json.decodeFromString<JsonArray>(jsonString)
+                val array = Json.decodeFromString<JsonArray>(jsonString)
                 array.mapNotNull { element ->
                     val obj = element as? JsonObject ?: return@mapNotNull null
                     val type = obj["type"]?.jsonPrimitive?.content ?: return@mapNotNull null
@@ -122,24 +121,25 @@ class MatchDetailViewModel
             }
         }
 
-        private fun parseBreakdown(jsonString: String): Map<String, Map<String, String>>? =
-            try {
-                val obj = json.decodeFromString<JsonObject>(jsonString)
-                val result = mutableMapOf<String, Map<String, String>>()
-                for (alliance in listOf("red", "blue")) {
-                    val allianceObj = obj[alliance] as? JsonObject ?: continue
-                    result[alliance] =
-                        allianceObj.entries
-                            .filter { (_, v) -> v is JsonPrimitive }
-                            .associate { (k, v) -> k to v.jsonPrimitive.content }
-                }
-                result.ifEmpty { null }
-            } catch (_: Exception) {
-                null
-            }
-
         @AssistedFactory
         interface Factory {
             fun create(navKey: Screen.MatchDetail): MatchDetailViewModel
         }
+    }
+
+/** Per-alliance breakdown values as strings; null values are left out so they show as missing. */
+internal fun parseScoreBreakdown(jsonString: String): Map<String, Map<String, String>>? =
+    try {
+        val obj = Json.decodeFromString<JsonObject>(jsonString)
+        val result = mutableMapOf<String, Map<String, String>>()
+        for (alliance in listOf("red", "blue")) {
+            val allianceObj = obj[alliance] as? JsonObject ?: continue
+            result[alliance] =
+                allianceObj.entries
+                    .filter { (_, v) -> v is JsonPrimitive && v !is JsonNull }
+                    .associate { (k, v) -> k to v.jsonPrimitive.content }
+        }
+        result.ifEmpty { null }
+    } catch (_: Exception) {
+        null
     }

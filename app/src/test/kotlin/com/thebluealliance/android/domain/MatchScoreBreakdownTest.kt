@@ -86,4 +86,46 @@ class MatchScoreBreakdownTest {
         assertEquals("+2 RP", formatBreakdownValue("rp", "2"))
         assertEquals("42", formatBreakdownValue("totalPoints", "42"))
     }
+
+    @Test
+    fun `endgame enums split into words`() {
+        assertEquals("Deep cage", formatBreakdownValue("endGameRobot1", "DeepCage"))
+        assertEquals("Shallow cage", formatBreakdownValue("endGameRobot2", "ShallowCage"))
+        assertEquals("Stage left", formatBreakdownValue("endGameRobot1", "StageLeft"))
+        assertEquals("Level 3", formatBreakdownValue("endGameTowerRobot1", "Level3"))
+        assertEquals("Hab level 2", formatBreakdownValue("preMatchLevelRobot1", "HabLevel2"))
+        assertEquals("TBA data", formatBreakdownValue("someKey", "TBAData"))
+    }
+
+    @Test
+    fun `single words, acronyms and non-enum values stay unchanged`() {
+        listOf(
+            "None",
+            "Docked",
+            "Parked",
+            "LRL",
+            "G206",
+            "frc254",
+            "A_ChevalDeFrise",
+            "-5",
+            "1.5",
+        ).forEach { assertEquals(it, formatBreakdownValue("someKey", it)) }
+    }
+
+    @Test
+    fun `every boolean formats as check or cross`() {
+        assertEquals("✗", formatBreakdownValue("g410Penalty", "false"))
+        assertEquals("✓", formatBreakdownValue("rotor1Auto", "true"))
+        assertEquals("✓", formatBreakdownValue("autoLineRobot1", "Yes"))
+        assertEquals("✗", formatBreakdownValue("mobilityRobot1", "No"))
+    }
+
+    @Test
+    fun `uncurated keys become sentence case labels split at digits`() {
+        assertEquals("Auto coral count", camelCaseToLabel("autoCoralCount"))
+        assertEquals("G410 penalty", camelCaseToLabel("g410Penalty"))
+        assertEquals("Robot 1 auto", camelCaseToLabel("robot1Auto"))
+        assertEquals("Foul points", camelCaseToLabel("foul_points"))
+        assertEquals("Tower face A", camelCaseToLabel("towerFaceA"))
+    }
 }
