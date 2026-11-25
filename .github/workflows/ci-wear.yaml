@@ -49,6 +49,8 @@ jobs:
           done
       - name: Build debug APK
         run: ./gradlew :wear:assembleDebug --stacktrace
+      - name: Run unit tests
+        run: ./gradlew :wear:testDebugUnitTest --stacktrace
 
   wear-release-build:
     runs-on: ubuntu-latest
