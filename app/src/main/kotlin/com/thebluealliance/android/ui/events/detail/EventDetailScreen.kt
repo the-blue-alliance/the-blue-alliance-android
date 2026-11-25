@@ -23,8 +23,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,6 +39,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.components.LocalMatchDetailPaneHost
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -54,6 +57,7 @@ import com.thebluealliance.android.ui.events.detail.tabs.EventMatchesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventRankingsTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventTeamsTab
 import com.thebluealliance.android.ui.theme.TbaIcons
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 enum class EventDetailTab(
@@ -86,11 +90,28 @@ fun EventDetailScreen(
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
+    // A match selected in the two-pane layout belongs to the Matches tab: open on it, and
+    // leaving the tab clears the selection rather than hiding it.
+    val paneHost = LocalMatchDetailPaneHost.current
+    val hasSelectedMatch = paneHost?.selectedMatchKey != null
+    val firstTab = if (hasSelectedMatch) EventDetailTab.MATCHES else initialTab
     val pagerState =
         rememberPagerState(
-            initialPage = initialTab.ordinal,
+            initialPage = firstTab.ordinal,
             pageCount = { EventDetailTab.entries.size },
         )
+    LaunchedEffect(hasSelectedMatch) {
+        if (hasSelectedMatch) pagerState.scrollToPage(EventDetailTab.MATCHES.ordinal)
+    }
+    val currentPaneHost by rememberUpdatedState(paneHost)
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.settledPage }.drop(1).collect { page ->
+            val host = currentPaneHost
+            if (page != EventDetailTab.MATCHES.ordinal && host?.selectedMatchKey != null) {
+                host.onClearSelection()
+            }
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
 
     var showSignInDialog by rememberSaveable { mutableStateOf(false) }

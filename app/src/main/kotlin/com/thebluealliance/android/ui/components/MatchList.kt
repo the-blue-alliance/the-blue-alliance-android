@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,12 +29,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.getGroup
@@ -55,6 +60,7 @@ fun MatchList(
     headerContent: (LazyListScope.() -> Unit)? = null,
     headerItemCount: Int = 0,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    selectedMatchKey: String? = null,
 ) {
     if (matches == null || matches.isEmpty()) {
         LazyColumn(
@@ -101,8 +107,16 @@ fun MatchList(
             }
             -1
         }
+    // A match already selected on arrival (deep link, resize) is scrolled to instead.
+    val arrivalSelection = remember { selectedMatchKey }
+    val initialSelectedIndex =
+        remember(grouped) {
+            arrivalSelection?.let { key -> matchListItemIndex(grouped.values, key, headerOffset) }
+        }
     // Scroll so the last few played matches are visible above the first unplayed
-    val scrollTarget = if (firstUnplayedIndex > 2) firstUnplayedIndex - 2 else 0
+    val scrollTarget =
+        initialSelectedIndex?.let { (it - 2).coerceAtLeast(0) }
+            ?: if (firstUnplayedIndex > 2) firstUnplayedIndex - 2 else 0
     val listState = rememberLazyListState()
     LaunchedEffect(scrollTarget) {
         if (scrollTarget > 0) {
@@ -168,6 +182,7 @@ fun MatchList(
                         match = match,
                         playoffType = playoffType,
                         onClick = { onNavigateToMatch(match.key) },
+                        selected = match.key == selectedMatchKey,
                     )
                     HorizontalDivider()
                 }
@@ -176,11 +191,31 @@ fun MatchList(
     }
 }
 
+/** Lazy list index of [matchKey] among [groups], each led by a header; null if absent. */
+internal fun matchListItemIndex(
+    groups: Collection<List<Match>>,
+    matchKey: String,
+    headerOffset: Int = 0,
+): Int? {
+    var index = headerOffset
+    for (group in groups) {
+        index++ // group header
+        val position = group.indexOfFirst { it.key == matchKey }
+        if (position >= 0) return index + position
+        index += group.size
+    }
+    return null
+}
+
+/** Width of the accent bar on the selected row's start edge. */
+private val SelectedRowAccentWidth = 4.dp
+
 @Composable
 fun MatchItem(
     match: Match,
     playoffType: PlayoffType,
     onClick: () -> Unit,
+    selected: Boolean = false,
 ) {
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
@@ -202,14 +237,34 @@ fun MatchItem(
             )
         }
 
+    val accent = MaterialTheme.colorScheme.primary
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .then(
+                    if (selected) {
+                        // Brand tint plus a start bar, so the alliance colors keep their contrast.
+                        Modifier
+                            .background(accent.copy(alpha = 0.12f))
+                            .drawBehind {
+                                val barWidth = SelectedRowAccentWidth.toPx()
+                                val rtl = layoutDirection == LayoutDirection.Rtl
+                                val startX = if (rtl) size.width - barWidth else 0f
+                                drawRect(
+                                    color = accent,
+                                    topLeft = Offset(startX, 0f),
+                                    size = size.copy(width = barWidth),
+                                )
+                            }
+                    } else {
+                        Modifier
+                    },
+                ).clickable(onClick = onClick)
                 .clearAndSetSemantics {
                     contentDescription = description
                     role = Role.Button
+                    if (selected) this.selected = true
                     onClick(label = "View match details") {
                         onClick()
                         true

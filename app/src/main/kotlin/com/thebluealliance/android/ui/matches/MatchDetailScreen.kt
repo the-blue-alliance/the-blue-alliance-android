@@ -3,13 +3,18 @@ package com.thebluealliance.android.ui.matches
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -62,6 +69,7 @@ import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.components.LocalDetailPaneChrome
 import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
@@ -75,6 +83,35 @@ import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
 import kotlin.math.roundToInt
+
+/** Width breakpoints the match layout uses. */
+internal data class MatchDetailWidths(
+    val wide: Boolean,
+    val expanded: Boolean,
+)
+
+/** Breakpoints from [paneWidth] when shown as a detail pane, else from the window. */
+internal fun matchDetailWidths(
+    windowSizeClass: WindowSizeClass,
+    paneWidth: Dp?,
+): MatchDetailWidths =
+    if (paneWidth != null) {
+        MatchDetailWidths(
+            wide = paneWidth.value >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+            expanded = paneWidth.value >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
+        )
+    } else {
+        MatchDetailWidths(
+            wide =
+                windowSizeClass.isWidthAtLeastBreakpoint(
+                    WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+                ),
+            expanded =
+                windowSizeClass.isWidthAtLeastBreakpoint(
+                    WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
+                ),
+        )
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,50 +128,83 @@ fun MatchDetailScreen(
     val isRefreshing = refreshing && (uiState.match != null || uiState.loadFailed)
     val context = LocalContext.current
 
-    Scaffold(
-        topBar = {
-            TBATopAppBar(
-                onRefresh = viewModel::refresh,
-                isRefreshing = isRefreshing,
-                title = {
-                    TopBarTitle(
-                        text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+    // As a detail pane the event's bar is above, so this bar is a surface-colored pane header
+    // with Close instead of Back, and no Search.
+    val paneChrome = LocalDetailPaneChrome.current
+    val shareAction =
+        uiState.match?.let { match ->
+            TopBarAction(
+                label = "Share",
+                icon = TbaIcons.Share,
+                onClick = {
+                    val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                    context.shareTbaUrl(
+                        title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
+                        url = "https://www.thebluealliance.com/match/${match.key}",
                     )
                 },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
-                        Icon(
-                            imageVector = TbaIcons.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
-                },
-                secondaryActions =
-                    listOfNotNull(
-                        TopBarAction(
-                            label = "Search",
-                            icon = TbaIcons.Search,
-                            onClick = onNavigateToSearch,
-                        ),
-                        uiState.match?.let { match ->
-                            TopBarAction(
-                                label = "Share",
-                                icon = TbaIcons.Share,
-                                onClick = {
-                                    val eventLabel =
-                                        uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
-                                    context.shareTbaUrl(
-                                        title =
-                                            "$eventLabel${match.getFullLabel(uiState.playoffType)}",
-                                        url = "https://www.thebluealliance.com/match/${match.key}",
-                                    )
-                                },
-                            )
-                        },
-                    ),
             )
+        }
+    val title: @Composable () -> Unit = {
+        TopBarTitle(
+            text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    Scaffold(
+        contentWindowInsets =
+            if (paneChrome != null) {
+                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom + WindowInsetsSides.End)
+            } else {
+                ScaffoldDefaults.contentWindowInsets
+            },
+        topBar = {
+            if (paneChrome != null) {
+                TBATopAppBar(
+                    windowInsets = WindowInsets(0),
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        ),
+                    onRefresh = viewModel::refresh,
+                    isRefreshing = isRefreshing,
+                    title = title,
+                    secondaryActions =
+                        listOfNotNull(
+                            shareAction,
+                            TopBarAction(
+                                label = "Close match",
+                                icon = TbaIcons.Close,
+                                onClick = paneChrome.onClose,
+                            ),
+                        ),
+                )
+            } else {
+                TBATopAppBar(
+                    onRefresh = viewModel::refresh,
+                    isRefreshing = isRefreshing,
+                    title = title,
+                    navigationIcon = {
+                        IconButton(onClick = onNavigateUp) {
+                            Icon(
+                                imageVector = TbaIcons.ArrowBack,
+                                contentDescription = "Back",
+                            )
+                        }
+                    },
+                    secondaryActions =
+                        listOfNotNull(
+                            TopBarAction(
+                                label = "Search",
+                                icon = TbaIcons.Search,
+                                onClick = onNavigateToSearch,
+                            ),
+                            shareAction,
+                        ),
+                )
+            }
         },
     ) { innerPadding ->
         PullToRefreshBox(
@@ -158,162 +228,166 @@ fun MatchDetailScreen(
                     )
                 }
             } else {
-                // Wide windows inset the dividers to the text margin and show video at 16:9.
-                val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-                val wide =
-                    windowSize.isWidthAtLeastBreakpoint(
-                        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                    )
-                val dividerModifier =
-                    Modifier.padding(horizontal = if (wide) 16.dp else 0.dp, vertical = 8.dp)
-                val mediaItems =
-                    uiState.videos
-                        .filter { mediaUrl(it.type, it.key) != null }
-                        .map { MediaGridItem(type = it.type, foreignKey = it.key) }
-                val videoBesideScore =
-                    matchVideoBesideScore(
-                        expandedWidth =
-                            windowSize.isWidthAtLeastBreakpoint(
-                                WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
-                            ),
-                        videoCount = mediaItems.size,
-                    )
-                val scoreSeparatorWidth = scoreSeparatorWidth()
-                val summary: @Composable () -> Unit = {
-                    EventInfo(
-                        eventName = uiState.eventName,
-                        eventKey = uiState.eventKey,
-                        formattedTime = uiState.formattedTime,
-                        onNavigateToEvent = onNavigateToEvent,
-                    )
-                    ScoreSummary(match, uiState.playoffType)
-                    HorizontalDivider(modifier = dividerModifier)
-                    AllianceTeams(
-                        redTeamKeys = match.redTeamKeys,
-                        blueTeamKeys = match.blueTeamKeys,
-                        redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
-                        bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
-                        onTeamClick = { teamKey ->
-                            val ek = uiState.eventKey
-                            if (ek != null) onNavigateToTeamEvent(teamKey, ek)
-                        },
-                    )
-                }
-                val videoHeader: @Composable (Modifier) -> Unit = { modifier ->
-                    Text(
-                        text = "Match Video",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = modifier.padding(vertical = 8.dp),
-                    )
-                }
-                ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = readingPadding,
-                    ) {
-                        if (videoBesideScore) {
-                            // Result, teams and video share the first view on wide windows,
-                            // instead of the video falling below the fold.
-                            item(key = "summary_and_media") {
-                                Row(modifier = Modifier.fillMaxWidth()) {
-                                    Column(modifier = Modifier.weight(1f)) { summary() }
-                                    // The left column's 16dp end margin is the gutter.
-                                    Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
-                                        videoHeader(Modifier)
+                BoxWithConstraints(Modifier.fillMaxSize()) {
+                    // Wide windows inset the dividers to the text margin and show video at 16:9. A
+                    // detail pane goes by its own width, not the window's.
+                    val widths =
+                        matchDetailWidths(
+                            windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass,
+                            paneWidth = if (paneChrome != null) maxWidth else null,
+                        )
+                    val wide = widths.wide
+                    val dividerModifier =
+                        Modifier.padding(horizontal = if (wide) 16.dp else 0.dp, vertical = 8.dp)
+                    val mediaItems =
+                        uiState.videos
+                            .filter { mediaUrl(it.type, it.key) != null }
+                            .map { MediaGridItem(type = it.type, foreignKey = it.key) }
+                    val videoBesideScore =
+                        matchVideoBesideScore(
+                            expandedWidth = widths.expanded,
+                            videoCount = mediaItems.size,
+                        )
+                    val scoreSeparatorWidth = scoreSeparatorWidth()
+                    val summary: @Composable () -> Unit = {
+                        EventInfo(
+                            eventName = uiState.eventName,
+                            eventKey = uiState.eventKey,
+                            formattedTime = uiState.formattedTime,
+                            // A pane already sits inside this event.
+                            onNavigateToEvent = onNavigateToEvent.takeIf { paneChrome == null },
+                        )
+                        ScoreSummary(match, uiState.playoffType)
+                        HorizontalDivider(modifier = dividerModifier)
+                        AllianceTeams(
+                            redTeamKeys = match.redTeamKeys,
+                            blueTeamKeys = match.blueTeamKeys,
+                            redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
+                            bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
+                            onTeamClick = { teamKey ->
+                                val ek = uiState.eventKey
+                                if (ek != null) onNavigateToTeamEvent(teamKey, ek)
+                            },
+                        )
+                    }
+                    val videoHeader: @Composable (Modifier) -> Unit = { modifier ->
+                        Text(
+                            text = "Match Video",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = modifier.padding(vertical = 8.dp),
+                        )
+                    }
+                    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = readingPadding,
+                        ) {
+                            if (videoBesideScore) {
+                                // Result, teams and video share the first view on wide windows,
+                                // instead of the video falling below the fold.
+                                item(key = "summary_and_media") {
+                                    Row(modifier = Modifier.fillMaxWidth()) {
+                                        Column(modifier = Modifier.weight(1f)) { summary() }
+                                        // The left column's 16dp end margin is the gutter.
+                                        Column(
+                                            modifier = Modifier.weight(1f).padding(end = 16.dp),
+                                        ) {
+                                            videoHeader(Modifier)
+                                            MediaGridRow(
+                                                items = mediaItems,
+                                                modifier = Modifier.padding(vertical = 4.dp),
+                                                columns =
+                                                    matchVideoColumns(
+                                                        mediaItems.size,
+                                                        wide = true,
+                                                    ),
+                                                aspectRatio = 16f / 9f,
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                item(key = "summary") {
+                                    Column { summary() }
+                                }
+                                if (mediaItems.isNotEmpty()) {
+                                    item(key = "media_header") {
+                                        HorizontalDivider(modifier = dividerModifier)
+                                        videoHeader(Modifier.padding(horizontal = 16.dp))
+                                    }
+                                    item(key = "media_grid") {
                                         MediaGridRow(
                                             items = mediaItems,
-                                            modifier = Modifier.padding(vertical = 4.dp),
-                                            columns =
-                                                matchVideoColumns(
-                                                    mediaItems.size,
-                                                    wide = true,
+                                            // Wide windows keep the tiles on the 16dp text margin.
+                                            modifier =
+                                                Modifier.padding(
+                                                    horizontal = if (wide) 16.dp else 8.dp,
+                                                    vertical = 4.dp,
                                                 ),
-                                            aspectRatio = 16f / 9f,
+                                            columns = matchVideoColumns(mediaItems.size, wide),
+                                            aspectRatio = if (wide) 16f / 9f else 1f,
                                         )
                                     }
                                 }
                             }
-                        } else {
-                            item(key = "summary") {
-                                Column { summary() }
-                            }
-                            if (mediaItems.isNotEmpty()) {
-                                item(key = "media_header") {
+
+                            // Score breakdown
+                            val breakdown = uiState.scoreBreakdown
+                            if (breakdown != null) {
+                                // Wide windows keep red and blue values near their scores.
+                                val breakdownWidth =
+                                    when {
+                                        videoBesideScore -> Modifier.fillMaxWidth(0.5f)
+                                        wide -> Modifier.breakdownWidth()
+                                        else -> Modifier
+                                    }
+                                item(key = "breakdown_header") {
                                     HorizontalDivider(modifier = dividerModifier)
-                                    videoHeader(Modifier.padding(horizontal = 16.dp))
-                                }
-                                item(key = "media_grid") {
-                                    MediaGridRow(
-                                        items = mediaItems,
-                                        // Wide windows keep the tiles on the 16dp text margin.
+                                    Text(
+                                        text = "Score Breakdown",
+                                        style = MaterialTheme.typography.titleMedium,
                                         modifier =
-                                            Modifier.padding(
-                                                horizontal = if (wide) 16.dp else 8.dp,
-                                                vertical = 4.dp,
-                                            ),
-                                        columns = matchVideoColumns(mediaItems.size, wide),
-                                        aspectRatio = if (wide) 16f / 9f else 1f,
+                                            breakdownWidth
+                                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                                .semantics { heading() },
                                     )
                                 }
-                            }
-                        }
 
-                        // Score breakdown
-                        val breakdown = uiState.scoreBreakdown
-                        if (breakdown != null) {
-                            // Wide windows keep red and blue values near their scores.
-                            val breakdownWidth =
-                                when {
-                                    videoBesideScore -> Modifier.fillMaxWidth(0.5f)
-                                    wide -> Modifier.breakdownWidth()
-                                    else -> Modifier
+                                val redAllianceTitle = match.redPlayoffAlliance?.displayTitle
+                                val blueAllianceTitle = match.bluePlayoffAlliance?.displayTitle
+                                val redBreakdown = breakdown["red"] ?: emptyMap()
+                                val blueBreakdown = breakdown["blue"] ?: emptyMap()
+                                val orderedFields =
+                                    getOrderedBreakdownFields(
+                                        year = uiState.year,
+                                        redBreakdown = redBreakdown,
+                                        blueBreakdown = blueBreakdown,
+                                    )
+
+                                items(
+                                    orderedFields,
+                                    key = { "breakdown_${it.first}" },
+                                ) { (apiKey, label) ->
+                                    BreakdownRow(
+                                        modifier = breakdownWidth,
+                                        redPlayoffAllianceTitle = redAllianceTitle,
+                                        bluePlayoffAllianceTitle = blueAllianceTitle,
+                                        // Beside the video, each value sits under its score.
+                                        scoreSeparatorWidth =
+                                            scoreSeparatorWidth.takeIf { videoBesideScore },
+                                        label = label,
+                                        redValue =
+                                            formatBreakdownValue(
+                                                apiKey,
+                                                redBreakdown[apiKey] ?: "-",
+                                            ),
+                                        blueValue =
+                                            formatBreakdownValue(
+                                                apiKey,
+                                                blueBreakdown[apiKey] ?: "-",
+                                            ),
+                                    )
                                 }
-                            item(key = "breakdown_header") {
-                                HorizontalDivider(modifier = dividerModifier)
-                                Text(
-                                    text = "Score Breakdown",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier =
-                                        breakdownWidth
-                                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                                            .semantics { heading() },
-                                )
-                            }
-
-                            val redAllianceTitle = match.redPlayoffAlliance?.displayTitle
-                            val blueAllianceTitle = match.bluePlayoffAlliance?.displayTitle
-                            val redBreakdown = breakdown["red"] ?: emptyMap()
-                            val blueBreakdown = breakdown["blue"] ?: emptyMap()
-                            val orderedFields =
-                                getOrderedBreakdownFields(
-                                    year = uiState.year,
-                                    redBreakdown = redBreakdown,
-                                    blueBreakdown = blueBreakdown,
-                                )
-
-                            items(
-                                orderedFields,
-                                key = { "breakdown_${it.first}" },
-                            ) { (apiKey, label) ->
-                                BreakdownRow(
-                                    modifier = breakdownWidth,
-                                    redPlayoffAllianceTitle = redAllianceTitle,
-                                    bluePlayoffAllianceTitle = blueAllianceTitle,
-                                    // Beside the video, each value sits under its score.
-                                    scoreSeparatorWidth =
-                                        scoreSeparatorWidth.takeIf { videoBesideScore },
-                                    label = label,
-                                    redValue =
-                                        formatBreakdownValue(
-                                            apiKey,
-                                            redBreakdown[apiKey] ?: "-",
-                                        ),
-                                    blueValue =
-                                        formatBreakdownValue(
-                                            apiKey,
-                                            blueBreakdown[apiKey] ?: "-",
-                                        ),
-                                )
                             }
                         }
                     }
@@ -328,7 +402,7 @@ private fun EventInfo(
     eventName: String?,
     eventKey: String?,
     formattedTime: String?,
-    onNavigateToEvent: (String) -> Unit,
+    onNavigateToEvent: ((String) -> Unit)?,
 ) {
     if (eventName == null && formattedTime == null) return
     Column(
@@ -337,7 +411,13 @@ private fun EventInfo(
                 .fillMaxWidth()
                 .padding(vertical = 4.dp),
     ) {
-        if (eventName != null && eventKey != null) {
+        if (eventName != null && onNavigateToEvent == null) {
+            Text(
+                text = eventName,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 2.dp),
+            )
+        } else if (eventName != null && eventKey != null && onNavigateToEvent != null) {
             // Full-width tap target (EventRow idiom) so hover/ripple reads as a row rather
             // than hugging the text; the 16.dp inset keeps the text where it was.
             Text(
