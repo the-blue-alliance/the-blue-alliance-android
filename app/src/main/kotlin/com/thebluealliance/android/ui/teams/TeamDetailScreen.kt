@@ -65,6 +65,7 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -213,54 +214,61 @@ fun TeamDetailScreen(
                                     },
                             )
                         }
-                        var menuExpanded by remember { mutableStateOf(false) }
-                        Box {
-                            IconButton(onClick = { menuExpanded = true }) {
-                                Icon(TbaIcons.MoreVert, contentDescription = "More options")
-                            }
-                            DropdownMenu(
-                                expanded = menuExpanded,
-                                onDismissRequest = { menuExpanded = false },
-                            ) {
-                                uiState.team?.let { team ->
-                                    DropdownMenuItem(
-                                        text = { Text("Share") },
-                                        leadingIcon = {
-                                            Icon(
-                                                TbaIcons.Share,
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            menuExpanded = false
-                                            context.shareTbaUrl(
-                                                title =
-                                                    "Team ${team.number} - " +
-                                                        (team.nickname ?: ""),
-                                                url =
-                                                    "https://www.thebluealliance.com/team/" +
-                                                        "${team.number}",
-                                            )
-                                        },
-                                    )
+                        if (
+                            hasDetailOverflowItems(
+                                entityLoaded = uiState.team != null,
+                                canPinShortcuts = viewModel.canPinShortcuts,
+                            )
+                        ) {
+                            var menuExpanded by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { menuExpanded = true }) {
+                                    Icon(TbaIcons.MoreVert, contentDescription = "More options")
                                 }
-                                if (viewModel.canPinShortcuts) {
-                                    DropdownMenuItem(
-                                        text = { Text("Add to home screen") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter =
-                                                    painterResource(
-                                                        R.drawable.ic_add_to_home_screen,
-                                                    ),
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            menuExpanded = false
-                                            viewModel.requestPinShortcut()
-                                        },
-                                    )
+                                DropdownMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = { menuExpanded = false },
+                                ) {
+                                    uiState.team?.let { team ->
+                                        DropdownMenuItem(
+                                            text = { Text("Share") },
+                                            leadingIcon = {
+                                                Icon(
+                                                    TbaIcons.Share,
+                                                    contentDescription = null,
+                                                )
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                context.shareTbaUrl(
+                                                    title =
+                                                        "Team ${team.number} - " +
+                                                            (team.nickname ?: ""),
+                                                    url =
+                                                        "https://www.thebluealliance.com/team/" +
+                                                            "${team.number}",
+                                                )
+                                            },
+                                        )
+                                    }
+                                    if (viewModel.canPinShortcuts) {
+                                        DropdownMenuItem(
+                                            text = { Text("Add to home screen") },
+                                            leadingIcon = {
+                                                Icon(
+                                                    painter =
+                                                        painterResource(
+                                                            R.drawable.ic_add_to_home_screen,
+                                                        ),
+                                                    contentDescription = null,
+                                                )
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                viewModel.requestPinShortcut()
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
