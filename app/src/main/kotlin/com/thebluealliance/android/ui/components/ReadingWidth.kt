@@ -7,9 +7,16 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
@@ -97,3 +104,63 @@ fun ReadingWidthBox(
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit,
 ) = ReadingWidthBox(PaddingValues(), modifier, content = content)
+
+/**
+ * Paints a screen's content area: [page] under the centered reading column and [backdrop] in the
+ * margins beside it, full height, so on a wide window the column reads as a sheet and header bands
+ * capped to it end at its edges. No wider than the column, it is a plain [narrow] fill.
+ */
+fun Modifier.pageBackground(
+    page: Color,
+    backdrop: Color,
+    narrow: Color = page,
+): Modifier =
+    drawBehind {
+        val inset = sheetInset(size.width, ReadingMaxWidth.toPx())
+        if (inset <= 0f) {
+            drawRect(narrow)
+        } else {
+            drawRect(backdrop)
+            drawRect(
+                page,
+                topLeft = Offset(inset, 0f),
+                size = Size(size.width - inset * 2, size.height),
+            )
+        }
+    }
+
+/** Width of each margin beside a centered [column] in [width], whole pixels; 0 or less if none. */
+internal fun sheetInset(
+    width: Float,
+    column: Float,
+): Float = kotlin.math.round((width - column) / 2f)
+
+private val ColorScheme.isDark: Boolean get() = background.luminance() < 0.5f
+
+/**
+ * The sheet under the reading column on a wide window: the lightest tone in light, and in dark the
+ * elevated one, lighter than the backdrop, so the column sits above the margins rather than in a well.
+ */
+val ColorScheme.pageSheet: Color get() = if (isDark) surfaceContainer else background
+
+/** The backdrop beside the reading column on a wide window, a step below [pageSheet]. */
+val ColorScheme.pageBackdrop: Color get() = if (isDark) background else surfaceContainer
+
+/**
+ * [pageBackground] in the theme's colors: beside a rail, [pageSheet] on the column and
+ * [pageBackdrop] beside it; background when there are no margins or no rail, so phones and narrow
+ * windows are unchanged.
+ */
+@Composable
+fun Modifier.pageBackground(): Modifier {
+    val colors = MaterialTheme.colorScheme
+    return if (LocalNavigationRailShown.current) {
+        pageBackground(
+            page = colors.pageSheet,
+            backdrop = colors.pageBackdrop,
+            narrow = colors.background,
+        )
+    } else {
+        pageBackground(page = colors.background, backdrop = colors.background)
+    }
+}

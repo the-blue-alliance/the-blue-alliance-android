@@ -41,6 +41,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -114,17 +115,14 @@ fun RegionalAdvancementScreen(
             state = uiState,
             isRefreshing = isRefreshing,
             onRefresh = viewModel::refreshRankings,
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier = Modifier.pageBackground().padding(innerPadding).fillMaxSize(),
             empty = {
                 EmptyBox("No regional advancement rankings for $selectedYear")
             },
         ) { rankings ->
             LazyColumn(
                 state = listState,
-                modifier =
-                    Modifier.fillMaxSize().background(
-                        MaterialTheme.colorScheme.background,
-                    ),
+                modifier = Modifier.fillMaxSize(),
             ) {
                 item(key = "header") {
                     Box(modifier = Modifier.tableWidth()) { RankingsTableHeader() }

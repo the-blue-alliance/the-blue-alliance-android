@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.more
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -42,6 +41,7 @@ import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 
@@ -87,9 +87,9 @@ fun ThanksScreen(
                 Column(
                     modifier =
                         Modifier
+                            .pageBackground()
                             .padding(innerPadding)
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
                             .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,

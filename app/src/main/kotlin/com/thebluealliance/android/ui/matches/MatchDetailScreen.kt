@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.matches
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -79,6 +78,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
@@ -213,7 +213,7 @@ fun MatchDetailScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .pageBackground(),
         ) {
             val match = uiState.match
             if (match == null) {

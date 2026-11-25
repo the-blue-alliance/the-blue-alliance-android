@@ -58,6 +58,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 import com.thebluealliance.android.ui.theme.OnBrandOutline
@@ -118,9 +119,9 @@ fun EventsScreen(
             onRefresh = viewModel::refreshEvents,
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize(),
             empty = { EmptyBox("No events found for $selectedYear") },
         ) { data ->
             EventsList(

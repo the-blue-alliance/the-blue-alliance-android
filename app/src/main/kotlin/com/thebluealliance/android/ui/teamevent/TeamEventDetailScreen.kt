@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.teamevent
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,6 +66,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.statRowWidth
@@ -216,7 +216,7 @@ fun TeamEventDetailScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
-                    .background(MaterialTheme.colorScheme.background),
+                    .pageBackground(),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,

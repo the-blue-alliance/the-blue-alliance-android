@@ -76,6 +76,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -367,7 +368,7 @@ private fun InfoTab(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .pageBackground()
                     .padding(16.dp),
             contentPadding = readingPadding,
         ) {

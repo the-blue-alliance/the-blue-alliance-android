@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.settings
 
 import android.app.NotificationManager
 import android.content.Context
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -35,6 +34,7 @@ import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
@@ -71,9 +71,9 @@ fun SettingsScreen(
         Column(
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
                     .readingWidth()
                     .fillMaxWidth()
                     .padding(16.dp),

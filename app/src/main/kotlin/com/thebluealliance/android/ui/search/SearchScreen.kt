@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.search
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +35,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -141,9 +141,9 @@ fun SearchScreen(
         Column(
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize(),
         ) {
             if (uiState.query.isBlank()) {
                 EmptyBox(message = "Search teams and events")

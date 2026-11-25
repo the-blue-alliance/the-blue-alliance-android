@@ -12,6 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.thebluealliance.android.core.theme.TbaBrandColors
+import com.thebluealliance.android.core.theme.TbaPaletteTokens
 import com.thebluealliance.android.core.theme.TbaDarkColorTokens as Dark
 import com.thebluealliance.android.core.theme.TbaLightColorTokens as Light
 
@@ -34,6 +35,12 @@ val BrandHeaderContainer: Color = TbaBrandColors.HeaderBlue
 val OnBrand: Color = TbaBrandColors.OnBlue
 val OnBrandMuted: Color = TbaBrandColors.OnBlueMuted
 val OnBrandOutline: Color = TbaBrandColors.OnBlueOutline
+
+/**
+ * The strip painted behind the status bar while the navigation rail shows: Neutral10 in both
+ * modes, so the status bar is its own band above the rail and the blue bar. White icons, 17.2:1.
+ */
+val StatusStripGray: Color = TbaPaletteTokens.Neutral10
 
 internal val TbaLightColorScheme =
     lightColorScheme(

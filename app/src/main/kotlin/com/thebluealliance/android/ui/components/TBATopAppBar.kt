@@ -111,6 +111,8 @@ fun TBATopAppBar(
     secondaryActions: List<TopBarAction> = emptyList(),
     overflowMenu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)? = null,
 ) {
+    // Beside a rail the lamp is in the rail's header.
+    val showLamp = showLamp && !LocalNavigationRailShown.current
     val hasNavigationIcon = showLamp || navigationIcon != null
     // The title's Refresh action ignores requests while busy, as pull-to-refresh does.
     val currentRefreshing by rememberUpdatedState(isRefreshing)

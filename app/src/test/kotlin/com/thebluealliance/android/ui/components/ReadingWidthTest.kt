@@ -56,4 +56,16 @@ class ReadingWidthTest {
         assertEquals(StatRowMaxWidth, statRowWidth(601.dp))
         assertEquals(StatRowMaxWidth, statRowWidth(984.dp))
     }
+
+    @Test
+    fun `the sheet has no margins until the window outgrows the column`() {
+        assertTrue(sheetInset(800f, 840f) <= 0f)
+        assertEquals(0f, sheetInset(840f, 840f))
+    }
+
+    @Test
+    fun `sheet margins are even whole pixels`() {
+        assertEquals(92f, sheetInset(1024f, 840f))
+        assertEquals(2f, sheetInset(843f, 840f))
+    }
 }
