@@ -49,6 +49,8 @@ jobs:
           done
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
+      - name: Run shared network module unit tests
+        run: ./gradlew :core-network:testDebugUnitTest --stacktrace
       - name: Run unit tests
         run: ./gradlew :app:testDebugUnitTest :core-theme:testDebugUnitTest --stacktrace
 
