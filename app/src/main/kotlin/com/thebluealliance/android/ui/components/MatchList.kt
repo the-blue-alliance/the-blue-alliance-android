@@ -149,24 +149,28 @@ fun MatchList(
         grouped.forEach { (group, levelMatches) ->
             val headerKey = "match_header_${group.label}"
             stickyHeader(key = headerKey) {
-                SectionHeader(
-                    label = group.label,
-                    isStuck = stuckHeaderKey == headerKey,
-                    allHeaders = headerInfos,
-                    onHeaderSelected = { info ->
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(info.itemIndex)
-                        }
-                    },
-                )
+                Box(modifier = Modifier.tableWidth()) {
+                    SectionHeader(
+                        label = group.label,
+                        isStuck = stuckHeaderKey == headerKey,
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
             }
             items(levelMatches, key = { it.key }) { match ->
-                MatchItem(
-                    match = match,
-                    playoffType = playoffType,
-                    onClick = { onNavigateToMatch(match.key) },
-                )
-                HorizontalDivider()
+                Column(modifier = Modifier.tableWidth()) {
+                    MatchItem(
+                        match = match,
+                        playoffType = playoffType,
+                        onClick = { onNavigateToMatch(match.key) },
+                    )
+                    HorizontalDivider()
+                }
             }
         }
     }

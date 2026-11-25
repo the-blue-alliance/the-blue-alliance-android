@@ -54,6 +54,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
@@ -218,7 +219,7 @@ private fun RankingHeaderRow(
     Row(
         modifier =
             Modifier
-                .fillMaxWidth()
+                .tableWidth()
                 .background(BrandHeaderContainer)
                 // 6.dp vertical here + 6.dp inside each sortable cell below: the sort targets get
                 // a full-height hover band without changing the header's height. The horizontal
@@ -412,7 +413,7 @@ private fun RankingItem(
     )
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.tableWidth(),
     ) {
         Row(
             modifier =

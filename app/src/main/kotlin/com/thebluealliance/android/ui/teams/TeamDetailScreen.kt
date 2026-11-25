@@ -66,6 +66,7 @@ import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -359,106 +360,108 @@ private fun InfoTab(
         return
     }
     val avatar = media?.firstOrNull { it.isAvatar }
-    LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(16.dp),
-        contentPadding = innerPadding,
-    ) {
-        item {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (avatar != null) {
-                    val bitmap =
-                        remember(avatar.base64Image) {
-                            try {
-                                val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
-                                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                            } catch (_: Exception) {
-                                null
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(16.dp),
+            contentPadding = readingPadding,
+        ) {
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (avatar != null) {
+                        val bitmap =
+                            remember(avatar.base64Image) {
+                                try {
+                                    val bytes = Base64.decode(avatar.base64Image, Base64.DEFAULT)
+                                    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                                } catch (_: Exception) {
+                                    null
+                                }
                             }
+                        if (bitmap != null) {
+                            var showRed by remember { mutableStateOf(false) }
+                            val bgColor =
+                                if (showRed) {
+                                    TbaAllianceColors.AvatarRed
+                                } else {
+                                    TbaAllianceColors.AvatarBlue
+                                }
+                            Box(
+                                modifier =
+                                    Modifier
+                                        .size(64.dp)
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(bgColor)
+                                        .toggleable(
+                                            value = showRed,
+                                            role = Role.Switch,
+                                            onValueChange = { showRed = it },
+                                        ).semantics {
+                                            stateDescription =
+                                                if (showRed) {
+                                                    "Red alliance background"
+                                                } else {
+                                                    "Blue alliance background"
+                                                }
+                                        },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Image(
+                                    bitmap = bitmap.asImageBitmap(),
+                                    contentDescription = "Team avatar",
+                                    contentScale = ContentScale.Fit,
+                                    modifier = Modifier.size(64.dp),
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(12.dp))
                         }
-                    if (bitmap != null) {
-                        var showRed by remember { mutableStateOf(false) }
-                        val bgColor =
-                            if (showRed) {
-                                TbaAllianceColors.AvatarRed
-                            } else {
-                                TbaAllianceColors.AvatarBlue
-                            }
-                        Box(
-                            modifier =
-                                Modifier
-                                    .size(64.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(bgColor)
-                                    .toggleable(
-                                        value = showRed,
-                                        role = Role.Switch,
-                                        onValueChange = { showRed = it },
-                                    ).semantics {
-                                        stateDescription =
-                                            if (showRed) {
-                                                "Red alliance background"
-                                            } else {
-                                                "Blue alliance background"
-                                            }
-                                    },
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Image(
-                                bitmap = bitmap.asImageBitmap(),
-                                contentDescription = "Team avatar",
-                                contentScale = ContentScale.Fit,
-                                modifier = Modifier.size(64.dp),
+                    }
+                    Column {
+                        Text(
+                            text = "Team ${team.number}",
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        if (team.nickname != null) {
+                            Text(
+                                text = team.nickname,
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
-                        Spacer(modifier = Modifier.width(12.dp))
                     }
                 }
-                Column {
+            }
+            if (team.name != null) {
+                item {
                     Text(
-                        text = "Team ${team.number}",
-                        style = MaterialTheme.typography.headlineSmall,
+                        text = team.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = 8.dp),
                     )
-                    if (team.nickname != null) {
-                        Text(
-                            text = team.nickname,
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.padding(top = 4.dp),
-                        )
-                    }
                 }
             }
-        }
-        if (team.name != null) {
-            item {
-                Text(
-                    text = team.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
+            val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
+            if (location.isNotEmpty()) {
+                item {
+                    Text(
+                        text = location,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
             }
-        }
-        val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
-        if (location.isNotEmpty()) {
-            item {
-                Text(
-                    text = location,
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-        }
-        if (team.rookieYear != null) {
-            item {
-                Text(
-                    text = "Rookie Year: ${team.rookieYear}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
+            if (team.rookieYear != null) {
+                item {
+                    Text(
+                        text = "Rookie Year: ${team.rookieYear}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
             }
         }
     }

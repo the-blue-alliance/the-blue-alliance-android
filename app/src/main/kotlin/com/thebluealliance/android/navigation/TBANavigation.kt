@@ -9,8 +9,18 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +36,8 @@ import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.common.UserMessageHost
 import com.thebluealliance.android.ui.components.TBABottomBar
+import com.thebluealliance.android.ui.components.TBANavigationRail
+import com.thebluealliance.android.ui.components.useNavigationRail
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
@@ -85,6 +97,9 @@ fun TBANavigation(
                 Screen.RegionalAdvancement,
             )
 
+    // The rail shows exactly where the bottom bar would, on windows that aren't compact.
+    val useRail = useNavigationRail(currentWindowAdaptiveInfo().windowSizeClass)
+
     val coroutineScope = rememberCoroutineScope()
     val tabReselectFlows =
         remember {
@@ -93,7 +108,21 @@ fun TBANavigation(
                 .associateWith { MutableSharedFlow<Unit>() }
         }
 
-    Column(
+    val onReselect: () -> Unit = {
+        coroutineScope.launch {
+            tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
+        }
+    }
+
+    NavigationFrame(
+        showRail = showBottomBar && useRail,
+        rail = {
+            TBANavigationRail(
+                currentRoute = navState.currentRoute,
+                onNavigate = { navigator.navigate(it) },
+                onReselect = onReselect,
+            )
+        },
         modifier =
             modifier
                 .fillMaxSize()
@@ -432,7 +461,7 @@ fun TBANavigation(
         UserMessageHost(padNavigationBars = !showBottomBar)
 
         AnimatedVisibility(
-            visible = showBottomBar,
+            visible = showBottomBar && !useRail,
             enter =
                 slideInVertically(
                     animationSpec = TBAMotionTokens.defaultSpatialSpec(),
@@ -447,12 +476,56 @@ fun TBANavigation(
             TBABottomBar(
                 currentRoute = navState.currentRoute,
                 onNavigate = { navigator.navigate(it) },
-                onReselect = {
-                    coroutineScope.launch {
-                        tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
-                    }
-                },
+                onReselect = onReselect,
             )
         }
+    }
+}
+
+/** Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. */
+@Composable
+private fun NavigationFrame(
+    showRail: Boolean,
+    rail: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Row(modifier = modifier) {
+        AnimatedVisibility(
+            visible = showRail,
+            enter =
+                slideInHorizontally(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    initialOffsetX = { -it },
+                ),
+            exit =
+                slideOutHorizontally(
+                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                    targetOffsetX = { -it },
+                ),
+        ) {
+            rail()
+        }
+        Column(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .then(
+                        // The rail owns the start inset, and the bottom inset a bottom bar
+                        // would have absorbed falls to the screen.
+                        if (showRail) {
+                            Modifier
+                                .consumeWindowInsets(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
+                                ).windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                                )
+                        } else {
+                            Modifier
+                        },
+                    ),
+            content = content,
+        )
     }
 }
