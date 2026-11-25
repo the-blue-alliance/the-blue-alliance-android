@@ -3,6 +3,7 @@ package com.thebluealliance.android.navigation
 import androidx.compose.runtime.mutableStateOf
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -68,6 +69,69 @@ class NavigateFromIntentTest {
         assertEquals(Screen.Events(), state.topLevelRoute)
         assertEquals(
             listOf(Screen.Events(), Screen.EventDetail("2025hop")),
+            state.currentStack.toList(),
+        )
+    }
+
+    @Test
+    fun `match link keeps its event under it`() {
+        val state = stateOn(Screen.More)
+        val link =
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2025casj", EventDetailTab.MATCHES),
+                Screen.MatchDetail("2025casj_qm1"),
+            )
+        state.navigateFromIntent(link)
+        assertEquals(Screen.Events(), state.topLevelRoute)
+        assertEquals(link, state.currentStack.toList())
+    }
+
+    @Test
+    fun `pit map link keeps its event under it`() {
+        val state = stateOn(Screen.Teams)
+        val link =
+            listOf(Screen.Events(), Screen.EventDetail("2025casj"), Screen.EventPitMap("2025casj"))
+        state.navigateFromIntent(link)
+        assertEquals(link, state.currentStack.toList())
+    }
+
+    @Test
+    fun `events link from another tab drops a stale detail`() {
+        val state = stateOn(Screen.More)
+        state.backStacks.getValue(Screen.Events()).add(Screen.EventDetail("2025hop"))
+        state.navigateFromIntent(listOf(Screen.Events()))
+        assertEquals(Screen.Events(), state.topLevelRoute)
+        assertEquals(listOf<NavKey>(Screen.Events()), state.currentStack.toList())
+    }
+
+    @Test
+    fun `events link keeps its year`() {
+        val state = stateOn(Screen.Teams)
+        state.navigateFromIntent(listOf(Screen.Events(2024)))
+        assertEquals(Screen.Events(), state.topLevelRoute)
+        assertEquals(listOf<NavKey>(Screen.Events(2024)), state.currentStack.toList())
+    }
+
+    @Test
+    fun `event link replaces a stale event`() {
+        val state = stateOn(Screen.Events())
+        state.currentStack.add(Screen.EventDetail("2025hop"))
+        state.navigateFromIntent(listOf(Screen.Events(), Screen.EventDetail("2025casj")))
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2025casj")),
+            state.currentStack.toList(),
+        )
+    }
+
+    @Test
+    fun `notification replaces a stale event on the events root`() {
+        val state = stateOn(Screen.Events())
+        state.currentStack.clear()
+        state.currentStack.addAll(listOf(Screen.Events(2024), Screen.EventDetail("2024hop")))
+        state.navigateFromIntent(listOf(Screen.EventDetail("2025casj")))
+        assertEquals(
+            listOf(Screen.Events(2024), Screen.EventDetail("2025casj")),
             state.currentStack.toList(),
         )
     }
