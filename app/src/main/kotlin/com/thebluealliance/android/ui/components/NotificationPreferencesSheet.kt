@@ -57,7 +57,7 @@ fun notificationPreferencesAction(
     onClick: () -> Unit,
 ): TopBarAction =
     TopBarAction(
-        label = "Notification preferences",
+        label = "Notifications",
         icon = if (notificationsOn) TbaIcons.Notifications else TbaIcons.NotificationsOutlined,
         onClick = onClick,
         stateDescription = notificationsStateDescription(notificationsOn),
