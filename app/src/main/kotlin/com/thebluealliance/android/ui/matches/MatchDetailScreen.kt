@@ -27,6 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -49,6 +53,7 @@ import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -71,8 +76,10 @@ fun MatchDetailScreen(
     Scaffold(
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refresh,
+                isRefreshing = isRefreshing,
                 title = {
-                    Text(
+                    TopBarTitle(
                         text = uiState.match?.getFullLabel(uiState.playoffType) ?: "Match",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -299,14 +306,25 @@ private fun RowScope.AllianceScoreSummaryCol(
     val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
     val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
 
+    val scoreState = allianceScoreState(match.winningAlliance, alliance, score)
+    // One stop per alliance; the win is otherwise only bold.
     Column(
-        modifier = Modifier.weight(1f),
+        modifier =
+            Modifier
+                .weight(1f)
+                .semantics(mergeDescendants = true) {
+                    scoreState?.let { stateDescription = it }
+                },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = playoffAlliance?.displayTitle ?: alliance.replaceFirstChar { it.titlecase() },
             style = MaterialTheme.typography.titleSmall,
             color = mainColor,
+            modifier =
+                allianceLabelDescription(playoffAlliance?.displayTitle, alliance)?.let {
+                    Modifier.semantics { contentDescription = it }
+                } ?: Modifier,
         )
         Text(
             text = if (score < 0) "—" else score.toString(),
@@ -320,6 +338,7 @@ private fun RowScope.AllianceScoreSummaryCol(
                     FontWeight.Normal
                 },
             color = mainColor,
+            modifier = Modifier.semantics { contentDescription = scoreDescription(score) },
         )
         rpBonus?.let {
             RpDots(it, mainColor, Modifier.padding(top = 4.dp), dotSize = 8.dp, gap = 4.dp)
@@ -382,7 +401,10 @@ private fun ScoreSummary(
         Text(
             text = "-",
             style = MaterialTheme.typography.displaySmall,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .clearAndSetSemantics {},
         )
         AllianceScoreSummaryCol(match, rpBonuses, advancementMsgs, "blue")
     }
@@ -414,6 +436,7 @@ private fun AllianceTeams(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
                             vertical = 4.dp,
+                            onClickLabel = "View team ${key.teamNumber}",
                         ) { onTeamClick(key) },
                 )
             }
@@ -424,7 +447,10 @@ private fun AllianceTeams(
             text = "-",
             style = MaterialTheme.typography.displaySmall,
             color = Color.Transparent,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .clearAndSetSemantics {},
         )
 
         Column(
@@ -441,6 +467,7 @@ private fun AllianceTeams(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
                             vertical = 4.dp,
+                            onClickLabel = "View team ${key.teamNumber}",
                         ) { onTeamClick(key) },
                 )
             }

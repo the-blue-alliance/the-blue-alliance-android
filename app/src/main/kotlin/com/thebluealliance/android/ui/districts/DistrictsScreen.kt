@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -73,6 +74,8 @@ fun DistrictsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshDistricts,
+                isRefreshing = isRefreshing && uiState !is UiState.Loading,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,

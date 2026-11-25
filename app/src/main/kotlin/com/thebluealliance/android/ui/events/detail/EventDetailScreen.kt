@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
@@ -136,8 +137,14 @@ fun EventDetailScreen(
         topBar = {
             Column {
                 TBATopAppBar(
+                    onRefresh = {
+                        viewModel.refreshTab(
+                            EventDetailTab.entries[pagerState.currentPage],
+                        )
+                    },
+                    isRefreshing = isRefreshing && uiState.event != null,
                     title = {
-                        Text(
+                        TopBarTitle(
                             text = uiState.event?.let { "${it.year} ${it.name}" } ?: "Event",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

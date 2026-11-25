@@ -23,6 +23,7 @@ import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
@@ -35,7 +36,7 @@ fun AboutScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("About") },
+                title = { TopBarTitle("About") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")

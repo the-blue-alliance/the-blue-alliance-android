@@ -33,6 +33,7 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.messaging.NotificationChannelManager
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
 
@@ -49,7 +50,7 @@ fun SettingsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("Settings") },
+                title = { TopBarTitle("Settings") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(

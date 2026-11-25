@@ -64,6 +64,7 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -127,7 +128,14 @@ fun MyTBAScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("myTBA") },
+                onRefresh =
+                    if (uiState.isSignedIn) {
+                        { viewModel.refreshTab(MyTBATab.entries[pagerState.currentPage]) }
+                    } else {
+                        null
+                    },
+                isRefreshing = isRefreshing,
+                title = { TopBarTitle("myTBA") },
                 navigationIcon = {
                     if (onNavigateUp != null) {
                         IconButton(onClick = onNavigateUp) {

@@ -15,7 +15,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -27,11 +26,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -59,7 +60,9 @@ fun TeamsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
-                title = { Text("Teams") },
+                onRefresh = viewModel::refreshTeams,
+                isRefreshing = isRefreshing && uiState !is UiState.Loading,
+                title = { TopBarTitle("Teams") },
                 actions = {
                     IconButton(onClick = onNavigateToSearch) {
                         Icon(TbaIcons.Search, contentDescription = "Search")

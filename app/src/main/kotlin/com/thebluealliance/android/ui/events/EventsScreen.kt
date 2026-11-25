@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -92,6 +93,8 @@ fun EventsScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshEvents,
+                isRefreshing = isRefreshing && uiState !is UiState.Loading,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,

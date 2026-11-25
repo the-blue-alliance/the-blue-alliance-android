@@ -21,6 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -34,12 +37,18 @@ fun TopBarYearPicker(
     title: @Composable () -> Unit,
 ) {
     if (years.isEmpty()) {
-        title()
+        Box(
+            modifier =
+                Modifier
+                    .semantics(mergeDescendants = true) {}
+                    .topBarTitleSemantics(LocalTopBarRefresh.current),
+        ) { title() }
         return
     }
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
     val contentColor = LocalContentColor.current.copy(alpha = 0.85f)
+    val onRefresh = LocalTopBarRefresh.current
 
     // The padding below grows the touch/hover target around the text; the matching negative
     // offset cancels its horizontal contribution so the title keeps the same left edge as
@@ -49,10 +58,18 @@ fun TopBarYearPicker(
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
-                    .clickable { yearDropdownExpanded = true }
-                    .padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
+                    .clickable(onClickLabel = "Change year", role = Role.DropdownList) {
+                        yearDropdownExpanded = true
+                    }.padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
         ) {
-            title()
+            // Its own heading node, so the button reads as the year and heading navigation
+            // still reaches the screen title, with its Refresh action.
+            Box(
+                modifier =
+                    Modifier
+                        .semantics(mergeDescendants = true) {}
+                        .topBarTitleSemantics(onRefresh),
+            ) { title() }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -63,7 +80,7 @@ fun TopBarYearPicker(
                 )
                 Icon(
                     imageVector = TbaIcons.ArrowDropDown,
-                    contentDescription = "Select year",
+                    contentDescription = null,
                     modifier = Modifier.size(16.dp),
                     tint = contentColor,
                 )
@@ -74,8 +91,21 @@ fun TopBarYearPicker(
             onDismissRequest = { yearDropdownExpanded = false },
         ) {
             years.forEach { year ->
+                val isSelected = year == selectedYear
                 DropdownMenuItem(
-                    text = { Text(year.toString()) },
+                    text = {
+                        Text(
+                            text = year.toString(),
+                            fontWeight = if (isSelected) FontWeight.Bold else null,
+                        )
+                    },
+                    trailingIcon =
+                        if (isSelected) {
+                            { Icon(imageVector = TbaIcons.Check, contentDescription = null) }
+                        } else {
+                            null
+                        },
+                    modifier = Modifier.selectedIfCurrent(isSelected),
                     onClick = {
                         onYearSelected(year)
                         yearDropdownExpanded = false

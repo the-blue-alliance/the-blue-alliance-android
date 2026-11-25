@@ -124,6 +124,7 @@ private fun AllianceSlot(
                 MaterialTheme.shapes.small,
                 horizontal = 8.dp,
                 vertical = 4.dp,
+                onClickLabel = "View team ${teamKey.teamNumber}",
             ) { onTeamClick(teamKey) },
     ) {
         Text(

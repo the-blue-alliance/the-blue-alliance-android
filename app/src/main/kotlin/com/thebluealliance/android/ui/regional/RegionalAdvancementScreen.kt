@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.paddedClickable
@@ -73,6 +74,8 @@ fun RegionalAdvancementScreen(
         contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
         topBar = {
             TBATopAppBar(
+                onRefresh = viewModel::refreshRankings,
+                isRefreshing = isRefreshing && uiState !is UiState.Loading,
                 title = {
                     TopBarYearPicker(
                         selectedYear = selectedYear,
@@ -218,9 +221,11 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .paddedClickable(MaterialTheme.shapes.small, vertical = 6.dp) {
-                                onNavigateToEvent(sortedEvents[0].eventKey)
-                            },
+                            .paddedClickable(
+                                MaterialTheme.shapes.small,
+                                vertical = 6.dp,
+                                onClickLabel = "View event",
+                            ) { onNavigateToEvent(sortedEvents[0].eventKey) },
                 )
             } else {
                 Text(
@@ -237,9 +242,11 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .weight(0.15f)
-                            .paddedClickable(MaterialTheme.shapes.small, vertical = 6.dp) {
-                                onNavigateToEvent(sortedEvents[1].eventKey)
-                            },
+                            .paddedClickable(
+                                MaterialTheme.shapes.small,
+                                vertical = 6.dp,
+                                onClickLabel = "View event",
+                            ) { onNavigateToEvent(sortedEvents[1].eventKey) },
                 )
             } else {
                 Text(

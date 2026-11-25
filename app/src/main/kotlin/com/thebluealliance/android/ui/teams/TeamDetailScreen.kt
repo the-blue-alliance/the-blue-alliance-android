@@ -149,6 +149,12 @@ fun TeamDetailScreen(
         topBar = {
             Column {
                 TBATopAppBar(
+                    onRefresh = {
+                        viewModel.refreshTab(
+                            TeamDetailTab.entries[pagerState.currentPage],
+                        )
+                    },
+                    isRefreshing = isRefreshing && uiState.team != null,
                     title = {
                         val team = uiState.team
                         TopBarYearPicker(

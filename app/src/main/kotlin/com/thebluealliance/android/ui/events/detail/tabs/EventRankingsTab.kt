@@ -44,8 +44,6 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
@@ -54,6 +52,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
@@ -419,11 +418,7 @@ private fun RankingItem(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .semantics { stateDescription = if (expanded) "Expanded" else "Collapsed" }
-                    .clickable(
-                        onClickLabel = if (expanded) "Collapse details" else "Expand details",
-                        role = Role.Button,
-                    ) { expanded = !expanded }
+                    .expandableRow(expanded) { expanded = !expanded }
                     // Vertical padding lives in the cells: ROW_CELL_PADDING on each plain cell and
                     // ROW_CELL_PADDING + 4.dp inside the team cell, so the row keeps its height
                     // while the nested team target spans 48dp. The horizontal inset is the screen
