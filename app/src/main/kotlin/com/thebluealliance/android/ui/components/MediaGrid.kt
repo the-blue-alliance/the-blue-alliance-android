@@ -208,6 +208,7 @@ internal fun mediaTileMinSize(windowSizeClass: WindowSizeClass): Dp =
 fun MediaTab(
     media: List<Media>?,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    emptyAction: (@Composable () -> Unit)? = null,
 ) {
     if (media == null) {
         LoadingBox(modifier = Modifier.padding(innerPadding))
@@ -218,6 +219,7 @@ fun MediaTab(
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
             message = "No media",
+            action = emptyAction,
         )
         return
     }

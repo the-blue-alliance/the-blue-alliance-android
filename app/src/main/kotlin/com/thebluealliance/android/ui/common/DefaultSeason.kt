@@ -10,3 +10,9 @@ fun defaultSeason(
     available: List<Int>,
     currentSeason: Int,
 ): Int? = available.filter { it <= currentSeason }.maxOrNull() ?: available.minOrNull()
+
+/** The newest of [available] before [selected], for stepping back from an empty season. */
+fun previousSeason(
+    available: List<Int>,
+    selected: Int,
+): Int? = available.filter { it < selected }.maxOrNull()

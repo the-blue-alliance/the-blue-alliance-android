@@ -24,4 +24,15 @@ class DefaultSeasonTest {
     fun `is null with no seasons`() {
         assertNull(defaultSeason(emptyList(), currentSeason = 2026))
     }
+
+    @Test
+    fun `previous season skips years the team sat out`() {
+        assertEquals(2022, previousSeason(listOf(2027, 2024, 2022), selected = 2024))
+    }
+
+    @Test
+    fun `no previous season before the first`() {
+        assertNull(previousSeason(listOf(2027, 2024), selected = 2024))
+        assertNull(previousSeason(emptyList(), selected = 2026))
+    }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +59,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.previousSeason
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.MediaTab
@@ -94,6 +97,8 @@ fun TeamDetailScreen(
     val subscription by viewModel.subscription.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
+    // Empty Events and Media tabs offer a step back to the team's previous season.
+    val previousYear = previousSeason(yearsParticipated, selectedYear)
     val pagerState =
         rememberPagerState(initialPage = initialTab, pageCount = { TeamDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
@@ -323,6 +328,14 @@ fun TeamDetailScreen(
                         EventsTab(
                             events = uiState.events,
                             selectedYear = selectedYear,
+                            emptyAction =
+                                previousYear?.let { year ->
+                                    {
+                                        ShowSeasonButton("Show $year events") {
+                                            viewModel.selectYear(year)
+                                        }
+                                    }
+                                },
                             onNavigateToEvent = { eventKey ->
                                 val teamKey = uiState.team?.key
                                 if (teamKey != null) {
@@ -337,6 +350,14 @@ fun TeamDetailScreen(
                         MediaTab(
                             media = uiState.media,
                             innerPadding = bottomPadding,
+                            emptyAction =
+                                previousYear?.let { year ->
+                                    {
+                                        ShowSeasonButton("Show $year media") {
+                                            viewModel.selectYear(year)
+                                        }
+                                    }
+                                },
                         )
                 }
             }
@@ -457,6 +478,7 @@ private fun EventsTab(
     selectedYear: Int,
     onNavigateToEvent: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    emptyAction: (@Composable () -> Unit)? = null,
 ) {
     if (events == null) {
         LoadingBox(
@@ -466,6 +488,7 @@ private fun EventsTab(
         EmptyBox(
             modifier = Modifier.padding(innerPadding),
             message = "No events for $selectedYear",
+            action = emptyAction,
         )
     } else {
         LazyColumn(
@@ -476,5 +499,15 @@ private fun EventsTab(
                 EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
             }
         }
+    }
+}
+
+@Composable
+private fun ShowSeasonButton(
+    label: String,
+    onClick: () -> Unit,
+) {
+    FilledTonalButton(onClick = onClick, modifier = Modifier.heightIn(min = 48.dp)) {
+        Text(label)
     }
 }

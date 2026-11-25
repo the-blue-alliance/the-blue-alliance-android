@@ -33,6 +33,7 @@ class TeamDetailViewModelMessageTest {
             myTBARepository = myTBA,
             authRepository = auth,
             tbaApi = mockk(relaxed = true),
+            seasons = mockk(relaxed = true),
             shortcutManager = mockk(relaxed = true),
             userMessages = bus,
         )
