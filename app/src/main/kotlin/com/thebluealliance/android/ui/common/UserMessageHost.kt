@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Shows [UserMessageBus] messages as snackbars. Placed in a Column between the content and the
@@ -28,7 +30,7 @@ fun UserMessageHost(
     val bus = remember(context) { context.userMessageBus() }
     val hostState = remember { SnackbarHostState() }
     LaunchedEffect(bus) {
-        bus.messages.collect { hostState.showSnackbar(it) }
+        bus.messages.showLatest { hostState.showSnackbar(it) }
     }
     Box(modifier.fillMaxWidth().height(0.dp)) {
         SnackbarHost(
@@ -41,3 +43,9 @@ fun UserMessageHost(
         )
     }
 }
+
+/**
+ * Shows each message with [show], cancelling the one still showing. Cancelling
+ * showSnackbar dismisses its snackbar, so a burst of taps doesn't queue up minutes of messages.
+ */
+internal suspend fun Flow<String>.showLatest(show: suspend (String) -> Unit) = collectLatest(show)
