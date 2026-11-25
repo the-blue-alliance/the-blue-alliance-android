@@ -675,7 +675,10 @@ private fun StatsTab(
         }
 
         if (hasPointsData) {
-            if (hasOprData) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            if (hasOprData) {
+                // As wide as the stat rows it separates, not the reading column.
+                HorizontalDivider(modifier = Modifier.statRowWidth().padding(vertical = 8.dp))
+            }
             val isDistrictEvent = event.district != null
             val points = advancementPoints
             Column(Modifier.semantics(mergeDescendants = true) { heading() }) {
