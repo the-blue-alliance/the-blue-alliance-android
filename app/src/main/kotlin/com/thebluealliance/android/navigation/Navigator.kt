@@ -81,10 +81,11 @@ class Navigator(
      * See https://developer.android.com/guide/navigation/principles
      */
     fun goBack() {
-        // If we're at the base of the current route, go back to the start route stack.
-        if (state.currentRoute == state.topLevelRoute) {
+        // At a tab's root, go back to the start tab. The root may differ from the tab key, as
+        // Events(2024) does from Events().
+        if (state.currentStack.size <= 1) {
             state.topLevelRoute = state.startRoute
-        } else if (state.currentStack.size > 1) {
+        } else {
             state.currentStack.removeLastOrNull()
         }
     }

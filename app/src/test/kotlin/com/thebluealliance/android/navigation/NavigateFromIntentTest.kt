@@ -12,9 +12,12 @@ class NavigateFromIntentTest {
     private val tabs: List<NavKey> =
         listOf(Screen.Events(), Screen.Teams, Screen.Districts, Screen.More)
 
-    private fun stateOn(tab: NavKey): NavigationState =
+    private fun stateOn(
+        tab: NavKey,
+        startRoute: NavKey = Screen.Events(),
+    ): NavigationState =
         NavigationState(
-            startRoute = Screen.Events(),
+            startRoute = startRoute,
             topLevelRoute = mutableStateOf(tab),
             backStacks = tabs.associateWith { NavBackStack(it) },
         )
@@ -111,6 +114,18 @@ class NavigateFromIntentTest {
         state.navigateFromIntent(listOf(Screen.Events(2024)))
         assertEquals(Screen.Events(), state.topLevelRoute)
         assertEquals(listOf<NavKey>(Screen.Events(2024)), state.currentStack.toList())
+    }
+
+    @Test
+    fun `back from a warm events year link returns to the start tab`() {
+        val state = stateOn(Screen.Teams, startRoute = Screen.Teams)
+        state.navigateFromIntent(listOf(Screen.Events(2024)))
+        Navigator(state, mockk(relaxed = true)).goBack()
+        assertEquals(Screen.Teams, state.topLevelRoute)
+        assertEquals(
+            listOf<NavKey>(Screen.Events(2024)),
+            state.backStacks.getValue(Screen.Events()).toList(),
+        )
     }
 
     @Test
