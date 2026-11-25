@@ -22,6 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -61,7 +64,18 @@ fun SectionHeader(
             Modifier
                 .fillMaxWidth()
                 .background(BrandHeaderContainer)
-                .clickable(enabled = isStuck) { menuExpanded = true },
+                // Only the stuck header opens the jump menu; a disabled clickable on the others
+                // would announce them as unavailable controls.
+                .then(
+                    if (isStuck) {
+                        Modifier.clickable(
+                            onClickLabel = "Jump to section",
+                            role = Role.DropdownList,
+                        ) { menuExpanded = true }
+                    } else {
+                        Modifier
+                    },
+                ),
     ) {
         SectionHeaderRow(
             label = label,
@@ -71,7 +85,7 @@ fun SectionHeader(
                         Spacer(modifier = Modifier.width(4.dp))
                         Icon(
                             imageVector = TbaIcons.ArrowDropDown,
-                            contentDescription = "Jump to section",
+                            contentDescription = null,
                             tint = OnBrand,
                             modifier = Modifier.size(20.dp),
                         )
@@ -104,6 +118,7 @@ fun SectionHeader(
                         menuExpanded = false
                         onHeaderSelected(info)
                     },
+                    modifier = Modifier.selectedIfCurrent(isSelected),
                 )
             }
         }
@@ -129,6 +144,7 @@ private fun SectionHeaderRow(
             text = label,
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
+            modifier = Modifier.semantics { heading() },
         )
         trailingContent?.invoke(this)
     }
