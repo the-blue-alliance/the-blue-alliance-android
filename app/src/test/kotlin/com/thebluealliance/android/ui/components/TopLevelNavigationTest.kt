@@ -46,13 +46,15 @@ class TopLevelNavigationTest {
 
     @Test
     fun `more tab is selected on its sub screens`() {
-        listOf(Screen.More, Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks).forEach {
+        listOf(
+            Screen.More,
+            Screen.MyTBA,
+            Screen.RegionalAdvancement,
+            Screen.Settings,
+            Screen.About,
+            Screen.Thanks,
+        ).forEach {
             assertEquals(listOf("More"), selectedLabels(it))
         }
-    }
-
-    @Test
-    fun `no tab is selected on regional advancement`() {
-        assertEquals(emptyList<String>(), selectedLabels(Screen.RegionalAdvancement))
     }
 }

@@ -12,7 +12,7 @@ import com.thebluealliance.android.navigation.isSameTab
 import com.thebluealliance.android.ui.TopLevelDestination
 
 private val MORE_SUB_SCREENS: Set<NavKey> =
-    setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks)
+    setOf(Screen.MyTBA, Screen.RegionalAdvancement, Screen.Settings, Screen.About, Screen.Thanks)
 
 /** Whether [this] tab is highlighted while [currentRoute] is showing. */
 internal fun TopLevelDestination.isSelectedFor(currentRoute: NavKey): Boolean =
