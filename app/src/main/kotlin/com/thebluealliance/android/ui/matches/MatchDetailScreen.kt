@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -173,6 +174,8 @@ fun MatchDetailScreen(
                         AllianceTeams(
                             redTeamKeys = match.redTeamKeys,
                             blueTeamKeys = match.blueTeamKeys,
+                            redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
+                            bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
                             onTeamClick = { teamKey ->
                                 val ek = uiState.eventKey
                                 if (ek != null) onNavigateToTeamEvent(teamKey, ek)
@@ -276,8 +279,9 @@ private fun EventInfo(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .clickable { onNavigateToEvent(eventKey) }
-                        .padding(horizontal = 16.dp, vertical = 2.dp),
+                        .clickable(onClickLabel = "View event", role = Role.Button) {
+                            onNavigateToEvent(eventKey)
+                        }.padding(horizontal = 16.dp, vertical = 2.dp),
             )
         }
         if (formattedTime != null) {
@@ -426,6 +430,8 @@ private fun ScoreSummary(
 private fun AllianceTeams(
     redTeamKeys: List<String>,
     blueTeamKeys: List<String>,
+    redPlayoffAllianceTitle: String?,
+    bluePlayoffAllianceTitle: String?,
     onTeamClick: (String) -> Unit,
 ) {
     Row(
@@ -434,25 +440,13 @@ private fun AllianceTeams(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 4.dp),
     ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            redTeamKeys.forEach { key ->
-                Text(
-                    text = key.teamNumber,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.allianceColors.red,
-                    modifier =
-                        Modifier.paddedClickable(
-                            MaterialTheme.shapes.small,
-                            horizontal = 12.dp,
-                            vertical = 4.dp,
-                            onClickLabel = "View team ${key.teamNumber}",
-                        ) { onTeamClick(key) },
-                )
-            }
-        }
+        AllianceTeamColumn(
+            teamKeys = redTeamKeys,
+            color = MaterialTheme.allianceColors.red,
+            playoffAllianceTitle = redPlayoffAllianceTitle,
+            alliance = "red",
+            onTeamClick = onTeamClick,
+        )
 
         // Invisible separator to match ScoreSummary alignment
         Text(
@@ -465,24 +459,50 @@ private fun AllianceTeams(
                     .clearAndSetSemantics {},
         )
 
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            blueTeamKeys.forEach { key ->
-                Text(
-                    text = key.teamNumber,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.allianceColors.blue,
-                    modifier =
-                        Modifier.paddedClickable(
+        AllianceTeamColumn(
+            teamKeys = blueTeamKeys,
+            color = MaterialTheme.allianceColors.blue,
+            playoffAllianceTitle = bluePlayoffAllianceTitle,
+            alliance = "blue",
+            onTeamClick = onTeamClick,
+        )
+    }
+}
+
+@Composable
+private fun RowScope.AllianceTeamColumn(
+    teamKeys: List<String>,
+    color: Color,
+    playoffAllianceTitle: String?,
+    alliance: String,
+    onTeamClick: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.weight(1f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        teamKeys.forEach { key ->
+            Text(
+                text = key.teamNumber,
+                style = MaterialTheme.typography.bodyLarge,
+                color = color,
+                modifier =
+                    Modifier
+                        .paddedClickable(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
                             vertical = 4.dp,
                             onClickLabel = "View team ${key.teamNumber}",
-                        ) { onTeamClick(key) },
-                )
-            }
+                        ) { onTeamClick(key) }
+                        .semantics {
+                            contentDescription =
+                                allianceTeamDescription(
+                                    playoffAllianceTitle,
+                                    alliance,
+                                    key.teamNumber,
+                                )
+                        },
+            )
         }
     }
 }

@@ -4,7 +4,6 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -46,6 +46,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -390,7 +393,18 @@ private fun InfoTab(
                                     .size(64.dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(bgColor)
-                                    .clickable { showRed = !showRed },
+                                    .toggleable(
+                                        value = showRed,
+                                        role = Role.Switch,
+                                        onValueChange = { showRed = it },
+                                    ).semantics {
+                                        stateDescription =
+                                            if (showRed) {
+                                                "Red alliance background"
+                                            } else {
+                                                "Blue alliance background"
+                                            }
+                                    },
                             contentAlignment = Alignment.Center,
                         ) {
                             Image(

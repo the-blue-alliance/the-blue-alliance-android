@@ -149,7 +149,7 @@ private fun DistrictItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = "View district", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
     )
 }

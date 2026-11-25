@@ -92,6 +92,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = 4.dp,
+                            onClickLabel = "Open About",
                             onClick = onNavigateToAbout,
                         ),
                 )
@@ -110,6 +111,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = 4.dp,
+                            onClickLabel = "Open Thanks",
                             onClick = onNavigateToThanks,
                         ),
                 )
@@ -144,7 +146,7 @@ private fun MoreItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = "Open $label", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

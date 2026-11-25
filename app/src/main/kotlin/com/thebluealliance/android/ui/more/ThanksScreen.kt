@@ -127,14 +127,15 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable {
+                .clickable(onClickLabel = "Open in browser") {
                     context.openUrl(contributor.htmlUrl)
                 }.padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = contributor.avatarUrl,
-            contentDescription = contributor.login,
+            // Decorative: the login is read from the text beside it.
+            contentDescription = null,
             modifier = Modifier.size(40.dp).clip(CircleShape),
         )
         Spacer(modifier = Modifier.width(16.dp))
