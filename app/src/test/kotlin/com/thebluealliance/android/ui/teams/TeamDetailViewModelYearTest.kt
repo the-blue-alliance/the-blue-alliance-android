@@ -4,6 +4,7 @@ import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.ApiStatusDto
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -30,6 +31,7 @@ class TeamDetailViewModelYearTest {
             authRepository = mockk(relaxed = true),
             tbaApi = api,
             shortcutManager = mockk(relaxed = true),
+            userMessages = UserMessageBus(),
         )
 
     @BeforeEach
@@ -69,6 +71,7 @@ class TeamDetailViewModelYearTest {
             authRepository = mockk(relaxed = true),
             tbaApi = api,
             shortcutManager = mockk(relaxed = true),
+            userMessages = UserMessageBus(),
         )
         coVerify { eventRepository.refreshTeamEvents("frc254", 2026) }
     }
