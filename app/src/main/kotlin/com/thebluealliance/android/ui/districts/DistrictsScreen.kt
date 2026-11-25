@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +37,8 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
+
+private const val FIRST_DISTRICT_YEAR = 2009
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +80,7 @@ fun DistrictsScreen(
                             if (selectedYear >
                                 0
                             ) {
-                                (maxYear downTo 2009).toList()
+                                (maxYear downTo FIRST_DISTRICT_YEAR).toList()
                             } else {
                                 emptyList()
                             },
@@ -102,7 +106,24 @@ fun DistrictsScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
-            empty = { EmptyBox("No districts found for $selectedYear") },
+            empty = {
+                EmptyBox(
+                    message = "No districts found for $selectedYear",
+                    action =
+                        if (selectedYear > FIRST_DISTRICT_YEAR) {
+                            {
+                                FilledTonalButton(
+                                    onClick = { viewModel.selectYear(selectedYear - 1) },
+                                    modifier = Modifier.heightIn(min = 48.dp),
+                                ) {
+                                    Text("Show ${selectedYear - 1} districts")
+                                }
+                            }
+                        } else {
+                            null
+                        },
+                )
+            },
         ) { districts ->
             LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                 items(districts, key = { it.key }) { district ->

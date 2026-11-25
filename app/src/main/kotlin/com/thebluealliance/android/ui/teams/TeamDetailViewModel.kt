@@ -13,10 +13,12 @@ import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
+import com.thebluealliance.android.ui.common.defaultSeason
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -98,16 +100,28 @@ class TeamDetailViewModel
                 try {
                     val years = tbaApi.getTeamYearsParticipated(teamKey).sortedDescending()
                     _yearsParticipated.value = years
-                    if (years.isNotEmpty()) {
-                        _selectedYear.value = years.first()
+                    val year = defaultSeason(years, currentSeason())
+                    if (year != null) {
+                        _selectedYear.value = year
                         refreshYearData()
                     }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (_: Exception) {
                     // Fallback: generate year range from rookieYear if available
                     buildYearsFromRookieYear()
                 }
             }
         }
+
+        private suspend fun currentSeason(): Int =
+            try {
+                tbaApi.getStatus().currentSeason
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                Calendar.getInstance().get(Calendar.YEAR)
+            }
 
         private fun buildYearsFromRookieYear() {
             viewModelScope.launch {
