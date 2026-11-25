@@ -373,20 +373,27 @@ private fun RankingRow(
         modifier =
             modifier
                 .tableSideDrag(rowScroll.state, LocalLayoutDirection.current)
-                .padding(start = TABLE_ROW_PADDING, top = verticalPadding, bottom = verticalPadding)
+                .padding(start = TABLE_ROW_PADDING)
                 .then(contentModifier)
                 // Lets the scrolling part, and its edge cue, span the row's full height.
                 .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        frozen()
+        // The vertical padding goes inside each part, so the edge cue spans the padding too.
+        Row(
+            modifier = Modifier.padding(vertical = verticalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            frozen()
+        }
         Row(
             modifier =
                 Modifier
                     .weight(1f)
                     .fillMaxHeight()
                     .tableSideScroll(rowScroll.state, rowScroll.rowWidth, rowScroll.cueColor)
-                    .padding(end = TABLE_ROW_PADDING),
+                    .padding(end = TABLE_ROW_PADDING)
+                    .padding(vertical = verticalPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             scrolling()
