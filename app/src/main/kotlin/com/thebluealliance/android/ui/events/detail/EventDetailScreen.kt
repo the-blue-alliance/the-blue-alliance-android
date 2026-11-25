@@ -45,6 +45,7 @@ import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
@@ -191,55 +192,62 @@ fun EventDetailScreen(
                                     },
                             )
                         }
-                        var menuExpanded by remember { mutableStateOf(false) }
-                        Box {
-                            IconButton(onClick = { menuExpanded = true }) {
-                                Icon(
-                                    imageVector = TbaIcons.MoreVert,
-                                    contentDescription = "More options",
-                                )
-                            }
-                            DropdownMenu(
-                                expanded = menuExpanded,
-                                onDismissRequest = { menuExpanded = false },
-                            ) {
-                                uiState.event?.let { event ->
-                                    DropdownMenuItem(
-                                        text = { Text("Share") },
-                                        leadingIcon = {
-                                            Icon(
-                                                TbaIcons.Share,
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            menuExpanded = false
-                                            context.shareTbaUrl(
-                                                title = "${event.year} ${event.name}",
-                                                url =
-                                                    "https://www.thebluealliance.com/event/" +
-                                                        event.key,
-                                            )
-                                        },
+                        if (
+                            hasDetailOverflowItems(
+                                entityLoaded = uiState.event != null,
+                                canPinShortcuts = viewModel.canPinShortcuts,
+                            )
+                        ) {
+                            var menuExpanded by remember { mutableStateOf(false) }
+                            Box {
+                                IconButton(onClick = { menuExpanded = true }) {
+                                    Icon(
+                                        imageVector = TbaIcons.MoreVert,
+                                        contentDescription = "More options",
                                     )
                                 }
-                                if (viewModel.canPinShortcuts) {
-                                    DropdownMenuItem(
-                                        text = { Text("Add to home screen") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter =
-                                                    painterResource(
-                                                        R.drawable.ic_add_to_home_screen,
-                                                    ),
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            menuExpanded = false
-                                            viewModel.requestPinShortcut()
-                                        },
-                                    )
+                                DropdownMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = { menuExpanded = false },
+                                ) {
+                                    uiState.event?.let { event ->
+                                        DropdownMenuItem(
+                                            text = { Text("Share") },
+                                            leadingIcon = {
+                                                Icon(
+                                                    TbaIcons.Share,
+                                                    contentDescription = null,
+                                                )
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                context.shareTbaUrl(
+                                                    title = "${event.year} ${event.name}",
+                                                    url =
+                                                        "https://www.thebluealliance.com/event/" +
+                                                            event.key,
+                                                )
+                                            },
+                                        )
+                                    }
+                                    if (viewModel.canPinShortcuts) {
+                                        DropdownMenuItem(
+                                            text = { Text("Add to home screen") },
+                                            leadingIcon = {
+                                                Icon(
+                                                    painter =
+                                                        painterResource(
+                                                            R.drawable.ic_add_to_home_screen,
+                                                        ),
+                                                    contentDescription = null,
+                                                )
+                                            },
+                                            onClick = {
+                                                menuExpanded = false
+                                                viewModel.requestPinShortcut()
+                                            },
+                                        )
+                                    }
                                 }
                             }
                         }
