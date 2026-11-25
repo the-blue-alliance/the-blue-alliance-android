@@ -26,4 +26,13 @@ class SeasonSelectionTest {
         assertFalse(selection.offerDefault(2025))
         assertEquals(2019, selection.year.value)
     }
+
+    @Test
+    fun `remembers whether the user picked`() {
+        val selection = SeasonSelection(2026)
+        selection.offerDefault(2025)
+        assertFalse(selection.hasUserPick)
+        selection.pick(2019)
+        assertTrue(selection.hasUserPick)
+    }
 }

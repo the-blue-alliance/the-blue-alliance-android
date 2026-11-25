@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.teams
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
+import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
@@ -18,24 +19,27 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TeamDetailViewModelYearTest {
     private val api: TbaApi = mockk()
     private val seasons: SeasonRepository = mockk()
 
-    private fun viewModel(eventRepository: EventRepository = mockk(relaxed = true)) =
-        TeamDetailViewModel(
-            navKey = Screen.TeamDetail("frc254"),
-            teamRepository = mockk(relaxed = true),
-            eventRepository = eventRepository,
-            myTBARepository = mockk(relaxed = true),
-            authRepository = mockk(relaxed = true),
-            tbaApi = api,
-            seasons = seasons,
-            shortcutManager = mockk(relaxed = true),
-            userMessages = UserMessageBus(),
-        )
+    private fun viewModel(
+        eventRepository: EventRepository = mockk(relaxed = true),
+        teamRepository: TeamRepository = mockk(relaxed = true),
+    ) = TeamDetailViewModel(
+        navKey = Screen.TeamDetail("frc254"),
+        teamRepository = teamRepository,
+        eventRepository = eventRepository,
+        myTBARepository = mockk(relaxed = true),
+        authRepository = mockk(relaxed = true),
+        tbaApi = api,
+        seasons = seasons,
+        shortcutManager = mockk(relaxed = true),
+        userMessages = UserMessageBus(),
+    )
 
     @BeforeEach
     fun setUp() {
@@ -78,5 +82,63 @@ class TeamDetailViewModelYearTest {
         viewModel.selectYear(2023)
         default.complete(2024)
         assertEquals(2023, viewModel.selectedYear.value)
+    }
+
+    @Test
+    fun `loads only the team until the default season arrives`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val eventRepository = mockk<EventRepository>(relaxed = true)
+        val teamRepository = mockk<TeamRepository>(relaxed = true)
+        viewModel(eventRepository, teamRepository)
+        coVerify { teamRepository.refreshTeam("frc254") }
+        coVerify(exactly = 0) { eventRepository.refreshTeamEvents(any(), any()) }
+        coVerify(exactly = 0) { teamRepository.refreshTeamMedia(any(), any()) }
+        default.complete(2024)
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents(any(), any()) }
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", 2024) }
+        coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2024) }
+    }
+
+    @Test
+    fun `loads a default matching the initial year once`() {
+        val year = Calendar.getInstance().get(Calendar.YEAR)
+        coEvery { api.getTeamYearsParticipated("frc254") } returns listOf(year)
+        coEvery { seasons.defaultSeason() } returns year
+        val eventRepository = mockk<EventRepository>(relaxed = true)
+        viewModel(eventRepository)
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", year) }
+    }
+
+    @Test
+    fun `asks for the default season while the team's years are in flight`() {
+        val years = CompletableDeferred<List<Int>>()
+        coEvery { api.getTeamYearsParticipated("frc254") } coAnswers { years.await() }
+        coEvery { seasons.defaultSeason() } returns 2024
+        viewModel()
+        coVerify { seasons.defaultSeason() }
+        years.complete(listOf(2024))
+    }
+
+    @Test
+    fun `a late default doesn't load its season over the user's pick`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val eventRepository = mockk<EventRepository>(relaxed = true)
+        val viewModel = viewModel(eventRepository)
+        viewModel.selectYear(2023)
+        default.complete(2024)
+        coVerify(exactly = 0) { eventRepository.refreshTeamEvents("frc254", 2024) }
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", 2023) }
+    }
+
+    @Test
+    fun `without the team's years, loads the default season`() {
+        coEvery { api.getTeamYearsParticipated("frc254") } throws RuntimeException()
+        coEvery { seasons.defaultSeason() } returns 2024
+        val eventRepository = mockk<EventRepository>(relaxed = true)
+        val viewModel = viewModel(eventRepository)
+        assertEquals(2024, viewModel.selectedYear.value)
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", 2024) }
     }
 }

@@ -16,6 +16,9 @@ class SeasonSelection(
 
     private var userPicked = false
 
+    /** Whether the user has picked a year. */
+    val hasUserPick: Boolean get() = userPicked
+
     /** Applies the user's pick and ignores every later default. */
     fun pick(year: Int) {
         userPicked = true

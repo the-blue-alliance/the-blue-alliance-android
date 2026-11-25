@@ -22,6 +22,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -94,27 +95,41 @@ class TeamDetailViewModel
         val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
 
         init {
-            fetchYearsParticipated()
-            refreshAll()
+            // Year data waits for the default season, so nothing is fetched for a season the
+            // picker is about to leave.
+            refreshing({ teamRepository.refreshTeam(teamKey) })
+            loadSeasons()
         }
 
-        private fun fetchYearsParticipated() {
+        private fun loadSeasons() {
             viewModelScope.launch {
-                try {
-                    val years = tbaApi.getTeamYearsParticipated(teamKey).sortedDescending()
+                val current = async { seasons.defaultSeason() }
+                val years =
+                    try {
+                        tbaApi.getTeamYearsParticipated(teamKey).sortedDescending()
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (_: Exception) {
+                        null
+                    }
+                if (years != null) {
                     _yearsParticipated.value = years
-                    val year = defaultSeason(years, seasons.defaultSeason())
-                    if (year != null && selection.offerDefault(year)) refreshYearData()
-                } catch (e: CancellationException) {
-                    throw e
-                } catch (_: Exception) {
+                    openOnDefault(defaultSeason(years, current.await()))
+                } else {
+                    openOnDefault(current.await())
                     // Fallback: generate year range from rookieYear if available
-                    buildYearsFromRookieYear()
+                    buildYearsFromRookieYear(current.await())
                 }
             }
         }
 
-        private fun buildYearsFromRookieYear() {
+        /** Opens on [year] and loads its data, unless the user has already picked a year. */
+        private fun openOnDefault(year: Int?) {
+            val moved = year != null && selection.offerDefault(year)
+            if (moved || !selection.hasUserPick) refreshYearData()
+        }
+
+        private fun buildYearsFromRookieYear(currentSeason: Int) {
             viewModelScope.launch {
                 teamRepository.observeTeam(teamKey).collect { team ->
                     if (team != null && _yearsParticipated.value.isEmpty()) {
@@ -122,7 +137,8 @@ class TeamDetailViewModel
                         val maxYear = Calendar.getInstance().get(Calendar.YEAR)
                         val years = (maxYear downTo rookieYear).toList()
                         _yearsParticipated.value = years
-                        if (selection.offerDefault(years.first())) refreshYearData()
+                        val year = defaultSeason(years, currentSeason)
+                        if (year != null && selection.offerDefault(year)) refreshYearData()
                     }
                 }
             }
