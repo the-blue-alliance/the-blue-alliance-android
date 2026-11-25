@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.util.teamNumber
 
 @Composable
@@ -40,48 +41,50 @@ fun EventAwardsTab(
         }
         return
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        items(awards, key = {
-            "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}"
-        }) { award ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .then(
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            items(awards, key = {
+                "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}"
+            }) { award ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .then(
+                                if (award.teamKey.isNotEmpty()) {
+                                    Modifier.clickable(
+                                        onClickLabel = "View team ${award.teamKey.teamNumber}",
+                                    ) { onTeamClick(award.teamKey) }
+                                } else {
+                                    Modifier
+                                },
+                            ).padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = award.name,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    val recipient =
+                        buildString {
+                            if (award.awardee != null) append(award.awardee)
                             if (award.teamKey.isNotEmpty()) {
-                                Modifier.clickable(
-                                    onClickLabel = "View team ${award.teamKey.teamNumber}",
-                                ) { onTeamClick(award.teamKey) }
-                            } else {
-                                Modifier
-                            },
-                        ).padding(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = award.name,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                val recipient =
-                    buildString {
-                        if (award.awardee != null) append(award.awardee)
-                        if (award.teamKey.isNotEmpty()) {
-                            if (isNotEmpty()) {
-                                append(" (${award.teamKey.teamNumber})")
-                            } else {
-                                append(award.teamKey.teamNumber)
+                                if (isNotEmpty()) {
+                                    append(" (${award.teamKey.teamNumber})")
+                                } else {
+                                    append(award.teamKey.teamNumber)
+                                }
                             }
                         }
+                    if (recipient.isNotEmpty()) {
+                        Text(
+                            text = recipient,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
-                if (recipient.isNotEmpty()) {
-                    Text(
-                        text = recipient,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
                 }
             }
         }

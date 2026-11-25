@@ -19,6 +19,16 @@ internal fun TopLevelDestination.isSelectedFor(currentRoute: NavKey): Boolean =
     key.isSameTab(currentRoute) || (key == Screen.More && currentRoute in MORE_SUB_SCREENS)
 
 /**
+ * Whether [this] tab is highlighted on the rail. Top-level screens match the bottom bar; detail
+ * screens, which have no bar, mark the tab whose stack ([stackRoot]) they were pushed onto.
+ */
+internal fun TopLevelDestination.isRailSelectedFor(
+    currentRoute: NavKey,
+    stackRoot: NavKey,
+    onTopLevelScreen: Boolean,
+): Boolean = if (onTopLevelScreen) isSelectedFor(currentRoute) else key.isSameTab(stackRoot)
+
+/**
  * Top-level navigation moves from the bottom bar to a side rail once the window is not compact in
  * width, or is too short for a bottom bar to leave room for content.
  */

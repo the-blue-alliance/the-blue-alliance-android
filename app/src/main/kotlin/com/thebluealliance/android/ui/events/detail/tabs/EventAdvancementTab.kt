@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -91,19 +93,21 @@ fun EventAdvancementTab(
         itemsIndexed(advancementPoints, key = { _, points -> points.teamKey }) { index, points ->
             val rank = index + 1
             val teamName = teamsByKey[points.teamKey]?.nickname
-            AdvancementPointsItem(
-                rank = rank,
-                points = points,
-                teamName = teamName,
-                isDistrictEvent = isDistrictEvent,
-                cmpAdvancement =
-                    if (isDistrictEvent) {
-                        null
-                    } else {
-                        regionalCmpAdvancementByTeam[points.teamKey]
-                    },
-                onTeamClick = onTeamClick,
-            )
+            Box(modifier = Modifier.tableWidth()) {
+                AdvancementPointsItem(
+                    rank = rank,
+                    points = points,
+                    teamName = teamName,
+                    isDistrictEvent = isDistrictEvent,
+                    cmpAdvancement =
+                        if (isDistrictEvent) {
+                            null
+                        } else {
+                            regionalCmpAdvancementByTeam[points.teamKey]
+                        },
+                    onTeamClick = onTeamClick,
+                )
+            }
         }
     }
 }

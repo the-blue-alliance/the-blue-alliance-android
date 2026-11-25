@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,6 +37,7 @@ import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATab
@@ -45,6 +45,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -224,47 +225,49 @@ private fun EventsTab(
         }
     }
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        if (thisWeekResult != null) {
-            stickyHeader(key = "this_week_header") {
-                SectionHeader(
-                    label = thisWeekResult.label,
-                    isStuck = stuckHeaderKey == "this_week_header",
-                    allHeaders = headerInfos,
-                    onHeaderSelected = { info ->
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(info.itemIndex)
-                        }
-                    },
-                )
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            if (thisWeekResult != null) {
+                stickyHeader(key = "this_week_header") {
+                    SectionHeader(
+                        label = thisWeekResult.label,
+                        isStuck = stuckHeaderKey == "this_week_header",
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
+                items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                }
+                item(key = "this_week_divider") {
+                    HorizontalDivider()
+                }
             }
-            items(thisWeekResult.events, key = { "thisweek_${it.key}" }) { event ->
-                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
-            }
-            item(key = "this_week_divider") {
-                HorizontalDivider()
-            }
-        }
-        sections.forEach { section ->
-            val headerKey = "header_${section.label}"
-            stickyHeader(key = headerKey) {
-                SectionHeader(
-                    label = section.label,
-                    isStuck = stuckHeaderKey == headerKey,
-                    allHeaders = headerInfos,
-                    onHeaderSelected = { info ->
-                        coroutineScope.launch {
-                            listState.animateScrollToItem(info.itemIndex)
-                        }
-                    },
-                )
-            }
-            items(section.events, key = { it.key }) { event ->
-                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+            sections.forEach { section ->
+                val headerKey = "header_${section.label}"
+                stickyHeader(key = headerKey) {
+                    SectionHeader(
+                        label = section.label,
+                        isStuck = stuckHeaderKey == headerKey,
+                        allHeaders = headerInfos,
+                        onHeaderSelected = { info ->
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(info.itemIndex)
+                            }
+                        },
+                    )
+                }
+                items(section.events, key = { it.key }) { event ->
+                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                }
             }
         }
     }
@@ -298,7 +301,7 @@ private fun RankingsTab(
             Row(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
+                        .tableWidth()
                         .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -379,7 +382,7 @@ private fun RankingsTab(
             Row(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
+                        .tableWidth()
                         .clickable { onNavigateToTeam(ranking.teamKey) }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,

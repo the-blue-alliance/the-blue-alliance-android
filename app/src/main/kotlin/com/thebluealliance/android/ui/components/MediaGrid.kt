@@ -102,6 +102,7 @@ fun MediaItem(
     index: Int,
     count: Int,
     modifier: Modifier = Modifier,
+    aspectRatio: Float = 1f,
 ) {
     val url = mediaUrl(type, foreignKey) ?: return
     val linkUrl = mediaLinkUrl(type, foreignKey)
@@ -110,7 +111,7 @@ fun MediaItem(
     Box(
         modifier =
             modifier
-                .aspectRatio(1f)
+                .aspectRatio(aspectRatio)
                 .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .then(
@@ -160,15 +161,17 @@ fun MediaItem(
 }
 
 /**
- * Renders media items in a 2-column grid layout using Rows.
+ * Renders media items in a grid of [columns] tiles of [aspectRatio] using Rows.
  * Designed to be called inside a LazyColumn item{} block (not as a nested lazy layout).
  */
 @Composable
 fun MediaGridRow(
     items: List<MediaGridItem>,
     modifier: Modifier = Modifier,
+    columns: Int = 2,
+    aspectRatio: Float = 1f,
 ) {
-    items.chunked(2).forEachIndexed { rowIndex, rowItems ->
+    items.chunked(columns).forEachIndexed { rowIndex, rowItems ->
         Row(
             modifier = modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -177,12 +180,13 @@ fun MediaGridRow(
                 MediaItem(
                     type = item.type,
                     foreignKey = item.foreignKey,
-                    index = rowIndex * 2 + column,
+                    index = rowIndex * columns + column,
                     count = items.size,
                     modifier = Modifier.weight(1f),
+                    aspectRatio = aspectRatio,
                 )
             }
-            if (rowItems.size == 1) {
+            repeat(columns - rowItems.size) {
                 Spacer(modifier = Modifier.weight(1f))
             }
         }
@@ -231,27 +235,34 @@ fun MediaTab(
                 null
             }
         }
-    LazyVerticalGrid(
-        columns =
-            GridCells.Adaptive(
-                minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
-            ),
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = innerPadding,
-    ) {
-        itemsIndexed(gridItems, key = { _, it -> "${it.type}_${it.foreignKey}" }) { index, item ->
-            MediaItem(
-                type = item.type,
-                foreignKey = item.foreignKey,
-                index = index,
-                count = gridItems.size,
-                modifier = Modifier.fillMaxWidth(),
-            )
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyVerticalGrid(
+            columns =
+                GridCells.Adaptive(
+                    minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
+                ),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = readingPadding,
+        ) {
+            itemsIndexed(gridItems, key = {
+                _,
+                it,
+                ->
+                "${it.type}_${it.foreignKey}"
+            }) { index, item ->
+                MediaItem(
+                    type = item.type,
+                    foreignKey = item.foreignKey,
+                    index = index,
+                    count = gridItems.size,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }

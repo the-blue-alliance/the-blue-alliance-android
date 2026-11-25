@@ -57,6 +57,7 @@ import com.thebluealliance.android.ui.components.LocalTopBarRefresh
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -327,175 +328,184 @@ private fun SummaryTab(
     onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        // Event header
-        if (event != null) {
-            item(key = "header_event") {
-                EventRow(
-                    event = event,
-                    onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
-                    showYear = true,
-                    showChevron = true,
-                )
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            // Event header
+            if (event != null) {
+                item(key = "header_event") {
+                    EventRow(
+                        event = event,
+                        onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
+                        showYear = true,
+                        showChevron = true,
+                    )
+                }
             }
-        }
-        if (event != null && team != null) {
-            item(key = "header_divider") { HorizontalDivider() }
-        }
-        if (team != null) {
-            item(key = "header_team") {
-                TeamRow(
-                    team = team,
-                    onClick = { onNavigateToTeam(team.key) },
-                    showChevron = true,
-                )
+            if (event != null && team != null) {
+                item(key = "header_divider") { HorizontalDivider() }
             }
-        }
+            if (team != null) {
+                item(key = "header_team") {
+                    TeamRow(
+                        team = team,
+                        onClick = { onNavigateToTeam(team.key) },
+                        showChevron = true,
+                    )
+                }
+            }
 
-        // Info header (ranking, alliance, pit location)
-        val teamAlliance =
-            alliances?.firstOrNull { alliance ->
-                teamKey in alliance.picks || teamKey == alliance.backupIn
+            // Info header (ranking, alliance, pit location)
+            val teamAlliance =
+                alliances?.firstOrNull { alliance ->
+                    teamKey in alliance.picks || teamKey == alliance.backupIn
+                }
+            if (ranking != null || teamAlliance != null || pitLocation != null) {
+                item(key = "summary_info_header") {
+                    SectionHeader(label = "Info")
+                }
             }
-        if (ranking != null || teamAlliance != null || pitLocation != null) {
-            item(key = "summary_info_header") {
-                SectionHeader(label = "Info")
-            }
-        }
 
-        // Ranking
-        var infoItemCount = 0
-        if (ranking != null) {
-            item(key = "summary_ranking") {
-                InfoRow(
-                    label = "Rank ${ranking.rank}",
-                    value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
-                    onClick = { event?.let { onNavigateToEvent(it.key, EventDetailTab.RANKINGS) } },
-                )
+            // Ranking
+            var infoItemCount = 0
+            if (ranking != null) {
+                item(key = "summary_ranking") {
+                    InfoRow(
+                        label = "Rank ${ranking.rank}",
+                        value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                        onClick = {
+                            event?.let {
+                                onNavigateToEvent(
+                                    it.key,
+                                    EventDetailTab.RANKINGS,
+                                )
+                            }
+                        },
+                    )
+                }
+                infoItemCount++
             }
-            infoItemCount++
-        }
 
-        // Alliance
-        if (teamAlliance != null) {
-            if (infoItemCount > 0) {
-                item(key = "summary_alliance_divider") { HorizontalDivider() }
+            // Alliance
+            if (teamAlliance != null) {
+                if (infoItemCount > 0) {
+                    item(key = "summary_alliance_divider") { HorizontalDivider() }
+                }
+                item(key = "summary_alliance") {
+                    val role =
+                        when {
+                            teamKey == teamAlliance.backupIn -> "Backup"
+                            teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
+                            else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
+                        }
+                    InfoRow(
+                        label = "Alliance ${teamAlliance.number}",
+                        value = role,
+                        onClick = {
+                            event?.let {
+                                onNavigateToEvent(
+                                    it.key,
+                                    EventDetailTab.ALLIANCES,
+                                )
+                            }
+                        },
+                    )
+                }
+                infoItemCount++
             }
-            item(key = "summary_alliance") {
-                val role =
-                    when {
-                        teamKey == teamAlliance.backupIn -> "Backup"
-                        teamAlliance.picks.indexOf(teamKey) == 0 -> "Captain"
-                        else -> "Pick ${teamAlliance.picks.indexOf(teamKey)}"
-                    }
-                InfoRow(
-                    label = "Alliance ${teamAlliance.number}",
-                    value = role,
-                    onClick = {
-                        event?.let {
-                            onNavigateToEvent(
-                                it.key,
-                                EventDetailTab.ALLIANCES,
+
+            // Pit Location
+            if (pitLocation != null) {
+                if (infoItemCount > 0) {
+                    item(key = "summary_pit_location_divider") { HorizontalDivider() }
+                }
+                item(key = "summary_pit_location") {
+                    InfoRow(
+                        label = "Pit Location",
+                        labelLeadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_nexus_logo),
+                                contentDescription = "FRC Nexus",
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(16.dp),
+                            )
+                        },
+                        value = pitLocation,
+                        onClick = {
+                            onNavigateToPitMap(eventKey, listOf(teamKey))
+                        },
+                    )
+                }
+            }
+
+            // Awards
+            val teamAwards = awards
+            if (teamAwards != null && teamAwards.isNotEmpty()) {
+                item(key = "summary_awards") {
+                    SummarySection(label = "Awards") {
+                        teamAwards.forEach { award ->
+                            Text(
+                                text = award.name,
+                                style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                    },
-                )
-            }
-            infoItemCount++
-        }
-
-        // Pit Location
-        if (pitLocation != null) {
-            if (infoItemCount > 0) {
-                item(key = "summary_pit_location_divider") { HorizontalDivider() }
-            }
-            item(key = "summary_pit_location") {
-                InfoRow(
-                    label = "Pit Location",
-                    labelLeadingIcon = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_nexus_logo),
-                            contentDescription = "FRC Nexus",
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(16.dp),
-                        )
-                    },
-                    value = pitLocation,
-                    onClick = {
-                        onNavigateToPitMap(eventKey, listOf(teamKey))
-                    },
-                )
-            }
-        }
-
-        // Awards
-        val teamAwards = awards
-        if (teamAwards != null && teamAwards.isNotEmpty()) {
-            item(key = "summary_awards") {
-                SummarySection(label = "Awards") {
-                    teamAwards.forEach { award ->
-                        Text(
-                            text = award.name,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-        }
-
-        if (cmpAdvancement != null) {
-            item(key = "summary_cmp_header") {
-                SectionHeader(label = "Championship Qualification")
-            }
-            item(key = "summary_cmp_detail") {
-                SummarySection(label = "Status") {
-                    val detail = cmpAdvancementSummary(cmpAdvancement)
-                    if (detail != null) {
-                        Text(text = detail, style = MaterialTheme.typography.bodyMedium)
-                    }
-                }
-            }
-        }
-
-        // Last Match / Next Match
-        if (matches != null) {
-            val sortedMatches =
-                matches.sortedWith(
-                    compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber }),
-                )
-            val lastPlayed = sortedMatches.lastOrNull { it.redScore >= 0 }
-            val nextUnplayed = sortedMatches.firstOrNull { it.redScore < 0 }
-            val playoffType = event?.playoffType ?: PlayoffType.OTHER
-
-            if (lastPlayed != null || nextUnplayed != null) {
-                item(key = "summary_match_header") {
-                    SectionHeader(label = "Recent Matches")
-                }
-            }
-
-            if (lastPlayed != null) {
-                item(key = "summary_last_match") {
-                    SummarySection(label = "Last Match") {
-                        MatchItem(
-                            match = lastPlayed,
-                            playoffType = playoffType,
-                            onClick = { onNavigateToMatch(lastPlayed.key) },
-                        )
                     }
                 }
             }
 
-            if (nextUnplayed != null) {
-                item(key = "summary_next_match") {
-                    SummarySection(label = "Next Match") {
-                        MatchItem(
-                            match = nextUnplayed,
-                            playoffType = playoffType,
-                            onClick = { onNavigateToMatch(nextUnplayed.key) },
-                        )
+            if (cmpAdvancement != null) {
+                item(key = "summary_cmp_header") {
+                    SectionHeader(label = "Championship Qualification")
+                }
+                item(key = "summary_cmp_detail") {
+                    SummarySection(label = "Status") {
+                        val detail = cmpAdvancementSummary(cmpAdvancement)
+                        if (detail != null) {
+                            Text(text = detail, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                }
+            }
+
+            // Last Match / Next Match
+            if (matches != null) {
+                val sortedMatches =
+                    matches.sortedWith(
+                        compareBy({ it.compLevel.order }, { it.setNumber }, { it.matchNumber }),
+                    )
+                val lastPlayed = sortedMatches.lastOrNull { it.redScore >= 0 }
+                val nextUnplayed = sortedMatches.firstOrNull { it.redScore < 0 }
+                val playoffType = event?.playoffType ?: PlayoffType.OTHER
+
+                if (lastPlayed != null || nextUnplayed != null) {
+                    item(key = "summary_match_header") {
+                        SectionHeader(label = "Recent Matches")
+                    }
+                }
+
+                if (lastPlayed != null) {
+                    item(key = "summary_last_match") {
+                        SummarySection(label = "Last Match") {
+                            MatchItem(
+                                match = lastPlayed,
+                                playoffType = playoffType,
+                                onClick = { onNavigateToMatch(lastPlayed.key) },
+                            )
+                        }
+                    }
+                }
+
+                if (nextUnplayed != null) {
+                    item(key = "summary_next_match") {
+                        SummarySection(label = "Next Match") {
+                            MatchItem(
+                                match = nextUnplayed,
+                                playoffType = playoffType,
+                                onClick = { onNavigateToMatch(nextUnplayed.key) },
+                            )
+                        }
                     }
                 }
             }
@@ -699,59 +709,61 @@ private fun AwardsTab(
         )
         return
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        if (event != null) {
-            item(key = "header_event") {
-                EventRow(
-                    event = event,
-                    onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
-                    showYear = true,
-                    showChevron = true,
-                )
-            }
-        }
-        if (event != null && team != null) {
-            item(key = "header_divider") { HorizontalDivider() }
-        }
-        if (team != null) {
-            item(key = "header_team") {
-                TeamRow(
-                    team = team,
-                    onClick = { onNavigateToTeam(team.key) },
-                    showChevron = true,
-                )
-            }
-        }
-        if (awards.isEmpty()) {
-            item {
-                Box(
-                    Modifier.fillMaxWidth().padding(32.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text("No awards", style = MaterialTheme.typography.bodyLarge)
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = readingPadding,
+        ) {
+            if (event != null) {
+                item(key = "header_event") {
+                    EventRow(
+                        event = event,
+                        onClick = { onNavigateToEvent(event.key, EventDetailTab.INFO) },
+                        showYear = true,
+                        showChevron = true,
+                    )
                 }
             }
-        }
-        items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = award.name,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                if (award.awardee != null) {
-                    Text(
-                        text = award.awardee,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+            if (event != null && team != null) {
+                item(key = "header_divider") { HorizontalDivider() }
+            }
+            if (team != null) {
+                item(key = "header_team") {
+                    TeamRow(
+                        team = team,
+                        onClick = { onNavigateToTeam(team.key) },
+                        showChevron = true,
                     )
+                }
+            }
+            if (awards.isEmpty()) {
+                item {
+                    Box(
+                        Modifier.fillMaxWidth().padding(32.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("No awards", style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+            }
+            items(awards, key = { "${it.awardType}_${it.awardee.orEmpty()}" }) { award ->
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                ) {
+                    Text(
+                        text = award.name,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    if (award.awardee != null) {
+                        Text(
+                            text = award.awardee,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         }

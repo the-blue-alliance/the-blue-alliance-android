@@ -32,6 +32,7 @@ import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
@@ -126,12 +127,18 @@ fun DistrictsScreen(
                 )
             },
         ) { districts ->
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                items(districts, key = { it.key }) { district ->
-                    DistrictItem(
-                        district = district,
-                        onClick = { onNavigateToDistrict(district.key) },
-                    )
+            ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = readingPadding,
+                ) {
+                    items(districts, key = { it.key }) { district ->
+                        DistrictItem(
+                            district = district,
+                            onClick = { onNavigateToDistrict(district.key) },
+                        )
+                    }
                 }
             }
         }

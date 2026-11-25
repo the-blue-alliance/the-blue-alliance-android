@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import com.mikepenz.aboutlibraries.ui.compose.android.produceLibraries
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
 import com.thebluealliance.android.BuildConfig
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
@@ -51,15 +52,22 @@ fun AboutScreen(
         },
     ) { innerPadding ->
         val libs by produceLibraries()
-        LibrariesContainer(
-            libraries = libs,
+        ReadingWidthBox(
             modifier =
                 Modifier
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
-            header = { buildInfoSection() },
-        )
+                    .fillMaxSize(),
+        ) { readingPadding ->
+            LibrariesContainer(
+                libraries = libs,
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
+                contentPadding = readingPadding,
+                header = { buildInfoSection() },
+            )
+        }
     }
 }
 

@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.window.core.layout.WindowSizeClass
 import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.MatchAdvancementMsgs
 import com.thebluealliance.android.domain.camelCaseToLabel
@@ -147,67 +149,102 @@ fun MatchDetailScreen(
                     )
                 }
             } else {
+                // Wide windows inset the dividers to the text margin and show video at 16:9.
+                val windowSize = currentWindowAdaptiveInfo().windowSizeClass
+                val wide =
+                    windowSize.isWidthAtLeastBreakpoint(
+                        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
+                    )
+                val dividerModifier =
+                    Modifier.padding(horizontal = if (wide) 16.dp else 0.dp, vertical = 8.dp)
+                val mediaItems =
+                    uiState.videos
+                        .filter { mediaUrl(it.type, it.key) != null }
+                        .map { MediaGridItem(type = it.type, foreignKey = it.key) }
+                val videoBesideScore =
+                    matchVideoBesideScore(
+                        expandedWidth =
+                            windowSize.isWidthAtLeastBreakpoint(
+                                WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
+                            ),
+                        videoCount = mediaItems.size,
+                    )
+                val summary: @Composable () -> Unit = {
+                    EventInfo(
+                        eventName = uiState.eventName,
+                        eventKey = uiState.eventKey,
+                        formattedTime = uiState.formattedTime,
+                        onNavigateToEvent = onNavigateToEvent,
+                    )
+                    ScoreSummary(match, uiState.playoffType)
+                    HorizontalDivider(modifier = dividerModifier)
+                    AllianceTeams(
+                        redTeamKeys = match.redTeamKeys,
+                        blueTeamKeys = match.blueTeamKeys,
+                        redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
+                        bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
+                        onTeamClick = { teamKey ->
+                            val ek = uiState.eventKey
+                            if (ek != null) onNavigateToTeamEvent(teamKey, ek)
+                        },
+                    )
+                }
+                val videoHeader: @Composable (Modifier) -> Unit = { modifier ->
+                    Text(
+                        text = "Match Video",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = modifier.padding(vertical = 8.dp),
+                    )
+                }
                 ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = readingPadding,
                     ) {
-                        // Event name + match time
-                        item(key = "event_info") {
-                            EventInfo(
-                                eventName = uiState.eventName,
-                                eventKey = uiState.eventKey,
-                                formattedTime = uiState.formattedTime,
-                                onNavigateToEvent = onNavigateToEvent,
-                            )
-                        }
-
-                        // Score summary
-                        item(key = "score_header") {
-                            ScoreSummary(match, uiState.playoffType)
-                        }
-
-                        item(key = "divider_teams") {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        }
-
-                        // Teams
-                        item(key = "alliance_teams") {
-                            AllianceTeams(
-                                redTeamKeys = match.redTeamKeys,
-                                blueTeamKeys = match.blueTeamKeys,
-                                redPlayoffAllianceTitle = match.redPlayoffAlliance?.displayTitle,
-                                bluePlayoffAllianceTitle = match.bluePlayoffAlliance?.displayTitle,
-                                onTeamClick = { teamKey ->
-                                    val ek = uiState.eventKey
-                                    if (ek != null) onNavigateToTeamEvent(teamKey, ek)
-                                },
-                            )
-                        }
-
-                        // Media
-                        val mediaItems =
-                            uiState.videos
-                                .filter { mediaUrl(it.type, it.key) != null }
-                                .map { MediaGridItem(type = it.type, foreignKey = it.key) }
-                        if (mediaItems.isNotEmpty()) {
-                            item(key = "media_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                                Text(
-                                    text = "Match Video",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier =
-                                        Modifier.padding(
-                                            horizontal = 16.dp,
-                                            vertical = 8.dp,
-                                        ),
-                                )
+                        if (videoBesideScore) {
+                            // Result, teams and video share the first view on wide windows,
+                            // instead of the video falling below the fold.
+                            item(key = "summary_and_media") {
+                                Row(modifier = Modifier.fillMaxWidth()) {
+                                    Column(modifier = Modifier.weight(1f)) { summary() }
+                                    // The left column's 16dp end margin is the gutter.
+                                    Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
+                                        videoHeader(Modifier)
+                                        MediaGridRow(
+                                            items = mediaItems,
+                                            modifier = Modifier.padding(vertical = 4.dp),
+                                            columns =
+                                                matchVideoColumns(
+                                                    mediaItems.size,
+                                                    wide = true,
+                                                ),
+                                            aspectRatio = 16f / 9f,
+                                        )
+                                    }
+                                }
                             }
-                            item(key = "media_grid") {
-                                MediaGridRow(
-                                    items = mediaItems,
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                )
+                        } else {
+                            item(key = "summary") {
+                                Column { summary() }
+                            }
+                            if (mediaItems.isNotEmpty()) {
+                                item(key = "media_header") {
+                                    HorizontalDivider(modifier = dividerModifier)
+                                    videoHeader(Modifier.padding(horizontal = 16.dp))
+                                }
+                                item(key = "media_grid") {
+                                    MediaGridRow(
+                                        items = mediaItems,
+                                        // Wide windows keep the tiles on the 16dp text margin.
+                                        modifier =
+                                            Modifier.padding(
+                                                horizontal = if (wide) 16.dp else 8.dp,
+                                                vertical = 4.dp,
+                                            ),
+                                        columns = matchVideoColumns(mediaItems.size, wide),
+                                        aspectRatio = if (wide) 16f / 9f else 1f,
+                                    )
+                                }
                             }
                         }
 
@@ -215,7 +252,7 @@ fun MatchDetailScreen(
                         val breakdown = uiState.scoreBreakdown
                         if (breakdown != null) {
                             item(key = "breakdown_header") {
-                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                                HorizontalDivider(modifier = dividerModifier)
                                 Text(
                                     text = "Score Breakdown",
                                     style = MaterialTheme.typography.titleMedium,
@@ -746,3 +783,15 @@ private val breakdownFieldsByYear =
         2023 to breakdownFields2023,
         2015 to breakdownFields2015,
     )
+
+/** Expanded-width windows put match video beside the score, so both fit in the first view. */
+internal fun matchVideoBesideScore(
+    expandedWidth: Boolean,
+    videoCount: Int,
+): Boolean = expandedWidth && videoCount > 0
+
+/** A lone match video spans the column on wide windows; otherwise videos pair up. */
+internal fun matchVideoColumns(
+    videoCount: Int,
+    wide: Boolean,
+): Int = if (wide && videoCount == 1) 1 else 2

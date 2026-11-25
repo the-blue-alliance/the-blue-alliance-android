@@ -41,6 +41,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.Flow
@@ -125,13 +126,17 @@ fun RegionalAdvancementScreen(
                         MaterialTheme.colorScheme.background,
                     ),
             ) {
-                item(key = "header") { RankingsTableHeader() }
+                item(key = "header") {
+                    Box(modifier = Modifier.tableWidth()) { RankingsTableHeader() }
+                }
                 items(rankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
-                    RegionalRankingRow(
-                        ranking = ranking,
-                        onNavigateToTeam = onNavigateToTeam,
-                        onNavigateToEvent = onNavigateToEvent,
-                    )
+                    Box(modifier = Modifier.tableWidth()) {
+                        RegionalRankingRow(
+                            ranking = ranking,
+                            onNavigateToTeam = onNavigateToTeam,
+                            onNavigateToEvent = onNavigateToEvent,
+                        )
+                    }
                 }
             }
         }

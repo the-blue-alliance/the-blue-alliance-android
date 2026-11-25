@@ -26,6 +26,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -133,47 +134,50 @@ fun TeamsScreen(
             }
 
             FastScrollbar(listState = listState) {
-                LazyColumn(
-                    state = listState,
-                    modifier =
-                        Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                ) {
-                    if (hasFavorites) {
-                        stickyHeader(key = "favorites_header") {
-                            SectionHeader(
-                                label = "Favorites",
-                                isStuck = stuckHeaderKey == "favorites_header",
-                                allHeaders = headerInfos,
-                                onHeaderSelected = { info ->
-                                    coroutineScope.launch {
-                                        listState.animateScrollToItem(info.itemIndex)
-                                    }
-                                },
-                            )
+                ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                    LazyColumn(
+                        state = listState,
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background),
+                        contentPadding = readingPadding,
+                    ) {
+                        if (hasFavorites) {
+                            stickyHeader(key = "favorites_header") {
+                                SectionHeader(
+                                    label = "Favorites",
+                                    isStuck = stuckHeaderKey == "favorites_header",
+                                    allHeaders = headerInfos,
+                                    onHeaderSelected = { info ->
+                                        coroutineScope.launch {
+                                            listState.animateScrollToItem(info.itemIndex)
+                                        }
+                                    },
+                                )
+                            }
+                            items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
+                                TeamRow(
+                                    team = team,
+                                    onClick = { onNavigateToTeam(team.key) },
+                                )
+                            }
+                            stickyHeader(key = "all_teams_header") {
+                                SectionHeader(
+                                    label = "All teams",
+                                    isStuck = stuckHeaderKey == "all_teams_header",
+                                    allHeaders = headerInfos,
+                                    onHeaderSelected = { info ->
+                                        coroutineScope.launch {
+                                            listState.animateScrollToItem(info.itemIndex)
+                                        }
+                                    },
+                                )
+                            }
                         }
-                        items(favoriteTeams, key = { "fav_${it.key}" }) { team ->
-                            TeamRow(
-                                team = team,
-                                onClick = { onNavigateToTeam(team.key) },
-                            )
+                        items(data.teams, key = { it.key }) { team ->
+                            TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
                         }
-                        stickyHeader(key = "all_teams_header") {
-                            SectionHeader(
-                                label = "All teams",
-                                isStuck = stuckHeaderKey == "all_teams_header",
-                                allHeaders = headerInfos,
-                                onHeaderSelected = { info ->
-                                    coroutineScope.launch {
-                                        listState.animateScrollToItem(info.itemIndex)
-                                    }
-                                },
-                            )
-                        }
-                    }
-                    items(data.teams, key = { it.key }) { team ->
-                        TeamRow(team = team, onClick = { onNavigateToTeam(team.key) })
                     }
                 }
             }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
+import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
@@ -105,14 +106,17 @@ fun ThanksScreen(
                 }
             }
             is ThanksUiState.Success -> {
-                LazyColumn(
-                    modifier =
-                        Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize(),
-                ) {
-                    items(state.contributors) { contributor ->
-                        ContributorRow(contributor)
+                ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                    LazyColumn(
+                        modifier =
+                            Modifier
+                                .padding(innerPadding)
+                                .fillMaxSize(),
+                        contentPadding = readingPadding,
+                    ) {
+                        items(state.contributors) { contributor ->
+                            ContributorRow(contributor)
+                        }
                     }
                 }
             }

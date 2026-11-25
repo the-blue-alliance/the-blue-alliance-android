@@ -97,7 +97,8 @@ fun TBANavigation(
                 Screen.RegionalAdvancement,
             )
 
-    // The rail shows exactly where the bottom bar would, on windows that aren't compact.
+    // Once in use, the rail stays put on every screen, so pushing or popping a detail screen
+    // doesn't slide it out and reflow the content beside it.
     val useRail = useNavigationRail(currentWindowAdaptiveInfo().windowSizeClass)
 
     val coroutineScope = rememberCoroutineScope()
@@ -115,10 +116,13 @@ fun TBANavigation(
     }
 
     NavigationFrame(
-        showRail = showBottomBar && useRail,
+        showRail = useRail,
+        absorbBottomInset = showBottomBar,
         rail = {
             TBANavigationRail(
                 currentRoute = navState.currentRoute,
+                stackRoot = navState.topLevelRoute,
+                onTopLevelScreen = showBottomBar,
                 onNavigate = { navigator.navigate(it) },
                 onReselect = onReselect,
             )
@@ -482,10 +486,14 @@ fun TBANavigation(
     }
 }
 
-/** Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. */
+/**
+ * Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. With
+ * [absorbBottomInset], the frame pads the bottom inset a bottom bar would otherwise have taken.
+ */
 @Composable
 private fun NavigationFrame(
     showRail: Boolean,
+    absorbBottomInset: Boolean,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -512,15 +520,20 @@ private fun NavigationFrame(
                     .weight(1f)
                     .fillMaxHeight()
                     .then(
-                        // The rail owns the start inset, and the bottom inset a bottom bar
-                        // would have absorbed falls to the screen.
+                        // The rail owns the start inset. Detail screens handle their own bottom
+                        // inset, as they do beside a hidden bottom bar.
                         if (showRail) {
+                            Modifier.consumeWindowInsets(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
+                            )
+                        } else {
                             Modifier
-                                .consumeWindowInsets(
-                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
-                                ).windowInsetsPadding(
-                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
-                                )
+                        },
+                    ).then(
+                        if (showRail && absorbBottomInset) {
+                            Modifier.windowInsetsPadding(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                            )
                         } else {
                             Modifier
                         },

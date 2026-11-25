@@ -54,3 +54,10 @@ fun ReadingWidthBox(
         )
     }
 }
+
+/** [ReadingWidthBox] for a list with no padding of its own. */
+@Composable
+fun ReadingWidthBox(
+    modifier: Modifier = Modifier,
+    content: @Composable (PaddingValues) -> Unit,
+) = ReadingWidthBox(PaddingValues(), modifier, content)
