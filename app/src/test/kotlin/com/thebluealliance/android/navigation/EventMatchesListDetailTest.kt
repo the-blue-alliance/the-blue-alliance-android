@@ -6,6 +6,7 @@ import androidx.navigation3.scene.Scene
 import androidx.navigation3.scene.SceneStrategyScope
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.computeWindowSizeClass
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -172,5 +173,63 @@ class EventMatchesListDetailTest {
                 Screen.MatchDetail("2025hop_qm1"),
             ),
         )
+    }
+
+    private val hopMatch = Screen.MatchDetail("2025hop_qm1")
+    private val hopMatchLink =
+        listOf(
+            Screen.Events(),
+            Screen.EventDetail("2025hop", initialTab = EventDetailTab.MATCHES),
+            hopMatch,
+        )
+
+    @Test
+    fun `a match beside its open event selects it there`() {
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2025hop"), hopMatch),
+            matchBesideEventStack(
+                hopMatchLink,
+                current = listOf(Screen.Events(), Screen.EventDetail("2025hop")),
+            ),
+        )
+    }
+
+    @Test
+    fun `a match beside its event replaces the selection`() {
+        val current =
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2025hop"),
+                Screen.MatchDetail("2025hop_f1m1"),
+            )
+        assertEquals(
+            listOf(Screen.Events(), Screen.EventDetail("2025hop"), hopMatch),
+            matchBesideEventStack(hopMatchLink, current),
+        )
+    }
+
+    @Test
+    fun `a lone match gets its event's Matches tab under it`() {
+        val current =
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2025mifer"),
+                Screen.MatchDetail("2025mifer_qm1"),
+            )
+        assertEquals(
+            hopMatchLink,
+            matchBesideEventStack(listOf(Screen.Events(), hopMatch), current),
+        )
+    }
+
+    @Test
+    fun `a match link that has its event is kept`() {
+        assertEquals(hopMatchLink, matchBesideEventStack(hopMatchLink, listOf(Screen.Events())))
+    }
+
+    @Test
+    fun `a stack not ending in a match is kept`() {
+        val target = listOf(Screen.Events(), Screen.EventDetail("2025hop"))
+        assertEquals(target, matchBesideEventStack(target, listOf(Screen.Events())))
     }
 }

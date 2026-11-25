@@ -43,13 +43,19 @@ class Navigator(
      *   `[Events, B]`, so Back goes to Events, as after a cold launch.
      * - Entries the stack already shares with the target stay put, so a link to the screen on top
      *   neither stacks a copy nor resets it.
+     *
+     * With [matchBesideEvent], a match opens beside its event's match list, as a tap there would.
      */
-    fun navigateFromIntent(backStack: List<NavKey>) {
+    fun navigateFromIntent(
+        backStack: List<NavKey>,
+        matchBesideEvent: Boolean = false,
+    ) {
         val root = backStack.first()
         // The first tab is the launch default.
         val tab = launchTab(root, state.topLevelRoutes, state.topLevelRoutes.first())
         val stack = state.backStacks.getValue(tab)
-        val target = if (tab.isSameTab(root)) backStack else listOf(stack.first()) + backStack
+        val linked = if (tab.isSameTab(root)) backStack else listOf(stack.first()) + backStack
+        val target = if (matchBesideEvent) matchBesideEventStack(linked, stack) else linked
         Snapshot.withMutableSnapshot {
             val shared = stack.zip(target).takeWhile { (have, want) -> have == want }.size
             while (stack.size > shared) stack.removeAt(stack.lastIndex)

@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,8 +83,11 @@ fun TBANavigation(
     // Deeplinks and notification taps that arrive while the app is already running reach
     // MainActivity.onNewIntent rather than onCreate, so they navigate the live back stack here
     // instead of setting a start route.
+    val matchBesideEvent by rememberUpdatedState(
+        showsEventMatchesTwoPane(currentWindowAdaptiveInfo().windowSizeClass),
+    )
     LaunchedEffect(navigator) {
-        activity.intentRoutes.collect { navigator.navigateFromIntent(it) }
+        activity.intentRoutes.collect { navigator.navigateFromIntent(it, matchBesideEvent) }
     }
 
     val showBottomBar =

@@ -14,6 +14,7 @@ import com.thebluealliance.android.ui.components.DetailPaneChrome
 import com.thebluealliance.android.ui.components.LocalDetailPaneChrome
 import com.thebluealliance.android.ui.components.LocalMatchDetailPaneHost
 import com.thebluealliance.android.ui.components.MatchDetailPaneHost
+import com.thebluealliance.android.ui.events.detail.EventDetailTab
 
 /** Entry metadata key: an event whose Matches tab can hold a match detail pane. Value: event key. */
 internal const val EVENT_MATCHES_LIST_PANE = "tba.eventMatchesListPane"
@@ -68,6 +69,37 @@ internal fun MutableList<NavKey>.selectMatch(route: Screen.MatchDetail) {
         route -> Unit
         is Screen.MatchDetail -> set(lastIndex, route)
         else -> add(route)
+    }
+}
+
+/**
+ * [target], a tab's new back stack, with its match opened beside its event as a tap in that
+ * event's Matches tab would: if [current] already shows the event, or a match of it, the match
+ * replaces that selection; otherwise the event's Matches tab goes under the match.
+ */
+internal fun matchBesideEventStack(
+    target: List<NavKey>,
+    current: List<NavKey>,
+): List<NavKey> {
+    val match = target.lastOrNull() as? Screen.MatchDetail ?: return target
+    val eventKey = match.matchKey.substringBefore('_')
+
+    fun List<NavKey>.isEvent(index: Int) =
+        (getOrNull(index) as? Screen.EventDetail)?.eventKey == eventKey
+    val openEvent =
+        when {
+            current.isEvent(current.lastIndex) -> current.lastIndex
+            current.lastOrNull() is Screen.MatchDetail && current.isEvent(current.lastIndex - 1) ->
+                current.lastIndex - 1
+            else -> null
+        }
+    return when {
+        openEvent != null -> current.take(openEvent + 1) + match
+        target.isEvent(target.lastIndex - 1) -> target
+        else ->
+            target.dropLast(1) +
+                Screen.EventDetail(eventKey, initialTab = EventDetailTab.MATCHES) +
+                match
     }
 }
 
