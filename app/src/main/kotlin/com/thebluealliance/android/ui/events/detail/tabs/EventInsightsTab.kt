@@ -493,7 +493,7 @@ private fun InsightsView(
                     )
                     Box(modifier = Modifier.weight(0.4f))
                 }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider()
             }
         }
 
@@ -702,7 +702,7 @@ private fun StandardOPRsView(
                         column = OPR_VALUE_COLUMN,
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider()
             }
         }
 
@@ -794,7 +794,7 @@ private fun COPRView(
                         column = COPR_VALUE_COLUMN,
                     )
                 }
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                HorizontalDivider()
             }
         }
 
