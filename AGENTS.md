@@ -44,7 +44,7 @@ scripts/navigate.sh /teams                  # also /regional_advancement and /ev
 - **Several agents capturing at once:** use the read-only fleet below, one emulator per agent. Don't use a single shared emulator behind a lock.
 - **Stacked branches:**
   - `git config rerere.enabled true` replays conflict resolutions you've already made.
-  - `git rebase --update-refs` moves a whole linear stack in one command.
+  - `git rebase --update-refs` moves a whole linear stack in one command. It skips branches checked out in another worktree, so when each branch has its own worktree, add `exec` lines to the rebase that record each new tip, then `git reset --hard <tip>` in each clean worktree.
   - Keep each branch on its real parent, not on merge-only integration branches.
 - **Gates on a stack:** run ktlint plus the tests you touched on each branch. Run the full gate (`:app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:ktlintCheck`) on the stack's tip. CI runs everything on every PR.
 - **Screenshots:**
