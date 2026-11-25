@@ -23,6 +23,36 @@ scripts/emu screenshot artifacts/<name>.png
 `top` to confirm which activity is in front, `qs` to open Quick Settings (it waits
 until the shade has focus, so a following `find` sees the tiles).
 
+### Getting to a screen fast
+
+Open screens with a deep link, not taps. It takes about a second, and it doesn't flake the way UI-dump-then-tap does:
+
+```bash
+scripts/navigate.sh /event/2025hop          # Event detail
+scripts/navigate.sh /team/frc254            # Team detail
+scripts/navigate.sh /match/2025hop_qm5      # Match detail (event underneath)
+scripts/navigate.sh /events/2024            # Events list for a year
+scripts/navigate.sh /teams                  # also /regional_advancement and /event/<key>/pitmap
+```
+
+- Only use `scripts/emu find`/`tap` for states a URL can't express, such as a tab, an open menu or a selection.
+- Capture with `scripts/emu screenshot`.
+- For window sizes, use `adb shell wm size 2400x1080 && adb shell wm density 420` for phone landscape. Reset with `wm size reset; wm density reset`.
+
+### Keeping the loop short
+
+- **Several agents capturing at once:** use the read-only fleet below, one emulator per agent. Don't use a single shared emulator behind a lock.
+- **Stacked branches:**
+  - `git config rerere.enabled true` replays conflict resolutions you've already made.
+  - `git rebase --update-refs` moves a whole linear stack in one command.
+  - Keep each branch on its real parent, not on merge-only integration branches.
+- **Gates on a stack:** run ktlint plus the tests you touched on each branch. Run the full gate (`:app:assembleDebug :app:testDebugUnitTest :app:lintDebug :app:ktlintCheck`) on the stack's tip. CI runs everything on every PR.
+- **Screenshots:**
+  - Capture only states whose pixels the change can affect.
+  - For a semantics-only change, write "no visible change" instead of attaching 0.00% pairs.
+  - Don't recapture when only the base branch moved.
+- **Review before pushing:** run a code review on the branch before the first push. That's cheaper than force-pushing a stack after review comments.
+
 ### Parallel worktrees (fan-out)
 
 When several worktree agents verify at once, each drives its **own** read-only
