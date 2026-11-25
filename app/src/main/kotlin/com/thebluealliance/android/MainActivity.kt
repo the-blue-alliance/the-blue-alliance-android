@@ -1,7 +1,6 @@
 package com.thebluealliance.android
 
 import android.Manifest
-import android.app.ComponentCaller
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -137,12 +136,11 @@ class MainActivity : ComponentActivity() {
      * The Activity is `singleTop`, so a deeplink or notification tap aimed at the running app is
      * delivered here instead of through a fresh [onCreate]. Publishing the destination on
      * [intentRoutes] navigates the live back stack, rather than dropping the intent.
+     *
+     * Overrides the one-argument form: the `ComponentCaller` overload is only called on API 35+.
      */
-    override fun onNewIntent(
-        intent: Intent,
-        caller: ComponentCaller,
-    ) {
-        super.onNewIntent(intent, caller)
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         val destination = intent.destination()
         Log.d("MainActivity", "New intent: $intent -> $destination")
         if (destination == null) return
