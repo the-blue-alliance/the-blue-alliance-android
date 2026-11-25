@@ -71,7 +71,7 @@ fun TBANavigation(
     // MainActivity.onNewIntent rather than onCreate, so they navigate the live back stack here
     // instead of setting a start route.
     LaunchedEffect(navigator) {
-        activity.intentRoutes.collect { navigator.navigate(it) }
+        activity.intentRoutes.collect { navigator.navigateFromIntent(it) }
     }
 
     val showBottomBar =

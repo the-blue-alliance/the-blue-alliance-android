@@ -3,6 +3,7 @@ package com.thebluealliance.android.navigation
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavBackStack
@@ -26,7 +27,34 @@ class Navigator(
             }
             state.topLevelRoute = topLevelKey
         } else {
-            state.backStacks[state.topLevelRoute]?.add(route)
+            // A repeat of the top destination would share its saved state and ViewModel.
+            state.backStacks[state.topLevelRoute]?.takeIf { it.lastOrNull() != route }?.add(route)
+        }
+    }
+
+    /**
+     * Opens a deep link or notification that reached the running app the way a cold launch of
+     * [backStack] would: in the tab it is rooted in, with that tab's stack rebuilt from it.
+     *
+     * - A deep link's root replaces the tab's root, so `/events/2024` keeps its year, and its
+     *   parents stay, so `/match/{key}` keeps Event detail under Match detail.
+     * - A lone notification destination goes onto the root of the first (launch) tab.
+     * - Whatever the tab showed before is dropped: a warm `/event/B` over `[Events, A]` leaves
+     *   `[Events, B]`, so Back goes to Events, as after a cold launch.
+     * - Entries the stack already shares with the target stay put, so a link to the screen on top
+     *   neither stacks a copy nor resets it.
+     */
+    fun navigateFromIntent(backStack: List<NavKey>) {
+        val root = backStack.first()
+        // The first tab is the launch default.
+        val tab = launchTab(root, state.topLevelRoutes, state.topLevelRoutes.first())
+        val stack = state.backStacks.getValue(tab)
+        val target = if (tab.isSameTab(root)) backStack else listOf(stack.first()) + backStack
+        Snapshot.withMutableSnapshot {
+            val shared = stack.zip(target).takeWhile { (have, want) -> have == want }.size
+            while (stack.size > shared) stack.removeAt(stack.lastIndex)
+            stack.addAll(target.drop(shared))
+            state.topLevelRoute = tab
         }
     }
 
@@ -53,10 +81,11 @@ class Navigator(
      * See https://developer.android.com/guide/navigation/principles
      */
     fun goBack() {
-        // If we're at the base of the current route, go back to the start route stack.
-        if (state.currentRoute == state.topLevelRoute) {
+        // At a tab's root, go back to the start tab. The root may differ from the tab key, as
+        // Events(2024) does from Events().
+        if (state.currentStack.size <= 1) {
             state.topLevelRoute = state.startRoute
-        } else if (state.currentStack.size > 1) {
+        } else {
             state.currentStack.removeLastOrNull()
         }
     }

@@ -95,11 +95,18 @@ internal fun launchStacks(
     startTopLevelRoute: NavKey,
 ): LaunchStacks {
     val root = launchBackStack.first()
-    val tab = topLevelRoutes.firstOrNull { it.isSameTab(root) } ?: startTopLevelRoute
+    val tab = launchTab(root, topLevelRoutes, startTopLevelRoute)
     if (!buildFullPath) return LaunchStacks(tab, listOf(launchBackStack.last()), homeTab = tab)
     val tabStack = if (tab.isSameTab(root)) launchBackStack else listOf(tab) + launchBackStack
     return LaunchStacks(tab, tabStack, homeTab = startTopLevelRoute)
 }
+
+/** The tab a launch back stack rooted at [root] opens in; non-tab roots go to [startTopLevelRoute]. */
+internal fun launchTab(
+    root: NavKey,
+    topLevelRoutes: Collection<NavKey>,
+    startTopLevelRoute: NavKey,
+): NavKey = topLevelRoutes.firstOrNull { it.isSameTab(root) } ?: startTopLevelRoute
 
 class NavigationState(
     val startRoute: NavKey,
