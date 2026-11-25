@@ -41,6 +41,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.thebluealliance.android.domain.model.NotificationType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -129,7 +131,7 @@ fun NotificationPreferencesSheet(
             ) {
                 TextButton(
                     onClick = {
-                        scope.launch { sheetState.hide() }.invokeOnCompletion { onDismiss() }
+                        scope.hideThen({ sheetState.hide() }, onDismiss)
                     },
                 ) {
                     Text("Cancel")
@@ -148,7 +150,10 @@ fun NotificationPreferencesSheet(
                         ) {
                             permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         }
-                        onSave(favoriteState.value, selectedNotifications.toList())
+                        val favorite = favoriteState.value
+                        val notifications = selectedNotifications.toList()
+                        // Animate out like Cancel; the caller removes the sheet in onSave.
+                        scope.hideThen({ sheetState.hide() }) { onSave(favorite, notifications) }
                     },
                 ) {
                     Text("Save")
@@ -157,6 +162,12 @@ fun NotificationPreferencesSheet(
         }
     }
 }
+
+/** Runs [hide], then [then] once it ends, even if the hide animation is interrupted. */
+internal fun CoroutineScope.hideThen(
+    hide: suspend () -> Unit,
+    then: () -> Unit,
+): Job = launch { hide() }.also { job -> job.invokeOnCompletion { then() } }
 
 // Not listSaver: it saves an empty list as null, which would restore the server values.
 internal val StringStateListSaver =
