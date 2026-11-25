@@ -50,7 +50,7 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
       - name: Run unit tests
-        run: ./gradlew :app:testDebugUnitTest --stacktrace
+        run: ./gradlew :app:testDebugUnitTest :core-theme:testDebugUnitTest --stacktrace
 
   app-release-build:
     runs-on: ubuntu-latest

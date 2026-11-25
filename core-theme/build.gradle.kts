@@ -17,6 +17,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests.all {
+            it.useJUnitPlatform()
+        }
+    }
 }
 
 dependencies {
@@ -24,4 +31,8 @@ dependencies {
     // app maps these tokens into its own (phone material3, tv-material, wear-compose-material3).
     api(platform(libs.compose.bom))
     api(libs.compose.ui.graphics)
+
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.junit.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }

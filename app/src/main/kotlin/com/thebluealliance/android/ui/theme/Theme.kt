@@ -26,9 +26,14 @@ import com.thebluealliance.android.core.theme.TbaLightColorTokens as Light
  * - Section and table headers are [BrandHeaderContainer], TBA's Indigo 400 header blue.
  * - Content on either is [OnBrand], white. onPrimaryContainer / secondaryContainer are muted by
  *   design and read with less contrast on these surfaces.
+ * - Secondary content and outlines on the Blue bars are [OnBrandMuted] and [OnBrandOutline].
+ *   They are for TBA Blue only, not [BrandHeaderContainer]: on the lighter header blue,
+ *   [OnBrandMuted] falls below 4.5:1.
  */
 val BrandHeaderContainer: Color = TbaBrandColors.HeaderBlue
 val OnBrand: Color = TbaBrandColors.OnBlue
+val OnBrandMuted: Color = TbaBrandColors.OnBlueMuted
+val OnBrandOutline: Color = TbaBrandColors.OnBlueOutline
 
 internal val TbaLightColorScheme =
     lightColorScheme(
