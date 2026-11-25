@@ -5,12 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -383,16 +386,19 @@ private fun FavoriteItem(
         }
     var menuExpanded by remember { mutableStateOf(false) }
 
+    // The entity link stops short of the menu button so the two targets don't nest.
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable(onClick = onClick)
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = displayName,
@@ -404,7 +410,7 @@ private fun FavoriteItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Box {
+        Box(modifier = Modifier.padding(vertical = 8.dp)) {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = TbaIcons.MoreVert,
@@ -500,16 +506,19 @@ private fun SubscriptionItem(
         }
     var menuExpanded by remember { mutableStateOf(false) }
 
+    // The entity link stops short of the menu button so the two targets don't nest.
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable(onClick = onClick)
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
             val notificationNames =
                 subscription.notifications.joinToString(", ") { serverKey ->
@@ -529,7 +538,7 @@ private fun SubscriptionItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Box {
+        Box(modifier = Modifier.padding(vertical = 8.dp)) {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = TbaIcons.MoreVert,
