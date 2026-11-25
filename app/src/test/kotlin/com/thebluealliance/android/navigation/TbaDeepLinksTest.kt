@@ -68,9 +68,51 @@ class TbaDeepLinksTest {
             Screen.EventDetail("2026miket"),
             match("https://www.thebluealliance.com/event/2026miket/teams")?.last(),
         )
+    }
+
+    @Test
+    fun `event tab fragments open that tab`() {
+        val expected =
+            mapOf(
+                "results" to EventDetailTab.MATCHES,
+                "rankings" to EventDetailTab.RANKINGS,
+                "awards" to EventDetailTab.AWARDS,
+                "teams" to EventDetailTab.TEAMS,
+                "event-insights" to EventDetailTab.INSIGHTS,
+                "insights" to EventDetailTab.INSIGHTS,
+                "district-points" to EventDetailTab.ADVANCEMENT_POINTS,
+                "cmp-points" to EventDetailTab.ADVANCEMENT_POINTS,
+                "champs-qual-points" to EventDetailTab.ADVANCEMENT_POINTS,
+            )
+        for ((fragment, tab) in expected) {
+            assertEquals(
+                listOf(Screen.Events(), Screen.EventDetail("2025hop", initialTab = tab)),
+                match("https://www.thebluealliance.com/event/2025hop#$fragment"),
+                fragment,
+            )
+        }
+    }
+
+    @Test
+    fun `unknown or empty event fragments open the default tab`() {
+        for (url in listOf("#media", "#scouting", "#practice", "#bogus", "#", "")) {
+            assertEquals(
+                listOf(Screen.Events(), Screen.EventDetail("2025hop")),
+                match("https://www.thebluealliance.com/event/2025hop$url"),
+                url,
+            )
+        }
+    }
+
+    @Test
+    fun `event fragments only retarget the event itself`() {
         assertEquals(
-            Screen.EventDetail("2026miket"),
-            match("https://www.thebluealliance.com/event/2026miket#rankings")?.last(),
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2026miket"),
+                Screen.EventPitMap("2026miket", ""),
+            ),
+            match("https://www.thebluealliance.com/event/2026miket/pitmap#rankings"),
         )
     }
 

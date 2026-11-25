@@ -49,7 +49,35 @@ class TbaDeepLinks {
      * pattern matches.
      */
     fun match(request: DeepLinkRequest): List<Screen>? =
-        matchers.mapNotNull { it.match(request) }.maxOrNull()?.backStack
+        matchers
+            .mapNotNull { it.match(request) }
+            .maxOrNull()
+            ?.backStack
+            ?.withFragmentTab(request.uri?.fragment)
+}
+
+/**
+ * Event page tab anchors: the Jinja page's (`event_details.html`) and the PWA's, which renamed two.
+ * Media, Scouting and Practice have no app tab, so they open the default tab.
+ */
+private val EVENT_TAB_FRAGMENTS =
+    mapOf(
+        "results" to EventDetailTab.MATCHES,
+        "rankings" to EventDetailTab.RANKINGS,
+        "awards" to EventDetailTab.AWARDS,
+        "teams" to EventDetailTab.TEAMS,
+        "event-insights" to EventDetailTab.INSIGHTS,
+        "insights" to EventDetailTab.INSIGHTS,
+        "district-points" to EventDetailTab.ADVANCEMENT_POINTS,
+        "cmp-points" to EventDetailTab.ADVANCEMENT_POINTS,
+        "champs-qual-points" to EventDetailTab.ADVANCEMENT_POINTS,
+    )
+
+/** Opens the deep-linked event on the tab its URL fragment names, e.g. `/event/2025hop#rankings`. */
+private fun List<Screen>.withFragmentTab(fragment: String?): List<Screen> {
+    val target = lastOrNull() as? Screen.EventDetail ?: return this
+    val tab = EVENT_TAB_FRAGMENTS[fragment] ?: return this
+    return dropLast(1) + target.copy(initialTab = tab)
 }
 
 private val TBA_HOSTS = listOf("www.thebluealliance.com", "thebluealliance.com")
