@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
@@ -169,7 +172,18 @@ fun MediaGridRow(
 }
 
 /**
- * A full-screen tab that displays a team's media in a grid of tiles at least 160dp wide.
+ * Minimum media tile width: 160dp keeps phones at two columns; 240dp on medium and wider windows
+ * gives three columns at 840dp and five at 1280dp.
+ */
+internal fun mediaTileMinSize(windowSizeClass: WindowSizeClass): Dp =
+    if (windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        240.dp
+    } else {
+        160.dp
+    }
+
+/**
+ * A full-screen tab that displays a team's media in an adaptive grid sized by [mediaTileMinSize].
  * Shared between Team detail and Team@Event detail screens.
  */
 @Composable
@@ -198,7 +212,10 @@ fun MediaTab(
             }
         }
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 160.dp),
+        columns =
+            GridCells.Adaptive(
+                minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
+            ),
         modifier =
             Modifier
                 .fillMaxSize()
