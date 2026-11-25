@@ -67,6 +67,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -179,6 +180,7 @@ fun MyTBAScreen(
             Row(
                 modifier =
                     Modifier
+                        .readingWidth()
                         .fillMaxWidth()
                         // End inset matches the list rows so the overflow buttons line up.
                         .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
