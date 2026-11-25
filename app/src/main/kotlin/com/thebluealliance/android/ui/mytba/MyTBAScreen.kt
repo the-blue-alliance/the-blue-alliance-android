@@ -5,12 +5,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -170,7 +173,8 @@ fun MyTBAScreen(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        // End inset matches the list rows so the overflow buttons line up.
+                        .padding(start = 16.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val personIcon = rememberVectorPainter(TbaIcons.Person)
@@ -372,80 +376,14 @@ private fun FavoriteItem(
     onAddShortcut: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    val typeLabel =
-        when (favorite.modelType) {
-            ModelType.EVENT -> "Event"
-            ModelType.TEAM -> "Team"
-            ModelType.MATCH -> "Match"
-            ModelType.EVENT_TEAM -> "Team @ Event"
-            ModelType.DISTRICT -> "District"
-            else -> "Other"
-        }
-    var menuExpanded by remember { mutableStateOf(false) }
-
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            Text(
-                text = displayName,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = typeLabel,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Box {
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(
-                    imageVector = TbaIcons.MoreVert,
-                    contentDescription = "More options",
-                )
-            }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-            ) {
-                if (canPinShortcuts) {
-                    DropdownMenuItem(
-                        text = { Text("Add shortcut to home screen") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            onAddShortcut()
-                        },
-                    )
-                }
-                DropdownMenuItem(
-                    text = { Text("Remove") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = TbaIcons.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        onRemove()
-                    },
-                )
-            }
-        }
-    }
+    MyTbaEntityRow(
+        title = displayName,
+        subtitle = modelTypeLabel(favorite.modelType),
+        onClickLabel = modelTypeClickLabel(favorite.modelType),
+        onClick = onClick,
+        onRemove = onRemove,
+        onAddShortcut = if (canPinShortcuts) onAddShortcut else null,
+    )
 }
 
 @Composable
@@ -489,57 +427,104 @@ private fun SubscriptionItem(
     onClick: () -> Unit,
     onRemove: () -> Unit,
 ) {
-    val typeLabel =
-        when (subscription.modelType) {
-            ModelType.EVENT -> "Event"
-            ModelType.TEAM -> "Team"
-            ModelType.MATCH -> "Match"
-            ModelType.EVENT_TEAM -> "Team @ Event"
-            ModelType.DISTRICT -> "District"
-            else -> "Other"
+    val notificationNames =
+        subscription.notifications.joinToString(", ") { serverKey ->
+            NotificationType
+                .fromServerKey(serverKey)
+                ?.displayName
+                ?.takeIf { it.isNotBlank() }
+                ?: serverKey
         }
+    MyTbaEntityRow(
+        title = displayName,
+        subtitle = "${modelTypeLabel(subscription.modelType)} · $notificationNames",
+        onClickLabel = modelTypeClickLabel(subscription.modelType),
+        onClick = onClick,
+        onRemove = onRemove,
+    )
+}
+
+internal fun modelTypeLabel(modelType: Int): String =
+    when (modelType) {
+        ModelType.EVENT -> "Event"
+        ModelType.TEAM -> "Team"
+        ModelType.MATCH -> "Match"
+        ModelType.EVENT_TEAM -> "Team @ Event"
+        ModelType.DISTRICT -> "District"
+        else -> "Other"
+    }
+
+/** Names where tapping a myTBA row goes; Team @ Event rows open the event. */
+internal fun modelTypeClickLabel(modelType: Int): String? =
+    when (modelType) {
+        ModelType.EVENT, ModelType.EVENT_TEAM -> "View event"
+        ModelType.TEAM -> "View team"
+        ModelType.MATCH -> "View match"
+        else -> null
+    }
+
+/** A myTBA entity link with its overflow menu; the shortcut item shows only when [onAddShortcut] is set. */
+@Composable
+private fun MyTbaEntityRow(
+    title: String,
+    subtitle: String,
+    onClickLabel: String?,
+    onClick: () -> Unit,
+    onRemove: () -> Unit,
+    onAddShortcut: (() -> Unit)? = null,
+) {
     var menuExpanded by remember { mutableStateOf(false) }
 
+    // The entity link stops short of the menu button so the two targets don't nest.
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 4.dp),
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .clickable(onClickLabel = onClickLabel, onClick = onClick)
+                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+            verticalArrangement = Arrangement.Center,
         ) {
-            val notificationNames =
-                subscription.notifications.joinToString(", ") { serverKey ->
-                    NotificationType
-                        .fromServerKey(serverKey)
-                        ?.displayName
-                        ?.takeIf { it.isNotBlank() }
-                        ?: serverKey
-                }
             Text(
-                text = displayName,
+                text = title,
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = "$typeLabel · $notificationNames",
+                text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        Box {
+        Box(modifier = Modifier.padding(vertical = 8.dp)) {
             IconButton(onClick = { menuExpanded = true }) {
                 Icon(
                     imageVector = TbaIcons.MoreVert,
-                    contentDescription = "More options",
+                    contentDescription = "More options for $title",
                 )
             }
             DropdownMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
+                if (onAddShortcut != null) {
+                    DropdownMenuItem(
+                        text = { Text("Add shortcut to home screen") },
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_add_to_home_screen),
+                                contentDescription = null,
+                            )
+                        },
+                        onClick = {
+                            menuExpanded = false
+                            onAddShortcut()
+                        },
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text("Remove") },
                     leadingIcon = {
