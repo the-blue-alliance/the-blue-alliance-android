@@ -31,3 +31,20 @@ internal fun allianceLabelDescription(
             c.titlecase()
         }}"
     }
+
+/**
+ * One spoken line for a breakdown row, naming each value's alliance since only colour shows it.
+ * Playoff alliances are named as in their score column; a missing value reads as none.
+ */
+internal fun breakdownRowDescription(
+    label: String,
+    redValue: String,
+    blueValue: String,
+    redPlayoffAllianceTitle: String? = null,
+    bluePlayoffAllianceTitle: String? = null,
+): String {
+    fun spoken(value: String) = if (value == "-") "none" else value
+    val red = allianceLabelDescription(redPlayoffAllianceTitle, "red") ?: "Red"
+    val blue = allianceLabelDescription(bluePlayoffAllianceTitle, "blue") ?: "Blue"
+    return "$label: $red ${spoken(redValue)}; $blue ${spoken(blueValue)}"
+}

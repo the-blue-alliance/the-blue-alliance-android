@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
@@ -207,10 +208,15 @@ fun MatchDetailScreen(
                             Text(
                                 text = "Score Breakdown",
                                 style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                modifier =
+                                    Modifier
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .semantics { heading() },
                             )
                         }
 
+                        val redAllianceTitle = match.redPlayoffAlliance?.displayTitle
+                        val blueAllianceTitle = match.bluePlayoffAlliance?.displayTitle
                         val redBreakdown = breakdown["red"] ?: emptyMap()
                         val blueBreakdown = breakdown["blue"] ?: emptyMap()
                         val orderedFields =
@@ -222,6 +228,8 @@ fun MatchDetailScreen(
 
                         items(orderedFields, key = { "breakdown_${it.first}" }) { (apiKey, label) ->
                             BreakdownRow(
+                                redPlayoffAllianceTitle = redAllianceTitle,
+                                bluePlayoffAllianceTitle = blueAllianceTitle,
                                 label = label,
                                 redValue =
                                     formatBreakdownValue(
@@ -482,11 +490,23 @@ private fun BreakdownRow(
     label: String,
     redValue: String,
     blueValue: String,
+    redPlayoffAllianceTitle: String? = null,
+    bluePlayoffAllianceTitle: String? = null,
 ) {
     Row(
         modifier =
             Modifier
-                .fillMaxWidth()
+                // One stop per row that says which value is whose.
+                .clearAndSetSemantics {
+                    contentDescription =
+                        breakdownRowDescription(
+                            label,
+                            redValue,
+                            blueValue,
+                            redPlayoffAllianceTitle,
+                            bluePlayoffAllianceTitle,
+                        )
+                }.fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
