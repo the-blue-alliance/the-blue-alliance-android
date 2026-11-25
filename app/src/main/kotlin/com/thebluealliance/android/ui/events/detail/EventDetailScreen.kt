@@ -40,7 +40,6 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.shareTbaUrl
-import com.thebluealliance.android.ui.common.showUserMessage
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -98,11 +97,6 @@ fun EventDetailScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.userMessage.collect { message ->
-            context.showUserMessage(message)
-        }
     }
     ReportShortcutVisitEffect(uiState.event?.key)
 
