@@ -156,5 +156,21 @@ class EventRankingsTabLogicTest {
         val layout = rankingColumnLayout(1024.dp, List(6) { 40.dp })
         assertNull(layout.columnWidths)
         assertNull(layout.rowWidth)
+        assertEquals(720.dp, layout.tableWidth)
+    }
+
+    @Test
+    fun `columns wider than the weighted width widen the table`() {
+        val minWidths = listOf(40.dp, 100.dp, 100.dp, 200.dp, 200.dp, 60.dp)
+        val layout = rankingColumnLayout(1024.dp, minWidths)
+        assertEquals(724.dp, layout.tableWidth)
+        assertEquals(minWidths, layout.columnWidths)
+        assertNull(layout.rowWidth)
+    }
+
+    @Test
+    fun `columns wider than the reading column overflow it`() {
+        val minWidths = listOf(40.dp, 100.dp, 100.dp, 260.dp, 260.dp, 60.dp)
+        assertEquals(844.dp, rankingColumnLayout(1024.dp, minWidths).tableWidth)
     }
 }

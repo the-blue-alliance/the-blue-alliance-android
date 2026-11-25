@@ -63,13 +63,14 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.components.ReadingMaxWidth
+import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
+import com.thebluealliance.android.ui.components.tableSpan
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
@@ -223,7 +224,7 @@ fun EventRankingsTab(
     val minWidths = rankingColumnMinWidths(primaryLabel, secondaryLabel, sortState.column)
     val sideScroll = rememberScrollState()
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val (columnWidths, rowWidth) = rankingColumnLayout(maxWidth, minWidths)
+        val (columnWidths, rowWidth, tableWidth) = rankingColumnLayout(maxWidth, minWidths)
         // Only the header and row grids scroll, together, so expanded details stay on screen.
         // Rank and Team stay put, so every scrolled value keeps its team beside it.
         val cueColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.24f)
@@ -238,6 +239,7 @@ fun EventRankingsTab(
                     secondaryLabel = secondaryLabel,
                     columnWidths = columnWidths,
                     rowScroll = rowScroll,
+                    tableWidth = tableWidth,
                     sortState = sortState,
                     onSortSelected = { selectedColumn ->
                         sortState = nextRankingSortState(sortState, selectedColumn)
@@ -249,6 +251,7 @@ fun EventRankingsTab(
                     ranking = ranking,
                     columnWidths = columnWidths,
                     rowScroll = rowScroll,
+                    tableWidth = tableWidth,
                     sortOrders = rankingSortOrders,
                     extraStatsInfo = rankingExtraStatsInfo,
                     onTeamClick = onTeamClick,
@@ -258,18 +261,27 @@ fun EventRankingsTab(
     }
 }
 
-/** Column widths, null when weighted, and the side-scrolling row width, null when rows fit. */
+/**
+ * Column widths, null when weighted; the side-scrolling row width, null when rows fit; and the
+ * width the table needs, for [tableWidth].
+ */
 internal data class RankingColumnLayout(
     val columnWidths: List<Dp>?,
     val rowWidth: Dp?,
+    val tableWidth: Dp,
 )
 
-/** Lays the columns out in the table's capped width within a [windowWidth]-wide window. */
+/**
+ * Lays the columns out within a [windowWidth]-wide window. The table needs its weighted width, or
+ * more when its columns' [minWidths] do, and gets that capped at the reading column.
+ */
 internal fun rankingColumnLayout(
     windowWidth: Dp,
     minWidths: List<Dp>,
 ): RankingColumnLayout {
-    val viewport = minOf(windowWidth, ReadingMaxWidth)
+    val tableWidth =
+        maxOf(TableNaturalWidth, minWidths.fold(TABLE_ROW_PADDING * 2) { a, b -> a + b })
+    val viewport = tableSpan(windowWidth, tableWidth).width
     val columnWidths =
         fitColumnWidths(
             (viewport - TABLE_ROW_PADDING * 2).value,
@@ -283,7 +295,7 @@ internal fun rankingColumnLayout(
             TABLE_ROW_PADDING.value,
             frozenCount = FROZEN_COLUMNS,
         )
-    return RankingColumnLayout(columnWidths?.map { it.dp }, rowWidth?.dp)
+    return RankingColumnLayout(columnWidths?.map { it.dp }, rowWidth?.dp, tableWidth)
 }
 
 /** Narrowest each column can be without breaking a header word or the team number. */
@@ -419,12 +431,13 @@ private fun RankingHeaderRow(
     secondaryLabel: String,
     columnWidths: List<Dp>?,
     rowScroll: RowScroll?,
+    tableWidth: Dp,
     sortState: RankingSortState,
     onSortSelected: (RankingSortColumn) -> Unit,
 ) {
     RankingRow(
         rowScroll = rowScroll,
-        modifier = Modifier.tableWidth().background(BrandHeaderContainer),
+        modifier = Modifier.tableWidth(tableWidth).background(BrandHeaderContainer),
         // Sortable cells fill this height, so a wrapped label doesn't leave its neighbours with
         // shorter hover bands.
         contentModifier = Modifier.height(IntrinsicSize.Min),
@@ -648,6 +661,7 @@ private fun RankingItem(
     ranking: Ranking,
     columnWidths: List<Dp>?,
     rowScroll: RowScroll?,
+    tableWidth: Dp,
     sortOrders: List<RankingSortOrder>?,
     extraStatsInfo: List<RankingSortOrder>?,
     onTeamClick: (String) -> Unit,
@@ -660,7 +674,7 @@ private fun RankingItem(
     )
 
     Column(
-        modifier = Modifier.tableWidth(),
+        modifier = Modifier.tableWidth(tableWidth),
     ) {
         // Vertical padding lives in the cells: ROW_CELL_PADDING on each plain cell and
         // ROW_CELL_PADDING + 4.dp inside the team cell, so the row keeps its height while the
