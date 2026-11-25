@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.teams
 
 import android.graphics.BitmapFactory
 import android.util.Base64
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -103,11 +102,6 @@ fun TeamDetailScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.userMessage.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
     }
     ReportShortcutVisitEffect(uiState.team?.key)
 

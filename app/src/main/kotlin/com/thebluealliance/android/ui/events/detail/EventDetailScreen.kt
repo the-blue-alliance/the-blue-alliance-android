@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -98,11 +97,6 @@ fun EventDetailScreen(
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.showSignInPrompt.collect { showSignInDialog = true }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.userMessage.collect { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        }
     }
     ReportShortcutVisitEffect(uiState.event?.key)
 

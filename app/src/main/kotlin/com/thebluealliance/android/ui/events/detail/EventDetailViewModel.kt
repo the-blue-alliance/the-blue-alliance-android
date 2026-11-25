@@ -16,6 +16,7 @@ import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -48,6 +49,7 @@ class EventDetailViewModel
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
         private val shortcutManager: TBAShortcutManager,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val eventKey: String = navKey.eventKey
         private val eventYear: Int = eventKey.take(4).toIntOrNull() ?: 0
@@ -195,9 +197,6 @@ class EventDetailViewModel
         private val _showSignInPrompt = MutableSharedFlow<Unit>()
         val showSignInPrompt: SharedFlow<Unit> = _showSignInPrompt.asSharedFlow()
 
-        private val _userMessage = MutableSharedFlow<String>()
-        val userMessage: SharedFlow<String> = _userMessage.asSharedFlow()
-
         init {
             refreshAll()
         }
@@ -215,7 +214,7 @@ class EventDetailViewModel
                         myTBARepository.addFavorite(eventKey, ModelType.EVENT)
                     }
                 } catch (_: Exception) {
-                    _userMessage.emit("Couldn't update favorite")
+                    userMessages.show("Couldn't update favorite")
                 }
             }
         }
@@ -233,7 +232,7 @@ class EventDetailViewModel
                         notifications,
                     )
                 } catch (_: Exception) {
-                    _userMessage.emit("Failed to save notification preferences")
+                    userMessages.show("Failed to save notification preferences")
                 }
             }
         }

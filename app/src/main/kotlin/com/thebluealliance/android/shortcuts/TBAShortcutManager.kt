@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Base64
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
@@ -21,6 +20,7 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +47,7 @@ class TBAShortcutManager
         private val eventRepository: EventRepository,
         private val teamRepository: TeamRepository,
         private val tbaApi: TbaApi,
+        private val userMessages: UserMessageBus,
     ) {
         /**
          * Start watching the favorites repository for changes, syncing favorites to Android's shortcuts
@@ -177,24 +178,14 @@ class TBAShortcutManager
         suspend fun requestPinShortcut(favorite: Favorite) {
             val shortcutInfo = favorite.getShortcutInfo()
             if (shortcutInfo == null) {
-                Toast
-                    .makeText(
-                        context,
-                        "Failed to create shortcut",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                userMessages.show("Failed to create shortcut")
                 return
             }
 
             try {
                 val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
                 if (!success) {
-                    Toast
-                        .makeText(
-                            context,
-                            "Failed to add shortcut to home screen",
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                    userMessages.show("Failed to add shortcut to home screen")
                 }
             } catch (e: IllegalStateException) {
                 // requestPinShortcut throws if the app is no longer in the foreground
