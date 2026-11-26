@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -164,3 +165,16 @@ fun Modifier.pageBackground(): Modifier {
         pageBackground(page = colors.background, backdrop = colors.background)
     }
 }
+
+/**
+ * The fill under a centred message (loading, empty, error, sign-in): the plain page colour, as on a
+ * phone. A sheet with only a short message on it reads as an empty column, so such states skip it.
+ */
+val ColorScheme.messageBackground: Color get() = background
+
+/**
+ * Paints [messageBackground] over the whole area, covering any reading-column sheet a screen's
+ * container draws, so a centred message sits on one colour beside the rail.
+ */
+@Composable
+fun Modifier.messageBackground(): Modifier = background(MaterialTheme.colorScheme.messageBackground)

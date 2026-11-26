@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -58,6 +59,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.NotificationType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.ui.components.ProseMaxWidth
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -65,6 +67,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
@@ -162,7 +165,7 @@ fun MyTBAScreen(
             Box(
                 modifier =
                     Modifier
-                        .pageBackground()
+                        .messageBackground()
                         .padding(innerPadding.withoutBottom())
                         .fillMaxSize(),
             ) {
@@ -303,6 +306,7 @@ private fun SignInPrompt(onSignIn: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         Column(
+            modifier = Modifier.widthIn(max = ProseMaxWidth),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
