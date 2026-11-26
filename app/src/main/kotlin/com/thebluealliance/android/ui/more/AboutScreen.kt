@@ -1,11 +1,7 @@
 package com.thebluealliance.android.ui.more
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,7 +20,10 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
@@ -34,7 +33,7 @@ fun AboutScreen(
     onNavigateToSearch: () -> Unit,
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 title = { TopBarTitle("About") },
@@ -52,10 +51,10 @@ fun AboutScreen(
     ) { innerPadding ->
         val libs by produceLibraries()
         ReadingWidthBox(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
+            innerPadding.onlyBottom(),
+            Modifier
+                .padding(innerPadding.withoutBottom())
+                .fillMaxSize(),
         ) { readingPadding ->
             LibrariesContainer(
                 libraries = libs,

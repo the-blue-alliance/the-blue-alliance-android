@@ -6,17 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -68,8 +65,11 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -130,7 +130,7 @@ fun MyTBAScreen(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 onRefresh =
@@ -164,7 +164,7 @@ fun MyTBAScreen(
                 modifier =
                     Modifier
                         .pageBackground()
-                        .padding(innerPadding)
+                        .padding(innerPadding.withoutBottom())
                         .fillMaxSize(),
             ) {
                 SignInPrompt(onSignIn = onSignIn)
@@ -176,7 +176,7 @@ fun MyTBAScreen(
             modifier =
                 Modifier
                     .pageBackground()
-                    .padding(innerPadding)
+                    .padding(innerPadding.withoutBottom())
                     .fillMaxSize(),
         ) {
             Row(
@@ -273,6 +273,7 @@ fun MyTBAScreen(
                                 onNavigateToEvent = onNavigateToEvent,
                                 onNavigateToMatch = onNavigateToMatch,
                                 listState = favoritesListState,
+                                contentPadding = innerPadding.onlyBottom(),
                                 canPinShortcuts = uiState.canPinShortcuts,
                                 onAddShortcut = viewModel::requestPinShortcut,
                                 onRemoveFavorite = viewModel::removeFavorite,
@@ -288,6 +289,7 @@ fun MyTBAScreen(
                                 onNavigateToEvent = onNavigateToEvent,
                                 onNavigateToMatch = onNavigateToMatch,
                                 listState = notificationsListState,
+                                contentPadding = innerPadding.onlyBottom(),
                                 onRemoveSubscription = { sub ->
                                     viewModel.removeSubscription(sub.modelKey, sub.modelType)
                                 },
@@ -335,6 +337,7 @@ private fun FavoritesTab(
     onNavigateToEvent: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
     listState: LazyListState,
+    contentPadding: PaddingValues,
     canPinShortcuts: Boolean,
     onAddShortcut: (Favorite) -> Unit,
     onRemoveFavorite: (Favorite) -> Unit,
@@ -350,7 +353,7 @@ private fun FavoritesTab(
         )
         return
     }
-    ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+    ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -429,6 +432,7 @@ private fun NotificationsTab(
     onNavigateToEvent: (String) -> Unit,
     onNavigateToMatch: (String) -> Unit,
     listState: LazyListState,
+    contentPadding: PaddingValues,
     onRemoveSubscription: (Subscription) -> Unit,
 ) {
     if (error != null) {
@@ -442,7 +446,7 @@ private fun NotificationsTab(
         )
         return
     }
-    ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+    ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),

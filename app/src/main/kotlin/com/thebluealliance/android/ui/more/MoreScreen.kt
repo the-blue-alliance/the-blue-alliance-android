@@ -5,14 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -29,8 +25,10 @@ import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
@@ -45,7 +43,7 @@ fun MoreScreen(
     sponsors: List<PlatinumSponsor> = emptyList(),
 ) {
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 title = { TopBarTitle("More") },
@@ -60,7 +58,7 @@ fun MoreScreen(
         Column(
             modifier =
                 Modifier
-                    .padding(innerPadding)
+                    .padding(innerPadding.withoutBottom())
                     .readingWidth()
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background),
@@ -133,7 +131,8 @@ fun MoreScreen(
 
             SponsorCredits(sponsors = sponsors, modifier = Modifier.padding(top = 8.dp))
 
-            Spacer(modifier = Modifier.height(12.dp))
+            // The footer clears the gesture bar; the column's background runs on behind it.
+            Spacer(modifier = Modifier.height(12.dp + innerPadding.calculateBottomPadding()))
         }
     }
 }

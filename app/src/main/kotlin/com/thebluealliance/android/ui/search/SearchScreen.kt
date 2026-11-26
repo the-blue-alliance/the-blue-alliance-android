@@ -35,7 +35,9 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -142,7 +144,7 @@ fun SearchScreen(
             modifier =
                 Modifier
                     .pageBackground()
-                    .padding(innerPadding)
+                    .padding(innerPadding.withoutBottom())
                     .fillMaxSize(),
         ) {
             if (uiState.query.isBlank()) {
@@ -156,7 +158,7 @@ fun SearchScreen(
                 EmptyBox(message = "No results for \"${uiState.query}\"")
                 return@Column
             }
-            ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+            ReadingWidthBox(innerPadding.onlyBottom(), Modifier.fillMaxSize()) { readingPadding ->
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     state = lazyListState,

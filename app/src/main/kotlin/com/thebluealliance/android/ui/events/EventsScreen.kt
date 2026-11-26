@@ -6,14 +6,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -59,7 +55,10 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 import com.thebluealliance.android.ui.theme.OnBrandOutline
@@ -93,7 +92,7 @@ fun EventsScreen(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refreshEvents,
@@ -121,7 +120,7 @@ fun EventsScreen(
             modifier =
                 Modifier
                     .pageBackground()
-                    .padding(innerPadding)
+                    .padding(innerPadding.withoutBottom())
                     .fillMaxSize(),
             empty = { EmptyBox("No events found for $selectedYear") },
         ) { data ->
@@ -132,6 +131,7 @@ fun EventsScreen(
                 onNavigateToEvent = onNavigateToEvent,
                 listState = listState,
                 reselectFlow = reselectFlow,
+                contentPadding = innerPadding.onlyBottom(),
             )
         }
     }
@@ -145,6 +145,7 @@ private fun EventsList(
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
     reselectFlow: Flow<Unit>,
+    contentPadding: PaddingValues,
 ) {
     val allEvents = remember(sections) { sections.flatMap { it.events } }
     val today = remember { LocalDate.now() }
@@ -280,7 +281,7 @@ private fun EventsList(
         )
 
         FastScrollbar(listState = listState, modifier = Modifier.weight(1f)) {
-            ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+            ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
