@@ -6,12 +6,15 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.Layout
@@ -43,17 +48,28 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
 import com.thebluealliance.android.ui.components.expandableRow
+import com.thebluealliance.android.ui.components.fitColumnWidths
+import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.tableSideDrag
+import com.thebluealliance.android.ui.components.tableSideScroll
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
@@ -61,6 +77,7 @@ import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import java.util.Locale
+import kotlin.math.roundToInt
 
 /**
  * Half of the gutter between two table columns, applied inside every cell of both the header and
@@ -74,6 +91,23 @@ private val TABLE_ROW_PADDING = 12.dp
 
 /** Vertical inset of each ranking-row cell; the team cell adds 4.dp more for a 48dp target. */
 private val ROW_CELL_PADDING = 8.dp
+
+/** Rank, Team, Record, primary sort, secondary sort, chevron. */
+private val COLUMN_WEIGHTS = listOf(0.11f, 0.22f, 0.15f, 0.23f, 0.19f, 0.10f)
+
+private const val TEAM_COLUMN = 1
+
+/** Rank and Team, which stay put while a row's other columns scroll sideways. */
+private const val FROZEN_COLUMNS = 2
+
+private const val PRIMARY_COLUMN = 3
+private const val SECONDARY_COLUMN = 4
+
+/** Width of a sort carat or the row chevron. */
+private val ICON_WIDTH = 24.dp
+
+/** Widest a 5-digit team number, in the team column's style, is likely to be. */
+private const val WIDEST_TEAM_NUMBER = "88888"
 
 /** OpenType tabular figures: every digit takes the same advance, so numeric columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -184,75 +218,258 @@ fun EventRankingsTab(
             sortRankings(rankings, sortState)
         }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = innerPadding,
-    ) {
-        stickyHeader {
-            RankingHeaderRow(
-                primaryLabel = primaryLabel,
-                secondaryLabel = secondaryLabel,
-                sortState = sortState,
-                onSortSelected = { selectedColumn ->
-                    sortState = nextRankingSortState(sortState, selectedColumn)
-                },
-            )
-        }
-        items(sortedRankings, key = { "${it.eventKey}_${it.teamKey}" }) { ranking ->
-            RankingItem(
-                ranking = ranking,
-                sortOrders = rankingSortOrders,
-                extraStatsInfo = rankingExtraStatsInfo,
-                onTeamClick = onTeamClick,
-            )
+    // Narrow windows widen the columns whose header words would otherwise break, and scroll
+    // sideways if even that doesn't fit.
+    val minWidths = rankingColumnMinWidths(primaryLabel, secondaryLabel, sortState.column)
+    val sideScroll = rememberScrollState()
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val (columnWidths, rowWidth) = rankingColumnLayout(maxWidth, minWidths)
+        // Only the header and row grids scroll, together, so expanded details stay on screen.
+        // Rank and Team stay put, so every scrolled value keeps its team beside it.
+        val cueColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.24f)
+        val rowScroll = rowWidth?.let { RowScroll(sideScroll, it, cueColor) }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = innerPadding,
+        ) {
+            stickyHeader {
+                RankingHeaderRow(
+                    primaryLabel = primaryLabel,
+                    secondaryLabel = secondaryLabel,
+                    columnWidths = columnWidths,
+                    rowScroll = rowScroll,
+                    sortState = sortState,
+                    onSortSelected = { selectedColumn ->
+                        sortState = nextRankingSortState(sortState, selectedColumn)
+                    },
+                )
+            }
+            items(sortedRankings, key = { "${it.eventKey}_${it.teamKey}" }) { ranking ->
+                RankingItem(
+                    ranking = ranking,
+                    columnWidths = columnWidths,
+                    rowScroll = rowScroll,
+                    sortOrders = rankingSortOrders,
+                    extraStatsInfo = rankingExtraStatsInfo,
+                    onTeamClick = onTeamClick,
+                )
+            }
         }
     }
 }
+
+/** Column widths, null when weighted, and the side-scrolling row width, null when rows fit. */
+internal data class RankingColumnLayout(
+    val columnWidths: List<Dp>?,
+    val rowWidth: Dp?,
+)
+
+/** Lays the columns out in the table's capped width within a [windowWidth]-wide window. */
+internal fun rankingColumnLayout(
+    windowWidth: Dp,
+    minWidths: List<Dp>,
+): RankingColumnLayout {
+    val viewport = minOf(windowWidth, TABLE_MAX_WIDTH)
+    val columnWidths =
+        fitColumnWidths(
+            (viewport - TABLE_ROW_PADDING * 2).value,
+            COLUMN_WEIGHTS,
+            minWidths.map { it.value },
+        )
+    val rowWidth =
+        sideScrollRowWidth(
+            viewport.value,
+            columnWidths,
+            TABLE_ROW_PADDING.value,
+            frozenCount = FROZEN_COLUMNS,
+        )
+    return RankingColumnLayout(columnWidths?.map { it.dp }, rowWidth?.dp)
+}
+
+/** Narrowest each column can be without breaking a header word or the team number. */
+@Composable
+private fun rankingColumnMinWidths(
+    primaryLabel: String,
+    secondaryLabel: String,
+    sortColumn: RankingSortColumn,
+): List<Dp> {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val headerStyle = MaterialTheme.typography.titleSmall
+    val teamStyle = MaterialTheme.typography.titleMedium
+    return remember(
+        primaryLabel,
+        secondaryLabel,
+        sortColumn,
+        headerStyle,
+        teamStyle,
+        density,
+    ) {
+        fun widest(
+            text: String,
+            style: TextStyle,
+        ): Dp =
+            text.split(' ').maxOf { word ->
+                with(density) {
+                    measurer
+                        .measure(word, style, softWrap = false, maxLines = 1)
+                        .size.width
+                        .toDp()
+                }
+            }
+        val gutters = COLUMN_GUTTER * 2
+
+        fun caret(column: RankingSortColumn) = if (sortColumn == column) ICON_WIDTH else 0.dp
+        listOf(
+            widest("Rank", headerStyle) + gutters,
+            maxOf(
+                widest("Team", headerStyle) + caret(RankingSortColumn.TEAM),
+                widest(WIDEST_TEAM_NUMBER, teamStyle),
+            ) + gutters,
+            widest("Record", headerStyle) + gutters,
+            widest(primaryLabel, headerStyle) + caret(RankingSortColumn.PRIMARY) + gutters,
+            widest(secondaryLabel, headerStyle) + caret(RankingSortColumn.SECONDARY) + gutters,
+            ICON_WIDTH + gutters,
+        )
+    }
+}
+
+/** Sideways scrolling shared by the header and row grids when the columns overflow. */
+private class RowScroll(
+    val state: ScrollState,
+    val rowWidth: Dp,
+    val cueColor: Color,
+)
+
+/**
+ * A header or ranking row: [frozen] cells, then [scrolling] cells, inside the table's row padding.
+ * With [rowScroll], the [scrolling] cells and the end padding scroll sideways in the space the
+ * [frozen] cells leave; otherwise all the cells share one row. [modifier] comes before the padding
+ * and [contentModifier] after it.
+ */
+@Composable
+private fun RankingRow(
+    rowScroll: RowScroll?,
+    modifier: Modifier,
+    contentModifier: Modifier = Modifier,
+    verticalPadding: Dp = 0.dp,
+    frozen: @Composable RowScope.() -> Unit,
+    scrolling: @Composable RowScope.() -> Unit,
+) {
+    if (rowScroll == null) {
+        Row(
+            modifier =
+                modifier
+                    .padding(horizontal = TABLE_ROW_PADDING, vertical = verticalPadding)
+                    .then(contentModifier),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            frozen()
+            scrolling()
+        }
+        return
+    }
+    Row(
+        modifier =
+            modifier
+                .tableSideDrag(rowScroll.state, LocalLayoutDirection.current)
+                .padding(start = TABLE_ROW_PADDING)
+                .then(contentModifier)
+                // Lets the scrolling part, and its edge cue, span the row's full height.
+                .height(IntrinsicSize.Min),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // The vertical padding goes inside each part, so the edge cue spans the padding too.
+        Row(
+            modifier = Modifier.padding(vertical = verticalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            frozen()
+        }
+        Row(
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .tableSideScroll(rowScroll.state, rowScroll.rowWidth, rowScroll.cueColor)
+                    .padding(end = TABLE_ROW_PADDING)
+                    .padding(vertical = verticalPadding),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            scrolling()
+        }
+    }
+}
+
+/** Sizes column [index] of [row]: its weight, or its fitted width from [columnWidths]. */
+private fun Modifier.rankingColumn(
+    row: RowScope,
+    index: Int,
+    columnWidths: List<Dp>?,
+): Modifier =
+    if (columnWidths == null) {
+        with(row) { weight(COLUMN_WEIGHTS[index]) }
+    } else {
+        width(columnWidths[index])
+    }
 
 @Composable
 private fun RankingHeaderRow(
     primaryLabel: String,
     secondaryLabel: String,
+    columnWidths: List<Dp>?,
+    rowScroll: RowScroll?,
     sortState: RankingSortState,
     onSortSelected: (RankingSortColumn) -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .tableWidth()
-                .background(BrandHeaderContainer)
-                // 6.dp vertical here + 6.dp inside each sortable cell below: the sort targets get
-                // a full-height hover band without changing the header's height. The horizontal
-                // inset is the screen margin minus the cells' own COLUMN_GUTTER.
-                .padding(horizontal = TABLE_ROW_PADDING, vertical = 6.dp)
-                // Sortable cells fill this height, so a wrapped label doesn't leave its
-                // neighbours with shorter hover bands.
-                .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically,
+    RankingRow(
+        rowScroll = rowScroll,
+        modifier = Modifier.tableWidth().background(BrandHeaderContainer),
+        // Sortable cells fill this height, so a wrapped label doesn't leave its neighbours with
+        // shorter hover bands.
+        contentModifier = Modifier.height(IntrinsicSize.Min),
+        // 6.dp here + 6.dp inside each sortable cell below: the sort targets get a full-height
+        // hover band without changing the header's height. The horizontal inset is the screen
+        // margin minus the cells' own COLUMN_GUTTER.
+        verticalPadding = 6.dp,
+        frozen = {
+            Text(
+                text = "Rank",
+                style = MaterialTheme.typography.titleSmall,
+                color = OnBrand,
+                modifier =
+                    Modifier
+                        .rankingColumn(
+                            this,
+                            0,
+                            columnWidths,
+                        ).padding(horizontal = COLUMN_GUTTER),
+            )
+            RankingHeaderItem(
+                text = "Team",
+                modifier = Modifier.rankingColumn(this, TEAM_COLUMN, columnWidths),
+                sortColumn = RankingSortColumn.TEAM,
+                currentSort = sortState.column,
+                ascending = sortState.ascending,
+                onSortClick = { onSortSelected(RankingSortColumn.TEAM) },
+            )
+        },
     ) {
-        Text(
-            text = "Rank",
-            style = MaterialTheme.typography.titleSmall,
-            color = OnBrand,
-            modifier = Modifier.weight(0.11f).padding(horizontal = COLUMN_GUTTER),
-        )
-        RankingHeaderItem(
-            text = "Team",
-            modifier = Modifier.weight(0.22f),
-            sortColumn = RankingSortColumn.TEAM,
-            currentSort = sortState.column,
-            ascending = sortState.ascending,
-            onSortClick = { onSortSelected(RankingSortColumn.TEAM) },
-        )
         Text(
             text = "Record",
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
-            modifier = Modifier.weight(0.15f).padding(horizontal = COLUMN_GUTTER),
+            modifier =
+                Modifier
+                    .rankingColumn(
+                        this,
+                        2,
+                        columnWidths,
+                    ).padding(horizontal = COLUMN_GUTTER),
         )
         RankingHeaderItem(
             text = primaryLabel,
-            modifier = Modifier.weight(0.23f),
+            modifier = Modifier.rankingColumn(this, PRIMARY_COLUMN, columnWidths),
             numeric = true,
             sortColumn = RankingSortColumn.PRIMARY,
             currentSort = sortState.column,
@@ -261,7 +478,7 @@ private fun RankingHeaderRow(
         )
         RankingHeaderItem(
             text = secondaryLabel,
-            modifier = Modifier.weight(0.19f),
+            modifier = Modifier.rankingColumn(this, SECONDARY_COLUMN, columnWidths),
             numeric = true,
             sortColumn = RankingSortColumn.SECONDARY,
             currentSort = sortState.column,
@@ -269,7 +486,7 @@ private fun RankingHeaderRow(
             onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
         )
         // Spacer for chevron alignment
-        Spacer(modifier = Modifier.weight(0.10f))
+        Spacer(modifier = Modifier.rankingColumn(this, 5, columnWidths))
     }
 }
 
@@ -301,6 +518,8 @@ private fun RankingHeaderItem(
         // measured at the cell's full width so it never ellipsizes, then right-anchored; the carat
         // (child 1) is placed just left of the label, spilling into the column's left slack rather
         // than stealing width from the label.
+        val labelLayout = remember { LabelLayoutHolder() }
+        val measurePolicy = remember(labelLayout) { NumericHeaderMeasurePolicy(labelLayout) }
         Layout(
             modifier = cellModifier,
             content = {
@@ -311,12 +530,13 @@ private fun RankingHeaderItem(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.End,
+                    onTextLayout = { labelLayout.layout = it },
                 )
                 if (sorted) {
                     SortCaret(ascending)
                 }
             },
-            measurePolicy = NumericHeaderMeasurePolicy,
+            measurePolicy = measurePolicy,
         )
     } else {
         Row(
@@ -337,12 +557,34 @@ private fun RankingHeaderItem(
     }
 }
 
+/** The numeric header label's latest text layout, set as the label measures. */
+private class LabelLayoutHolder {
+    var layout: TextLayoutResult? = null
+}
+
+/** Left edge of the widest line in [layout], which a wrapped label reports as its full width. */
+private fun inkLeft(layout: TextLayoutResult?): Float =
+    layout?.let { result -> (0 until result.lineCount).minOf { result.getLineLeft(it) } } ?: 0f
+
+/**
+ * X of a numeric header's sort caret: just left of the label's widest line, which starts
+ * [labelInkLeft] into a label placed at [labelLeft], so a wrapped label keeps the caret beside its
+ * text rather than at the cell's far edge.
+ */
+internal fun numericHeaderCaretX(
+    labelLeft: Int,
+    labelInkLeft: Float,
+    caretWidth: Int,
+): Int = (labelLeft + labelInkLeft.roundToInt() - caretWidth).coerceAtLeast(0)
+
 /**
  * Lays out a numeric header cell: the label (child 0) right-anchored, the sort carat (optional
- * child 1) just left of it. Intrinsic height mirrors measure, so an `IntrinsicSize.Min` header row
- * gets the label's real wrapped height.
+ * child 1) just left of its widest line. Intrinsic height mirrors measure, so an
+ * `IntrinsicSize.Min` header row gets the label's real wrapped height.
  */
-private object NumericHeaderMeasurePolicy : MeasurePolicy {
+private class NumericHeaderMeasurePolicy(
+    private val labelLayout: LabelLayoutHolder,
+) : MeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<Measurable>,
         constraints: Constraints,
@@ -358,11 +600,14 @@ private object NumericHeaderMeasurePolicy : MeasurePolicy {
         val label = measurables[0].measure(loose.copy(maxWidth = labelMax))
         val height = maxOf(label.height, caret?.height ?: 0, constraints.minHeight)
         // Right-anchor the label on the cell's right edge (the values' shared edge), then seat
-        // the carat directly to its left.
+        // the carat directly left of its text.
         val labelLeft = (width - label.width).coerceAtLeast(caretWidth)
         return layout(width, height) {
             label.place(labelLeft, (height - label.height) / 2)
-            caret?.place((labelLeft - caretWidth).coerceAtLeast(0), (height - caret.height) / 2)
+            caret?.place(
+                numericHeaderCaretX(labelLeft, inkLeft(labelLayout.layout), caretWidth),
+                (height - caret.height) / 2,
+            )
         }
     }
 
@@ -401,6 +646,8 @@ private fun SortCaret(ascending: Boolean) {
 @Composable
 private fun RankingItem(
     ranking: Ranking,
+    columnWidths: List<Dp>?,
+    rowScroll: RowScroll?,
     sortOrders: List<RankingSortOrder>?,
     extraStatsInfo: List<RankingSortOrder>?,
     onTeamClick: (String) -> Unit,
@@ -415,46 +662,50 @@ private fun RankingItem(
     Column(
         modifier = Modifier.tableWidth(),
     ) {
-        Row(
+        // Vertical padding lives in the cells: ROW_CELL_PADDING on each plain cell and
+        // ROW_CELL_PADDING + 4.dp inside the team cell, so the row keeps its height while the
+        // nested team target spans 48dp. The horizontal inset is the screen margin minus the
+        // cells' own COLUMN_GUTTER.
+        RankingRow(
+            rowScroll = rowScroll,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .expandableRow(expanded) { expanded = !expanded }
-                    // Vertical padding lives in the cells: ROW_CELL_PADDING on each plain cell and
-                    // ROW_CELL_PADDING + 4.dp inside the team cell, so the row keeps its height
-                    // while the nested team target spans 48dp. The horizontal inset is the screen
-                    // margin minus the cells' own COLUMN_GUTTER.
-                    .padding(horizontal = TABLE_ROW_PADDING),
-            verticalAlignment = Alignment.CenterVertically,
+                    .expandableRow(expanded) { expanded = !expanded },
+            frozen = {
+                Text(
+                    text = "#${ranking.rank}",
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier =
+                        Modifier
+                            .rankingColumn(this, 0, columnWidths)
+                            .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
+                )
+                Text(
+                    text = ranking.teamKey.teamNumber,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier =
+                        Modifier
+                            .rankingColumn(this, TEAM_COLUMN, columnWidths)
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(
+                                onClickLabel = "View team ${ranking.teamKey.teamNumber}",
+                                role = Role.Button,
+                            ) { onTeamClick(ranking.teamKey) }
+                            .padding(
+                                horizontal = COLUMN_GUTTER,
+                                vertical = ROW_CELL_PADDING + 4.dp,
+                            ),
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            },
         ) {
-            Text(
-                text = "#${ranking.rank}",
-                style = MaterialTheme.typography.labelLarge,
-                modifier =
-                    Modifier
-                        .weight(0.11f)
-                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
-            )
-            Text(
-                text = ranking.teamKey.teamNumber,
-                style = MaterialTheme.typography.titleMedium,
-                modifier =
-                    Modifier
-                        .weight(0.22f)
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable(
-                            onClickLabel = "View team ${ranking.teamKey.teamNumber}",
-                            role = Role.Button,
-                        ) { onTeamClick(ranking.teamKey) }
-                        .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING + 4.dp),
-                color = MaterialTheme.colorScheme.primary,
-            )
             Text(
                 text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier =
                     Modifier
-                        .weight(0.15f)
+                        .rankingColumn(this, 2, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -473,7 +724,7 @@ private fun RankingItem(
                 textAlign = TextAlign.End,
                 modifier =
                     Modifier
-                        .weight(0.23f)
+                        .rankingColumn(this, PRIMARY_COLUMN, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -491,7 +742,7 @@ private fun RankingItem(
                 textAlign = TextAlign.End,
                 modifier =
                     Modifier
-                        .weight(0.19f)
+                        .rankingColumn(this, SECONDARY_COLUMN, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
             )
 
@@ -502,7 +753,7 @@ private fun RankingItem(
                 modifier =
                     Modifier
                         .rotate(rotationAngle)
-                        .weight(0.10f)
+                        .rankingColumn(this, 5, columnWidths)
                         .padding(horizontal = COLUMN_GUTTER, vertical = ROW_CELL_PADDING),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
