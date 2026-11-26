@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,11 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
@@ -45,7 +42,6 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
-import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
@@ -197,56 +193,32 @@ fun EventDetailScreen(
                                 onClick = viewModel::toggleFavorite,
                             ),
                         ),
-                    overflowMenu =
-                        if (
-                            hasDetailOverflowItems(
-                                entityLoaded = uiState.event != null,
-                                canPinShortcuts = viewModel.canPinShortcuts,
-                            )
-                        ) {
-                            { close ->
-                                uiState.event?.let { event ->
-                                    DropdownMenuItem(
-                                        text = { Text("Share") },
-                                        leadingIcon = {
-                                            Icon(
-                                                TbaIcons.Share,
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            close()
-                                            context.shareTbaUrl(
-                                                title = "${event.year} ${event.name}",
-                                                url =
-                                                    "https://www.thebluealliance.com/event/" +
-                                                        event.key,
-                                            )
-                                        },
-                                    )
-                                }
-                                if (viewModel.canPinShortcuts) {
-                                    DropdownMenuItem(
-                                        text = { Text("Add to home screen") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter =
-                                                    painterResource(
-                                                        R.drawable.ic_add_to_home_screen,
-                                                    ),
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            close()
-                                            viewModel.requestPinShortcut()
-                                        },
-                                    )
-                                }
-                            }
-                        } else {
-                            null
-                        },
+                    overflowActions =
+                        listOfNotNull(
+                            uiState.event?.let { event ->
+                                TopBarAction(
+                                    label = "Share",
+                                    icon = TbaIcons.Share,
+                                    onClick = {
+                                        context.shareTbaUrl(
+                                            title = "${event.year} ${event.name}",
+                                            url =
+                                                "https://www.thebluealliance.com/event/" +
+                                                    event.key,
+                                        )
+                                    },
+                                )
+                            },
+                            if (viewModel.canPinShortcuts) {
+                                TopBarAction(
+                                    label = "Add to home screen",
+                                    icon = TbaIcons.AddToHomeScreen,
+                                    onClick = viewModel::requestPinShortcut,
+                                )
+                            } else {
+                                null
+                            },
+                        ),
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {

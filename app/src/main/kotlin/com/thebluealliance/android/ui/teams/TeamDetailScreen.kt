@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -46,14 +45,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.thebluealliance.android.R
 import com.thebluealliance.android.core.theme.TbaAllianceColors
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
@@ -74,7 +71,6 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
-import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -217,58 +213,34 @@ fun TeamDetailScreen(
                                 onClick = viewModel::toggleFavorite,
                             ),
                         ),
-                    overflowMenu =
-                        if (
-                            hasDetailOverflowItems(
-                                entityLoaded = uiState.team != null,
-                                canPinShortcuts = viewModel.canPinShortcuts,
-                            )
-                        ) {
-                            { close ->
-                                uiState.team?.let { team ->
-                                    DropdownMenuItem(
-                                        text = { Text("Share") },
-                                        leadingIcon = {
-                                            Icon(
-                                                TbaIcons.Share,
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            close()
-                                            context.shareTbaUrl(
-                                                title =
-                                                    "Team ${team.number} - " +
-                                                        (team.nickname ?: ""),
-                                                url =
-                                                    "https://www.thebluealliance.com/team/" +
-                                                        "${team.number}",
-                                            )
-                                        },
-                                    )
-                                }
-                                if (viewModel.canPinShortcuts) {
-                                    DropdownMenuItem(
-                                        text = { Text("Add to home screen") },
-                                        leadingIcon = {
-                                            Icon(
-                                                painter =
-                                                    painterResource(
-                                                        R.drawable.ic_add_to_home_screen,
-                                                    ),
-                                                contentDescription = null,
-                                            )
-                                        },
-                                        onClick = {
-                                            close()
-                                            viewModel.requestPinShortcut()
-                                        },
-                                    )
-                                }
-                            }
-                        } else {
-                            null
-                        },
+                    overflowActions =
+                        listOfNotNull(
+                            uiState.team?.let { team ->
+                                TopBarAction(
+                                    label = "Share",
+                                    icon = TbaIcons.Share,
+                                    onClick = {
+                                        context.shareTbaUrl(
+                                            title =
+                                                "Team ${team.number} - " +
+                                                    (team.nickname ?: ""),
+                                            url =
+                                                "https://www.thebluealliance.com/team/" +
+                                                    "${team.number}",
+                                        )
+                                    },
+                                )
+                            },
+                            if (viewModel.canPinShortcuts) {
+                                TopBarAction(
+                                    label = "Add to home screen",
+                                    icon = TbaIcons.AddToHomeScreen,
+                                    onClick = viewModel::requestPinShortcut,
+                                )
+                            } else {
+                                null
+                            },
+                        ),
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
