@@ -49,6 +49,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
@@ -146,7 +147,7 @@ fun DistrictDetailScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
-                    .background(MaterialTheme.colorScheme.background),
+                    .pageBackground(),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing =

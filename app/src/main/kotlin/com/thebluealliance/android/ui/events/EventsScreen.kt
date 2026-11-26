@@ -53,11 +53,13 @@ import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 import com.thebluealliance.android.ui.theme.OnBrandOutline
@@ -118,9 +120,9 @@ fun EventsScreen(
             onRefresh = viewModel::refreshEvents,
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize(),
             empty = { EmptyBox("No events found for $selectedYear") },
         ) { data ->
             EventsList(
@@ -424,13 +426,16 @@ private fun WeekFilterChips(
                 )
             }
             val fadeWidth = 24.dp
+            // Beside the rail a chip scrolled part-way off the start reads as cut by the rail's
+            // edge, so the start fades there as it does under the pinned star.
+            val fadeStart = hasFavorites || LocalNavigationRailShown.current
             LazyRow(
                 state = chipRowState,
                 modifier =
                     Modifier
                         .weight(1f)
                         .then(
-                            if (hasFavorites) {
+                            if (fadeStart) {
                                 Modifier.drawWithContent {
                                     drawContent()
                                     if (chipRowState.canScrollBackward) {

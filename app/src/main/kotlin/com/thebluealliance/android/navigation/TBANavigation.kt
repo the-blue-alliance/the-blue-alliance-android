@@ -18,16 +18,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
@@ -36,8 +41,10 @@ import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.common.UserMessageHost
+import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.components.TBANavigationRail
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.useNavigationRail
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
@@ -63,6 +70,7 @@ import com.thebluealliance.android.ui.teamevent.TeamEventDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamDetailScreen
 import com.thebluealliance.android.ui.teams.TeamDetailViewModel
 import com.thebluealliance.android.ui.teams.TeamsScreen
+import com.thebluealliance.android.ui.theme.StatusStripGray
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emptyFlow
@@ -510,47 +518,64 @@ private fun NavigationFrame(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Row(modifier = modifier) {
-        AnimatedVisibility(
-            visible = showRail,
-            enter =
-                slideInHorizontally(
-                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
-                    initialOffsetX = { -it },
-                ),
-            exit =
-                slideOutHorizontally(
-                    animationSpec = TBAMotionTokens.defaultSpatialSpec(),
-                    targetOffsetX = { -it },
-                ),
-        ) {
-            rail()
-        }
-        Column(
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .then(
-                        // The rail owns the start inset. Detail screens handle their own bottom
-                        // inset, as they do beside a hidden bottom bar.
-                        if (showRail) {
-                            Modifier.consumeWindowInsets(
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
-                            )
-                        } else {
-                            Modifier
-                        },
-                    ).then(
-                        if (showRail && absorbBottomInset) {
-                            Modifier.windowInsetsPadding(
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
-                            )
-                        } else {
-                            Modifier
-                        },
+    CompositionLocalProvider(LocalNavigationRailShown provides showRail) {
+        Row(modifier = modifier.then(if (showRail) Modifier.statusBarStrip() else Modifier)) {
+            AnimatedVisibility(
+                visible = showRail,
+                enter =
+                    slideInHorizontally(
+                        animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                        initialOffsetX = { -it },
                     ),
-            content = content,
-        )
+                exit =
+                    slideOutHorizontally(
+                        animationSpec = TBAMotionTokens.defaultSpatialSpec(),
+                        targetOffsetX = { -it },
+                    ),
+            ) {
+                rail()
+            }
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        // Also paints the bottom inset the column absorbs beside the rail.
+                        .pageBackground()
+                        .then(
+                            // The rail owns the start inset. Detail screens handle their own bottom
+                            // inset, as they do beside a hidden bottom bar.
+                            if (showRail) {
+                                Modifier.consumeWindowInsets(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ).then(
+                            if (showRail && absorbBottomInset) {
+                                Modifier.windowInsetsPadding(
+                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                                )
+                            } else {
+                                Modifier
+                            },
+                        ),
+                content = content,
+            )
+        }
+    }
+}
+
+/**
+ * Paints [StatusStripGray] behind the status bar across the window, over the rail and the bars, so
+ * the light status icons sit on their own band rather than on the rail's edge against the blue bar.
+ */
+@Composable
+private fun Modifier.statusBarStrip(): Modifier {
+    val top = WindowInsets.statusBars.getTop(LocalDensity.current).toFloat()
+    return drawWithContent {
+        drawContent()
+        drawRect(StatusStripGray, size = Size(size.width, top))
     }
 }

@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,6 +47,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.hasDetailOverflowItems
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
@@ -298,7 +298,7 @@ fun EventDetailScreen(
                 Modifier
                     .fillMaxSize()
                     .padding(top = innerPadding.calculateTopPadding())
-                    .background(MaterialTheme.colorScheme.background),
+                    .pageBackground(),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.event != null,

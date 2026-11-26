@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.districts
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -36,6 +35,7 @@ import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 
@@ -105,9 +105,9 @@ fun DistrictsScreen(
             onRefresh = viewModel::refreshDistricts,
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize(),
             empty = {
                 EmptyBox(
                     message = "No districts found for $selectedYear",

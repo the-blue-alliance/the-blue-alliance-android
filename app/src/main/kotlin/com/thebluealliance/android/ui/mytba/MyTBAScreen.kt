@@ -67,6 +67,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -161,9 +162,9 @@ fun MyTBAScreen(
             Box(
                 modifier =
                     Modifier
+                        .pageBackground()
                         .padding(innerPadding)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
+                        .fillMaxSize(),
             ) {
                 SignInPrompt(onSignIn = onSignIn)
             }
@@ -173,9 +174,9 @@ fun MyTBAScreen(
         Column(
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .fillMaxSize(),
         ) {
             Row(
                 modifier =

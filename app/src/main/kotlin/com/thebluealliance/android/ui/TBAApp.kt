@@ -59,7 +59,8 @@ fun TBAApp(
     LaunchedEffect(darkTheme) {
         // Keep system bars in sync with the in-app theme override, not just the system
         // night mode; the status bar stays dark-style because the top bar is primaryContainer, the brand
-        // blue (#3F51B5) in both light and dark.
+        // blue (#3F51B5) in both light and dark, and beside a rail the status bar sits on the gray
+        // strip NavigationFrame paints.
         // enableEdgeToEdge is a one-shot call with no teardown, so there's nothing to dispose.
         activity?.enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
