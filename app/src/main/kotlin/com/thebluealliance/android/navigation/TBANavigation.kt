@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,8 +83,11 @@ fun TBANavigation(
     // Deeplinks and notification taps that arrive while the app is already running reach
     // MainActivity.onNewIntent rather than onCreate, so they navigate the live back stack here
     // instead of setting a start route.
+    val matchBesideEvent by rememberUpdatedState(
+        showsEventMatchesTwoPane(currentWindowAdaptiveInfo().windowSizeClass),
+    )
     LaunchedEffect(navigator) {
-        activity.intentRoutes.collect { navigator.navigateFromIntent(it) }
+        activity.intentRoutes.collect { navigator.navigateFromIntent(it, matchBesideEvent) }
     }
 
     val showBottomBar =
@@ -169,6 +173,7 @@ fun TBANavigation(
                     )
             },
             onBack = { navigator.goBack() },
+            sceneStrategies = listOf(rememberEventMatchesSceneStrategy()),
             entries =
                 navState.toEntries(
                     entryProvider =
@@ -302,7 +307,9 @@ fun TBANavigation(
                                     },
                                 )
                             }
-                            entry<Screen.EventDetail> { eventDetail ->
+                            entry<Screen.EventDetail>(
+                                metadata = { eventMatchesListPane(it.eventKey) },
+                            ) { eventDetail ->
                                 val viewModel: EventDetailViewModel =
                                     hiltViewModel(
                                         creationCallback = { f: EventDetailViewModel.Factory ->
@@ -315,8 +322,11 @@ fun TBANavigation(
                                     onNavigateToTeam = { teamKey ->
                                         navigator.navigate(Screen.TeamDetail(teamKey))
                                     },
+                                    // Replaces a match already in the detail pane.
                                     onNavigateToMatch = { matchKey ->
-                                        navigator.navigate(Screen.MatchDetail(matchKey))
+                                        navigator.state.currentStack.selectMatch(
+                                            Screen.MatchDetail(matchKey),
+                                        )
                                     },
                                     onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
                                     onNavigateToTeamEvent = { teamKey, eventKey ->
@@ -335,7 +345,9 @@ fun TBANavigation(
                                     initialTab = eventDetail.initialTab,
                                 )
                             }
-                            entry<Screen.MatchDetail> { matchDetail ->
+                            entry<Screen.MatchDetail>(
+                                metadata = { matchDetailPane(it.matchKey) },
+                            ) { matchDetail ->
                                 val viewModel: MatchDetailViewModel =
                                     hiltViewModel(
                                         creationCallback = { f: MatchDetailViewModel.Factory ->

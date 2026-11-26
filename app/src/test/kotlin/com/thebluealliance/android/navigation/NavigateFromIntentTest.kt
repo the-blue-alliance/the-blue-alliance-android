@@ -22,8 +22,17 @@ class NavigateFromIntentTest {
             backStacks = tabs.associateWith { NavBackStack(it) },
         )
 
-    private fun NavigationState.navigateFromIntent(backStack: List<NavKey>) =
-        Navigator(this, mockk(relaxed = true)).navigateFromIntent(backStack)
+    private fun NavigationState.navigateFromIntent(
+        backStack: List<NavKey>,
+        matchBesideEvent: Boolean = false,
+    ) = Navigator(this, mockk(relaxed = true)).navigateFromIntent(backStack, matchBesideEvent)
+
+    private val matchLink =
+        listOf(
+            Screen.Events(),
+            Screen.EventDetail("2025hop", initialTab = EventDetailTab.MATCHES),
+            Screen.MatchDetail("2025hop_qm1"),
+        )
 
     @Test
     fun `notification opens under events from another tab`() {
@@ -158,5 +167,46 @@ class NavigateFromIntentTest {
         navigator.navigate(Screen.TeamDetail("frc254"))
         navigator.navigate(Screen.TeamDetail("frc254"))
         assertEquals(listOf(Screen.Teams, Screen.TeamDetail("frc254")), state.currentStack.toList())
+    }
+
+    @Test
+    fun `match link on a wide window opens beside its event`() {
+        val state = stateOn(Screen.Teams)
+        state.navigateFromIntent(matchLink, matchBesideEvent = true)
+        assertEquals(Screen.Events(), state.topLevelRoute)
+        assertEquals(matchLink, state.currentStack.toList())
+    }
+
+    @Test
+    fun `match link on a wide window replaces the match selected in its event`() {
+        val state = stateOn(Screen.Events())
+        state.currentStack.add(Screen.EventDetail("2025hop"))
+        state.currentStack.add(Screen.MatchDetail("2025hop_qm9"))
+        state.navigateFromIntent(matchLink, matchBesideEvent = true)
+        assertEquals(
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2025hop"),
+                Screen.MatchDetail("2025hop_qm1"),
+            ),
+            state.currentStack.toList(),
+        )
+    }
+
+    @Test
+    fun `match notification on a wide window opens beside its event`() {
+        val state = stateOn(Screen.Events())
+        state.navigateFromIntent(listOf(Screen.MatchDetail("2025hop_qm1")), matchBesideEvent = true)
+        assertEquals(matchLink, state.currentStack.toList())
+    }
+
+    @Test
+    fun `match notification on a narrower window opens the match alone`() {
+        val state = stateOn(Screen.Teams)
+        state.navigateFromIntent(listOf(Screen.MatchDetail("2025hop_qm1")))
+        assertEquals(
+            listOf(Screen.Events(), Screen.MatchDetail("2025hop_qm1")),
+            state.currentStack.toList(),
+        )
     }
 }
