@@ -5,13 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,9 +36,12 @@ import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.Flow
@@ -74,7 +73,7 @@ fun RegionalAdvancementScreen(
         reselectFlow.collect { listState.animateScrollToItem(0) }
     }
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refreshRankings,
@@ -115,7 +114,12 @@ fun RegionalAdvancementScreen(
             state = uiState,
             isRefreshing = isRefreshing,
             onRefresh = viewModel::refreshRankings,
-            modifier = Modifier.pageBackground().padding(innerPadding).fillMaxSize(),
+            modifier =
+                Modifier
+                    .pageBackground()
+                    .padding(
+                        innerPadding.withoutBottom(),
+                    ).fillMaxSize(),
             empty = {
                 EmptyBox("No regional advancement rankings for $selectedYear")
             },
@@ -123,6 +127,7 @@ fun RegionalAdvancementScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
+                contentPadding = innerPadding.onlyBottom(),
             ) {
                 item(key = "header") {
                     Box(modifier = Modifier.tableWidth()) { RankingsTableHeader() }

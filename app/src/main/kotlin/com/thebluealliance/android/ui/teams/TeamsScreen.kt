@@ -1,11 +1,7 @@
 package com.thebluealliance.android.ui.teams
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -31,7 +27,10 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -56,7 +55,7 @@ fun TeamsScreen(
     }
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 onRefresh = viewModel::refreshTeams,
@@ -76,7 +75,7 @@ fun TeamsScreen(
             onRefresh = viewModel::refreshTeams,
             modifier =
                 Modifier
-                    .padding(innerPadding)
+                    .padding(innerPadding.withoutBottom())
                     .fillMaxSize(),
             empty = { EmptyBox("No teams found") },
         ) { data ->
@@ -133,7 +132,10 @@ fun TeamsScreen(
             }
 
             FastScrollbar(listState = listState) {
-                ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                ReadingWidthBox(
+                    innerPadding.onlyBottom(),
+                    Modifier.fillMaxSize(),
+                ) { readingPadding ->
                     LazyColumn(
                         state = listState,
                         modifier =
