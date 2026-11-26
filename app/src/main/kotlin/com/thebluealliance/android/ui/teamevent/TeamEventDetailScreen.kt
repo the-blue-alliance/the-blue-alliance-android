@@ -66,6 +66,8 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
@@ -251,29 +253,35 @@ fun TeamEventDetailScreen(
                             headerContent = {
                                 if (evt != null) {
                                     item(key = "header_event") {
-                                        EventRow(
-                                            event = evt,
-                                            onClick = {
-                                                onNavigateToEvent(
-                                                    evt.key,
-                                                    EventDetailTab.INFO,
-                                                )
-                                            },
-                                            showYear = true,
-                                            showChevron = true,
-                                        )
+                                        Box(Modifier.tableWidth()) {
+                                            EventRow(
+                                                event = evt,
+                                                onClick = {
+                                                    onNavigateToEvent(
+                                                        evt.key,
+                                                        EventDetailTab.INFO,
+                                                    )
+                                                },
+                                                showYear = true,
+                                                showChevron = true,
+                                            )
+                                        }
                                     }
                                 }
                                 if (evt != null && tm != null) {
-                                    item(key = "header_divider") { HorizontalDivider() }
+                                    item(key = "header_divider") {
+                                        Box(Modifier.tableWidth()) { HorizontalDivider() }
+                                    }
                                 }
                                 if (tm != null) {
                                     item(key = "header_team") {
-                                        TeamRow(
-                                            team = tm,
-                                            onClick = { onNavigateToTeam(tm.key) },
-                                            showChevron = true,
-                                        )
+                                        Box(Modifier.tableWidth()) {
+                                            TeamRow(
+                                                team = tm,
+                                                onClick = { onNavigateToTeam(tm.key) },
+                                                showChevron = true,
+                                            )
+                                        }
                                     }
                                 }
                             },
@@ -616,6 +624,7 @@ private fun StatsTab(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .readingWidth()
                 .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {

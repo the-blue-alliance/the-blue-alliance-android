@@ -7,9 +7,6 @@ import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -20,28 +17,58 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 
-/** Widest a data table grows; beyond it, weighted columns spread too far apart to scan. */
-val TABLE_MAX_WIDTH = 720.dp
+/**
+ * Width a table of weighted columns needs: the width its weights were tuned for. Wider, its columns
+ * spread too far apart to scan.
+ */
+val TableNaturalWidth = 720.dp
+
+/** Where a table sits in its window: [start] inset from the start edge, [width] wide. */
+internal data class TableSpan(
+    val start: Dp,
+    val width: Dp,
+)
 
 /**
- * Fills the available width up to [TABLE_MAX_WIDTH], centered. Apply it to a table's header and
- * to each of its rows so they share one column grid; it is a no-op on narrower windows.
+ * Places a table that needs [naturalWidth] in [available]: at the reading column's start edge, as
+ * wide as it needs but no wider than the column. Windows narrower than both fill with it.
  */
-fun Modifier.tableWidth(): Modifier =
-    this
-        .fillMaxWidth()
-        .wrapContentWidth(Alignment.CenterHorizontally)
-        .widthIn(max = TABLE_MAX_WIDTH)
-        .fillMaxWidth()
+internal fun tableSpan(
+    available: Dp,
+    naturalWidth: Dp = TableNaturalWidth,
+): TableSpan =
+    TableSpan(
+        start = readingInset(available),
+        width = minOf(available, ReadingMaxWidth, naturalWidth),
+    )
 
-/** Side inset that centers a [TABLE_MAX_WIDTH] column in [availableWidth]; zero when narrower. */
-internal fun tableInset(availableWidth: Dp): Dp =
-    ((availableWidth - TABLE_MAX_WIDTH) / 2).coerceAtLeast(0.dp)
+/**
+ * Lays a table out [naturalWidth] wide, capped at the reading column and starting at its start
+ * edge, so every table shares one start edge without stretching. Apply it to a table's header,
+ * each of its rows and their dividers, with the same [naturalWidth], so they share one width; a
+ * window narrower than the table fills with it.
+ */
+fun Modifier.tableWidth(naturalWidth: Dp = TableNaturalWidth): Modifier =
+    layout { measurable, constraints ->
+        if (!constraints.hasBoundedWidth) {
+            val placeable = measurable.measure(constraints)
+            return@layout layout(
+                placeable.width,
+                placeable.height,
+            ) { placeable.placeRelative(0, 0) }
+        }
+        val span = tableSpan(constraints.maxWidth.toDp(), naturalWidth)
+        val start = span.start.roundToPx()
+        val width = span.width.roundToPx().coerceAtMost(constraints.maxWidth - start)
+        val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+        layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(start, 0) }
+    }
 
 /**
  * Column widths for a table of [available] width whose columns are [weights] shares but must be at

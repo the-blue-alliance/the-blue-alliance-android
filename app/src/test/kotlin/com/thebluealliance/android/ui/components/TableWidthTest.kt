@@ -7,15 +7,26 @@ import org.junit.jupiter.api.Test
 
 class TableWidthTest {
     @Test
-    fun `no inset at or below the table width`() {
-        assertEquals(0.dp, tableInset(412.dp))
-        assertEquals(0.dp, tableInset(720.dp))
+    fun `phones fill the window`() {
+        assertEquals(TableSpan(0.dp, 412.dp), tableSpan(412.dp))
     }
 
     @Test
-    fun `wider windows center the table`() {
-        assertEquals(60.dp, tableInset(840.dp))
-        assertEquals(152.dp, tableInset(1024.dp))
+    fun `a table narrower than the column keeps its own width at the column start`() {
+        // 1180dp panel: the 840dp column starts 170dp in.
+        assertEquals(TableSpan(170.dp, 720.dp), tableSpan(1180.dp))
+        assertEquals(TableSpan(170.dp, 512.dp), tableSpan(1180.dp, 512.dp))
+    }
+
+    @Test
+    fun `a table wider than the column is capped at the column`() {
+        assertEquals(TableSpan(170.dp, 840.dp), tableSpan(1180.dp, 1000.dp))
+    }
+
+    @Test
+    fun `between the table and column widths the table starts at the edge`() {
+        assertEquals(TableSpan(0.dp, 720.dp), tableSpan(800.dp))
+        assertEquals(TableSpan(0.dp, 800.dp), tableSpan(800.dp, 1000.dp))
     }
 
     @Test
