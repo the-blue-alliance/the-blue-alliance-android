@@ -18,6 +18,12 @@ import androidx.compose.ui.unit.dp
 val ReadingMaxWidth = 840.dp
 
 /**
+ * Widest a running paragraph grows inside the reading column, for comfortable line lengths. No
+ * narrower than a compact window, so phone layout is unchanged.
+ */
+val ProseMaxWidth = 600.dp
+
+/**
  * Centers the content and caps it at [ReadingMaxWidth], so lines stay readable on wide windows.
  * Windows narrower than the cap lay out exactly as without it. For scrolling lists use
  * [ReadingWidthBox] instead, so the whole width still scrolls.
@@ -27,22 +33,27 @@ fun Modifier.readingWidth(): Modifier =
         .wrapContentWidth(Alignment.CenterHorizontally)
         .widthIn(max = ReadingMaxWidth)
 
-/** Side inset that centers a [ReadingMaxWidth] column in [availableWidth]; zero when narrower. */
-internal fun readingInset(availableWidth: Dp): Dp =
-    ((availableWidth - ReadingMaxWidth) / 2).coerceAtLeast(0.dp)
+/** Side inset that centers a [maxWidth] column in [availableWidth]; zero when narrower. */
+internal fun readingInset(
+    availableWidth: Dp,
+    maxWidth: Dp = ReadingMaxWidth,
+): Dp = ((availableWidth - maxWidth) / 2).coerceAtLeast(0.dp)
 
 /**
- * Lays out a full-width scrolling list whose content is centered at [ReadingMaxWidth]: [content]
+ * Lays out a full-width scrolling list whose content is centered at [maxWidth]: [content]
  * receives [contentPadding] widened by the side inset. Dragging in the side margins still scrolls.
+ * Tabs that page beside tables pass [TABLE_MAX_WIDTH], so every tab shares one start edge.
  */
 @Composable
 fun ReadingWidthBox(
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
+    maxWidth: Dp = ReadingMaxWidth,
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val columnWidth = maxWidth
     BoxWithConstraints(modifier) {
-        val inset = readingInset(maxWidth)
+        val inset = readingInset(this.maxWidth, columnWidth)
         val direction = LocalLayoutDirection.current
         content(
             PaddingValues(
@@ -60,4 +71,4 @@ fun ReadingWidthBox(
 fun ReadingWidthBox(
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit,
-) = ReadingWidthBox(PaddingValues(), modifier, content)
+) = ReadingWidthBox(PaddingValues(), modifier, content = content)

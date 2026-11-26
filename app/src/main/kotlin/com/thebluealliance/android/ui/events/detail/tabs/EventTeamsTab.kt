@@ -11,6 +11,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.TABLE_MAX_WIDTH
 import com.thebluealliance.android.ui.components.TeamRow
 
 @Composable
@@ -33,7 +34,7 @@ fun EventTeamsTab(
         )
         return
     }
-    ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+    ReadingWidthBox(innerPadding, Modifier.fillMaxSize(), TABLE_MAX_WIDTH) { readingPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = readingPadding,
