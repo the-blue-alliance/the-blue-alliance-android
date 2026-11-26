@@ -66,19 +66,41 @@ private val TopAppBarEdgePadding = 4.dp
  * Whether [secondaryCount] secondary actions should collapse into the overflow menu: they leave
  * the title under [minTitleWidth] in a bar of [barWidth] with [fixedWidth] taken by everything
  * else, and collapsing them saves space. With [hasOverflowMenu] false, collapsing adds the menu.
+ * [pinnedCount] buttons, such as Close, never collapse but take their width either way.
  */
 internal fun topBarCollapsesActions(
     barWidth: Dp,
     fixedWidth: Dp,
     secondaryCount: Int,
     hasOverflowMenu: Boolean,
+    pinnedCount: Int = 0,
     actionWidth: Dp = TopBarActionWidth,
     minTitleWidth: Dp = TopBarMinTitleWidth,
 ): Boolean {
     if (secondaryCount == 0) return false
-    val buttons = secondaryCount + if (hasOverflowMenu) 1 else 0
-    return buttons > 1 && barWidth - fixedWidth - actionWidth * buttons < minTitleWidth
+    val collapsible = secondaryCount + if (hasOverflowMenu) 1 else 0
+    val buttons = collapsible + pinnedCount
+    return collapsible > 1 && barWidth - fixedWidth - actionWidth * buttons < minTitleWidth
 }
+
+/** The order of the bar's trailing buttons. */
+internal enum class TopBarSlot { Secondary, Overflow, Close }
+
+/**
+ * The bar's trailing buttons in order: secondary actions unless [collapse], then More options when
+ * there is a menu to open, then Close, which is always last and never collapses.
+ */
+internal fun topBarSlots(
+    secondaryCount: Int,
+    hasOverflowMenu: Boolean,
+    hasClose: Boolean,
+    collapse: Boolean,
+): List<TopBarSlot> =
+    buildList {
+        if (!collapse) repeat(secondaryCount) { add(TopBarSlot.Secondary) }
+        if (hasOverflowMenu || (collapse && secondaryCount > 0)) add(TopBarSlot.Overflow)
+        if (hasClose) add(TopBarSlot.Close)
+    }
 
 /**
  * The app's top bar. Pass [navigationIcon] as null when there is none, so the bar's measurement
@@ -88,7 +110,7 @@ internal fun topBarCollapsesActions(
  *
  * [secondaryActions] show as icon buttons, then a More options button opens [overflowMenu]. When
  * the bar is too narrow to keep the title readable, the secondary actions move to the top of that
- * menu.
+ * menu. [closeAction], when set, is the last button, after More options, and never collapses.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,6 +132,7 @@ fun TBATopAppBar(
     isRefreshing: Boolean = false,
     secondaryActions: List<TopBarAction> = emptyList(),
     overflowMenu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)? = null,
+    closeAction: TopBarAction? = null,
 ) {
     // Beside a rail the lamp is in the rail's header.
     val showLamp = showLamp && !LocalNavigationRailShown.current
@@ -156,21 +179,28 @@ fun TBATopAppBar(
                                 if (hasNavigationIcon) TopBarActionWidth else 0.dp,
                         secondaryCount = secondaryActions.size,
                         hasOverflowMenu = overflowMenu != null,
+                        pinnedCount = if (closeAction != null) 1 else 0,
+                    )
+                val slots =
+                    topBarSlots(
+                        secondaryCount = secondaryActions.size,
+                        hasOverflowMenu = overflowMenu != null,
+                        hasClose = closeAction != null,
+                        collapse = collapse,
                     )
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!collapse) {
-                        secondaryActions.forEach { action ->
-                            IconButton(
-                                onClick = action.onClick,
-                                modifier = Modifier.actionState(action),
-                            ) {
-                                Icon(action.icon, contentDescription = action.label)
-                            }
+                    var secondaryIndex = 0
+                    slots.forEach { slot ->
+                        when (slot) {
+                            TopBarSlot.Secondary ->
+                                TopBarIconButton(secondaryActions[secondaryIndex++])
+                            TopBarSlot.Overflow ->
+                                TopBarOverflowMenu(
+                                    if (collapse) secondaryActions else emptyList(),
+                                    overflowMenu,
+                                )
+                            TopBarSlot.Close -> closeAction?.let { TopBarIconButton(it) }
                         }
-                    }
-                    val menuActions = if (collapse) secondaryActions else emptyList()
-                    if (overflowMenu != null || menuActions.isNotEmpty()) {
-                        TopBarOverflowMenu(menuActions, overflowMenu)
                     }
                 }
             }
@@ -179,6 +209,13 @@ fun TBATopAppBar(
         colors = colors,
         scrollBehavior = scrollBehavior,
     )
+}
+
+@Composable
+private fun TopBarIconButton(action: TopBarAction) {
+    IconButton(onClick = action.onClick, modifier = Modifier.actionState(action)) {
+        Icon(action.icon, contentDescription = action.label)
+    }
 }
 
 @Composable

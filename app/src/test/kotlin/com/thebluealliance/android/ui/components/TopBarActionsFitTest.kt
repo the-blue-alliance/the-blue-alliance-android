@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -52,5 +53,70 @@ class TopBarActionsFitTest {
     @Test
     fun `nothing to collapse`() {
         assertFalse(collapses(100.dp, secondaryCount = 0))
+    }
+
+    @Test
+    fun `Close reserves its width`() {
+        // Pane without Back: 8 fixed + Share + menu + Close + 120 title = 272.
+        assertFalse(topBarCollapsesActions(272.dp, 8.dp, 1, true, pinnedCount = 1))
+        assertTrue(topBarCollapsesActions(271.dp, 8.dp, 1, true, pinnedCount = 1))
+    }
+
+    @Test
+    fun `Close alone never triggers a collapse`() {
+        assertFalse(topBarCollapsesActions(100.dp, 8.dp, 1, false, pinnedCount = 1))
+        assertFalse(topBarCollapsesActions(100.dp, 8.dp, 0, true, pinnedCount = 1))
+    }
+
+    @Test
+    fun `Close follows secondary actions and More options`() {
+        assertEquals(
+            listOf(TopBarSlot.Secondary, TopBarSlot.Overflow, TopBarSlot.Close),
+            topBarSlots(
+                secondaryCount = 1,
+                hasOverflowMenu = true,
+                hasClose = true,
+                collapse = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `Close stays last when secondary actions collapse`() {
+        assertEquals(
+            listOf(TopBarSlot.Overflow, TopBarSlot.Close),
+            topBarSlots(
+                secondaryCount = 2,
+                hasOverflowMenu = false,
+                hasClose = true,
+                collapse = true,
+            ),
+        )
+    }
+
+    @Test
+    fun `Close follows secondary actions without a menu`() {
+        assertEquals(
+            listOf(TopBarSlot.Secondary, TopBarSlot.Close),
+            topBarSlots(
+                secondaryCount = 1,
+                hasOverflowMenu = false,
+                hasClose = true,
+                collapse = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `no menu button with nothing to put in it`() {
+        assertEquals(
+            listOf(TopBarSlot.Secondary, TopBarSlot.Secondary),
+            topBarSlots(
+                secondaryCount = 2,
+                hasOverflowMenu = false,
+                hasClose = false,
+                collapse = false,
+            ),
+        )
     }
 }

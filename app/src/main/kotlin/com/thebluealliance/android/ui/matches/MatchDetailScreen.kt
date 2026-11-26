@@ -171,14 +171,12 @@ fun MatchDetailScreen(
                     onRefresh = viewModel::refresh,
                     isRefreshing = isRefreshing,
                     title = title,
-                    secondaryActions =
-                        listOfNotNull(
-                            shareAction,
-                            TopBarAction(
-                                label = "Close match",
-                                icon = TbaIcons.Close,
-                                onClick = paneChrome.onClose,
-                            ),
+                    secondaryActions = listOfNotNull(shareAction),
+                    closeAction =
+                        TopBarAction(
+                            label = "Close match",
+                            icon = TbaIcons.Close,
+                            onClick = paneChrome.onClose,
                         ),
                 )
             } else {
