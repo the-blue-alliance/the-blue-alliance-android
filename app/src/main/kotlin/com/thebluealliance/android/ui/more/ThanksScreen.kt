@@ -107,13 +107,15 @@ fun ThanksScreen(
             is ThanksUiState.Success -> {
                 ReadingWidthBox(
                     innerPadding.onlyBottom(),
-                    Modifier.fillMaxSize(),
+                    Modifier
+                        .padding(innerPadding.withoutBottom())
+                        .fillMaxSize(),
                 ) { readingPadding ->
                     LazyColumn(
                         modifier =
                             Modifier
-                                .padding(innerPadding.withoutBottom())
-                                .fillMaxSize(),
+                                .fillMaxSize()
+                                .pageBackground(),
                         contentPadding = readingPadding,
                     ) {
                         items(state.contributors) { contributor ->
