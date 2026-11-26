@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
@@ -149,6 +150,8 @@ fun TBANavigation(
                 Modifier
                     .weight(1f)
                     .fillMaxSize()
+                    // Keeps sliding screens from drawing over the rail beside them.
+                    .clipToBounds()
                     .background(MaterialTheme.colorScheme.background),
             transitionSpec = {
                 slideInHorizontally(
