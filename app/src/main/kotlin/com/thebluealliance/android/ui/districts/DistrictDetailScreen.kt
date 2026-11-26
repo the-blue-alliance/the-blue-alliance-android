@@ -28,6 +28,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -359,31 +362,32 @@ private fun RankingsTab(
         }
 
         items(rankings, key = { "${it.districtKey}_${it.teamKey}" }) { ranking ->
-            val event1Points =
+            val eventPoints =
                 ranking.eventPoints
-                    .filter { !it.districtCmp }
-                    .getOrNull(
-                        0,
-                    )?.total
-                    ?.toInt()
-                    ?.toString()
-                    ?: "-"
-            val event2Points =
-                ranking.eventPoints
-                    .filter { !it.districtCmp }
-                    .getOrNull(
-                        1,
-                    )?.total
-                    ?.toInt()
-                    ?.toString()
-                    ?: "-"
-            val dcmpPoints = dcmpPointsLabel(ranking.eventPoints)
+                    .filterNot { it.districtCmp }
+                    .map { it.total.toInt() }
+            val event1Points = eventPoints.getOrNull(0)
+            val event2Points = eventPoints.getOrNull(1)
+            val dcmpPoints = dcmpPoints(ranking.eventPoints)
+            val rookieBonus = ranking.rookieBonus.toInt()
+            val description =
+                districtRowDescription(
+                    rank = ranking.rank,
+                    teamNumber = ranking.teamKey.teamNumber,
+                    event1 = event1Points,
+                    event2 = event2Points,
+                    dcmp = dcmpPoints,
+                    rookieBonus = rookieBonus,
+                    total = ranking.pointTotal.toInt(),
+                )
 
             Row(
                 modifier =
                     Modifier
                         .tableWidth()
-                        .clickable { onNavigateToTeam(ranking.teamKey) }
+                        .clickable(onClickLabel = "View team ${ranking.teamKey.teamNumber}") {
+                            onNavigateToTeam(ranking.teamKey)
+                        }.semantics { contentDescription = description }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -391,43 +395,43 @@ private fun RankingsTab(
                     text = "#${ranking.rank}",
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.10f),
+                    modifier = Modifier.weight(0.10f).clearAndSetSemantics {},
                 )
                 Text(
                     text = ranking.teamKey.teamNumber,
                     style = MaterialTheme.typography.bodyLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = event1Points,
+                    text = event1Points?.toString() ?: "-",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = event2Points,
+                    text = event2Points?.toString() ?: "-",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = dcmpPoints,
+                    text = dcmpPoints?.toString() ?: "-",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = if (ranking.rookieBonus > 0) "+${ranking.rookieBonus.toInt()}" else "-",
+                    text = if (rookieBonus > 0) "+$rookieBonus" else "-",
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
                     text = "${ranking.pointTotal.toInt()} pts",
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
             }
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp), thickness = 0.5.dp)
@@ -436,8 +440,28 @@ private fun RankingsTab(
 }
 
 /** DCMPs with divisions report division + finals as separate districtCmp entries; sum them. */
-internal fun dcmpPointsLabel(eventPoints: List<DistrictEventPoints>): String {
+internal fun dcmpPoints(eventPoints: List<DistrictEventPoints>): Int? {
     val dcmpEntries = eventPoints.filter { it.districtCmp }
-    if (dcmpEntries.isEmpty()) return "-"
-    return dcmpEntries.sumOf { it.total }.toInt().toString()
+    if (dcmpEntries.isEmpty()) return null
+    return dcmpEntries.sumOf { it.total }.toInt()
 }
+
+/** One spoken summary of a district rankings row; a null value is an empty cell. */
+internal fun districtRowDescription(
+    rank: Int,
+    teamNumber: String,
+    event1: Int?,
+    event2: Int?,
+    dcmp: Int?,
+    rookieBonus: Int,
+    total: Int,
+): String =
+    buildList {
+        add("Rank $rank")
+        add("Team $teamNumber")
+        add(event1?.let { "Event 1: $it points" } ?: "Event 1 none")
+        add(event2?.let { "Event 2: $it points" } ?: "Event 2 none")
+        add(dcmp?.let { "DCMP: $it points" } ?: "DCMP none")
+        add(if (rookieBonus > 0) "rookie bonus $rookieBonus" else "rookie bonus none")
+        add("$total total points")
+    }.joinToString(", ")

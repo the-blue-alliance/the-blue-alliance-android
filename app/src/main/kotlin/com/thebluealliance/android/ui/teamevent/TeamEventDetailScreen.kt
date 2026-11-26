@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,9 +68,12 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.recordDescription
+import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
+import com.thebluealliance.android.ui.events.detail.tabs.AdvancementBreakdownRow
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
@@ -383,6 +387,9 @@ private fun SummaryTab(
                     InfoRow(
                         label = "Rank ${ranking.rank}",
                         value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                        valueDescription =
+                            recordDescription(ranking.wins, ranking.losses, ranking.ties),
+                        onClickLabel = "View rankings",
                         onClick = {
                             event?.let {
                                 onNavigateToEvent(
@@ -411,6 +418,7 @@ private fun SummaryTab(
                     InfoRow(
                         label = "Alliance ${teamAlliance.number}",
                         value = role,
+                        onClickLabel = "View alliances",
                         onClick = {
                             event?.let {
                                 onNavigateToEvent(
@@ -441,6 +449,7 @@ private fun SummaryTab(
                             )
                         },
                         value = pitLocation,
+                        onClickLabel = "View pit map",
                         onClick = {
                             onNavigateToPitMap(eventKey, listOf(teamKey))
                         },
@@ -452,7 +461,7 @@ private fun SummaryTab(
             val teamAwards = awards
             if (teamAwards != null && teamAwards.isNotEmpty()) {
                 item(key = "summary_awards") {
-                    SummarySection(label = "Awards") {
+                    SummarySection(label = "Awards", mergeContent = true) {
                         teamAwards.forEach { award ->
                             Text(
                                 text = award.name,
@@ -534,6 +543,7 @@ private fun cmpAdvancementSummary(advancement: CmpAdvancement): String? =
 @Composable
 private fun SummarySection(
     label: String,
+    mergeContent: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -546,9 +556,14 @@ private fun SummarySection(
             text = label,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 4.dp),
+            modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
         )
-        content()
+        // The heading stays its own stop; only the content merges.
+        if (mergeContent) {
+            Column(Modifier.fillMaxWidth().semantics(mergeDescendants = true) {}) { content() }
+        } else {
+            content()
+        }
     }
 }
 
@@ -557,13 +572,15 @@ private fun InfoRow(
     label: String,
     labelLeadingIcon: (@Composable () -> Unit)? = null,
     value: String,
+    valueDescription: String? = null,
+    onClickLabel: String,
     onClick: () -> Unit,
 ) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
+                .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -584,6 +601,12 @@ private fun InfoRow(
             text = value,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier =
+                if (valueDescription != null) {
+                    Modifier.clearAndSetSemantics { contentDescription = valueDescription }
+                } else {
+                    Modifier
+                },
         )
         Icon(
             imageVector = TbaIcons.KeyboardArrowRight,
@@ -652,30 +675,26 @@ private fun StatsTab(
         }
 
         if (hasPointsData) {
-            if (hasOprData) HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            if (hasOprData) {
+                // As wide as the stat rows it separates, not the reading column.
+                HorizontalDivider(modifier = Modifier.statRowWidth().padding(vertical = 8.dp))
+            }
             val isDistrictEvent = event.district != null
             val points = advancementPoints
-            Text(
-                text = if (isDistrictEvent) "District Points" else "Regional Points",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = "${points.total} pts",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(Modifier.semantics(mergeDescendants = true) { heading() }) {
+                Text(
+                    text = if (isDistrictEvent) "District Points" else "Regional Points",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = "${points.total} pts",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            // The rows' own 2.dp vertical padding spaces them.
+            Column {
                 advancementBreakdownRows(points, isDistrictEvent).forEach { (label, value) ->
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.weight(1f),
-                        )
-                        Text(
-                            text = value.toString(),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
+                    AdvancementBreakdownRow(label, value, Modifier.statRowWidth())
                 }
             }
         }
@@ -689,7 +708,11 @@ private fun StatRow(
     value: Double,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .statRowWidth()
+                .fillMaxWidth()
+                .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(

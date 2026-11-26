@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +45,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -55,6 +56,7 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -101,6 +103,23 @@ private data class TableColumn(
 
 /** Every numeric cell shows two decimals, so right-aligned values line up digit for digit. */
 private fun formatStatValue(value: Double): String = "%.2f".format(value)
+
+/** Spoken summary of an OPR table row; the header labels are not in focus order. */
+internal fun oprRowDescription(
+    team: String,
+    opr: Double,
+    dpr: Double,
+    ccwm: Double,
+): String =
+    "Team $team, OPR ${formatStatValue(opr)}, DPR ${formatStatValue(dpr)}, " +
+        "CCWM ${formatStatValue(ccwm)}"
+
+/** Spoken summary of a COPR table row. */
+internal fun coprRowDescription(
+    team: String,
+    statName: String,
+    value: Double,
+): String = "Team $team, $statName ${formatStatValue(value)}"
 
 /** OpenType tabular figures: every digit takes the same advance, so the columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -474,6 +493,7 @@ private fun InsightsView(
                     modifier =
                         Modifier
                             .fillMaxWidth()
+                            .semantics(mergeDescendants = true) {}
                             .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -494,17 +514,7 @@ private fun InsightsView(
         }
 
         item {
-            Text(
-                text = "Learn more about OPR",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier =
-                    Modifier
-                        .tableWidth()
-                        .wrapContentWidth(Alignment.Start)
-                        .clickable { onOpenOprLink() }
-                        .padding(16.dp),
-            )
+            OprLearnMoreLink(onClick = onOpenOprLink)
         }
     }
 }
@@ -685,37 +695,23 @@ private fun StandardOPRsView(
 
         items(sortedTeams) { teamKey ->
             Column(modifier = Modifier.tableWidth()) {
-                InsightsTableDataRow {
+                val opr = oprs.oprs[teamKey] ?: 0.0
+                val dpr = oprs.dprs[teamKey] ?: 0.0
+                val ccwm = oprs.ccwms[teamKey] ?: 0.0
+                InsightsTableDataRow(
+                    description = oprRowDescription(teamKey.teamNumber, opr, dpr, ccwm),
+                ) {
                     TableDataCell(text = teamKey.teamNumber, column = OPR_TEAM_COLUMN)
-                    TableDataCell(
-                        text = formatStatValue(oprs.oprs[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
-                    TableDataCell(
-                        text = formatStatValue(oprs.dprs[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
-                    TableDataCell(
-                        text = formatStatValue(oprs.ccwms[teamKey] ?: 0.0),
-                        column = OPR_VALUE_COLUMN,
-                    )
+                    TableDataCell(text = formatStatValue(opr), column = OPR_VALUE_COLUMN)
+                    TableDataCell(text = formatStatValue(dpr), column = OPR_VALUE_COLUMN)
+                    TableDataCell(text = formatStatValue(ccwm), column = OPR_VALUE_COLUMN)
                 }
                 HorizontalDivider()
             }
         }
 
         item {
-            Text(
-                text = "Learn more about OPR",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier =
-                    Modifier
-                        .tableWidth()
-                        .wrapContentWidth(Alignment.Start)
-                        .clickable { onOpenOprLink() }
-                        .padding(16.dp),
-            )
+            OprLearnMoreLink(onClick = onOpenOprLink)
         }
     }
 }
@@ -787,31 +783,42 @@ private fun COPRView(
 
         items(sortedTeams) { teamKey ->
             Column(modifier = Modifier.tableWidth()) {
-                InsightsTableDataRow {
+                val value = coprData[teamKey] ?: 0.0
+                InsightsTableDataRow(
+                    description = coprRowDescription(teamKey.teamNumber, statName, value),
+                ) {
                     TableDataCell(text = teamKey.teamNumber, column = COPR_TEAM_COLUMN)
-                    TableDataCell(
-                        text = formatStatValue(coprData[teamKey] ?: 0.0),
-                        column = COPR_VALUE_COLUMN,
-                    )
+                    TableDataCell(text = formatStatValue(value), column = COPR_VALUE_COLUMN)
                 }
                 HorizontalDivider()
             }
         }
 
         item {
-            Text(
-                text = "Learn more about OPR",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                modifier =
-                    Modifier
-                        .tableWidth()
-                        .wrapContentWidth(Alignment.Start)
-                        .clickable { onOpenOprLink() }
-                        .padding(16.dp),
-            )
+            OprLearnMoreLink(onClick = onOpenOprLink)
         }
     }
+}
+
+/** The "Learn more about OPR" link under each table; it leaves the app for the browser. */
+@Composable
+private fun OprLearnMoreLink(onClick: () -> Unit) {
+    Text(
+        text = "Learn more about OPR",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.primary,
+        modifier =
+            Modifier
+                .tableWidth()
+                .wrapContentWidth(Alignment.Start)
+                .paddedClickable(
+                    MaterialTheme.shapes.small,
+                    horizontal = 16.dp,
+                    vertical = 16.dp,
+                    onClickLabel = "Open in browser",
+                    onClick = onClick,
+                ),
+    )
 }
 
 /**
@@ -855,13 +862,20 @@ private fun InsightsTableHeaderRow(
     }
 }
 
-/** A data row of an insights table, reserving the same trailing slot as the header above it. */
+/**
+ * A data row of an insights table, reserving the same trailing slot as the header above it. It is
+ * one focus stop read as [description], since focus skips the sticky header's column labels.
+ */
 @Composable
-private fun InsightsTableDataRow(cells: @Composable RowScope.() -> Unit) {
+private fun InsightsTableDataRow(
+    description: String,
+    cells: @Composable RowScope.() -> Unit,
+) {
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .clearAndSetSemantics { contentDescription = description }
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

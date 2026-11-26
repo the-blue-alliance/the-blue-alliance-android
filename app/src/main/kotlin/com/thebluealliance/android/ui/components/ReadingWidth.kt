@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -22,6 +23,35 @@ val ReadingMaxWidth = 840.dp
  * narrower than a compact window, so phone layout is unchanged.
  */
 val ProseMaxWidth = 600.dp
+
+/** Widest a label-and-value stat row grows on a wide panel, so the value stays near its label. */
+val StatRowMaxWidth = 360.dp
+
+/** Widest a stat row can be and still fill it; no phone in portrait is wider. */
+private val StatRowFillMaxWidth = 600.dp
+
+/** Width a stat row lays out in [available]: all of it up to compact widths, else capped. */
+internal fun statRowWidth(available: Dp): Dp =
+    if (available <= StatRowFillMaxWidth) available else StatRowMaxWidth
+
+/**
+ * Caps a label-and-value row at [StatRowMaxWidth] once it has more than a compact window's width,
+ * so phones lay out as without it.
+ */
+fun Modifier.statRowWidth(): Modifier =
+    layout { measurable, constraints ->
+        val max =
+            if (constraints.hasBoundedWidth) {
+                statRowWidth(constraints.maxWidth.toDp()).roundToPx()
+            } else {
+                constraints.maxWidth
+            }
+        val placeable =
+            measurable.measure(
+                constraints.copy(minWidth = minOf(constraints.minWidth, max), maxWidth = max),
+            )
+        layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+    }
 
 /**
  * Centers the content and caps it at [ReadingMaxWidth], so lines stay readable on wide windows.
