@@ -56,6 +56,7 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
@@ -458,6 +459,7 @@ private fun InsightsView(
                 modifier =
                     Modifier
                         .tableWidth()
+                        .blocksRowsBeneath()
                         .background(BrandHeaderContainer)
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -834,6 +836,7 @@ private fun InsightsTableHeaderRow(
         modifier =
             Modifier
                 .tableWidth()
+                .blocksRowsBeneath()
                 .background(BrandHeaderContainer)
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
                 // Header cells fill this height, so every sort band matches the tallest cell.

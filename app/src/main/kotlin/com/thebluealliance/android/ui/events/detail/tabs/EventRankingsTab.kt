@@ -68,6 +68,7 @@ import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.TableNaturalWidth
+import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.rankingRowDescription
@@ -444,7 +445,11 @@ private fun RankingHeaderRow(
 ) {
     RankingRow(
         rowScroll = rowScroll,
-        modifier = Modifier.tableWidth(tableWidth).background(BrandHeaderContainer),
+        modifier =
+            Modifier
+                .tableWidth(tableWidth)
+                .blocksRowsBeneath()
+                .background(BrandHeaderContainer),
         // Sortable cells fill this height, so a wrapped label doesn't leave its neighbours with
         // shorter hover bands.
         contentModifier = Modifier.height(IntrinsicSize.Min),
