@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -49,7 +50,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.round
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -70,6 +73,7 @@ import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.messageBackground
+import com.thebluealliance.android.ui.components.onSecondaryClick
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
@@ -533,7 +537,10 @@ internal fun modelTypeClickLabel(modelType: Int): String? =
         else -> null
     }
 
-/** A myTBA entity link with its overflow menu; the shortcut item shows only when [onAddShortcut] is set. */
+/**
+ * A myTBA entity link with its overflow menu; the shortcut item shows only when [onAddShortcut] is
+ * set. A right-click anywhere on the row opens the same menu at the pointer.
+ */
 @Composable
 private fun MyTbaEntityRow(
     title: String,
@@ -544,74 +551,103 @@ private fun MyTbaEntityRow(
     onAddShortcut: (() -> Unit)? = null,
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
+    var contextMenuExpanded by remember { mutableStateOf(false) }
+    var contextMenuAt by remember { mutableStateOf(IntOffset.Zero) }
 
-    // The entity link stops short of the menu button so the two targets don't nest.
-    Row(
-        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(end = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(
+    Box {
+        // The entity link stops short of the menu button so the two targets don't nest.
+        Row(
             modifier =
                 Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .handCursor()
-                    .clickable(onClickLabel = onClickLabel, onClick = onClick)
-                    .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.Center,
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .onSecondaryClick { position ->
+                        contextMenuAt = position.round()
+                        contextMenuExpanded = true
+                    }.padding(end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Box(modifier = Modifier.padding(vertical = 8.dp)) {
-            IconButton(onClick = { menuExpanded = true }, modifier = Modifier.handCursor()) {
-                Icon(
-                    imageVector = TbaIcons.MoreVert,
-                    contentDescription = "More options for $title",
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .handCursor()
+                        .clickable(onClickLabel = onClickLabel, onClick = onClick)
+                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            DropdownMenu(
-                expanded = menuExpanded,
-                onDismissRequest = { menuExpanded = false },
-            ) {
-                if (onAddShortcut != null) {
-                    DropdownMenuItem(
-                        text = { Text("Add shortcut to home screen") },
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_add_to_home_screen),
-                                contentDescription = null,
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            onAddShortcut()
-                        },
-                        modifier = Modifier.handCursor(),
+            Box(modifier = Modifier.padding(vertical = 8.dp)) {
+                IconButton(onClick = { menuExpanded = true }, modifier = Modifier.handCursor()) {
+                    Icon(
+                        imageVector = TbaIcons.MoreVert,
+                        contentDescription = "More options for $title",
                     )
                 }
-                DropdownMenuItem(
-                    text = { Text("Remove") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = TbaIcons.Delete,
-                            contentDescription = null,
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        onRemove()
-                    },
-                    modifier = Modifier.handCursor(),
-                )
+                DropdownMenu(
+                    expanded = menuExpanded,
+                    onDismissRequest = { menuExpanded = false },
+                ) {
+                    MyTbaEntityMenuItems(onRemove, onAddShortcut) { menuExpanded = false }
+                }
+            }
+        }
+        // A zero-size anchor at the pointer, so the menu opens where the row was right-clicked.
+        Box(modifier = Modifier.offset { contextMenuAt }) {
+            DropdownMenu(
+                expanded = contextMenuExpanded,
+                onDismissRequest = { contextMenuExpanded = false },
+            ) {
+                MyTbaEntityMenuItems(onRemove, onAddShortcut) { contextMenuExpanded = false }
             }
         }
     }
+}
+
+@Composable
+private fun MyTbaEntityMenuItems(
+    onRemove: () -> Unit,
+    onAddShortcut: (() -> Unit)?,
+    close: () -> Unit,
+) {
+    if (onAddShortcut != null) {
+        DropdownMenuItem(
+            text = { Text("Add shortcut to home screen") },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_add_to_home_screen),
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                close()
+                onAddShortcut()
+            },
+            modifier = Modifier.handCursor(),
+        )
+    }
+    DropdownMenuItem(
+        text = { Text("Remove") },
+        leadingIcon = {
+            Icon(
+                imageVector = TbaIcons.Delete,
+                contentDescription = null,
+            )
+        },
+        onClick = {
+            close()
+            onRemove()
+        },
+        modifier = Modifier.handCursor(),
+    )
 }
