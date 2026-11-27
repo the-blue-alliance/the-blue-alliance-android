@@ -97,6 +97,14 @@ fun TBANavigation(
     LaunchedEffect(navigator) {
         activity.intentRoutes.collect { navigator.navigateFromIntent(it, matchBesideEvent) }
     }
+    LaunchedEffect(navigator) {
+        activity.keyboardShortcuts.collect {
+            when (it) {
+                // Already on Search, this is a no-op, so focus stays in the search field.
+                KeyboardShortcut.Search -> navigator.navigate(Screen.Search)
+            }
+        }
+    }
 
     val showBottomBar =
         TOP_LEVEL_DESTINATIONS.any { it.key.isSameTab(navState.currentRoute) } ||

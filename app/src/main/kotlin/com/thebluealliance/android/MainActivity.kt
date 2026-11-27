@@ -6,6 +6,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyboardShortcutGroup
+import android.view.KeyboardShortcutInfo
+import android.view.Menu
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -25,6 +29,7 @@ import com.thebluealliance.android.config.ThemePreferences
 import com.thebluealliance.android.data.sync.DataSyncManager
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
+import com.thebluealliance.android.navigation.KeyboardShortcut
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.navigation.TbaDeepLinks
 import com.thebluealliance.android.ui.TBAApp
@@ -63,6 +68,18 @@ class MainActivity : ComponentActivity() {
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
     val intentRoutes: SharedFlow<List<NavKey>> = newIntentRoutes.asSharedFlow()
+
+    /**
+     * App-wide keyboard shortcuts, caught once here rather than per screen. Compose only sees key
+     * events while something has focus, but the Activity gets every Ctrl chord the UI leaves
+     * unhandled.
+     */
+    private val pressedShortcuts =
+        MutableSharedFlow<KeyboardShortcut>(
+            extraBufferCapacity = 1,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+        )
+    val keyboardShortcuts: SharedFlow<KeyboardShortcut> = pressedShortcuts.asSharedFlow()
 
     private val notificationPermissionLauncher =
         registerForActivityResult(
@@ -142,6 +159,35 @@ class MainActivity : ComponentActivity() {
         Log.d("MainActivity", "New intent: $intent -> $backStack")
         if (backStack == null) return
         newIntentRoutes.tryEmit(backStack)
+    }
+
+    override fun onKeyShortcut(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean {
+        val shortcut =
+            KeyboardShortcut.match(keyCode, event.metaState)
+                ?: return super.onKeyShortcut(keyCode, event)
+        pressedShortcuts.tryEmit(shortcut)
+        return true
+    }
+
+    /** Lists [KeyboardShortcut]s in the system Keyboard Shortcuts Helper (Meta+/). */
+    override fun onProvideKeyboardShortcuts(
+        data: MutableList<KeyboardShortcutGroup>?,
+        menu: Menu?,
+        deviceId: Int,
+    ) {
+        super.onProvideKeyboardShortcuts(data, menu, deviceId)
+        data?.add(
+            KeyboardShortcutGroup(
+                // The helper already heads this list with the app's name.
+                "Navigation",
+                KeyboardShortcut.entries.map {
+                    KeyboardShortcutInfo(it.label, it.keyCode, KeyEvent.META_CTRL_ON)
+                },
+            ),
+        )
     }
 
     fun requestNotificationPermission() {
