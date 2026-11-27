@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.common
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerType
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -51,5 +52,14 @@ class TouchPullGateTest {
         gate.observe(pulls = false)
         gate.observe(pulls = true)
         assertEquals(Offset.Zero, overscroll(Offset(0f, 40f)))
+    }
+
+    @Test
+    fun `a mouse entering or leaving doesn't change the last input`() {
+        assertFalse(changesLastInput(PointerEventType.Enter))
+        assertFalse(changesLastInput(PointerEventType.Exit))
+        assertTrue(changesLastInput(PointerEventType.Move))
+        assertTrue(changesLastInput(PointerEventType.Press))
+        assertTrue(changesLastInput(PointerEventType.Scroll))
     }
 }

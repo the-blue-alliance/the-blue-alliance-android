@@ -62,6 +62,10 @@ fun TouchPullToRefreshBox(
 internal fun isPullInput(event: PointerEvent): Boolean =
     event.type != PointerEventType.Scroll && isPullPointer(event.changes.map { it.type })
 
+/** Whether [type] is real input; a mouse entering or leaving mid-pull is not. */
+internal fun changesLastInput(type: PointerEventType): Boolean =
+    type != PointerEventType.Enter && type != PointerEventType.Exit
+
 /** Whether every pointer in [types] is a finger or stylus. */
 internal fun isPullPointer(types: List<PointerType>): Boolean =
     types.isNotEmpty() &&
@@ -78,7 +82,7 @@ internal class TouchPullGate : NestedScrollConnection {
         private set
 
     fun observe(event: PointerEvent) {
-        lastInputPulls = isPullInput(event)
+        if (changesLastInput(event.type)) lastInputPulls = isPullInput(event)
     }
 
     fun observe(pulls: Boolean) {
