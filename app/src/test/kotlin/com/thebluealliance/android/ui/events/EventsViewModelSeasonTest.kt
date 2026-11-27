@@ -8,6 +8,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -79,5 +80,16 @@ class EventsViewModelSeasonTest {
         val viewModel = viewModel(Screen.Events())
         assertEquals(currentSeason, viewModel.selectedYear.value)
         coVerify { events.refreshEventsForYear(currentSeason) }
+    }
+
+    @Test
+    fun `a late current season doesn't override the user's pick`() {
+        val currentSeason = CompletableDeferred<Int>()
+        coEvery { seasons.maxSeason() } returns 2027
+        coEvery { seasons.defaultSeason() } coAnswers { currentSeason.await() }
+        val viewModel = viewModel(Screen.Events())
+        viewModel.selectYear(2019)
+        currentSeason.complete(2027)
+        assertEquals(2019, viewModel.selectedYear.value)
     }
 }
