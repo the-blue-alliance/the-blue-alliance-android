@@ -95,6 +95,7 @@ fun MyTBAScreen(
     onNavigateToTeam: (String) -> Unit = {},
     onNavigateToEvent: (String) -> Unit = {},
     onNavigateToMatch: (String) -> Unit = {},
+    onNavigateToTeamAtEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateUp: (() -> Unit)? = null,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
@@ -102,6 +103,13 @@ fun MyTBAScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val rowNavigation =
+        MyTbaRowNavigation(
+            toTeam = onNavigateToTeam,
+            toEvent = onNavigateToEvent,
+            toMatch = onNavigateToMatch,
+            toTeamAtEvent = onNavigateToTeamAtEvent,
+        )
 
     val pagerState = rememberPagerState(pageCount = { MyTBATab.entries.size })
     val coroutineScope = rememberCoroutineScope()
@@ -288,9 +296,7 @@ fun MyTBAScreen(
                                 error = uiState.favoritesError,
                                 onRetry = { viewModel.refreshTab(MyTBATab.FAVORITES) },
                                 displayNames = uiState.displayNames,
-                                onNavigateToTeam = onNavigateToTeam,
-                                onNavigateToEvent = onNavigateToEvent,
-                                onNavigateToMatch = onNavigateToMatch,
+                                rowNavigation = rowNavigation,
                                 listState = favoritesListState,
                                 contentPadding = innerPadding.onlyBottom(),
                                 canPinShortcuts = uiState.canPinShortcuts,
@@ -304,9 +310,7 @@ fun MyTBAScreen(
                                 error = uiState.subscriptionsError,
                                 onRetry = { viewModel.refreshTab(MyTBATab.NOTIFICATIONS) },
                                 displayNames = uiState.displayNames,
-                                onNavigateToTeam = onNavigateToTeam,
-                                onNavigateToEvent = onNavigateToEvent,
-                                onNavigateToMatch = onNavigateToMatch,
+                                rowNavigation = rowNavigation,
                                 listState = notificationsListState,
                                 contentPadding = innerPadding.onlyBottom(),
                                 onRemoveSubscription = { sub ->
@@ -353,9 +357,7 @@ private fun FavoritesTab(
     error: String?,
     onRetry: () -> Unit,
     displayNames: Map<String, String>,
-    onNavigateToTeam: (String) -> Unit,
-    onNavigateToEvent: (String) -> Unit,
-    onNavigateToMatch: (String) -> Unit,
+    rowNavigation: MyTbaRowNavigation,
     listState: LazyListState,
     contentPadding: PaddingValues,
     canPinShortcuts: Boolean,
@@ -383,15 +385,7 @@ private fun FavoritesTab(
                 FavoriteItem(
                     favorite = favorite,
                     displayName = displayNames[favorite.modelKey] ?: favorite.modelKey,
-                    onClick = {
-                        when (favorite.modelType) {
-                            ModelType.TEAM -> onNavigateToTeam(favorite.modelKey)
-                            ModelType.EVENT -> onNavigateToEvent(favorite.modelKey)
-                            ModelType.MATCH -> onNavigateToMatch(favorite.modelKey)
-                            ModelType.EVENT_TEAM ->
-                                onNavigateToEvent(favorite.modelKey.substringBefore('_'))
-                        }
-                    },
+                    onClick = { rowNavigation.open(favorite.modelType, favorite.modelKey) },
                     canPinShortcuts = canPinShortcuts,
                     onAddShortcut = { onAddShortcut(favorite) },
                     onRemove = { onRemoveFavorite(favorite) },
@@ -448,9 +442,7 @@ private fun NotificationsTab(
     error: String?,
     onRetry: () -> Unit,
     displayNames: Map<String, String>,
-    onNavigateToTeam: (String) -> Unit,
-    onNavigateToEvent: (String) -> Unit,
-    onNavigateToMatch: (String) -> Unit,
+    rowNavigation: MyTbaRowNavigation,
     listState: LazyListState,
     contentPadding: PaddingValues,
     onRemoveSubscription: (Subscription) -> Unit,
@@ -477,13 +469,7 @@ private fun NotificationsTab(
                     subscription = subscription,
                     displayName = displayNames[subscription.modelKey] ?: subscription.modelKey,
                     onClick = {
-                        when (subscription.modelType) {
-                            ModelType.TEAM -> onNavigateToTeam(subscription.modelKey)
-                            ModelType.EVENT -> onNavigateToEvent(subscription.modelKey)
-                            ModelType.MATCH -> onNavigateToMatch(subscription.modelKey)
-                            ModelType.EVENT_TEAM ->
-                                onNavigateToEvent(subscription.modelKey.substringBefore('_'))
-                        }
+                        rowNavigation.open(subscription.modelType, subscription.modelKey)
                     },
                     onRemove = { onRemoveSubscription(subscription) },
                 )
@@ -526,10 +512,33 @@ internal fun modelTypeLabel(modelType: Int): String =
         else -> "Other"
     }
 
-/** Names where tapping a myTBA row goes; Team @ Event rows open the event. */
+/** Where tapping a myTBA row goes: the screen for its model. */
+internal class MyTbaRowNavigation(
+    private val toTeam: (String) -> Unit,
+    private val toEvent: (String) -> Unit,
+    private val toMatch: (String) -> Unit,
+    private val toTeamAtEvent: (teamKey: String, eventKey: String) -> Unit,
+) {
+    fun open(
+        modelType: Int,
+        modelKey: String,
+    ) {
+        when (modelType) {
+            ModelType.TEAM -> toTeam(modelKey)
+            ModelType.EVENT -> toEvent(modelKey)
+            ModelType.MATCH -> toMatch(modelKey)
+            // Keys are "{eventKey}_{teamKey}", e.g. 2024micmp4_frc2471.
+            ModelType.EVENT_TEAM ->
+                toTeamAtEvent(modelKey.substringAfter('_'), modelKey.substringBefore('_'))
+        }
+    }
+}
+
+/** Names where tapping a myTBA row goes. */
 internal fun modelTypeClickLabel(modelType: Int): String? =
     when (modelType) {
-        ModelType.EVENT, ModelType.EVENT_TEAM -> "View event"
+        ModelType.EVENT -> "View event"
+        ModelType.EVENT_TEAM -> "View team at event"
         ModelType.TEAM -> "View team"
         ModelType.MATCH -> "View match"
         else -> null

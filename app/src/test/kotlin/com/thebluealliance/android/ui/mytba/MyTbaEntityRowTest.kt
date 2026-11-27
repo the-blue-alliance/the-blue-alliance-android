@@ -35,4 +35,33 @@ class MyTbaEntityRowTest {
     fun `rows without a destination keep the default click label`() {
         assertEquals(null, modelTypeClickLabel(ModelType.DISTRICT))
     }
+
+    private fun openRow(
+        modelType: Int,
+        modelKey: String,
+    ): String {
+        var opened = ""
+        MyTbaRowNavigation(
+            toTeam = { opened = "team $it" },
+            toEvent = { opened = "event $it" },
+            toMatch = { opened = "match $it" },
+            toTeamAtEvent = { team, event -> opened = "team $team at $event" },
+        ).open(modelType, modelKey)
+        return opened
+    }
+
+    @Test
+    fun `team at event rows navigate to Team @ Event`() {
+        assertEquals(
+            "team frc2471 at 2024micmp4",
+            openRow(ModelType.EVENT_TEAM, "2024micmp4_frc2471"),
+        )
+    }
+
+    @Test
+    fun `other rows navigate to their model`() {
+        assertEquals("team frc254", openRow(ModelType.TEAM, "frc254"))
+        assertEquals("event 2024casj", openRow(ModelType.EVENT, "2024casj"))
+        assertEquals("match 2024casj_qm1", openRow(ModelType.MATCH, "2024casj_qm1"))
+    }
 }
