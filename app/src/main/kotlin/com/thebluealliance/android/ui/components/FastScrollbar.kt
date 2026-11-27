@@ -38,6 +38,24 @@ private val ThumbWidth = 4.dp
 private val ThumbHeight = 48.dp
 private val TouchTargetWidth = 48.dp
 
+/**
+ * Whether a press at ([x], [y]) in a [width]-wide list belongs to the fast scrollbar rather than
+ * the row under it. The strip is [stripWidth] wide at the end edge ([ltr] picks the side), and the
+ * thumb spans [thumbTop] to [thumbTop] + [thumbHeight] while [thumbShown].
+ *
+ * Today the strip claims every press on it, whether or not the thumb is there.
+ */
+internal fun fastScrollbarClaimsPress(
+    x: Float,
+    y: Float,
+    width: Float,
+    stripWidth: Float,
+    ltr: Boolean,
+    thumbTop: Float,
+    thumbHeight: Float,
+    thumbShown: Boolean,
+): Boolean = if (ltr) x >= width - stripWidth else x <= stripWidth
+
 @Composable
 fun FastScrollbar(
     listState: LazyListState,
