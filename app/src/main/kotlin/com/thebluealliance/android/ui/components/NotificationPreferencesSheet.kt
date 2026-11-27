@@ -92,6 +92,8 @@ fun NotificationPreferencesSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
+        // The sheet's window drops Esc, so dismiss it here, animating out like Cancel.
+        EscapeHandler { scope.hideThen({ sheetState.hide() }, onDismiss) }
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             // Scrolls so Save stays reachable when the sheet is taller than the window.
             Column(
