@@ -42,6 +42,14 @@
                 <data android:pathPrefix="/teams" />
                 <data android:pathPrefix="/regional_advancement" />
             </intent-filter>
+            <!-- Opening size of a desktop (freeform) window; full screen and split screen ignore
+                 it. 920dp is the 80dp navigation rail plus the 840dp reading column, so the column
+                 fills the window with no side margins, and it meets the 840dp expanded breakpoint,
+                 so Event > Matches opens as list and detail panes. -->
+            <layout
+                android:defaultWidth="920dp"
+                android:defaultHeight="720dp"
+                android:gravity="center" />
         </activity>
 
         <!-- This alias insulates our shortcuts (which maintain the same Intent data through app updates)
