@@ -105,7 +105,7 @@ apiv3_key() {
     return
   fi
   local cfg="$HOME/.config/tba/auth.yaml"
-  [[ -f "$cfg" ]] && awk '/thebluealliance\.com\/api\/v3:/ {print $2; exit}' "$cfg"
+  [[ -f "$cfg" ]] && awk '/thebluealliance\.com\/api\/v3:/ {v = $2; gsub(/^["\047]|["\047]$/, "", v); print v; exit}' "$cfg"
 }
 
 # A Firebase ID token for uid 2 from the Auth emulator, minted the way the app's debug
