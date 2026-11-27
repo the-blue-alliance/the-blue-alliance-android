@@ -44,18 +44,15 @@ internal object TrackerStatusLogic {
     ): TrackerStatus =
         when {
             // Anything stored keeps showing, stamped with its age, whatever the refresh is doing.
-            hasData -> TrackerStatus.Content(lastSuccessAtMillis, offline = !isOnline)
+            // A refresh that succeeded and found nothing counts: "no upcoming events" is still
+            // true while offline.
+            hasData || lastSuccessAtMillis != null ->
+                TrackerStatus.Content(lastSuccessAtMillis, offline = !isOnline)
             work == RefreshWork.RUNNING -> TrackerStatus.Loading
             // A queued refresh can't run without a network, so say so instead of spinning.
             !isOnline -> TrackerStatus.Offline
             lastRefreshFailed -> TrackerStatus.LoadFailed
             work == RefreshWork.PENDING -> TrackerStatus.Loading
-            // A refresh succeeded and found nothing: that's a real "no upcoming events".
-            lastSuccessAtMillis != null ->
-                TrackerStatus.Content(
-                    lastSuccessAtMillis,
-                    offline = false,
-                )
             // Never loaded and nothing queued: the screen enqueues a refresh when it opens.
             else -> TrackerStatus.Loading
         }

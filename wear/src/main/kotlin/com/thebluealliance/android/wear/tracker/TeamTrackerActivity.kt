@@ -42,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
@@ -460,10 +461,15 @@ private fun StatusText(text: String) {
 /** "Updated 12 min. ago", or "Offline · updated …" while there's no network. Ticks each minute. */
 @Composable
 private fun UpdatedLine(status: TrackerStatus.Content) {
-    val now by produceState(System.currentTimeMillis()) {
-        while (true) {
-            delay(60_000L)
-            value = System.currentTimeMillis()
+    // Tick only while the screen is started, and re-read the clock as soon as it starts again so
+    // waking the watch doesn't show an age that's up to a minute stale.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val now by produceState(System.currentTimeMillis(), lifecycleOwner) {
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (true) {
+                value = System.currentTimeMillis()
+                delay(60_000L)
+            }
         }
     }
     val age =
