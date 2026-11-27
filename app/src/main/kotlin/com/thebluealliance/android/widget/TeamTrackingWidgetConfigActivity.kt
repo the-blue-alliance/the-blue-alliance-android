@@ -195,8 +195,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
             val glanceId = manager.getGlanceIdBy(appWidgetId)
 
             updateAppWidgetState(this@TeamTrackingWidgetConfigActivity, glanceId) { prefs ->
-                prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
-                prefs[TeamTrackingWidgetKeys.TEAM_KEY] = "frc$teamNumber"
+                WidgetRefreshState.setTeam(prefs, teamNumber)
                 // Sane default until the first worker run stamps the real state — shrinks the
                 // "unknown" widget_state window for analytics.
                 prefs[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.NO_UPCOMING.value

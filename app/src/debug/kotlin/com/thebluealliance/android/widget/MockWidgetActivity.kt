@@ -156,7 +156,7 @@ class MockWidgetActivity : ComponentActivity() {
         prefs[TeamTrackingWidgetKeys.EVENT_KEY] = "2026ne"
         prefs[TeamTrackingWidgetKeys.EVENT_NAME] = "NE District Event"
         prefs[TeamTrackingWidgetKeys.RECORD] = "5-2-0"
-        prefs[TeamTrackingWidgetKeys.LAST_UPDATED] = "just now"
+        WidgetRefreshState.markSucceeded(prefs, System.currentTimeMillis())
 
         // Last match: Q12 — blue 177 wins
         prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL] = "Q12"
@@ -213,7 +213,7 @@ class MockWidgetActivity : ComponentActivity() {
         prefs.remove(TeamTrackingWidgetKeys.EVENT_KEY)
         prefs.remove(TeamTrackingWidgetKeys.EVENT_NAME)
         prefs.remove(TeamTrackingWidgetKeys.RECORD)
-        prefs[TeamTrackingWidgetKeys.LAST_UPDATED] = "just now"
+        WidgetRefreshState.markSucceeded(prefs, System.currentTimeMillis())
 
         // No last match
         for (k in TeamTrackingWidgetKeys.ALL_LAST_MATCH_KEYS) prefs.remove(k)

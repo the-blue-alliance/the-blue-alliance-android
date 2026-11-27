@@ -95,6 +95,25 @@ class WidgetRefreshStateTest {
     }
 
     @Test
+    fun `switching teams drops the previous team's data`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals("frc254", prefs[TeamTrackingWidgetKeys.TEAM_KEY])
+        assertNull(prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+        assertNull(prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT])
+        WidgetRefreshState.markFailed(prefs)
+        assertEquals(WidgetState.LOAD_FAILED.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `saving the same team keeps its data`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals("Q18", prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+        assertEquals(todayAt0753, prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT])
+    }
+
+    @Test
     fun `footer shows today's update time`() {
         assertEquals("Updated 7:53 AM", footer(todayAt0753, refreshFailed = false))
         assertEquals("Updated 07:53", footer(todayAt0753, refreshFailed = false, use24Hour = true))
