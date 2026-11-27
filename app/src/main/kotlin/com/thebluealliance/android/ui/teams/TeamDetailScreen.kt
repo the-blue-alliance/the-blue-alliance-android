@@ -593,7 +593,9 @@ private fun DistrictStandingText(
             style = MaterialTheme.typography.bodyMedium,
             onTextLayout = { layout = it },
         )
-        layout?.let { result ->
+        // The last layout can be of the previous text, e.g. before the district name loaded.
+        val current = layout?.takeIf { linkFitsLayout(it.layoutInput.text.text, text.text, link) }
+        current?.let { result ->
             val bounds = linkBounds(result, link)
             Box(
                 Modifier
@@ -622,6 +624,16 @@ internal fun districtLinkRange(standing: TeamDistrictStanding): IntRange {
     val start = "District: ".length
     return start until start + standing.districtName.length
 }
+
+/**
+ * Whether a layout of [laidOutText] can place the [link] in [text]: it's a layout of this text and
+ * the link has characters in it.
+ */
+internal fun linkFitsLayout(
+    laidOutText: String,
+    text: String,
+    link: IntRange,
+): Boolean = laidOutText == text && !link.isEmpty() && link.last < text.length
 
 /** The name's box on the line it starts on; a name that wraps keeps its first line's part. */
 private fun linkBounds(

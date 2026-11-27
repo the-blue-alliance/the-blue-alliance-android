@@ -77,7 +77,7 @@ fun teamDistrictStanding(
             TeamDistrictStanding(
                 districtKey = snapshot.districtKey,
                 districtName =
-                    snapshot.district?.displayName
+                    snapshot.district?.displayName?.takeIf { it.isNotBlank() }
                         ?: snapshot.districtKey.replace(Regex("^\\d{4}"), "").uppercase(),
                 rank = ranking.rank,
                 points = ranking.pointTotal.toInt(),

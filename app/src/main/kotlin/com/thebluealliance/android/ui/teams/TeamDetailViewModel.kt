@@ -92,7 +92,10 @@ class TeamDetailViewModel
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
 
-        /** District rankings already fetched by this screen, so revisits read the cache. */
+        /**
+         * District rankings this screen has fetched or is fetching, so revisits read the cache. A
+         * failed fetch leaves the set, so the next year switch or return to the screen retries it.
+         */
         private val fetchedDistrictKeys = mutableSetOf<String>()
 
         /** The districts the selected year's events point at; rankings say which is the team's. */
@@ -100,6 +103,8 @@ class TeamDetailViewModel
 
         private val districtStanding: Flow<TeamDistrictStanding?> =
             selection.year.flatMapLatest { year ->
+                // Until this year's events load, a refresh must not fetch the last year's districts.
+                currentDistrictKeys = emptyList()
                 eventRepository
                     .observeTeamEvents(teamKey, year)
                     .map { teamDistrictKeys(it, year) }
@@ -162,7 +167,11 @@ class TeamDetailViewModel
             if (keys.isEmpty()) return
             viewModelScope.launch {
                 keys.forEach { key ->
-                    launch { quietly { districtRepository.refreshDistrictRankings(key) } }
+                    launch {
+                        fetchedDistrictKeys.add(key)
+                        val fetched = quietly { districtRepository.refreshDistrictRankings(key) }
+                        if (!fetched) fetchedDistrictKeys.remove(key)
+                    }
                 }
                 launch {
                     quietly {
@@ -174,15 +183,17 @@ class TeamDetailViewModel
             }
         }
 
-        private suspend fun quietly(task: suspend () -> Unit) {
+        /** Runs [task], returning whether it succeeded. */
+        private suspend fun quietly(task: suspend () -> Unit): Boolean =
             try {
                 task()
+                true
             } catch (e: CancellationException) {
                 throw e
             } catch (_: Exception) {
                 // The district row stays hidden.
+                false
             }
-        }
 
         val isFavorite: StateFlow<Boolean> =
             myTBARepository

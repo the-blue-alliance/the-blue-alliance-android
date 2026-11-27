@@ -17,6 +17,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -132,5 +133,53 @@ class TeamDetailViewModelDistrictTest {
             val viewModel = viewModel()
             backgroundScope.launch { viewModel.uiState.collect {} }
             assertNull(viewModel.uiState.value.districtStanding)
+        }
+
+    @Test
+    fun `a failed rankings fetch is retried when the year comes back`() =
+        runTest(UnconfinedTestDispatcher()) {
+            every { eventRepository.observeTeamEvents("frc254", 2026) } returns
+                flowOf(listOf(event("2026fim")))
+            every { eventRepository.observeTeamEvents("frc254", 2025) } returns
+                flowOf(emptyList())
+            coEvery { districtRepository.refreshDistrictRankings("2026fim") } throws
+                RuntimeException("offline")
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.uiState.collect {} }
+            coVerify(exactly = 1) { districtRepository.refreshDistrictRankings("2026fim") }
+
+            viewModel.selectYear(2025)
+            viewModel.selectYear(2026)
+            coVerify(exactly = 2) { districtRepository.refreshDistrictRankings("2026fim") }
+        }
+
+    @Test
+    fun `a fetched district isn't fetched again when the year comes back`() =
+        runTest(UnconfinedTestDispatcher()) {
+            every { eventRepository.observeTeamEvents("frc254", 2026) } returns
+                flowOf(listOf(event("2026fim")))
+            every { eventRepository.observeTeamEvents("frc254", 2025) } returns
+                flowOf(emptyList())
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.uiState.collect {} }
+
+            viewModel.selectYear(2025)
+            viewModel.selectYear(2026)
+            coVerify(exactly = 1) { districtRepository.refreshDistrictRankings("2026fim") }
+        }
+
+    @Test
+    fun `a refresh before the new year's events load doesn't fetch the old year's districts`() =
+        runTest(UnconfinedTestDispatcher()) {
+            every { eventRepository.observeTeamEvents("frc254", 2026) } returns
+                flowOf(listOf(event("2026fim")))
+            every { eventRepository.observeTeamEvents("frc254", 2025) } returns
+                MutableSharedFlow()
+            val viewModel = viewModel()
+            backgroundScope.launch { viewModel.uiState.collect {} }
+
+            viewModel.selectYear(2025)
+            viewModel.refreshAll()
+            coVerify(exactly = 1) { districtRepository.refreshDistrictRankings("2026fim") }
         }
 }

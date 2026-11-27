@@ -5,7 +5,9 @@ import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class TeamDistrictStandingTest {
@@ -153,5 +155,40 @@ class TeamDistrictStandingTest {
         val line = districtStandingLine(standing)
         assertEquals("District: FIRST California · Rank 2 · 364 pts", line)
         assertEquals("FIRST California", line.substring(districtLinkRange(standing)))
+    }
+
+    @Test
+    fun `falls back to the abbreviation when the district's name is blank`() {
+        val blank = District("2026fim", "fim", "", 2026)
+        val snapshot =
+            DistrictRankingsSnapshot("2026fim", blank, listOf(ranking("frc254", 3, 150.0)))
+        assertEquals("FIM", teamDistrictStanding("frc254", listOf(snapshot))?.districtName)
+    }
+
+    @Test
+    fun `a layout of the abbreviation can't place the full name's link`() {
+        val short = TeamDistrictStanding("2026ne", "NE", rank = 5, points = 120)
+        val full = short.copy(districtName = "FIRST In New England")
+        assertFalse(
+            linkFitsLayout(
+                laidOutText = districtStandingLine(short),
+                text = districtStandingLine(full),
+                link = districtLinkRange(full),
+            ),
+        )
+    }
+
+    @Test
+    fun `a layout of the same line places its link`() {
+        val standing =
+            TeamDistrictStanding("2026ne", "FIRST In New England", rank = 5, points = 120)
+        val line = districtStandingLine(standing)
+        assertTrue(linkFitsLayout(line, line, districtLinkRange(standing)))
+    }
+
+    @Test
+    fun `an empty link is never placed`() {
+        val line = "District:  · Rank 5 · 120 pts"
+        assertFalse(linkFitsLayout(line, line, 10 until 10))
     }
 }
