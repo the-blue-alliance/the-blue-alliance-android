@@ -31,6 +31,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.controlWidth
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
@@ -88,7 +89,9 @@ fun SettingsScreen(
                 modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
             )
 
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.controlWidth().fillMaxWidth(),
+            ) {
                 ThemeMode.entries.forEachIndexed { index, mode ->
                     SegmentedButton(
                         selected = themeMode == mode,
@@ -125,8 +128,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth()
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Match score notification")
                 }
@@ -136,8 +140,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth()
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Upcoming match notification")
                 }
@@ -147,8 +152,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth()
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Event update notification")
                 }
@@ -158,8 +164,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth()
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Duplicate match (2 followed teams)")
                 }
@@ -169,8 +176,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth()
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Seed event_team subscription (myTBA)")
                 }

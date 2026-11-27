@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.more
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +28,7 @@ import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -61,10 +61,10 @@ fun MoreScreen(
         Column(
             modifier =
                 Modifier
+                    .pageBackground()
                     .padding(innerPadding.withoutBottom())
-                    .readingWidth()
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background),
+                    .readingWidth(),
         ) {
             MoreItem(icon = TbaIcons.Star, label = "myTBA", onClick = onNavigateToMyTBA)
             HorizontalDivider()
@@ -138,7 +138,7 @@ fun MoreScreen(
 
             SponsorCredits(sponsors = sponsors, modifier = Modifier.padding(top = 8.dp))
 
-            // The footer clears the gesture bar; the column's background runs on behind it.
+            // The footer clears the gesture bar; the page background runs on behind it.
             Spacer(modifier = Modifier.height(12.dp + innerPadding.calculateBottomPadding()))
         }
     }

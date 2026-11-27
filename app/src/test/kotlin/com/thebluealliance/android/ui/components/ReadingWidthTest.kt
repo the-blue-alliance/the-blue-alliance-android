@@ -125,4 +125,57 @@ class ReadingWidthTest {
         assertEquals(light.pageSheet, light.messageBackground)
         assertEquals(dark.pageBackdrop, dark.messageBackground)
     }
+
+    @Test
+    fun `controls fill every phone width`() {
+        listOf(320.dp, 328.dp, 379.dp, 400.dp, 440.dp, 600.dp).forEach {
+            assertEquals(it, controlWidth(it))
+        }
+    }
+
+    @Test
+    fun `controls cap on wide panels`() {
+        assertEquals(ControlMaxWidth, controlWidth(601.dp))
+        assertEquals(ControlMaxWidth, controlWidth(808.dp))
+    }
+
+    @Test
+    fun `a field in a phone bar keeps its slot`() {
+        // 411dp phone at density 1: slot starts after the 56dp back button.
+        val fit = readingColumnFit(56f, 0f, 411f, 840f, rtl = false)
+        assertEquals(0f, fit.start)
+        assertTrue(fit.maxWidth >= 411f - 56f)
+    }
+
+    @Test
+    fun `a field beside the rail below the reading width keeps its slot`() {
+        // 900dp window, 80dp rail: an 820dp content area, narrower than the column.
+        val fit = readingColumnFit(136f, 80f, 900f, 840f, rtl = false)
+        assertEquals(0f, fit.start)
+        assertEquals(900f - 136f, fit.maxWidth)
+    }
+
+    @Test
+    fun `a field on a 1280dp tablet shares the column's edges`() {
+        // 1200dp content area beside the rail; the column runs from 260 to 1100.
+        val fit = readingColumnFit(136f, 80f, 1280f, 840f, rtl = false)
+        assertEquals(260f - 136f, fit.start)
+        assertEquals(840f, fit.maxWidth)
+    }
+
+    @Test
+    fun `a field just past the reading width ends at the column's end`() {
+        // 920dp content area: the column runs from 120 to 1000, left of the field's slot.
+        val fit = readingColumnFit(136f, 80f, 1000f, 840f, rtl = false)
+        assertEquals(0f, fit.start)
+        assertEquals(960f - 136f, fit.maxWidth)
+    }
+
+    @Test
+    fun `a field in a right-to-left bar shares the column's edges`() {
+        // Mirror of the 1280dp tablet: rail on the right, slot starting at 1144.
+        val fit = readingColumnFit(1144f, 0f, 1200f, 840f, rtl = true)
+        assertEquals(1144f - 1020f, fit.start)
+        assertEquals(840f, fit.maxWidth)
+    }
 }
