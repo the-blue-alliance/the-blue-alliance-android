@@ -69,11 +69,12 @@ fun webcastChannelLabel(webcast: Webcast): String {
 fun LiveWebcastButton(
     event: Event,
     webcasts: List<Webcast>,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     val open = { webcast: Webcast -> webcastUrl(webcast)?.let { context.openWebcast(webcast, it) } }
-    Box {
+    Box(modifier) {
         IconButton(
             onClick = {
                 if (webcasts.size == 1) open(webcasts.single()) else expanded = true

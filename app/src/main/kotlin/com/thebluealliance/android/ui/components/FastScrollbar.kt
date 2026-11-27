@@ -36,7 +36,12 @@ import kotlin.math.roundToInt
 
 private val ThumbWidth = 4.dp
 private val ThumbHeight = 48.dp
-private val TouchTargetWidth = 48.dp
+
+/**
+ * Width of the drag strip along the list's end edge. It sits over the list's content and takes
+ * every pointer event there, so a clickable inside a row must stay clear of it.
+ */
+val FastScrollbarTouchTargetWidth = 48.dp
 
 @Composable
 fun FastScrollbar(
@@ -80,7 +85,7 @@ fun FastScrollbar(
                     Modifier
                         .align(Alignment.TopEnd)
                         .fillMaxHeight()
-                        .width(TouchTargetWidth)
+                        .width(FastScrollbarTouchTargetWidth)
                         .onSizeChanged { trackHeightPx = it.height.toFloat() }
                         .pointerInput(totalItems) {
                             detectVerticalDragGestures(

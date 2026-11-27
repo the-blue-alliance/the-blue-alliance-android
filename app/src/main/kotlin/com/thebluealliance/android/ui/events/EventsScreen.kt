@@ -52,6 +52,7 @@ import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FastScrollbar
+import com.thebluealliance.android.ui.components.FastScrollbarTouchTargetWidth
 import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -167,7 +168,22 @@ private fun EventsList(
         EventRow(
             event = event,
             onClick = { onNavigateToEvent(event.key) },
-            trailing = if (live.isEmpty()) null else ({ LiveWebcastButton(event, live) }),
+            trailing =
+                if (live.isEmpty()) {
+                    null
+                } else {
+                    {
+                        // Clear of the fast scrollbar's drag strip, which would swallow its clicks.
+                        LiveWebcastButton(
+                            event = event,
+                            webcasts = live,
+                            modifier =
+                                Modifier.padding(
+                                    end = FastScrollbarTouchTargetWidth - 16.dp,
+                                ),
+                        )
+                    }
+                },
         )
     }
     val today = remember { LocalDate.now() }
