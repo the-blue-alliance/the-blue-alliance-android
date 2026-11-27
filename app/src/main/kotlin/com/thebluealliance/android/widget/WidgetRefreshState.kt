@@ -11,11 +11,23 @@ import java.util.Locale
 internal object WidgetRefreshState {
     /**
      * Record a refresh where the API couldn't be reached. Whatever the widget last showed stays,
-     * along with when it was fetched; only the failure is noted. A widget that has never loaded
+     * along with when it was fetched, and team info cached on the device is filled in; otherwise
+     * only the failure is noted. A widget that has never loaded
      * anything switches to [WidgetState.LOAD_FAILED] instead of claiming "No upcoming events".
      */
-    fun markFailed(prefs: MutablePreferences) {
+    fun markFailed(
+        prefs: MutablePreferences,
+        cachedNickname: String? = null,
+        cachedAvatarBase64: String? = null,
+    ) {
         prefs[TeamTrackingWidgetKeys.REFRESH_FAILED] = true
+        // Team info already in the local database is still good; only fill in, never clear.
+        if (!cachedNickname.isNullOrBlank()) {
+            prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME] = cachedNickname
+        }
+        if (cachedAvatarBase64 != null) {
+            prefs[TeamTrackingWidgetKeys.AVATAR_BASE64] = cachedAvatarBase64
+        }
         val everLoaded =
             prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT] != null ||
                 prefs[TeamTrackingWidgetKeys.LAST_UPDATED] != null

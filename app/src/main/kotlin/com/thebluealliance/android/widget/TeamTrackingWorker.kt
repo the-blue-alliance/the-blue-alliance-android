@@ -208,7 +208,7 @@ class TeamTrackingWorker
                 e: Exception,
             ) {
                 Log.w(TAG, "Failed to refresh team events $teamKey/$year", e)
-                return keepLastGoodData(glanceId)
+                return keepLastGoodData(glanceId, teamNickname, avatar)
             }
             val events =
                 eventRepository.observeTeamEvents(teamKey, year).firstOrNull()
@@ -278,7 +278,7 @@ class TeamTrackingWorker
                 e: Exception,
             ) {
                 Log.w(TAG, "Failed to refresh event matches $eventKey", e)
-                return keepLastGoodData(glanceId)
+                return keepLastGoodData(glanceId, teamNickname, avatar)
             }
 
             val event = eventRepository.observeEvent(eventKey).firstOrNull()
@@ -424,11 +424,15 @@ class TeamTrackingWorker
          * The API couldn't be reached: leave the widget's data as it was and note the failure.
          * Returns whether the widget is still showing an event, to keep the fast refresh going.
          */
-        private suspend fun keepLastGoodData(glanceId: androidx.glance.GlanceId): Boolean {
+        private suspend fun keepLastGoodData(
+            glanceId: androidx.glance.GlanceId,
+            cachedNickname: String,
+            cachedAvatar: Media?,
+        ): Boolean {
             var showingEvent = false
             updateAppWidgetState(applicationContext, glanceId) { prefs ->
                 showingEvent = prefs[TeamTrackingWidgetKeys.EVENT_KEY] != null
-                WidgetRefreshState.markFailed(prefs)
+                WidgetRefreshState.markFailed(prefs, cachedNickname, cachedAvatar?.base64Image)
             }
             TeamTrackingWidget().update(applicationContext, glanceId)
             return showingEvent

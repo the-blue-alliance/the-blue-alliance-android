@@ -95,6 +95,30 @@ class WidgetRefreshStateTest {
     }
 
     @Test
+    fun `a failed refresh keeps the cached nickname`() {
+        val prefs =
+            atEvent().apply {
+                this[TeamTrackingWidgetKeys.TEAM_NICKNAME] = "Bobcat Robotics"
+            }
+        WidgetRefreshState.markFailed(prefs)
+        assertEquals("Bobcat Robotics", prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME])
+    }
+
+    @Test
+    fun `a failed refresh after a team change shows the new team's cached nickname`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "1678")
+        WidgetRefreshState.markFailed(
+            prefs,
+            cachedNickname = "Citrus Circuits",
+            cachedAvatarBase64 = "abc",
+        )
+        assertEquals("Citrus Circuits", prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME])
+        assertEquals("abc", prefs[TeamTrackingWidgetKeys.AVATAR_BASE64])
+        assertNull(prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+    }
+
+    @Test
     fun `switching teams drops the previous team's data`() {
         val prefs = atEvent()
         WidgetRefreshState.setTeam(prefs, "254")
