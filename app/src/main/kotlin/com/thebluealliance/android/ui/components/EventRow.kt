@@ -22,12 +22,13 @@ import java.util.Locale
 fun EventRow(
     event: Event,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     showYear: Boolean = false,
     showChevron: Boolean = false,
 ) {
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .returnsFocus()
                 .handCursor()

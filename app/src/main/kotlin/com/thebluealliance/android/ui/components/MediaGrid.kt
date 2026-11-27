@@ -23,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -212,6 +214,8 @@ internal fun mediaTileMinSize(windowSizeClass: WindowSizeClass): Dp =
 fun MediaTab(
     media: List<Media>?,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    /** Attached to the first tile, so focus can be sent to the photos once they load. */
+    firstItemFocus: FocusRequester? = null,
     emptyAction: (@Composable () -> Unit)? = null,
 ) {
     if (media == null) {
@@ -260,7 +264,15 @@ fun MediaTab(
                     foreignKey = item.foreignKey,
                     index = index,
                     count = gridItems.size,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .then(
+                                if (index == 0 && firstItemFocus != null) {
+                                    Modifier.focusRequester(firstItemFocus)
+                                } else {
+                                    Modifier
+                                },
+                            ).fillMaxWidth(),
                 )
             }
         }

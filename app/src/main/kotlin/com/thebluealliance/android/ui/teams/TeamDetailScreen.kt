@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.toggleable
@@ -40,9 +40,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -61,6 +64,7 @@ import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.previousSeason
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.FocusHandoffEffect
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.ProseMaxWidth
@@ -71,9 +75,11 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.handCursor
+import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
+import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -104,6 +110,25 @@ fun TeamDetailScreen(
     val yearsParticipated by viewModel.yearsParticipated.collectAsStateWithLifecycle()
     // Empty Events and Media tabs offer a step back to the team's previous season.
     val previousYear = previousSeason(yearsParticipated, selectedYear)
+    // Pressing that button by keyboard removes it; focus moves to the first event or photo of the
+    // season it shows, or stays on the button when that season is empty too.
+    val inputModeManager = LocalInputModeManager.current
+    val eventsFocus = rememberFocusHandoff()
+    val mediaFocus = rememberFocusHandoff()
+    FocusHandoffEffect(
+        eventsFocus,
+        current = selectedYear,
+        hasContent = !uiState.events.isNullOrEmpty(),
+        controlShown = uiState.events?.isEmpty() == true,
+    )
+    val hasMediaTiles =
+        uiState.media?.any { it.type != "avatar" && mediaUrl(it.type, it.foreignKey) != null }
+    FocusHandoffEffect(
+        mediaFocus,
+        current = selectedYear,
+        hasContent = hasMediaTiles == true,
+        controlShown = uiState.media?.none { it.type != "avatar" } == true,
+    )
     val pagerState =
         rememberPagerState(initialPage = initialTab, pageCount = { TeamDetailTab.entries.size })
     val coroutineScope = rememberCoroutineScope()
@@ -295,10 +320,15 @@ fun TeamDetailScreen(
                         EventsTab(
                             events = uiState.events,
                             selectedYear = selectedYear,
+                            firstEventFocus = eventsFocus.requester,
                             emptyAction =
                                 previousYear?.let { year ->
                                     {
-                                        ShowSeasonButton("Show $year events") {
+                                        ShowSeasonButton(
+                                            "Show $year events",
+                                            eventsFocus.requester,
+                                        ) {
+                                            eventsFocus.arm(year, inputModeManager.inputMode)
                                             viewModel.selectYear(year)
                                         }
                                     }
@@ -317,10 +347,15 @@ fun TeamDetailScreen(
                         MediaTab(
                             media = uiState.media,
                             innerPadding = bottomPadding,
+                            firstItemFocus = mediaFocus.requester,
                             emptyAction =
                                 previousYear?.let { year ->
                                     {
-                                        ShowSeasonButton("Show $year media") {
+                                        ShowSeasonButton(
+                                            "Show $year media",
+                                            mediaFocus.requester,
+                                        ) {
+                                            mediaFocus.arm(year, inputModeManager.inputMode)
                                             viewModel.selectYear(year)
                                         }
                                     }
@@ -458,6 +493,7 @@ private fun EventsTab(
     events: List<Event>?,
     selectedYear: Int,
     onNavigateToEvent: (String) -> Unit,
+    firstEventFocus: FocusRequester,
     innerPadding: PaddingValues = PaddingValues.Zero,
     emptyAction: (@Composable () -> Unit)? = null,
 ) {
@@ -477,8 +513,13 @@ private fun EventsTab(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = readingPadding,
             ) {
-                items(events, key = { it.key }) { event ->
-                    EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                itemsIndexed(events, key = { _, event -> event.key }) { index, event ->
+                    EventRow(
+                        event = event,
+                        onClick = { onNavigateToEvent(event.key) },
+                        modifier =
+                            if (index == 0) Modifier.focusRequester(firstEventFocus) else Modifier,
+                    )
                 }
             }
         }
@@ -488,9 +529,13 @@ private fun EventsTab(
 @Composable
 private fun ShowSeasonButton(
     label: String,
+    focusRequester: FocusRequester,
     onClick: () -> Unit,
 ) {
-    FilledTonalButton(onClick = onClick, modifier = Modifier.handCursor().heightIn(min = 48.dp)) {
+    FilledTonalButton(
+        onClick = onClick,
+        modifier = Modifier.focusRequester(focusRequester).handCursor().heightIn(min = 48.dp),
+    ) {
         Text(label)
     }
 }
