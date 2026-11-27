@@ -17,6 +17,7 @@ import androidx.wear.watchface.complications.data.TimeRange
 import androidx.wear.watchface.complications.datasource.ComplicationRequest
 import androidx.wear.watchface.complications.datasource.SuspendingComplicationDataSourceService
 import com.thebluealliance.android.wear.R
+import com.thebluealliance.android.wear.tracker.AutoRefresh
 import com.thebluealliance.android.wear.tracker.TeamTrackerActivity
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -201,8 +202,12 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
     ) {
         super.onComplicationActivated(complicationInstanceId, type)
         // The first request is answered from whatever the tracker has stored; fetch fresh data so
-        // a newly added complication doesn't wait for the next scheduled refresh.
-        TeamTrackingComplicationWorker.enqueueImmediateRefresh(applicationContext)
+        // a newly added complication doesn't wait for the next scheduled refresh. Skip it when the
+        // tracked team is missing or the API said it doesn't exist.
+        val prefs = TeamTrackerPreferences(applicationContext)
+        if (AutoRefresh.allowed(prefs.teamNumber, prefs.teamNotFound)) {
+            TeamTrackingComplicationWorker.enqueueImmediateRefresh(applicationContext)
+        }
     }
 
     override fun onComplicationDeactivated(complicationInstanceId: Int) {
