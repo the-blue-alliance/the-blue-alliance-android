@@ -67,6 +67,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.statRowWidth
@@ -221,7 +222,7 @@ fun TeamEventDetailScreen(
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
                 onRefresh = { viewModel.refreshTab(TeamEventDetailTab.entries[page]) },
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 val evt = uiState.event
                 when (TeamEventDetailTab.entries[page]) {

@@ -33,4 +33,11 @@ class FocusRegionsTest {
         assertFalse(causedEntry(keyTime = 1_200, enteredAt = 1_005))
         assertFalse(causedEntry(keyTime = 1_000, enteredAt = -1))
     }
+
+    @Test
+    fun `only the current pager page takes focus`() {
+        assertTrue(isPageFocusable(page = 3, currentPage = 3))
+        assertFalse(isPageFocusable(page = 2, currentPage = 3))
+        assertFalse(isPageFocusable(page = 4, currentPage = 3))
+    }
 }

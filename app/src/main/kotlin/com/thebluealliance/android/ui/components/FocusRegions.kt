@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.components
 
 import android.os.SystemClock
 import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
@@ -80,4 +81,25 @@ fun Modifier.focusEntersAt(entry: WindowFocusEntry): Modifier =
                     entry.enteredAt = SystemClock.uptimeMillis()
                 }
             }
+        }.focusGroup()
+
+/** Whether a pager's [page] may take keyboard focus while [currentPage] is showing. */
+internal fun isPageFocusable(
+    page: Int,
+    currentPage: Int,
+): Boolean = page == currentPage
+
+/**
+ * Makes pager [page] a focus group that keyboard focus enters only while it is [state]'s current
+ * page. A pager lays out the pages beside the current one when a focus search reaches its edge, so
+ * without this Tab and arrows move into a neighbouring tab's page and the pager follows, switching
+ * tabs with no click. Refused there, the search moves on past the pager instead.
+ */
+fun Modifier.pagerPageFocus(
+    state: PagerState,
+    page: Int,
+): Modifier =
+    this
+        .focusProperties {
+            onEnter = { if (!isPageFocusable(page, state.currentPage)) cancelFocusChange() }
         }.focusGroup()

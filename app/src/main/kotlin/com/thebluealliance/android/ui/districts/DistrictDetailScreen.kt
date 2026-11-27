@@ -50,6 +50,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
@@ -153,7 +154,7 @@ fun DistrictDetailScreen(
                 isRefreshing =
                     isRefreshing && uiState.eventSections != null && uiState.rankings != null,
                 onRefresh = { viewModel.refreshTab(DistrictDetailTab.entries[page]) },
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 when (DistrictDetailTab.entries[page]) {
                     DistrictDetailTab.EVENTS ->

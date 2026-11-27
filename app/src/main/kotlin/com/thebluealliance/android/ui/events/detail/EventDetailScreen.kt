@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.events.detail.tabs.EventAdvancementTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAlliancesTab
 import com.thebluealliance.android.ui.events.detail.tabs.EventAwardsTab
@@ -275,7 +276,7 @@ fun EventDetailScreen(
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.event != null,
                 onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 when (EventDetailTab.entries[page]) {
                     EventDetailTab.INFO ->
