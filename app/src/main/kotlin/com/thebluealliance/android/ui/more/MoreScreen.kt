@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.PlatinumSponsor
+import com.thebluealliance.android.ui.components.SmallTextLinkVerticalPadding
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
@@ -84,7 +85,11 @@ fun MoreScreen(
 
             // Each link carries its own 8.dp inset inside the tap target, so the row's own
             // padding drops by the same amount and the separator's spaces are no longer needed.
-            Row(modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp)) {
+            // The links' own vertical padding makes them 48dp targets, replacing the row's top gap.
+            Row(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 Text(
                     text = "About",
                     style = MaterialTheme.typography.bodySmall,
@@ -93,7 +98,7 @@ fun MoreScreen(
                         Modifier.paddedClickable(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
-                            vertical = 4.dp,
+                            vertical = SmallTextLinkVerticalPadding,
                             onClickLabel = "Open About",
                             onClick = onNavigateToAbout,
                         ),
@@ -112,7 +117,7 @@ fun MoreScreen(
                         Modifier.paddedClickable(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
-                            vertical = 4.dp,
+                            vertical = SmallTextLinkVerticalPadding,
                             onClickLabel = "Open Thanks",
                             onClick = onNavigateToThanks,
                         ),

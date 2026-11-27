@@ -28,6 +28,12 @@ import androidx.compose.ui.unit.dp
  * Note that the padding is applied last, so it insets this element's *content* — chain any sizing
  * modifiers (`weight`, `fillMaxWidth`, ...) before this one, exactly as with the raw chain.
  *
+ * Pick [shape] by the highlight-shape rules (AGENTS.md, "UI conventions"). A highlight that spans
+ * its container edge to edge stays square; use a plain `clickable` for those. A highlight inset
+ * from its container's edges, which is every use of this helper, is rounded to suit the element:
+ * - one line of text or a number (links, score cells, footer links): `MaterialTheme.shapes.small`
+ * - a card-sized, multi-line block (an inset match row, a media tile): `MaterialTheme.shapes.medium`
+ *
  * [role] and [onClickLabel] are forwarded to `clickable` for accessibility services, e.g.
  * `onClickLabel = "View team 254"`.
  *
@@ -48,3 +54,18 @@ fun Modifier.paddedClickable(
         .handCursor()
         .clickable(onClickLabel = onClickLabel, role = role, onClick = onClick)
         .padding(horizontal = horizontal, vertical = vertical)
+
+/**
+ * Minimum height of a link's drawn highlight: the 48dp Material target. Compose widens small
+ * targets to 48dp only for touch, so a mouse gets exactly the drawn size.
+ */
+val MinLinkHeight = 48.dp
+
+/**
+ * How far a full-width link row's highlight sits in from each column edge. The label takes the
+ * same inset inside the highlight, so it keeps the 16dp keyline.
+ */
+val LinkRowInset = 8.dp
+
+/** Vertical padding that lifts a one-line `bodySmall` text link to [MinLinkHeight]. */
+val SmallTextLinkVerticalPadding = 16.dp

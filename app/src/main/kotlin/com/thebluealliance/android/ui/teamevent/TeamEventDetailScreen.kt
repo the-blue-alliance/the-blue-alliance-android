@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.teamevent
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -53,10 +54,12 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.LinkRowInset
 import com.thebluealliance.android.ui.components.LocalTopBarRefresh
 import com.thebluealliance.android.ui.components.MatchItem
 import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
+import com.thebluealliance.android.ui.components.MinLinkHeight
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATab
@@ -71,7 +74,6 @@ import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
-import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
@@ -512,6 +514,7 @@ private fun SummaryTab(
                                 match = lastPlayed,
                                 playoffType = playoffType,
                                 onClick = { onNavigateToMatch(lastPlayed.key) },
+                                modifier = Modifier.clip(MaterialTheme.shapes.medium),
                             )
                         }
                     }
@@ -524,6 +527,7 @@ private fun SummaryTab(
                                 match = nextUnplayed,
                                 playoffType = playoffType,
                                 onClick = { onNavigateToMatch(nextUnplayed.key) },
+                                modifier = Modifier.clip(MaterialTheme.shapes.medium),
                             )
                         }
                     }
@@ -579,14 +583,22 @@ private fun InfoRow(
     onClickLabel: String,
     onClick: () -> Unit,
 ) {
+    // The highlight sits LinkRowInset in from each edge and the label takes the same inset
+    // inside it, so the label keeps its 16dp keyline.
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .returnsFocus()
-                .handCursor()
-                .clickable(onClickLabel = onClickLabel, onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = LinkRowInset)
+                .heightIn(min = MinLinkHeight)
+                .paddedClickable(
+                    MaterialTheme.shapes.small,
+                    horizontal = LinkRowInset,
+                    vertical = 8.dp,
+                    role = null,
+                    onClickLabel = onClickLabel,
+                    onClick = onClick,
+                ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(
