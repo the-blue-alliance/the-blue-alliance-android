@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -51,6 +52,11 @@ fun SectionHeader(
     )
 }
 
+/**
+ * A section header that opens a menu to jump to any of [allHeaders], wherever it is in the list,
+ * and always shows the menu's arrow. [isStuck] marks the header pinned at the top, the only one
+ * that takes keyboard focus.
+ */
 @Composable
 fun SectionHeader(
     label: String,
@@ -66,35 +72,26 @@ fun SectionHeader(
                 Modifier
                     .fillMaxWidth()
                     .readingBand(BrandHeaderContainer)
-                    // Only the stuck header opens the jump menu; a disabled clickable on the others
-                    // would announce them as unavailable controls.
-                    .then(
-                        if (isStuck) {
-                            Modifier.handCursor().clickable(
-                                onClickLabel = "Jump to section",
-                                role = Role.DropdownList,
-                            ) { menuExpanded = true }
-                        } else {
-                            Modifier
-                        },
-                    ),
+                    // Only the stuck header takes keyboard focus, so Tab meets one header before
+                    // the rows (see tabOrderedStickyHeader); its menu reaches every section.
+                    .focusProperties { canFocus = isStuck }
+                    .handCursor()
+                    .clickable(
+                        onClickLabel = "Jump to section",
+                        role = Role.DropdownList,
+                    ) { menuExpanded = true },
         ) {
             SectionHeaderRow(
                 label = label,
-                trailingContent =
-                    if (isStuck) {
-                        {
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Icon(
-                                imageVector = TbaIcons.ArrowDropDown,
-                                contentDescription = null,
-                                tint = OnBrand,
-                                modifier = Modifier.size(20.dp),
-                            )
-                        }
-                    } else {
-                        null
-                    },
+                trailingContent = {
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(
+                        imageVector = TbaIcons.ArrowDropDown,
+                        contentDescription = null,
+                        tint = OnBrand,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
             )
 
             DropdownMenu(
