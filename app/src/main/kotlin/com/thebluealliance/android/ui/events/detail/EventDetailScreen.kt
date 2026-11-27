@@ -364,6 +364,10 @@ fun EventDetailScreen(
                             insights = uiState.insights,
                             isRefreshing = isRefreshing,
                             innerPadding = bottomPadding,
+                            onTeamClick = { teamKey ->
+                                val eventKey = uiState.event?.key
+                                if (eventKey != null) onNavigateToTeamEvent(teamKey, eventKey)
+                            },
                         )
                     EventDetailTab.ADVANCEMENT_POINTS ->
                         EventAdvancementTab(
