@@ -4,4 +4,6 @@
     <string name="loading">Loading…</string>
     <string name="widget_team_label">Team</string>
     <string name="widget_description">Track your team\'s matches at an event</string>
+    <string name="widget_config_not_a_team">Not a team number</string>
+    <string name="widget_config_team_not_found">Team %1$s not found</string>
 </resources>
