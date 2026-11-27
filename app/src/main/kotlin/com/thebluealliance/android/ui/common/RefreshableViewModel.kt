@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -63,7 +64,7 @@ abstract class RefreshableViewModel : ViewModel() {
         refreshing(*tracked.toTypedArray())
     }
 
-    protected fun refreshing(vararg tasks: suspend () -> Unit) {
+    protected fun refreshing(vararg tasks: suspend () -> Unit): Job =
         viewModelScope.launch {
             inFlight.incrementAndGet()
             _isRefreshing.value = true
@@ -85,7 +86,6 @@ abstract class RefreshableViewModel : ViewModel() {
                 if (inFlight.decrementAndGet() == 0) _isRefreshing.value = false
             }
         }
-    }
 
     private companion object {
         const val TAG = "RefreshableViewModel"
