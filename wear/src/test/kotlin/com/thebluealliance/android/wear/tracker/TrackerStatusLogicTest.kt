@@ -65,6 +65,22 @@ class TrackerStatusLogicTest {
     }
 
     @Test
+    fun `a successful load with no events stays up while offline`() {
+        assertEquals(
+            TrackerStatus.Content(updatedAtMillis = updatedAt, offline = true),
+            resolve(lastSuccessAtMillis = updatedAt, work = RefreshWork.PENDING, isOnline = false),
+        )
+    }
+
+    @Test
+    fun `a failed refresh after a successful empty load keeps the empty content`() {
+        assertEquals(
+            TrackerStatus.Content(updatedAtMillis = updatedAt, offline = false),
+            resolve(lastSuccessAtMillis = updatedAt, lastRefreshFailed = true),
+        )
+    }
+
+    @Test
     fun `a running refresh with nothing stored shows a spinner`() {
         assertEquals(TrackerStatus.Loading, resolve(work = RefreshWork.RUNNING))
     }

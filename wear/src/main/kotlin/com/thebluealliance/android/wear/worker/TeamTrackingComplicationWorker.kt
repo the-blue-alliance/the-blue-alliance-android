@@ -36,8 +36,9 @@ class TeamTrackingComplicationWorker
     ) : CoroutineWorker(appContext, workerParams) {
         companion object {
             private const val TAG = "ComplicationRefresh"
-            private const val WORK_NAME = "complication_refresh"
-            private const val FAST_WORK_NAME = "complication_fast_refresh"
+            internal const val WORK_NAME = "complication_refresh"
+            internal const val FAST_WORK_NAME = "complication_fast_refresh"
+            internal const val IMMEDIATE_WORK_NAME = "complication_immediate_refresh"
 
             private val networkConstraints =
                 Constraints
@@ -87,9 +88,12 @@ class TeamTrackingComplicationWorker
                 val request =
                     OneTimeWorkRequestBuilder<TeamTrackingComplicationWorker>()
                         .setConstraints(networkConstraints)
+                        // Unique-work names aren't visible on WorkInfo; the tag lets the tracker
+                        // tell this "refresh now" request apart from the scheduled ones.
+                        .addTag(IMMEDIATE_WORK_NAME)
                         .build()
                 WorkManager.getInstance(context).enqueueUniqueWork(
-                    "complication_immediate_refresh",
+                    IMMEDIATE_WORK_NAME,
                     ExistingWorkPolicy.REPLACE,
                     request,
                 )
@@ -137,6 +141,9 @@ class TeamTrackingComplicationWorker
 
                 trackerPrefs.lastRefreshFailed = false
                 trackerPrefs.teamNotFound = false
+                if (trackerPrefs.teamNumber.isNotBlank()) {
+                    trackerPrefs.lastSuccessAtMillis = System.currentTimeMillis()
+                }
                 Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update complications", e)
@@ -152,9 +159,8 @@ class TeamTrackingComplicationWorker
                     RefreshFailure.TRANSIENT -> Result.retry()
                 }
             } finally {
-                // Close any batch a failed updateAppTracker left open, so this write commits.
+                // Close any batch a failed updateAppTracker left open.
                 trackerPrefs.applyBatch()
-                trackerPrefs.isLoading = false
             }
         }
 

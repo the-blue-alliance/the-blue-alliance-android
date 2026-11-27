@@ -35,7 +35,6 @@ internal object TrackerStatusLogic {
      * @param hasData whether anything is stored to show (event, matches, or upcoming events)
      * @param lastSuccessAtMillis when a refresh last succeeded, or null if never
      */
-    @Suppress("UNUSED_PARAMETER")
     fun resolve(
         hasData: Boolean,
         lastSuccessAtMillis: Long?,
@@ -44,10 +43,17 @@ internal object TrackerStatusLogic {
         isOnline: Boolean,
     ): TrackerStatus =
         when {
-            // The screen shows a spinner from the moment a refresh is queued until the worker
-            // finishes, and has no notion of being offline or of when data was fetched.
-            work != RefreshWork.IDLE && !hasData -> TrackerStatus.Loading
-            lastRefreshFailed && !hasData -> TrackerStatus.LoadFailed
-            else -> TrackerStatus.Content(updatedAtMillis = null, offline = false)
+            // Anything stored keeps showing, stamped with its age, whatever the refresh is doing.
+            // A refresh that succeeded and found nothing counts: "no upcoming events" is still
+            // true while offline.
+            hasData || lastSuccessAtMillis != null ->
+                TrackerStatus.Content(lastSuccessAtMillis, offline = !isOnline)
+            work == RefreshWork.RUNNING -> TrackerStatus.Loading
+            // A queued refresh can't run without a network, so say so instead of spinning.
+            !isOnline -> TrackerStatus.Offline
+            lastRefreshFailed -> TrackerStatus.LoadFailed
+            work == RefreshWork.PENDING -> TrackerStatus.Loading
+            // Never loaded and nothing queued: the screen enqueues a refresh when it opens.
+            else -> TrackerStatus.Loading
         }
 }

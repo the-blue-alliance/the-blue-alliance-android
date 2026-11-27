@@ -44,9 +44,10 @@ class TeamTrackerPreferences(
         get() = prefs.getString(KEY_TEAM_NUMBER, "") ?: ""
         set(value) = put { putString(KEY_TEAM_NUMBER, value) }
 
-    var isLoading: Boolean
-        get() = prefs.getBoolean(KEY_IS_LOADING, false)
-        set(value) = put { putBoolean(KEY_IS_LOADING, value) }
+    /** When a refresh last succeeded (epoch millis), or null if it never has for this team. */
+    var lastSuccessAtMillis: Long?
+        get() = prefs.getLong(KEY_LAST_SUCCESS_AT, 0L).takeIf { it > 0L }
+        set(value) = put { putLong(KEY_LAST_SUCCESS_AT, value ?: 0L) }
 
     /** True when the most recent refresh threw before completing (network/API failure). */
     var lastRefreshFailed: Boolean
@@ -160,13 +161,12 @@ class TeamTrackerPreferences(
         prefs.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
-    /** Clear all cached data except the team number, and mark as loading. */
+    /** Clear all cached data except the team number. */
     fun clearCachedData() {
         val team = teamNumber
         prefs.edit {
             clear()
             putString(KEY_TEAM_NUMBER, team)
-            putBoolean(KEY_IS_LOADING, true)
         }
     }
 
@@ -176,7 +176,7 @@ class TeamTrackerPreferences(
 
     companion object {
         private const val KEY_TEAM_NUMBER = "team_number"
-        private const val KEY_IS_LOADING = "is_loading"
+        private const val KEY_LAST_SUCCESS_AT = "last_success_at"
         private const val KEY_LAST_REFRESH_FAILED = "last_refresh_failed"
         private const val KEY_TEAM_NOT_FOUND = "team_not_found"
         private const val KEY_AVATAR_BASE64 = "avatar_base64"
