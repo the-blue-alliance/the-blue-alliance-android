@@ -113,8 +113,9 @@ stage() {
 }
 
 # Write a diff image of BEFORE vs AFTER to OUT; echo the % of pixels changed.
-# A pixel counts as changed when its luminance difference exceeds 16/255, which
-# ignores compression noise but catches any real rendering change.
+# Emulator screenshots are lossless PNGs, so there is no compression noise to
+# ignore: a pixel counts as changed when any channel differs at all. (A luminance
+# threshold hid real subtle colour changes, e.g. a #EFEDF6 -> #FBF8FF surface.)
 make_diff() {
   python3 - "$1" "$2" "$3" <<'PY'
 import sys
@@ -123,12 +124,13 @@ b, a, out = sys.argv[1:4]
 B, A = Image.open(b).convert("RGB"), Image.open(a).convert("RGB")
 if B.size != A.size:
     sys.exit(f"error: size mismatch {B.size} vs {A.size}: {b} / {a} (crop both the same way)")
-mask = ImageChops.difference(B, A).convert("L").point(lambda v: 255 if v > 16 else 0)
+r, g, bl = ImageChops.difference(B, A).split()
+mask = ImageChops.lighter(ImageChops.lighter(r, g), bl).point(lambda v: 255 if v > 0 else 0)
 changed = mask.histogram()[255]
 diff = Image.blend(Image.new("RGB", A.size), A, 0.25)
 diff.paste(Image.new("RGB", A.size, (255, 0, 200)), mask=mask)
 diff.save(out, format="PNG")
-print(f"{100 * changed / (A.size[0] * A.size[1]):.1f}%")
+print(f"{100 * changed / (A.size[0] * A.size[1]):.2f}%")
 PY
 }
 

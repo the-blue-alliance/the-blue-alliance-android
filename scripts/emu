@@ -6,9 +6,21 @@ Subcommands:
   find <text> [--raw]        Find UI elements matching text/content-desc
   tap <text>                 Tap element matching text/content-desc (must be unique)
   tap-xy <x> <y>            Tap at exact device pixel coordinates
-  hover <text> | <x> <y>     Park a hovering pointer over an element/coordinate
+  hover <text> | <x> <y>     Park a hovering stylus over an element/coordinate
                              (--shot PATH captures while it is hovering)
   hover --clear              Release a pointer left by a previous `hover`
+  mouse move <text> | <x> <y> [--shot PATH]
+                             Park a real (virtual USB) mouse pointer there; the
+                             pointer and its icon (hand, I-beam) show in shots
+  mouse click <text> | <x> <y> [--right|--middle] [--double] [--shot PATH]
+  mouse scroll up|down|left|right [N] [--at <text> | --at <x> <y>]
+                             Turn the wheel N notches (left/right: horizontal wheel)
+  mouse drag <x1> <y1> <x2> <y2>
+                             Left-button drag
+  mouse pos | cursor | stop  Pointer position / icon type (HAND, TEXT, ARROW…) /
+                             unregister (also `mouse --clear`)
+  key <combo>...             Press keys in order: tab, esc, enter, ctrl+f,
+                             shift+tab, meta+slash, KEYCODE_SEARCH, …
   logcat [options]           Show recent logcat lines
   back                       Press BACK key
   launch <package/activity>  Force-stop + start activity
@@ -25,6 +37,15 @@ All reported and accepted coordinates are physical display pixels — the space
 handed straight to `tap-xy`. On the Meta Spatial Simulator, where the spatial
 shell composites each app window as a scaled, off-centre panel, that means
 converting uiautomator's logical bounds; see the panel transform notes below.
+Under a `wm size` override they are the overridden (letterboxed) display's
+pixels, as in screenshots; hover and mouse map them onto the panel themselves.
+
+hover vs mouse: `hover` is a stylus — enough for hover highlights, and it is
+what a Quest laser pointer looks like. Use `mouse` for anything mouse-only:
+pointer icons, right-click, middle-click, wheel. Each releases the other, so
+only one pointer is ever drawn. Both stay registered between commands (the
+mouse until `mouse stop`), keyed by serial, so they need -s / $ANDROID_SERIAL
+when more than one device is attached.
 """
 
 import argparse
@@ -32,6 +53,7 @@ import json
 import os
 import re
 import signal
+import socket
 import subprocess
 import sys
 import tempfile
@@ -60,6 +82,37 @@ def adb_check(*args):
         print(f"adb error: {result.stderr.strip()}", file=sys.stderr)
         sys.exit(1)
     return result
+
+
+def die(msg):
+    print(msg, file=sys.stderr)
+    sys.exit(1)
+
+
+def require_serial():
+    """Pin _serial: -s, else $ANDROID_SERIAL, else the only attached device.
+
+    Commands that leave state on a device (hover, mouse) key their pid/socket
+    files by serial, and must never guess between several devices.
+    """
+    global _serial
+    if _serial:
+        return _serial
+    out = subprocess.run(["adb", "devices"], capture_output=True, text=True).stdout
+    devices = [l.split()[0] for l in out.splitlines()[1:] if l.strip().endswith("\tdevice")]
+    if len(devices) != 1:
+        die(f"{len(devices)} devices attached; pass -s SERIAL or set $ANDROID_SERIAL")
+    _serial = devices[0]
+    return _serial
+
+
+def state_base(kind, serial):
+    """Per-serial path prefix for state files that outlive one emu invocation."""
+    d = tempfile.gettempdir()
+    # AF_UNIX socket paths max out at 104 bytes on macOS.
+    if len(d) > 60:
+        d = "/tmp"
+    return os.path.join(d, f"emu-{kind}-{re.sub(r'[^A-Za-z0-9._-]', '_', serial)}")
 
 
 def parse_bounds(bounds_str):
@@ -281,6 +334,45 @@ def print_match(m, idx=None):
     print(prefix + "  ".join(parts))
 
 
+# ── Display viewport (wm size overrides) ─────────────────────────────
+#
+# With a `wm size` override the logical display is scaled and letterboxed into
+# the panel: 1080x1600 on a 1080x2400 phone is drawn at physicalFrame
+# [0, 400, 1080, 2000]. Screenshots, `input tap`, uiautomator and the app all
+# speak logical pixels, but the input pipeline doesn't: a mouse position in
+# `dumpsys input` is in the physical frame, and a direct (stylus) device's axes
+# span the whole physical panel. These map between the two; without an override
+# the frames are equal and both are the identity. Natural orientation only.
+
+FRAME_RE = r"\[(-?\d+), (-?\d+), (-?\d+), (-?\d+)\]"
+VIEWPORT_RE = re.compile(
+    rf"Viewport INTERNAL: displayId=0,[^\n]*?logicalFrame={FRAME_RE}, "
+    rf"physicalFrame={FRAME_RE}, deviceSize=\[(\d+), (\d+)\]")
+
+
+def parse_viewport(dump):
+    """(logicalFrame, physicalFrame, deviceSize) of display 0 from `dumpsys input`, or None."""
+    m = VIEWPORT_RE.search(dump)
+    if not m:
+        return None
+    v = [int(g) for g in m.groups()]
+    if v[2] <= v[0] or v[6] <= v[4]:
+        return None
+    return v[0:4], v[4:8], v[8:10]
+
+
+def to_logical(pos, logical, physical):
+    """Physical-panel px → logical display px."""
+    sx = (logical[2] - logical[0]) / (physical[2] - physical[0])
+    sy = (logical[3] - logical[1]) / (physical[3] - physical[1])
+    return logical[0] + (pos[0] - physical[0]) * sx, logical[1] + (pos[1] - physical[1]) * sy
+
+
+def to_physical(pos, logical, physical):
+    """Logical display px → physical-panel px (inverse of to_logical)."""
+    return to_logical(pos, physical, logical)
+
+
 # ── Hover injection ──────────────────────────────────────────────────
 #
 # `input` cannot inject hover: its motionevent verb only accepts
@@ -293,10 +385,11 @@ def print_match(m, idx=None):
 # the platform's `uinput` shell tool (which `shell` may use: it is in the `uhid`
 # group). A pen reporting BTN_TOOL_PEN *without* BTN_TOUCH is hovering — the
 # kernel and InputReader turn that into ACTION_HOVER_ENTER/MOVE. Declaring
-# INPUT_PROP_DIRECT maps its ABS range 1:1 onto the display, so the coordinates
-# this command takes are the same physical display pixels `tap-xy` uses and
-# `find`/`list` report, including on a Spatial Simulator where the panel
-# transform above has already been applied.
+# INPUT_PROP_DIRECT maps its ABS range 1:1 onto the physical panel; hover_at maps
+# its target there (see parse_viewport), so the coordinates this command takes
+# are the same display pixels `tap-xy` uses and `find`/`list` report, under a
+# `wm size` override too, and on a Spatial Simulator where the panel transform
+# above has already been applied.
 #
 # The virtual device lives exactly as long as the `uinput` process holds it open,
 # so the hover has to outlive this command for a screenshot to catch it: we send
@@ -309,7 +402,6 @@ BTN_TOUCH, BTN_TOOL_PEN = 330, 320
 UI_SET_EVBIT, UI_SET_KEYBIT, UI_SET_ABSBIT, UI_SET_PROPBIT = 100, 101, 103, 110
 INPUT_PROP_DIRECT = 0
 
-HOVER_PID_FILE = os.path.join(tempfile.gettempdir(), "emu-hover.pid")
 
 
 def _abs_axis(code, maximum):
@@ -317,10 +409,14 @@ def _abs_axis(code, maximum):
                                    "fuzz": 0, "flat": 0, "resolution": 0}}
 
 
+def hover_pid_file():
+    return state_base("hover", require_serial()) + ".pid"
+
+
 def hover_release():
     """Kill the `uinput` child from a previous `hover`, if it is still alive."""
     try:
-        with open(HOVER_PID_FILE) as f:
+        with open(hover_pid_file()) as f:
             pid = int(f.read().strip())
     except (OSError, ValueError):
         return False
@@ -330,7 +426,7 @@ def hover_release():
     except (ProcessLookupError, PermissionError):
         alive = False
     try:
-        os.remove(HOVER_PID_FILE)
+        os.remove(hover_pid_file())
     except OSError:
         pass
     return alive
@@ -342,6 +438,11 @@ def hover_at(x, y, hold):
     if not (0 <= x < width and 0 <= y < height):
         print(f"({x}, {y}) is outside the {width}x{height} display", file=sys.stderr)
         sys.exit(1)
+    # The stylus axes span the physical panel, so aim in panel pixels.
+    viewport = parse_viewport(adb("shell", "dumpsys", "input").stdout)
+    if viewport:
+        (width, height) = viewport[2]
+        x, y = (round(v) for v in to_physical((x, y), *viewport[:2]))
 
     script = [
         {"id": 1, "command": "register", "name": "emu-hover",
@@ -373,7 +474,7 @@ def hover_at(x, y, hold):
     proc.stdin.flush()
     proc.stdin.close()
 
-    with open(HOVER_PID_FILE, "w") as f:
+    with open(hover_pid_file(), "w") as f:
         f.write(str(proc.pid))
 
     # Cover registration plus the settle delay above, so that by the time this
@@ -382,6 +483,388 @@ def hover_at(x, y, hold):
     if proc.poll() is not None:
         print("uinput exited immediately — is /dev/uinput readable by shell?", file=sys.stderr)
         sys.exit(1)
+
+
+# ── Mouse injection ──────────────────────────────────────────────────
+#
+# `hover` fakes a stylus, which is enough for hover highlights but is not a
+# mouse: Compose only shows pointer icons (hand, I-beam) for mouse pointers, a
+# stylus has no secondary button, and wheel handlers want mouse-source events.
+# `mouse` registers a real relative USB mouse (buttons, wheel, horizontal wheel)
+# through the same `uinput -` shell tool, no root needed.
+#
+# A uinput device lives only as long as its `uinput` process reads stdin, so a
+# detached daemon (this script re-run as `--mouse-daemon SERIAL`) owns that
+# process and forwards JSON lines from a per-serial Unix socket into it. A dead
+# daemon leaves only a socket nobody listens on, which the next command notices
+# and replaces, so there is nothing like a FIFO left to block on.
+#
+# A relative mouse cannot be told where to go, only how far to move. The pointer
+# position is read back from `dumpsys input` (InputDispatcher's per-device
+# "Pointer(id=0, MOUSE) at (x, y)") and the move repeated until it lands within
+# MOUSE_TOLERANCE px. The gain (display px per count; ~2.7 on a 420dpi phone)
+# is learned from each step rather than assumed. Positions are logical display
+# pixels — the space of `input tap`, screenshots and `find` — including under a
+# letterboxing `wm size` override (see parse_viewport).
+
+EV_REL = 2
+REL_X, REL_Y, REL_HWHEEL, REL_WHEEL = 0, 1, 6, 8
+BTN_LEFT, BTN_RIGHT, BTN_MIDDLE = 272, 273, 274
+UI_SET_RELBIT = 102
+MOUSE_NAME = "emu-mouse"
+MOUSE_TOLERANCE = 2.0
+
+# android.view.PointerIcon TYPE_* constants, as dumped by MouseCursorController.
+POINTER_ICONS = {
+    -1: "CUSTOM", 0: "NULL", 1: "NOT_SPECIFIED", 1000: "ARROW", 1001: "CONTEXT_MENU",
+    1002: "HAND", 1003: "HELP", 1004: "WAIT", 1006: "CELL", 1007: "CROSSHAIR",
+    1008: "TEXT", 1009: "VERTICAL_TEXT", 1010: "ALIAS", 1011: "COPY", 1012: "NO_DROP",
+    1013: "ALL_SCROLL", 1014: "HORIZONTAL_DOUBLE_ARROW", 1015: "VERTICAL_DOUBLE_ARROW",
+    1016: "TOP_RIGHT_DIAGONAL_DOUBLE_ARROW", 1017: "TOP_LEFT_DIAGONAL_DOUBLE_ARROW",
+    1018: "ZOOM_IN", 1019: "ZOOM_OUT", 1020: "GRAB", 1021: "GRABBING", 1022: "HANDWRITING",
+}
+
+
+def mouse_paths(serial):
+    """(socket, pid, log) paths for serial's mouse daemon."""
+    base = state_base("mouse", serial)
+    return base + ".sock", base + ".pid", base + ".log"
+
+
+def _daemon_alive(pid):
+    """True if pid is a running `emu --mouse-daemon` (not some recycled pid)."""
+    out = subprocess.run(["ps", "-p", str(pid), "-o", "command="], capture_output=True, text=True).stdout
+    return "--mouse-daemon" in out
+
+
+def mouse_daemon(serial):
+    """Own one `uinput -` process for serial and feed it JSON lines from the socket."""
+    sock_path, pid_path, _ = mouse_paths(serial)
+    proc = subprocess.Popen(["adb", "-s", serial, "shell", "uinput", "-"],
+                            stdin=subprocess.PIPE, text=True)
+
+    def feed(obj):
+        proc.stdin.write(json.dumps(obj) + "\n")
+        proc.stdin.flush()
+
+    feed({"id": 1, "command": "register", "name": MOUSE_NAME,
+          "vid": 0x18d1, "pid": 0x4005, "bus": "usb",
+          "configuration": [
+              {"type": UI_SET_EVBIT, "data": [EV_KEY, EV_REL]},
+              {"type": UI_SET_KEYBIT, "data": [BTN_LEFT, BTN_RIGHT, BTN_MIDDLE]},
+              {"type": UI_SET_RELBIT, "data": [REL_X, REL_Y, REL_HWHEEL, REL_WHEEL]},
+          ]})
+
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+    srv = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        os.unlink(sock_path)
+    except OSError:
+        pass
+    srv.bind(sock_path)
+    srv.listen(4)
+    srv.settimeout(1.0)
+    with open(pid_path, "w") as f:
+        f.write(str(os.getpid()))
+    try:
+        while proc.poll() is None:
+            try:
+                conn, _ = srv.accept()
+            except socket.timeout:
+                continue
+            stop = False
+            with conn:
+                conn.settimeout(5)
+                data = b""
+                while chunk := conn.recv(65536):
+                    data += chunk
+                for line in data.decode().splitlines():
+                    msg = json.loads(line)
+                    if msg.get("command") == "stop":
+                        stop = True
+                        break
+                    feed(msg)
+                conn.sendall(b"ok\n")
+            if stop:
+                break
+    finally:
+        # EOF on stdin makes uinput exit, which unregisters the device.
+        try:
+            proc.stdin.close()
+            proc.wait(timeout=3)
+        except Exception:
+            proc.kill()
+        for path in (sock_path, pid_path):
+            try:
+                os.unlink(path)
+            except OSError:
+                pass
+
+
+def _mouse_connect(sock_path):
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(5)
+    s.connect(sock_path)
+    return s
+
+
+def _mouse_deliver(sock_path, msgs):
+    s = _mouse_connect(sock_path)
+    with s:
+        s.sendall(("\n".join(json.dumps(m) for m in msgs) + "\n").encode())
+        s.shutdown(socket.SHUT_WR)
+        s.recv(16)
+
+
+def mouse_device_id():
+    """InputReader id of this serial's mouse, or None if it isn't registered."""
+    out = adb_check("shell", "dumpsys", "input").stdout
+    m = re.search(rf"^\s*Device (\d+): {MOUSE_NAME}$", out, re.M)
+    return int(m.group(1)) if m else None
+
+
+def mouse_start():
+    """Start the mouse daemon for _serial and wait for the device to register."""
+    sock_path, pid_path, log_path = mouse_paths(_serial)
+    mouse_stop()  # clear anything stale left by a crashed daemon
+    hover_release()  # a parked stylus would keep hovering its own target
+    with open(log_path, "w") as log:
+        subprocess.Popen([sys.executable, os.path.abspath(__file__), "--mouse-daemon", _serial],
+                         stdin=subprocess.DEVNULL, stdout=log, stderr=log, start_new_session=True)
+    deadline = time.time() + 10
+    while time.time() < deadline:
+        if os.path.exists(sock_path) and mouse_device_id() is not None:
+            # Let InputReader finish configuring the device before it is addressed.
+            time.sleep(0.3)
+            return
+        time.sleep(0.25)
+    with open(log_path) as f:
+        detail = f.read().strip()
+    mouse_stop()
+    die(f"virtual mouse didn't register within 10s{': ' + detail if detail else ''}")
+
+
+def mouse_send(*msgs):
+    """Inject uinput messages through the mouse, starting it on first use."""
+    sock_path, _, _ = mouse_paths(_serial)
+    try:
+        _mouse_deliver(sock_path, msgs)
+    except OSError:
+        mouse_start()
+        _mouse_deliver(sock_path, msgs)
+
+
+def mouse_stop():
+    """Unregister this serial's mouse; True if one was running."""
+    sock_path, pid_path, log_path = mouse_paths(_serial)
+    stopped = False
+    try:
+        _mouse_deliver(sock_path, [{"command": "stop"}])
+        stopped = True
+    except OSError:
+        pass
+    try:
+        with open(pid_path) as f:
+            pid = int(f.read().strip())
+    except (OSError, ValueError):
+        pid = None
+    deadline = time.time() + 3
+    while pid and _daemon_alive(pid):
+        if time.time() > deadline:
+            os.kill(pid, signal.SIGTERM)
+            time.sleep(0.5)
+            break
+        time.sleep(0.1)
+    for path in (sock_path, pid_path, log_path):
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+    return stopped
+
+
+def _inject(*events):
+    return {"id": 1, "command": "inject", "events": list(events) + [EV_SYN, 0, 0]}
+
+
+def _delay(ms):
+    return {"id": 1, "command": "delay", "duration": ms}
+
+
+def parse_mouse_pos(dump, device_id):
+    """Pointer (x, y) for device_id in a `dumpsys input` dump, or None.
+
+    InputDispatcher prints one "DeviceId(N):[... Pointer(id=0, MOUSE) at (x, y)]"
+    line per window the pointer is over; entries for unplugged devices linger, so
+    the id has to match.
+    """
+    m = re.search(rf"DeviceId\({device_id}\):\[[^\n]*?MOUSE\) at \((-?[\d.]+), (-?[\d.]+)\)", dump)
+    return (float(m.group(1)), float(m.group(2))) if m else None
+
+
+def mouse_pos():
+    """Pointer position in logical display px, or None if there is no mouse pointer."""
+    out = adb_check("shell", "dumpsys", "input").stdout
+    m = re.search(rf"^\s*Device (\d+): {MOUSE_NAME}$", out, re.M)
+    pos = parse_mouse_pos(out, m.group(1)) if m else None
+    viewport = parse_viewport(out)
+    if pos and viewport:
+        pos = to_logical(pos, *viewport[:2])
+    return pos
+
+
+def next_step(delta, gain):
+    """Counts to cover delta px at gain px/count; 0 once within tolerance.
+
+    Tolerance is MOUSE_TOLERANCE, or half a count when one count moves further
+    than that (a scaled-down `wm size` override), since that is as close as a
+    relative mouse can land.
+    """
+    if abs(delta) <= max(MOUSE_TOLERANCE, gain / 2):
+        return 0
+    return int(round(delta / gain)) or (1 if delta > 0 else -1)
+
+
+def mouse_move_to(x, y, timeout=10.0):
+    """Move the pointer to (x, y) display px, within MOUSE_TOLERANCE; returns where it landed."""
+    width, height = display_size()
+    if not (0 <= x < width and 0 <= y < height):
+        die(f"({x}, {y}) is outside the {width}x{height} display")
+    pos = mouse_pos()
+    if pos is None:
+        # A freshly registered pointer has no position until it first moves.
+        mouse_send(_inject(EV_REL, REL_X, 1))
+        time.sleep(0.2)
+        pos = mouse_pos()
+        if pos is None:
+            die("can't read the mouse position from `dumpsys input`")
+    gain = [2.5, 2.5]
+    deadline = time.time() + timeout
+    while True:
+        dx, dy = x - pos[0], y - pos[1]
+        sx, sy = next_step(dx, gain[0]), next_step(dy, gain[1])
+        if sx == 0 and sy == 0:
+            return pos
+        if time.time() > deadline:
+            die(f"pointer stuck at ({pos[0]:.0f}, {pos[1]:.0f}) after {timeout:.0f}s; wanted ({x}, {y})")
+        mouse_send(_inject(EV_REL, REL_X, sx, EV_REL, REL_Y, sy))
+        time.sleep(0.05)
+        new = mouse_pos() or pos
+        for axis, step in ((0, sx), (1, sy)):
+            moved = new[axis] - pos[axis]
+            # Motion is linear in counts (no acceleration for single events), so any
+            # step that moved and wasn't clamped at an edge gives the gain.
+            if step and 0.2 < moved / step < 20:
+                gain[axis] = moved / step
+        pos = new
+
+
+def mouse_gain(pos):
+    """Display px per count on each axis, measured with a small probe move from pos."""
+    width, height = display_size()
+    probe = 20
+    sx = probe if pos[0] < width / 2 else -probe
+    sy = probe if pos[1] < height / 2 else -probe
+    mouse_send(_inject(EV_REL, REL_X, sx, EV_REL, REL_Y, sy))
+    time.sleep(0.1)
+    new = mouse_pos() or pos
+    gx, gy = (new[0] - pos[0]) / sx, (new[1] - pos[1]) / sy
+    if not (gx > 0 and gy > 0):
+        die(f"couldn't measure pointer gain (probe moved {pos} → {new})")
+    return gx, gy
+
+
+def mouse_drag(start, end, steps):
+    """Left-drag from start to end in `steps` moves; returns where the pointer ended.
+
+    InputDispatcher stops reporting the position while a button is held, so the
+    drag is dead-reckoned from a gain measured just before pressing.
+    """
+    width, height = display_size()
+    for x, y in (start, end):
+        if not (0 <= x < width and 0 <= y < height):
+            die(f"({x}, {y}) is outside the {width}x{height} display")
+    gain = mouse_gain(mouse_move_to(*start))
+    origin = mouse_move_to(*start)
+    mouse_send(_inject(EV_KEY, BTN_LEFT, 1))
+    try:
+        time.sleep(0.1)
+        sent = [0, 0]
+        for i in range(1, steps + 1):
+            want = [round((start[a] + (end[a] - start[a]) * i / steps - origin[a]) / gain[a]) for a in (0, 1)]
+            mouse_send(_inject(EV_REL, REL_X, want[0] - sent[0], EV_REL, REL_Y, want[1] - sent[1]))
+            sent = want
+            time.sleep(0.03)
+        time.sleep(0.1)
+    finally:
+        mouse_send(_inject(EV_KEY, BTN_LEFT, 0))
+    time.sleep(0.3)
+    return mouse_pos() or end
+
+
+def mouse_click(button, double=False):
+    press = [_inject(EV_KEY, button, 1), _delay(50), _inject(EV_KEY, button, 0)]
+    msgs = press + ([_delay(80)] + press if double else [])
+    mouse_send(*msgs)
+    time.sleep(0.4 if double else 0.2)
+
+
+def pointer_icon():
+    """(type, name) of the mouse pointer icon on the default display, or None."""
+    out = adb_check("shell", "dumpsys", "input").stdout
+    i = out.find("MouseCursorController")
+    m = re.search(r"resolvedPointerType: (-?\d+)", out[i:]) if i >= 0 else None
+    if not m:
+        return None
+    t = int(m.group(1))
+    return t, POINTER_ICONS.get(t, "UNKNOWN")
+
+
+# ── Key injection ────────────────────────────────────────────────────
+
+KEY_MODIFIERS = {
+    "ctrl": "CTRL_LEFT", "control": "CTRL_LEFT", "shift": "SHIFT_LEFT",
+    "alt": "ALT_LEFT", "option": "ALT_LEFT",
+    "meta": "META_LEFT", "cmd": "META_LEFT", "win": "META_LEFT", "super": "META_LEFT",
+}
+KEY_ALIASES = {
+    "esc": "ESCAPE", "return": "ENTER", "backspace": "DEL", "bksp": "DEL",
+    "delete": "FORWARD_DEL", "del": "FORWARD_DEL", "up": "DPAD_UP", "down": "DPAD_DOWN",
+    "left": "DPAD_LEFT", "right": "DPAD_RIGHT", "pgup": "PAGE_UP", "pageup": "PAGE_UP",
+    "pgdn": "PAGE_DOWN", "pagedown": "PAGE_DOWN", "home": "MOVE_HOME", "end": "MOVE_END",
+    "/": "SLASH", ",": "COMMA", ".": "PERIOD", "-": "MINUS", "=": "EQUALS",
+    ";": "SEMICOLON", "'": "APOSTROPHE", "[": "LEFT_BRACKET", "]": "RIGHT_BRACKET",
+    "\\": "BACKSLASH", "`": "GRAVE",
+}
+
+
+def keycode(name):
+    """KEYCODE_* for a key name: `tab`, `esc`, `f`, `5`, `slash`, `/`, `KEYCODE_SEARCH`."""
+    low = name.lower()
+    if low in KEY_MODIFIERS:
+        code = KEY_MODIFIERS[low]
+    elif name in KEY_ALIASES or low in KEY_ALIASES:
+        code = KEY_ALIASES.get(name) or KEY_ALIASES[low]
+    else:
+        code = name.upper().removeprefix("KEYCODE_")
+    if not re.fullmatch(r"[A-Z0-9_]+", code):
+        raise ValueError(f"unknown key: {name!r}")
+    return "KEYCODE_" + code
+
+
+def parse_combo(combo):
+    """`ctrl+shift+f` → ['KEYCODE_CTRL_LEFT', 'KEYCODE_SHIFT_LEFT', 'KEYCODE_F'].
+
+    `+` alone or as the last key means the plus key (`ctrl++`).
+    """
+    if combo == "+":
+        return ["KEYCODE_PLUS"]
+    parts = combo.split("+")
+    if combo.endswith("++"):
+        parts = parts[:-2] + ["PLUS"]
+    if any(p == "" for p in parts):
+        raise ValueError(f"malformed combo: {combo!r}")
+    return [keycode(p) for p in parts]
 
 
 # ── Subcommand handlers ──────────────────────────────────────────────
@@ -445,34 +928,137 @@ def cmd_tap_xy(args):
     print(f"Tapped ({args.x}, {args.y})")
 
 
+def resolve_target(target, y, verb):
+    """(x, y, element-or-None) from `TEXT` or `X Y`; a number is x only when a y follows."""
+    if target is None:
+        die(f"{verb} needs an element query, or x and y")
+    if y is not None:
+        if not is_int(target):
+            die(f"{verb} got a y but \"{target}\" is not an x coordinate")
+        return int(target), y, None
+    m = find_unique(target)
+    return m["center"][0], m["center"][1], m
+
+
 def cmd_hover(args):
+    require_serial()
     if args.clear:
         print("Released hover pointer" if hover_release() else "No hover pointer to release")
         return
 
     # Any earlier pointer would keep hovering its own target and muddy the shot.
     hover_release()
+    if mouse_stop():
+        print("Stopped the virtual mouse (it would draw a second pointer)")
 
-    if args.target is None:
-        print("hover needs an element query, or x and y", file=sys.stderr)
-        sys.exit(1)
-
-    described = None
-    if args.y is not None:
-        if not is_int(args.target):
-            print(f"hover got a y but \"{args.target}\" is not an x coordinate", file=sys.stderr)
-            sys.exit(1)
-        x, y = int(args.target), args.y
-    else:
-        described = find_unique(args.target)
-        x, y = described["center"]
-
+    x, y, described = resolve_target(args.target, args.y, "hover")
     hover_at(x, y, args.hold)
     print(f"Hovering ({x}, {y}) for {args.hold}s")
     if args.shot:
         capture_screenshot(args.shot)
     if described:
         print_match(described)
+
+
+def _report(verb, pos, described, shot):
+    print(f"{verb} at ({pos[0]:.0f}, {pos[1]:.0f})")
+    if shot:
+        capture_screenshot(shot)
+    if described:
+        print_match(described)
+
+
+def cmd_mouse(args):
+    require_serial()
+    action = args.action
+    if args.clear or action == "stop":
+        print("Stopped the virtual mouse" if mouse_stop() else "No virtual mouse running")
+        return
+    if action is None:
+        die("mouse needs an action: move, click, scroll, drag, pos, cursor, stop")
+
+    if action == "pos":
+        pos = mouse_pos()
+        if pos is None:
+            die("No virtual mouse pointer (it starts on the first move/click)")
+        print(f"Pointer at ({pos[0]:.1f}, {pos[1]:.1f})")
+    elif action == "cursor":
+        icon = pointer_icon()
+        if icon is None:
+            die("No mouse pointer controller in `dumpsys input` (no mouse attached?)")
+        print(f"{icon[1]} ({icon[0]})")
+    elif action == "move":
+        x, y, described = resolve_target(args.target, args.y, "mouse move")
+        pos = mouse_move_to(x, y)
+        time.sleep(0.3)  # let hover state and the pointer icon catch up before a shot
+        _report("Pointer parked", pos, described, args.shot)
+    elif action == "click":
+        x, y, described = resolve_target(args.target, args.y, "mouse click")
+        button = BTN_RIGHT if args.right else BTN_MIDDLE if args.middle else BTN_LEFT
+        pos = mouse_move_to(x, y)
+        mouse_click(button, args.double)
+        if args.shot:
+            time.sleep(1.0)  # menus and ripples animate in
+        name = {BTN_LEFT: "Left", BTN_RIGHT: "Right", BTN_MIDDLE: "Middle"}[button]
+        _report(f"{name}-{'double-' if args.double else ''}clicked", pos, described, args.shot)
+    elif action == "scroll":
+        if args.at:
+            if len(args.at) > 2:
+                die("mouse scroll --at takes TEXT or X Y")
+            target = args.at[0]
+            y = int(args.at[1]) if len(args.at) == 2 else None
+            x, y, _ = resolve_target(target, y, "mouse scroll --at")
+            mouse_move_to(x, y)
+        # Wheel up / right are positive, like evdev.
+        axis, sign = {"up": (REL_WHEEL, 1), "down": (REL_WHEEL, -1),
+                      "left": (REL_HWHEEL, -1), "right": (REL_HWHEEL, 1)}[args.direction]
+        notches = []
+        for _ in range(args.n):
+            notches += [_inject(EV_REL, axis, sign), _delay(30)]
+        mouse_send(*notches)
+        time.sleep(0.05 * args.n + 0.4)
+        print(f"Scrolled {args.direction} {args.n} notch(es)")
+        if args.shot:
+            capture_screenshot(args.shot)
+    elif action == "drag":
+        end = mouse_drag((args.x1, args.y1), (args.x2, args.y2), max(1, args.steps))
+        print(f"Dragged ({args.x1}, {args.y1}) → ({end[0]:.0f}, {end[1]:.0f})")
+        if args.shot:
+            capture_screenshot(args.shot)
+
+
+KNOWN_KEYS = {"TAB", "ENTER", "SPACE", "ESCAPE", "SEARCH", "MENU", "BACK", "HOME", "PLUS",
+              "INSERT", "BREAK", "CAPS_LOCK", *KEY_MODIFIERS.values(), *KEY_ALIASES.values()}
+
+
+def key_known(code):
+    """True if `input` will understand code. `input keyevent` silently drops unknown
+    names, so anything not obviously valid is checked against keycombination, which
+    names the bad keycode (and otherwise only complains that one key is too few)."""
+    name = code.removeprefix("KEYCODE_")
+    if name in KNOWN_KEYS or re.fullmatch(r"[A-Z0-9]|F\d{1,2}|NUMPAD_\w+|DPAD_\w+|MEDIA_\w+", name):
+        return True
+    out = adb("shell", "input", "keycombination", code)
+    return "Unknown keycode" not in out.stdout + out.stderr
+
+
+def cmd_key(args):
+    combos = []
+    for combo in args.combos:
+        try:
+            codes = parse_combo(combo)
+        except ValueError as e:
+            die(str(e))
+        for code in codes:
+            if not key_known(code):
+                die(f"unknown key {code} in {combo!r} (see android.view.KeyEvent KEYCODE_*)")
+        combos.append(codes)
+    for codes in combos:
+        if len(codes) == 1:
+            adb_check("shell", "input", "keyevent", codes[0])
+        else:
+            adb_check("shell", "input", "keycombination", *codes)
+        print(f"Pressed {' + '.join(c.removeprefix('KEYCODE_') for c in codes)}")
 
 
 def cmd_logcat(args):
@@ -631,7 +1217,11 @@ RAW_HELP = ("Report unconverted uiautomator (logical) bounds instead of physical
 
 def main():
     global _serial
-    parser = argparse.ArgumentParser(prog="emu", description="Android emulator automation CLI")
+    if sys.argv[1:2] == ["--mouse-daemon"]:
+        mouse_daemon(sys.argv[2])
+        return
+    parser = argparse.ArgumentParser(prog="emu", description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-s", "--serial", help="Target device serial (passed to adb -s; defaults to $ANDROID_SERIAL)")
     sub = parser.add_subparsers(dest="command")
 
@@ -658,6 +1248,49 @@ def main():
                    help="Capture a screenshot while hovering (the pointer sprite auto-hides "
                         "after a few idle seconds, so a separate screenshot may miss it)")
     p.add_argument("--clear", action="store_true", help="Release a pointer left by an earlier hover")
+
+    p = sub.add_parser("mouse", help="Drive a virtual USB mouse (pointer icons, right-click, wheel)")
+    p.add_argument("--clear", action="store_true", help="Unregister the mouse (same as `mouse stop`)")
+    msub = p.add_subparsers(dest="action")
+    shot_help = "Capture a screenshot afterwards (the pointer stays parked and is drawn in it)"
+
+    m = msub.add_parser("move", help="Park the pointer over an element or coordinate",
+                        usage="emu mouse move (TEXT | X Y) [--shot PATH]")
+    m.add_argument("target", help="Substring to match (must be unique), or an x coordinate")
+    m.add_argument("y", type=int, nargs="?", help="y coordinate, when target is an x coordinate")
+    m.add_argument("--shot", metavar="PATH", help=shot_help)
+
+    m = msub.add_parser("click", help="Move there and click",
+                        usage="emu mouse click (TEXT | X Y) [--right | --middle] [--double] [--shot PATH]")
+    m.add_argument("target", help="Substring to match (must be unique), or an x coordinate")
+    m.add_argument("y", type=int, nargs="?", help="y coordinate, when target is an x coordinate")
+    button = m.add_mutually_exclusive_group()
+    button.add_argument("--right", action="store_true", help="Secondary (right) button")
+    button.add_argument("--middle", action="store_true", help="Middle button")
+    m.add_argument("--double", action="store_true", help="Double-click")
+    m.add_argument("--shot", metavar="PATH", help=shot_help)
+
+    m = msub.add_parser("scroll", help="Turn the wheel (left/right use the horizontal wheel)",
+                        usage="emu mouse scroll {up,down,left,right} [N] [--at TEXT | --at X Y] [--shot PATH]")
+    m.add_argument("direction", choices=["up", "down", "left", "right"])
+    m.add_argument("n", type=int, nargs="?", default=3, help="Wheel notches (default 3)")
+    m.add_argument("--at", nargs="+", metavar="TEXT|X Y",
+                   help="Move the pointer here first (default: wherever it is)")
+    m.add_argument("--shot", metavar="PATH", help=shot_help)
+
+    m = msub.add_parser("drag", help="Left-button drag between coordinates")
+    for name in ("x1", "y1", "x2", "y2"):
+        m.add_argument(name, type=int)
+    m.add_argument("--steps", type=int, default=8, help="Intermediate moves (default 8)")
+    m.add_argument("--shot", metavar="PATH", help=shot_help)
+
+    msub.add_parser("pos", help="Print the pointer position")
+    msub.add_parser("cursor", help="Print the pointer icon type (HAND, TEXT, ARROW, …)")
+    msub.add_parser("stop", help="Unregister the mouse")
+
+    p = sub.add_parser("key", help="Press keys or combos: tab, esc, ctrl+f, shift+tab, meta+slash")
+    p.add_argument("combos", nargs="+", metavar="COMBO",
+                   help="Key names joined by +, pressed in order (e.g. `key tab tab enter`)")
 
     p = sub.add_parser("logcat", help="Show recent logcat")
     p.add_argument("--tag", "-t", help="Filter by tag")
@@ -711,6 +1344,8 @@ def main():
         "tap": cmd_tap,
         "tap-xy": cmd_tap_xy,
         "hover": cmd_hover,
+        "mouse": cmd_mouse,
+        "key": cmd_key,
         "logcat": cmd_logcat,
         "back": cmd_back,
         "launch": cmd_launch,
