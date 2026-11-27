@@ -124,7 +124,7 @@ fun TBANavigation(
                 // Already on Search, this is a no-op, so focus stays in the search field.
                 ShortcutAction.Search -> navigator.navigate(Screen.Search)
                 ShortcutAction.Refresh -> refreshTargets?.refresh()
-                ShortcutAction.Back -> activity.onBackPressedDispatcher.onBackPressed()
+                ShortcutAction.Back -> activity.onBackPressedDispatcher.keyboardBack()
                 // As tapping the tab: on it, its screen scrolls to the top; otherwise it opens.
                 is ShortcutAction.SwitchTab -> {
                     val tab = TOP_LEVEL_DESTINATIONS[it.index].key
