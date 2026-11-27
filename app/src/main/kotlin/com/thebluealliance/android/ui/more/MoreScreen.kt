@@ -29,6 +29,7 @@ import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -148,6 +149,7 @@ private fun MoreItem(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable(onClickLabel = "Open $label", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 14.dp),

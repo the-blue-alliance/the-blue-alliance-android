@@ -29,6 +29,7 @@ fun EventRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable(onClickLabel = "View event", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 12.dp),

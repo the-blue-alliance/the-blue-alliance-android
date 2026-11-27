@@ -8,12 +8,16 @@ import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
+import com.thebluealliance.android.ui.components.FocusReturn
 
 class Navigator(
     val state: NavigationState,
     val activity: Activity,
+    private val focusReturn: FocusReturn? = null,
 ) {
     fun navigate(route: NavKey) {
+        // The focused element that opens this screen gets focus back when the user returns.
+        focusReturn?.onNavigate()
         // Resolve parameterized top-level routes (e.g. Events(year)) to their canonical tab key,
         // so navigating to Events(2024) switches to the Events tab instead of nesting inside the
         // current stack.

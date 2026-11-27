@@ -74,6 +74,7 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.rankingRowDescription
 import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.statRowWidth
@@ -754,7 +755,7 @@ private fun RankingItem(
                                 gutter = COLUMN_GUTTER,
                                 labelAtEnd = false,
                                 interaction =
-                                    Modifier.handCursor().clickable(
+                                    Modifier.returnsFocus().handCursor().clickable(
                                         onClickLabel = "View team ${ranking.teamKey.teamNumber}",
                                         role = Role.Button,
                                     ) { onTeamClick(ranking.teamKey) },

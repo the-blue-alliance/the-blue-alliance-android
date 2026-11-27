@@ -41,6 +41,7 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -207,6 +208,7 @@ private fun RegionalRankingRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable {
                     onNavigateToTeam(ranking.teamKey)

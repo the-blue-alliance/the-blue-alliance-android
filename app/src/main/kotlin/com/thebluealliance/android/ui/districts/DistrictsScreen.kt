@@ -35,6 +35,7 @@ import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -156,6 +157,7 @@ private fun DistrictItem(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable(onClickLabel = "View district", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 12.dp),

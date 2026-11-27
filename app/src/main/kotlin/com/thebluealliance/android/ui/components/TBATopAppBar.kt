@@ -265,7 +265,10 @@ private fun TBATopAppBarContent(
 
 @Composable
 private fun TopBarIconButton(action: TopBarAction) {
-    IconButton(onClick = action.onClick, modifier = Modifier.handCursor().actionState(action)) {
+    IconButton(
+        onClick = action.onClick,
+        modifier = Modifier.returnsFocus().handCursor().actionState(action),
+    ) {
         Icon(action.icon, contentDescription = action.label)
     }
 }

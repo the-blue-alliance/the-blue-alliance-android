@@ -26,6 +26,7 @@ fun TeamRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable(
                     onClickLabel = "View team ${team.number}",

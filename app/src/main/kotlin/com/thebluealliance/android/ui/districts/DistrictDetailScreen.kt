@@ -53,6 +53,7 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableWidth
@@ -394,6 +395,7 @@ private fun RankingsTab(
                 modifier =
                     Modifier
                         .tableWidth()
+                        .returnsFocus()
                         .handCursor()
                         .clickable(
                             onClickLabel = "View team ${ranking.teamKey.teamNumber}",

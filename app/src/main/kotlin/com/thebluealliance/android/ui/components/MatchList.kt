@@ -310,7 +310,8 @@ fun MatchItem(
                     } else {
                         Modifier
                     },
-                ).handCursor()
+                ).returnsFocus()
+                .handCursor()
                 .clickable(onClick = onClick)
                 .clearAndSetSemantics {
                     contentDescription = description
