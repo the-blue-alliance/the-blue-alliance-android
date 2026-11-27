@@ -260,8 +260,8 @@ fun MatchItem(
     match: Match,
     playoffType: PlayoffType,
     onClick: () -> Unit,
-    selected: Boolean = false,
     modifier: Modifier = Modifier,
+    selected: Boolean = false,
 ) {
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
