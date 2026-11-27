@@ -15,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +33,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.LocalMatchDetailPaneHost
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
@@ -272,7 +272,7 @@ fun EventDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
-            PullToRefreshBox(
+            TouchPullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.event != null,
                 onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),

@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,6 +51,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.LocalTopBarRefresh
 import com.thebluealliance.android.ui.components.MatchItem
@@ -218,7 +218,7 @@ fun TeamEventDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
-            PullToRefreshBox(
+            TouchPullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
                 onRefresh = { viewModel.refreshTab(TeamEventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),

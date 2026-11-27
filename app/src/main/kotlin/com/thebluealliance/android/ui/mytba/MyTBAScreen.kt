@@ -35,7 +35,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,6 +59,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.NotificationType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.common.ErrorBox
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.ProseMaxWidth
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
@@ -260,7 +260,7 @@ fun MyTBAScreen(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
             ) { page ->
-                PullToRefreshBox(
+                TouchPullToRefreshBox(
                     isRefreshing = isRefreshing,
                     onRefresh = { viewModel.refreshTab(MyTBATab.entries[page]) },
                     modifier = Modifier.fillMaxSize(),
