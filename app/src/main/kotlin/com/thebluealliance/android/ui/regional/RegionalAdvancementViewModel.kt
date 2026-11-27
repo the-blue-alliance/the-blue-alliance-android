@@ -8,6 +8,8 @@ import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,24 +53,31 @@ class RegionalAdvancementViewModel
             refreshRankings()
         }
 
+        private var rankingsJob: Job? = null
+
         fun refreshRankings() {
             val year = selection.year.value
-            refreshing({
-                val state =
-                    try {
-                        val rankings = repository.getRegionalRankings(year)
-                        if (rankings.isEmpty()) {
-                            UiState.Empty
-                        } else {
-                            UiState.Success(rankings)
+            // A load for a year no longer selected is abandoned, so it can't hold the spinner.
+            rankingsJob?.cancel()
+            rankingsJob =
+                refreshing({
+                    val state =
+                        try {
+                            val rankings = repository.getRegionalRankings(year)
+                            if (rankings.isEmpty()) {
+                                UiState.Empty
+                            } else {
+                                UiState.Success(rankings)
+                            }
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            UiState.Error(
+                                e.message ?: "Unable to load regional advancement rankings",
+                            )
                         }
-                    } catch (e: Exception) {
-                        UiState.Error(
-                            e.message ?: "Unable to load regional advancement rankings",
-                        )
-                    }
-                // A slower load for a year no longer selected must not replace the current one.
-                if (selection.year.value == year) _uiState.value = state
-            })
+                    // A slower load for a year no longer selected must not replace the current one.
+                    if (selection.year.value == year) _uiState.value = state
+                })
         }
     }

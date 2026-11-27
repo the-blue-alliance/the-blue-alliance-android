@@ -67,4 +67,15 @@ class RegionalAdvancementViewModelTest {
         stale.complete(listOf(mockk(relaxed = true)))
         assertEquals(UiState.Empty, viewModel.uiState.value)
     }
+
+    @Test
+    fun `switching year stops the spinner without waiting for the abandoned load`() {
+        val stale = CompletableDeferred<List<RegionalRanking>>()
+        coEvery { repository.getRegionalRankings(2025) } coAnswers { stale.await() }
+        val viewModel = RegionalAdvancementViewModel(repository, seasons)
+        assertEquals(true, viewModel.isRefreshing.value)
+        viewModel.selectYear(2019)
+        assertEquals(false, viewModel.isRefreshing.value)
+        assertEquals(UiState.Empty, viewModel.uiState.value)
+    }
 }
