@@ -20,6 +20,7 @@ import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.common.isFetchFailure
+import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -67,6 +68,8 @@ class EventDetailViewModel
 
         private val loadOutcomes =
             MutableStateFlow<Map<EventDetailTab, RefreshOutcome>>(emptyMap())
+
+        private val eventMissing = MutableStateFlow(false)
 
         private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
@@ -190,6 +193,7 @@ class EventDetailViewModel
                         )
                     }
                 }.combine(loadOutcomes) { state, outcomes -> state.copy(loadOutcomes = outcomes) }
+                .combine(eventMissing) { state, missing -> state.copy(eventMissing = missing) }
 
         val uiState: StateFlow<EventDetailUiState> =
             state.stateIn(
@@ -266,7 +270,7 @@ class EventDetailViewModel
         fun refreshAll() {
             refreshTracked(
                 EventDetailTab.INFO to {
-                    eventRepository.refreshEvent(eventKey)
+                    refreshEvent()
                     refreshRegionalCmpAdvancementLogged()
                 },
                 EventDetailTab.TEAMS to { teamRepository.refreshEventTeams(eventKey) },
@@ -297,7 +301,7 @@ class EventDetailViewModel
             when (tab) {
                 EventDetailTab.INFO ->
                     refreshTracked(
-                        tab to { eventRepository.refreshEvent(eventKey) },
+                        tab to { refreshEvent() },
                         null to { districtRepository.refreshDistrictsForYear(eventYear) },
                     )
                 EventDetailTab.TEAMS ->
@@ -383,6 +387,17 @@ class EventDetailViewModel
             if (failed.isEmpty()) return
             val cached = state.first()
             if (failed.any { cached.hasData(it) }) userMessages.show("Couldn't refresh event")
+        }
+
+        // Records whether TBA has the event at all, so a 404 shows "not found", not a spinner.
+        private suspend fun refreshEvent() {
+            try {
+                eventRepository.refreshEvent(eventKey)
+                eventMissing.value = false
+            } catch (e: Exception) {
+                if (e.isNotFound()) eventMissing.value = true
+                throw e
+            }
         }
 
         // Advancement needs the stored event, so it follows it; its failure isn't Info's.

@@ -131,6 +131,8 @@ class EventDetailViewModelLoadTest {
         coEvery { districts.refreshDistrictsForYear(any()) } throws error
     }
 
+    private fun notFound() = HttpException(Response.error<Any>(404, "".toResponseBody()))
+
     private fun TestScope.subscribedViewModel(): EventDetailViewModel {
         val viewModel =
             EventDetailViewModel(
@@ -245,4 +247,41 @@ class EventDetailViewModelLoadTest {
         coEvery { matches.refreshEventMatches(any()) } returns Unit
         coEvery { districts.refreshDistrictsForYear(any()) } returns Unit
     }
+
+    @Test
+    fun `a missing event shows not found`() =
+        runTest {
+            refreshesThrow(notFound())
+            assertTrue(subscribedViewModel().uiState.value.notFound)
+        }
+
+    @Test
+    fun `a missing event is not a load error`() =
+        runTest {
+            refreshesThrow(notFound())
+            val state = subscribedViewModel().uiState.value
+            EventDetailTab.entries.forEach { tab -> assertFalse(state.loadFailed(tab), "$tab") }
+        }
+
+    @Test
+    fun `a cached event that is now missing keeps its cache`() =
+        runTest {
+            cache(event = event, awards = listOf(award))
+            refreshesThrow(notFound())
+            assertFalse(subscribedViewModel().uiState.value.notFound)
+        }
+
+    @Test
+    fun `an event that can't be fetched offline is not missing`() =
+        runTest {
+            refreshesThrow(UnknownHostException())
+            assertFalse(subscribedViewModel().uiState.value.notFound)
+        }
+
+    @Test
+    fun `a tab with no data for a found event is not a missing event`() =
+        runTest {
+            coEvery { events.refreshEventRankings(any()) } throws notFound()
+            assertFalse(subscribedViewModel().uiState.value.notFound)
+        }
 }

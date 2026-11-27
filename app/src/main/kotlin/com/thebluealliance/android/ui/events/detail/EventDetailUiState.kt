@@ -32,6 +32,8 @@ data class EventDetailUiState(
     val pitLocations: Map<String, String> = emptyMap(),
     val favoriteTeamKeysAtEvent: List<String> = emptyList(),
     val loadOutcomes: Map<EventDetailTab, RefreshOutcome> = emptyMap(),
+    /** TBA's last answer for the event itself was a 404. */
+    val eventMissing: Boolean = false,
 ) {
     /** Whether [tab] has anything to show, cached or fetched. */
     fun hasData(tab: EventDetailTab): Boolean =
@@ -49,6 +51,9 @@ data class EventDetailUiState(
             EventDetailTab.ADVANCEMENT_POINTS -> !advancementPoints.isNullOrEmpty()
             EventDetailTab.AWARDS -> !awards.isNullOrEmpty()
         }
+
+    /** TBA has no event with this key, and none is cached. */
+    val notFound: Boolean get() = eventMissing && event == null
 
     /** The tab's last fetch failed and there is nothing cached to show instead. */
     fun loadFailed(tab: EventDetailTab): Boolean =

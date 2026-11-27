@@ -228,25 +228,35 @@ fun TeamDetailScreen(
                             )
                         }
                     },
+                    // A missing key has nothing to favorite, subscribe to or pin.
                     secondaryActions =
-                        listOf(
-                            notificationPreferencesAction(
-                                notificationsOn = subscription?.notifications?.isNotEmpty() == true,
-                                onClick = {
-                                    if (!viewModel.isSignedIn()) {
-                                        showSignInDialog = true
-                                    } else {
-                                        showNotificationSheet = true
-                                    }
-                                },
-                            ),
-                            TopBarAction(
-                                label =
-                                    if (isFavorite) "Remove from favorites" else "Add to favorites",
-                                icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
-                                onClick = viewModel::toggleFavorite,
-                            ),
-                        ),
+                        if (uiState.notFound) {
+                            emptyList()
+                        } else {
+                            listOf(
+                                notificationPreferencesAction(
+                                    notificationsOn =
+                                        subscription?.notifications?.isNotEmpty() == true,
+                                    onClick = {
+                                        if (!viewModel.isSignedIn()) {
+                                            showSignInDialog = true
+                                        } else {
+                                            showNotificationSheet = true
+                                        }
+                                    },
+                                ),
+                                TopBarAction(
+                                    label =
+                                        if (isFavorite) {
+                                            "Remove from favorites"
+                                        } else {
+                                            "Add to favorites"
+                                        },
+                                    icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
+                                    onClick = viewModel::toggleFavorite,
+                                ),
+                            )
+                        },
                     overflowActions =
                         listOfNotNull(
                             uiState.team?.let { team ->
@@ -265,7 +275,7 @@ fun TeamDetailScreen(
                                     },
                                 )
                             },
-                            if (viewModel.canPinShortcuts) {
+                            if (viewModel.canPinShortcuts && !uiState.notFound) {
                                 TopBarAction(
                                     label = "Add to home screen",
                                     icon = TbaIcons.AddToHomeScreen,
@@ -277,24 +287,35 @@ fun TeamDetailScreen(
                         ),
                 )
 
-                TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TeamDetailTab.entries.forEach { tab ->
-                        TBATab(
-                            label = tab.readableName,
-                            selected = pagerState.currentPage == tab.ordinal,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        tab.ordinal,
-                                    )
-                                }
-                            },
-                        )
+                // A missing team has no tabs to switch between.
+                if (!uiState.notFound) {
+                    TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                        TeamDetailTab.entries.forEach { tab ->
+                            TBATab(
+                                label = tab.readableName,
+                                selected = pagerState.currentPage == tab.ordinal,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            tab.ordinal,
+                                        )
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }
         },
     ) { innerPadding ->
+        if (uiState.notFound) {
+            // A 404 is TBA's answer, not a failed fetch, so Retry would only get it again.
+            EmptyBox(
+                message = "Team not found",
+                modifier = Modifier.padding(innerPadding),
+            )
+            return@Scaffold
+        }
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,

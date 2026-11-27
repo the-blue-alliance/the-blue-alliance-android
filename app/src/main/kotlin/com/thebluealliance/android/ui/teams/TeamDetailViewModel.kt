@@ -16,6 +16,7 @@ import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.common.defaultSeason
+import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -65,6 +66,8 @@ class TeamDetailViewModel
             }
         val selectedYear: StateFlow<Int> = selection.year
 
+        private val teamMissing = MutableStateFlow(false)
+
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
 
@@ -77,11 +80,13 @@ class TeamDetailViewModel
                 selection.year.flatMapLatest { year ->
                     teamRepository.observeTeamMedia(teamKey, year)
                 },
-            ) { team, events, media ->
+                teamMissing,
+            ) { team, events, media, missing ->
                 TeamDetailUiState(
                     team = team,
                     events = events,
                     media = media,
+                    teamMissing = missing,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamDetailUiState())
 
@@ -101,7 +106,7 @@ class TeamDetailViewModel
         init {
             // Year data waits for the default season, so nothing is fetched for a season the
             // picker is about to leave.
-            refreshing({ teamRepository.refreshTeam(teamKey) })
+            refreshing({ refreshTeam() })
             if (navKey.year != null) refreshYearData()
             loadSeasons()
         }
@@ -205,7 +210,7 @@ class TeamDetailViewModel
         fun refreshAll() {
             val year = selection.year.value
             refreshing(
-                { teamRepository.refreshTeam(teamKey) },
+                { refreshTeam() },
                 { eventRepository.refreshTeamEvents(teamKey, year) },
                 { teamRepository.refreshTeamMedia(teamKey, year) },
             )
@@ -216,13 +221,24 @@ class TeamDetailViewModel
             when (tab) {
                 TeamDetailTab.INFO ->
                     refreshing(
-                        { teamRepository.refreshTeam(teamKey) },
+                        { refreshTeam() },
                         { teamRepository.refreshTeamMedia(teamKey, year) },
                     )
                 TeamDetailTab.EVENTS ->
                     refreshing({ eventRepository.refreshTeamEvents(teamKey, year) })
                 TeamDetailTab.MEDIA ->
                     refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+            }
+        }
+
+        // Records whether TBA has the team at all, so a 404 shows "not found", not a spinner.
+        private suspend fun refreshTeam() {
+            try {
+                teamRepository.refreshTeam(teamKey)
+                teamMissing.value = false
+            } catch (e: Exception) {
+                if (e.isNotFound()) teamMissing.value = true
+                throw e
             }
         }
 
