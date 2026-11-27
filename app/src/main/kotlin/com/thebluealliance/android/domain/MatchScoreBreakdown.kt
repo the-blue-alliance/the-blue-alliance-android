@@ -56,7 +56,7 @@ fun Match.rpBonuses(): AllianceRpBonuses? {
 }
 
 /** Shown for a breakdown value the API left out. */
-const val BREAKDOWN_MISSING = "-"
+const val BREAKDOWN_MISSING = NO_VALUE
 
 /** Shown for a met boolean breakdown field. */
 const val BREAKDOWN_YES = "✓"

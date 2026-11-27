@@ -56,7 +56,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.thebluealliance.android.domain.AllianceRpBonuses
+import com.thebluealliance.android.domain.BREAKDOWN_MISSING
 import com.thebluealliance.android.domain.MatchAdvancementMsgs
+import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.camelCaseToLabel
 import com.thebluealliance.android.domain.formatBreakdownValue
 import com.thebluealliance.android.domain.getAdvancement
@@ -382,12 +384,12 @@ fun MatchDetailScreen(
                                         redValue =
                                             formatBreakdownValue(
                                                 apiKey,
-                                                redBreakdown[apiKey] ?: "-",
+                                                redBreakdown[apiKey] ?: BREAKDOWN_MISSING,
                                             ),
                                         blueValue =
                                             formatBreakdownValue(
                                                 apiKey,
-                                                blueBreakdown[apiKey] ?: "-",
+                                                blueBreakdown[apiKey] ?: BREAKDOWN_MISSING,
                                             ),
                                     )
                                 }
@@ -495,7 +497,7 @@ private fun RowScope.AllianceScoreSummaryCol(
                 } ?: Modifier,
         )
         Text(
-            text = if (score < 0) "—" else score.toString(),
+            text = if (score < 0) NO_VALUE else score.toString(),
             style = MaterialTheme.typography.displaySmall,
             fontWeight =
                 if (match.winningAlliance ==
@@ -544,7 +546,8 @@ private fun RowScope.AllianceScoreSummaryCol(
     }
 }
 
-private const val SCORE_SEPARATOR = "-"
+/** En dash, as between the two scores of a game. */
+private const val SCORE_SEPARATOR = "\u2013"
 private val ScoreSeparatorPadding = 16.dp
 
 /** Width of the separator between the two scores in [ScoreSummary], padding included. */
@@ -628,7 +631,7 @@ private fun AllianceTeams(
 
         // Invisible separator to match ScoreSummary alignment
         Text(
-            text = "-",
+            text = SCORE_SEPARATOR,
             style = MaterialTheme.typography.displaySmall,
             color = Color.Transparent,
             modifier =

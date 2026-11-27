@@ -83,8 +83,8 @@ internal fun formatEventDateRange(
     val end = endDate?.let { LocalDate.parse(it) }
     if (end == null || start == end) return start.format(fullFormat)
     return if (start.year == end.year) {
-        "${start.format(noYearFormat)} - ${end.format(fullFormat)}"
+        "${start.format(noYearFormat)} \u2013 ${end.format(fullFormat)}"
     } else {
-        "${start.format(fullFormat)} - ${end.format(fullFormat)}"
+        "${start.format(fullFormat)} \u2013 ${end.format(fullFormat)}"
     }
 }

@@ -48,6 +48,7 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.getGroup
 import com.thebluealliance.android.domain.getShortLabel
@@ -519,7 +520,7 @@ private fun formatMatchTimeSpoken(epochSeconds: Long): String =
     )
 
 fun formatMatchTime(epochSeconds: Long?): String {
-    if (epochSeconds == null) return "\u2014"
+    if (epochSeconds == null) return NO_VALUE
     val instant = java.time.Instant.ofEpochSecond(epochSeconds)
     return matchTimeFormat
         .format(instant.atZone(java.time.ZoneId.systemDefault()))

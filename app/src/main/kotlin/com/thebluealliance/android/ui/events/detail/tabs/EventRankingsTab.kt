@@ -62,6 +62,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -774,7 +775,7 @@ private fun RankingItem(
             )
 
             Text(
-                text = primaryValue ?: "--",
+                text = primaryValue ?: NO_VALUE,
                 style =
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
@@ -787,7 +788,7 @@ private fun RankingItem(
             )
 
             Text(
-                text = secondaryValue ?: "--",
+                text = secondaryValue ?: NO_VALUE,
                 style =
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
@@ -845,7 +846,7 @@ private fun RankingItem(
                         val formattedValue =
                             value?.let {
                                 String.format(Locale.US, "%.${sortOrder.precision}f", it)
-                            } ?: "--"
+                            } ?: NO_VALUE
 
                         Row(
                             modifier =
@@ -903,7 +904,7 @@ private fun RankingItem(
                             Text(
                                 text =
                                     value?.let { String.format(Locale.US, "%.${precision}f", it) }
-                                        ?: "--",
+                                        ?: NO_VALUE,
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }

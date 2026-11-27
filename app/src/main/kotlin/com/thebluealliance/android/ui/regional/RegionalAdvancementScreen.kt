@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
@@ -239,7 +240,7 @@ private fun RegionalRankingRow(
                 )
             } else {
                 Text(
-                    text = "--",
+                    text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(0.15f),
@@ -260,7 +261,7 @@ private fun RegionalRankingRow(
                 )
             } else {
                 Text(
-                    text = "--",
+                    text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(0.15f),
@@ -275,7 +276,7 @@ private fun RegionalRankingRow(
                 )
             } else {
                 Text(
-                    text = "--",
+                    text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.weight(0.15f),
@@ -298,7 +299,7 @@ private fun AdvancementBadge(
 ) {
     if (method.isNullOrBlank()) {
         Text(
-            text = "--",
+            text = NO_VALUE,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = modifier,
