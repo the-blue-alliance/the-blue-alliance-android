@@ -7,12 +7,15 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.URLDecoder
+import java.time.Year
 
 class TbaDeepLinksTest {
     private lateinit var deepLinks: TbaDeepLinks
@@ -130,10 +133,57 @@ class TbaDeepLinksTest {
             listOf(Screen.Teams, Screen.TeamDetail("frc254")),
             match("https://www.thebluealliance.com/team/frc254"),
         )
+    }
+
+    @Test
+    fun `team year deeplink opens that year`() {
         assertEquals(
-            Screen.TeamDetail("frc254"),
-            match("https://www.thebluealliance.com/team/frc254/2024")?.last(),
+            listOf(Screen.Teams, teamDetail("254", year = 2024)),
+            match("https://www.thebluealliance.com/team/254/2024"),
         )
+    }
+
+    @Test
+    fun `team subpages without a year open the default year`() {
+        assertEquals(
+            listOf(Screen.Teams, Screen.TeamDetail("254")),
+            match("https://www.thebluealliance.com/team/254/history"),
+        )
+    }
+
+    @Test
+    fun `event insights deeplink opens the insights tab`() {
+        assertEquals(
+            listOf(
+                Screen.Events(),
+                Screen.EventDetail("2025hop", initialTab = EventDetailTab.INSIGHTS),
+            ),
+            match("https://www.thebluealliance.com/event/2025hop/insights"),
+        )
+    }
+
+    @Test
+    fun `district events deeplink opens that district's year`() {
+        assertEquals(
+            listOf(Screen.Districts, Screen.DistrictDetail("2025fim")),
+            match("https://www.thebluealliance.com/events/fim/2025"),
+        )
+    }
+
+    @Test
+    fun `district events deeplink without a year opens the current year`() {
+        assertEquals(
+            listOf(Screen.Districts, Screen.DistrictDetail("${Year.now().value}ne")),
+            match("https://www.thebluealliance.com/events/ne"),
+        )
+    }
+
+    @Test
+    fun `regional events deeplinks are not districts`() {
+        for (url in listOf("/events/regional", "/events/regional/2025")) {
+            val screen = match("https://www.thebluealliance.com$url")?.last()
+            assertFalse(screen is Screen.DistrictDetail, url)
+        }
     }
 
     @Test
@@ -186,6 +236,12 @@ class TbaDeepLinksTest {
         assertNull(match("https://www.thebluealliance.com/team/"))
         assertNull(match("https://www.example.com/event/2026miket"))
     }
+
+    /** A [Screen.TeamDetail] for [year], built by name so this compiles before the field exists. */
+    private fun teamDetail(
+        teamKey: String,
+        year: Int,
+    ): Screen.TeamDetail = Json.decodeFromString("""{"teamKey":"$teamKey","year":$year}""")
 
     private fun decode(s: String): String = URLDecoder.decode(s.replace("+", "%2B"), Charsets.UTF_8)
 
