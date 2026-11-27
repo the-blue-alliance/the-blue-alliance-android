@@ -5,25 +5,27 @@
 #
 # The intent is pinned to the app's package (-p): debug builds aren't verified
 # for thebluealliance.com, so an unpinned VIEW intent can resolve to Chrome.
-# The package is the first of these that is installed: $TBA_PACKAGE, the debug
-# build (com.thebluealliance.androidclient.development), the release build.
+# The package is $TBA_PACKAGE if set (it must be installed), else the debug
+# build (com.thebluealliance.androidclient.development), else the release build.
 # Honors $ANDROID_SERIAL like adb.
 set -euo pipefail
 
 PATH_ARG="${1:?Usage: navigate.sh <path> (e.g. /event/2024casf)}"
 
-installed="$(adb shell pm list packages com.thebluealliance.androidclient | tr -d '\r')"
-PKG=""
-for candidate in ${TBA_PACKAGE:-} \
-    com.thebluealliance.androidclient.development \
-    com.thebluealliance.androidclient; do
-  if grep -qx "package:${candidate}" <<<"$installed"; then
-    PKG="$candidate"
-    break
-  fi
-done
-if [[ -z "$PKG" ]]; then
-  echo "navigate.sh: no TBA app installed (set TBA_PACKAGE to override)" >&2
+# pm's filter is a substring match; -x keeps only the exact package.
+is_installed() {
+  adb shell pm list packages "$1" | tr -d '\r' | grep -x "package:$1" >/dev/null
+}
+
+if [[ -n "${TBA_PACKAGE:-}" ]]; then
+  is_installed "$TBA_PACKAGE" || { echo "navigate.sh: TBA_PACKAGE=$TBA_PACKAGE is not installed" >&2; exit 1; }
+  PKG="$TBA_PACKAGE"
+elif is_installed com.thebluealliance.androidclient.development; then
+  PKG=com.thebluealliance.androidclient.development
+elif is_installed com.thebluealliance.androidclient; then
+  PKG=com.thebluealliance.androidclient
+else
+  echo "navigate.sh: no TBA app installed (set TBA_PACKAGE to pick one)" >&2
   exit 1
 fi
 

@@ -356,7 +356,7 @@ def parse_viewport(dump):
     if not m:
         return None
     v = [int(g) for g in m.groups()]
-    if v[2] <= v[0] or v[6] <= v[4]:
+    if v[2] <= v[0] or v[3] <= v[1] or v[6] <= v[4] or v[7] <= v[5]:
         return None
     return v[0:4], v[4:8], v[8:10]
 
@@ -562,6 +562,7 @@ def mouse_daemon(serial):
     except OSError:
         pass
     srv.bind(sock_path)
+    sock_ino = os.stat(sock_path).st_ino
     srv.listen(4)
     srv.settimeout(1.0)
     with open(pid_path, "w") as f:
@@ -579,6 +580,8 @@ def mouse_daemon(serial):
                 while chunk := conn.recv(65536):
                     data += chunk
                 for line in data.decode().splitlines():
+                    if not line.strip():
+                        continue
                     msg = json.loads(line)
                     if msg.get("command") == "stop":
                         stop = True
@@ -594,11 +597,16 @@ def mouse_daemon(serial):
             proc.wait(timeout=3)
         except Exception:
             proc.kill()
-        for path in (sock_path, pid_path):
-            try:
-                os.unlink(path)
-            except OSError:
-                pass
+        # A daemon that was signalled late (e.g. after being stopped) can outlive
+        # its replacement; only remove files that are still this daemon's own.
+        try:
+            if os.stat(sock_path).st_ino == sock_ino:
+                os.unlink(sock_path)
+            with open(pid_path) as f:
+                if f.read().strip() == str(os.getpid()):
+                    os.unlink(pid_path)
+        except OSError:
+            pass
 
 
 def _mouse_connect(sock_path):
@@ -613,7 +621,10 @@ def _mouse_deliver(sock_path, msgs):
     with s:
         s.sendall(("\n".join(json.dumps(m) for m in msgs) + "\n").encode())
         s.shutdown(socket.SHUT_WR)
-        s.recv(16)
+        reply = s.recv(16)
+    if reply != b"ok\n":
+        # The daemon died mid-request; OSError makes mouse_send restart it.
+        raise OSError(f"mouse daemon replied {reply!r}")
 
 
 def mouse_device_id():
@@ -629,8 +640,9 @@ def mouse_start():
     mouse_stop()  # clear anything stale left by a crashed daemon
     hover_release()  # a parked stylus would keep hovering its own target
     with open(log_path, "w") as log:
-        subprocess.Popen([sys.executable, os.path.abspath(__file__), "--mouse-daemon", _serial],
-                         stdin=subprocess.DEVNULL, stdout=log, stderr=log, start_new_session=True)
+        daemon = subprocess.Popen([sys.executable, os.path.abspath(__file__), "--mouse-daemon", _serial],
+                                  stdin=subprocess.DEVNULL, stdout=log, stderr=log,
+                                  start_new_session=True)
     deadline = time.time() + 10
     while time.time() < deadline:
         if os.path.exists(sock_path) and mouse_device_id() is not None:
@@ -640,6 +652,7 @@ def mouse_start():
         time.sleep(0.25)
     with open(log_path) as f:
         detail = f.read().strip()
+    daemon.terminate()
     mouse_stop()
     die(f"virtual mouse didn't register within 10s{': ' + detail if detail else ''}")
 
@@ -668,10 +681,16 @@ def mouse_stop():
             pid = int(f.read().strip())
     except (OSError, ValueError):
         pid = None
-    deadline = time.time() + 3
+    # A daemon that took the stop request gets a moment to unregister the device;
+    # one whose socket is unreachable is wedged, so signal it straight away.
+    deadline = time.time() + (3 if stopped else 0)
     while pid and _daemon_alive(pid):
-        if time.time() > deadline:
-            os.kill(pid, signal.SIGTERM)
+        if time.time() >= deadline:
+            try:
+                os.kill(pid, signal.SIGTERM)
+                stopped = True
+            except ProcessLookupError:
+                pass
             time.sleep(0.5)
             break
         time.sleep(0.1)
@@ -1002,11 +1021,17 @@ def cmd_mouse(args):
         name = {BTN_LEFT: "Left", BTN_RIGHT: "Right", BTN_MIDDLE: "Middle"}[button]
         _report(f"{name}-{'double-' if args.double else ''}clicked", pos, described, args.shot)
     elif action == "scroll":
+        if args.n < 1:
+            die("mouse scroll needs at least 1 notch")
         if args.at:
             if len(args.at) > 2:
                 die("mouse scroll --at takes TEXT or X Y")
             target = args.at[0]
-            y = int(args.at[1]) if len(args.at) == 2 else None
+            y = None
+            if len(args.at) == 2:
+                if not is_int(args.at[1]):
+                    die(f"mouse scroll --at got \"{args.at[1]}\" where a y coordinate goes")
+                y = int(args.at[1])
             x, y, _ = resolve_target(target, y, "mouse scroll --at")
             mouse_move_to(x, y)
         # Wheel up / right are positive, like evdev.
@@ -1036,7 +1061,7 @@ def key_known(code):
     names, so anything not obviously valid is checked against keycombination, which
     names the bad keycode (and otherwise only complains that one key is too few)."""
     name = code.removeprefix("KEYCODE_")
-    if name in KNOWN_KEYS or re.fullmatch(r"[A-Z0-9]|F\d{1,2}|NUMPAD_\w+|DPAD_\w+|MEDIA_\w+", name):
+    if name in KNOWN_KEYS or re.fullmatch(r"[A-Z0-9]|F[1-9]|F1[0-2]|DPAD_(UP|DOWN|LEFT|RIGHT|CENTER)", name):
         return True
     out = adb("shell", "input", "keycombination", code)
     return "Unknown keycode" not in out.stdout + out.stderr
