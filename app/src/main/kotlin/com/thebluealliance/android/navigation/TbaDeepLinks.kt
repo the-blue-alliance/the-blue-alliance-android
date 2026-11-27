@@ -1,5 +1,6 @@
 package com.thebluealliance.android.navigation
 
+import android.net.Uri
 import androidx.navigation3.runtime.deeplink.BackStackMatcher
 import androidx.navigation3.runtime.deeplink.DeepLinkRequest
 import androidx.navigation3.runtime.deeplink.DeepLinkUri
@@ -9,6 +10,7 @@ import androidx.navigation3.runtime.deeplink.withBackStack
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.serializer
+import java.time.Year
 
 /**
  * Maps thebluealliance.com web URLs (the VIEW intent filter in AndroidManifest.xml) to [Screen]s,
@@ -25,6 +27,9 @@ class TbaDeepLinks {
             link<Screen.EventPitMap>("event/{eventKey}/pitmap", query = "teams={teamsCsv}") {
                 listOf(Screen.Events(), Screen.EventDetail(it.eventKey), it)
             }
+            link<Screen.EventDetail>("event/{eventKey}/insights") {
+                listOf(Screen.Events(), it.copy(initialTab = EventDetailTab.INSIGHTS))
+            }
             link<Screen.EventDetail>("event/{eventKey}") { listOf(Screen.Events(), it) }
             link<Screen.MatchDetail>("match/{matchKey}") {
                 val eventKey = it.matchKey.substringBefore('_')
@@ -34,6 +39,9 @@ class TbaDeepLinks {
                     it,
                 )
             }
+            // /team/{number}/{year} outranks the bare team link; a non-numeric subpage such as
+            // /history fails to decode and falls through to it, opening the default season.
+            link<Screen.TeamDetail>("team/{teamKey}/{year}") { listOf(Screen.Teams, it) }
             link<Screen.TeamDetail>("team/{teamKey}") { listOf(Screen.Teams, it) }
             // /events/{year} outranks the bare /events/.* fallback; a non-numeric year fails to
             // decode and falls through to it, landing on the current season.
@@ -49,12 +57,31 @@ class TbaDeepLinks {
      * pattern matches.
      */
     fun match(request: DeepLinkRequest): List<Screen>? =
-        matchers
-            .mapNotNull { it.match(request) }
-            .maxOrNull()
-            ?.backStack
-            ?.withFragmentTab(request.uri?.fragment)
+        districtEvents(request.uri)
+            ?: matchers
+                .mapNotNull { it.match(request) }
+                .maxOrNull()
+                ?.backStack
+                ?.withFragmentTab(request.uri?.fragment)
 }
+
+/**
+ * The web's district events page, `/events/{abbreviation}` or `/events/{abbreviation}/{year}`,
+ * opens that district. Handled by hand because the district key joins two path parts
+ * (`2025` + `fim`), and the abbreviation is letters only, which tells it from `/events/{year}`.
+ * `/events/regional` is the regional pool's page, not a district.
+ */
+private fun districtEvents(uri: Uri?): List<Screen>? {
+    if (uri == null || uri.scheme != "https" || uri.authority !in TBA_HOSTS) return null
+    val segments = uri.pathSegments
+    if (segments.size !in 2..3 || segments[0] != "events") return null
+    val abbreviation = segments[1]
+    if (!DISTRICT_ABBREVIATION.matches(abbreviation) || abbreviation == "regional") return null
+    val year = segments.getOrNull(2)?.let { it.toIntOrNull() ?: return null } ?: Year.now().value
+    return listOf(Screen.Districts, Screen.DistrictDetail("$year$abbreviation"))
+}
+
+private val DISTRICT_ABBREVIATION = Regex("[a-z]+")
 
 /**
  * Event page tab anchors: the Jinja page's (`event_details.html`) and the PWA's, which renamed two.

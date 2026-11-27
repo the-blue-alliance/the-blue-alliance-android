@@ -29,8 +29,9 @@ class TeamDetailViewModelYearTest {
     private fun viewModel(
         eventRepository: EventRepository = mockk(relaxed = true),
         teamRepository: TeamRepository = mockk(relaxed = true),
+        navKey: Screen.TeamDetail = Screen.TeamDetail("frc254"),
     ) = TeamDetailViewModel(
-        navKey = Screen.TeamDetail("frc254"),
+        navKey = navKey,
         teamRepository = teamRepository,
         eventRepository = eventRepository,
         myTBARepository = mockk(relaxed = true),
@@ -141,4 +142,33 @@ class TeamDetailViewModelYearTest {
         assertEquals(2024, viewModel.selectedYear.value)
         coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", 2024) }
     }
+
+    @Test
+    fun `opens on the year from the link`() {
+        coEvery { seasons.defaultSeason() } returns 2027
+        assertEquals(2024, viewModel(navKey = linkedYear(2024)).selectedYear.value)
+    }
+
+    @Test
+    fun `loads only the year from the link`() {
+        coEvery { seasons.defaultSeason() } returns 2027
+        val eventRepository = mockk<EventRepository>(relaxed = true)
+        val teamRepository = mockk<TeamRepository>(relaxed = true)
+        viewModel(eventRepository, teamRepository, navKey = linkedYear(2024))
+        coVerify(exactly = 1) { eventRepository.refreshTeamEvents("frc254", 2024) }
+        coVerify(exactly = 1) { teamRepository.refreshTeamMedia("frc254", 2024) }
+        coVerify(exactly = 0) { eventRepository.refreshTeamEvents("frc254", 2027) }
+    }
+
+    @Test
+    fun `a late default doesn't override the year from the link`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val viewModel = viewModel(navKey = linkedYear(2023))
+        default.complete(2027)
+        assertEquals(2023, viewModel.selectedYear.value)
+    }
+
+    /** A /team/254/<year> link's key. */
+    private fun linkedYear(year: Int) = Screen.TeamDetail("frc254", year = year)
 }
