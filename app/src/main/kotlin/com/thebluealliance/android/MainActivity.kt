@@ -31,6 +31,7 @@ import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.messaging.NotificationBuilder
 import com.thebluealliance.android.navigation.KeyboardShortcut
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.navigation.ShortcutAction
 import com.thebluealliance.android.navigation.TbaDeepLinks
 import com.thebluealliance.android.ui.TBAApp
 import com.thebluealliance.android.widget.TeamTrackingWidgetOpenAction
@@ -71,15 +72,14 @@ class MainActivity : ComponentActivity() {
 
     /**
      * App-wide keyboard shortcuts, caught once here rather than per screen. Compose only sees key
-     * events while something has focus, but the Activity gets every Ctrl chord the UI leaves
-     * unhandled.
+     * events while something has focus, but the Activity gets every key the UI leaves unhandled.
      */
     private val pressedShortcuts =
-        MutableSharedFlow<KeyboardShortcut>(
+        MutableSharedFlow<ShortcutAction>(
             extraBufferCapacity = 1,
             onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
-    val keyboardShortcuts: SharedFlow<KeyboardShortcut> = pressedShortcuts.asSharedFlow()
+    val keyboardShortcuts: SharedFlow<ShortcutAction> = pressedShortcuts.asSharedFlow()
 
     private val notificationPermissionLauncher =
         registerForActivityResult(
@@ -161,14 +161,26 @@ class MainActivity : ComponentActivity() {
         newIntentRoutes.tryEmit(backStack)
     }
 
+    /** Ctrl chords the UI leaves unhandled. */
     override fun onKeyShortcut(
         keyCode: Int,
         event: KeyEvent,
-    ): Boolean {
-        val shortcut =
-            KeyboardShortcut.match(keyCode, event.metaState)
-                ?: return super.onKeyShortcut(keyCode, event)
-        pressedShortcuts.tryEmit(shortcut)
+    ): Boolean = onShortcutKey(event) || super.onKeyShortcut(keyCode, event)
+
+    /** Keys without Ctrl the UI leaves unhandled, such as F5, or Alt+Left with nothing focused. */
+    override fun onKeyDown(
+        keyCode: Int,
+        event: KeyEvent,
+    ): Boolean = (!event.isCtrlPressed && onShortcutKey(event)) || super.onKeyDown(keyCode, event)
+
+    /**
+     * Runs the shortcut [event] presses, if any, and reports whether it did. Holding the keys
+     * doesn't repeat it. Also called from Compose for keys it would otherwise spend on focus.
+     */
+    fun onShortcutKey(event: KeyEvent): Boolean {
+        if (event.action != KeyEvent.ACTION_DOWN || event.repeatCount != 0) return false
+        val action = KeyboardShortcut.match(event.keyCode, event.metaState) ?: return false
+        pressedShortcuts.tryEmit(action)
         return true
     }
 
@@ -179,16 +191,16 @@ class MainActivity : ComponentActivity() {
         deviceId: Int,
     ) {
         super.onProvideKeyboardShortcuts(data, menu, deviceId)
+        // The helper already heads these groups with the app's name.
         data?.add(
-            KeyboardShortcutGroup(
-                // The helper already heads this list with the app's name.
-                "Navigation",
-                KeyboardShortcut.entries.map {
-                    KeyboardShortcutInfo(it.label, it.keyCode, KeyEvent.META_CTRL_ON)
-                },
-            ),
+            KeyboardShortcutGroup("Navigation", KeyboardShortcut.navigation.map { it.info() }),
+        )
+        data?.add(
+            KeyboardShortcutGroup("Current screen", KeyboardShortcut.screen.map { it.info() }),
         )
     }
+
+    private fun KeyboardShortcut.info() = KeyboardShortcutInfo(label, keyCode, modifiers)
 
     fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

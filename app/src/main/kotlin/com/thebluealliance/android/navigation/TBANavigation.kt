@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -42,6 +43,7 @@ import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.common.UserMessageHost
 import com.thebluealliance.android.ui.components.LocalNavigationRailShown
+import com.thebluealliance.android.ui.components.LocalRefreshTargets
 import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.components.TBANavigationRail
 import com.thebluealliance.android.ui.components.pageBackground
@@ -97,11 +99,37 @@ fun TBANavigation(
     LaunchedEffect(navigator) {
         activity.intentRoutes.collect { navigator.navigateFromIntent(it, matchBesideEvent) }
     }
+    val refreshTargets = LocalRefreshTargets.current
+    val coroutineScope = rememberCoroutineScope()
+    val tabReselectFlows =
+        remember {
+            TOP_LEVEL_DESTINATIONS
+                .map { it.key }
+                .associateWith { MutableSharedFlow<Unit>() }
+        }
+
+    val onReselect: () -> Unit = {
+        coroutineScope.launch {
+            tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
+        }
+    }
+
     LaunchedEffect(navigator) {
         activity.keyboardShortcuts.collect {
             when (it) {
                 // Already on Search, this is a no-op, so focus stays in the search field.
-                KeyboardShortcut.Search -> navigator.navigate(Screen.Search)
+                ShortcutAction.Search -> navigator.navigate(Screen.Search)
+                ShortcutAction.Refresh -> refreshTargets?.refresh()
+                ShortcutAction.Back -> activity.onBackPressedDispatcher.onBackPressed()
+                // As tapping the tab: on it, its screen scrolls to the top; otherwise it opens.
+                is ShortcutAction.SwitchTab -> {
+                    val tab = TOP_LEVEL_DESTINATIONS[it.index].key
+                    if (tab.isSameTab(navState.currentRoute)) {
+                        onReselect()
+                    } else {
+                        navigator.navigate(tab)
+                    }
+                }
             }
         }
     }
@@ -121,20 +149,6 @@ fun TBANavigation(
     // doesn't slide it out and reflow the content beside it.
     val useRail = useNavigationRail(currentWindowAdaptiveInfo().windowSizeClass)
 
-    val coroutineScope = rememberCoroutineScope()
-    val tabReselectFlows =
-        remember {
-            TOP_LEVEL_DESTINATIONS
-                .map { it.key }
-                .associateWith { MutableSharedFlow<Unit>() }
-        }
-
-    val onReselect: () -> Unit = {
-        coroutineScope.launch {
-            tabReselectFlows.reselectFlowFor(navState.currentRoute)?.emit(Unit)
-        }
-    }
-
     val bottomBarShown = showBottomBar && !useRail
 
     NavigationFrame(
@@ -151,6 +165,9 @@ fun TBANavigation(
         modifier =
             modifier
                 .fillMaxSize()
+                // Shortcuts the focused element leaves unhandled, before Compose spends arrow keys
+                // (Alt+Left) on moving focus. With nothing focused, MainActivity gets them itself.
+                .onKeyEvent { activity.onShortcutKey(it.nativeKeyEvent) }
                 .background(MaterialTheme.colorScheme.background),
     ) {
         NavDisplay(
