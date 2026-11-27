@@ -104,12 +104,14 @@ fun MyTBAScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val rowNavigation =
-        MyTbaRowNavigation(
-            toTeam = onNavigateToTeam,
-            toEvent = onNavigateToEvent,
-            toMatch = onNavigateToMatch,
-            toTeamAtEvent = onNavigateToTeamAtEvent,
-        )
+        remember(onNavigateToTeam, onNavigateToEvent, onNavigateToMatch, onNavigateToTeamAtEvent) {
+            MyTbaRowNavigation(
+                toTeam = onNavigateToTeam,
+                toEvent = onNavigateToEvent,
+                toMatch = onNavigateToMatch,
+                toTeamAtEvent = onNavigateToTeamAtEvent,
+            )
+        }
 
     val pagerState = rememberPagerState(pageCount = { MyTBATab.entries.size })
     val coroutineScope = rememberCoroutineScope()
@@ -527,9 +529,13 @@ internal class MyTbaRowNavigation(
             ModelType.TEAM -> toTeam(modelKey)
             ModelType.EVENT -> toEvent(modelKey)
             ModelType.MATCH -> toMatch(modelKey)
-            // Keys are "{eventKey}_{teamKey}", e.g. 2024micmp4_frc2471.
-            ModelType.EVENT_TEAM ->
-                toTeamAtEvent(modelKey.substringAfter('_'), modelKey.substringBefore('_'))
+            // Keys are "{eventKey}_{teamKey}", e.g. 2024micmp4_frc2471. The server stores what
+            // clients send, so a malformed key goes nowhere.
+            ModelType.EVENT_TEAM -> {
+                val eventKey = modelKey.substringBefore('_', "")
+                val teamKey = modelKey.substringAfter('_', "")
+                if (eventKey.isNotEmpty() && teamKey.isNotEmpty()) toTeamAtEvent(teamKey, eventKey)
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ class TeamEventDetailViewModel
     ) : RefreshableViewModel() {
         val teamKey: String = navKey.teamKey
         val eventKey: String = navKey.eventKey
-        private val year: Int = eventKey.substring(0, 4).toIntOrNull() ?: 0
+        private val year: Int = eventKey.take(4).toIntOrNull() ?: 0
 
         private val regionalCmpAdvancementByTeam =
             MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())

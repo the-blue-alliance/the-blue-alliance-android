@@ -64,4 +64,11 @@ class MyTbaEntityRowTest {
         assertEquals("event 2024casj", openRow(ModelType.EVENT, "2024casj"))
         assertEquals("match 2024casj_qm1", openRow(ModelType.MATCH, "2024casj_qm1"))
     }
+
+    @Test
+    fun `a malformed team at event key goes nowhere`() {
+        assertEquals("", openRow(ModelType.EVENT_TEAM, "2024micmp4"))
+        assertEquals("", openRow(ModelType.EVENT_TEAM, "_frc2471"))
+        assertEquals("", openRow(ModelType.EVENT_TEAM, "2024micmp4_"))
+    }
 }
