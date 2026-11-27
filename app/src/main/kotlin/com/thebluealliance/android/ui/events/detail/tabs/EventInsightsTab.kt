@@ -57,6 +57,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
 import com.thebluealliance.android.domain.model.EventCOPRs
@@ -104,7 +105,7 @@ private fun Modifier.bleedVertically(bleed: Dp): Modifier =
     layout { measurable, constraints ->
         val px = bleed.roundToPx()
         val placeable = measurable.measure(constraints.offset(vertical = px * 2))
-        layout(placeable.width, (placeable.height - px * 2).coerceAtLeast(0)) {
+        layout(placeable.width, constraints.constrainHeight(placeable.height - px * 2)) {
             placeable.placeRelative(0, -px)
         }
     }
