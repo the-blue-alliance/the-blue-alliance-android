@@ -74,9 +74,9 @@ class TeamTrackerActivity : ComponentActivity() {
         loadState()
         trackerPrefs.registerOnChangeListener(prefListener)
 
-        // Trigger refresh to get latest data
-        TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
-        if (trackerPrefs.teamNumber.isNotBlank()) {
+        // Trigger refresh to get latest data, unless the last one said the team doesn't exist
+        if (AutoRefresh.allowed(trackerPrefs.teamNumber, trackerPrefs.teamNotFound)) {
+            TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
             TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
         }
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -121,6 +122,9 @@ private fun ConfigScreen(
 ) {
     val textFieldState = rememberTextFieldState()
     var showInvalid by remember { mutableStateOf(false) }
+    // The error is about what was typed when Save was pressed; editing clears it.
+    val typedText = textFieldState.text.toString()
+    LaunchedEffect(typedText) { showInvalid = false }
 
     fun save() {
         val typed = textFieldState.text.toString()
