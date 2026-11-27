@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -37,5 +38,17 @@ class HandCursorTest {
     @Test
     fun `expandableRow shows the hand`() {
         assertTrue(Modifier.expandableRow(expanded = false) {}.showsHand())
+    }
+
+    @Test
+    fun `arrowCursor sets the default pointer`() {
+        assertTrue(
+            Modifier.arrowCursor().any { it == Modifier.pointerHoverIcon(PointerIcon.Default) },
+        )
+    }
+
+    @Test
+    fun `a disabled control keeps the arrow`() {
+        assertFalse(Modifier.handCursor(enabled = false).showsHand())
     }
 }

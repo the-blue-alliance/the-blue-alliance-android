@@ -21,6 +21,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.arrowCursor
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
@@ -62,7 +63,10 @@ fun AboutScreen(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .pageBackground(),
+                        .pageBackground()
+                        // Every library row is clickable, and the rows take no modifier, so the
+                        // list shows the hand and the build info above it opts back out.
+                        .handCursor(),
                 contentPadding = readingPadding,
                 header = { buildInfoSection() },
             )
@@ -71,11 +75,13 @@ fun AboutScreen(
 }
 
 private fun LazyListScope.buildInfoSection() {
-    item(key = "build-header") { SectionHeader("Build") }
+    item(key = "build-header") { SectionHeader("Build", Modifier.arrowCursor()) }
     item(key = "build-version") { BuildInfoRow("Version", BuildConfig.VERSION_NAME) }
     item(key = "build-commit") { BuildInfoRow("Commit", BuildConfig.GIT_HASH) }
     item(key = "build-time") { BuildInfoRow("Built", buildTimeLabel()) }
-    item(key = "libraries-header") { SectionHeader("Open source libraries") }
+    item(key = "libraries-header") {
+        SectionHeader("Open source libraries", Modifier.arrowCursor())
+    }
 }
 
 @Composable
@@ -85,6 +91,7 @@ private fun BuildInfoRow(
 ) {
     ListItem(
         headlineContent = { Text(label) },
+        modifier = Modifier.arrowCursor(),
         supportingContent = { Text(value) },
     )
 }

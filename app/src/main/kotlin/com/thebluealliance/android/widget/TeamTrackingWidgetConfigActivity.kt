@@ -171,7 +171,10 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 Button(
                                     onClick = { confirmWidget(appWidgetId, teamNumber) },
                                     enabled = teamNumber.isNotBlank(),
-                                    modifier = Modifier.handCursor().fillMaxWidth(),
+                                    modifier =
+                                        Modifier
+                                            .handCursor(enabled = teamNumber.isNotBlank())
+                                            .fillMaxWidth(),
                                 ) {
                                     Text("Save")
                                 }
