@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
@@ -45,7 +46,7 @@ val PaddedClickableHorizontalPadding: Dp = 8.dp
  * - a card-sized, multi-line block (an inset match row, a media tile): `MaterialTheme.shapes.medium`
  *
  * With [keepContentInPlace], the horizontal padding grows the highlight outward past this
- * element's layout bounds (see [horizontalOutset]) instead of pushing the content in, so the
+ * element's layout bounds (see [bleedHorizontally]) instead of pushing the content in, so the
  * content stays aligned with its neighbours. Leave room for the bleed beside the element.
  *
  * [role] and [onClickLabel] are forwarded to `clickable` for accessibility services, e.g.
@@ -63,12 +64,59 @@ fun Modifier.paddedClickable(
     onClickLabel: String? = null,
     onClick: () -> Unit,
 ): Modifier =
+    padded(
+        shape,
+        horizontal,
+        vertical,
+        keepContentInPlace,
+        Modifier.clickable(onClickLabel = onClickLabel, role = role, onClick = onClick),
+    )
+
+/**
+ * The [paddedClickable] chain for a two-state control: [value] toggles via [onValueChange], with
+ * the same inner padding, [shape] clip and optional [keepContentInPlace] outset.
+ *
+ * [role] defaults to [Role.Switch]; pass [Role.Checkbox] for a checkbox row.
+ */
+fun Modifier.paddedToggleable(
+    value: Boolean,
+    shape: Shape,
+    horizontal: Dp = PaddedClickableHorizontalPadding,
+    vertical: Dp = 0.dp,
+    keepContentInPlace: Boolean = false,
+    role: Role? = Role.Switch,
+    onValueChange: (Boolean) -> Unit,
+): Modifier =
+    padded(
+        shape,
+        horizontal,
+        vertical,
+        keepContentInPlace,
+        Modifier.toggleable(value = value, role = role, onValueChange = onValueChange),
+    )
+
+/** Outset (optional), clip, hand cursor, [interaction], then the inner padding, in the one order that works. */
+private fun Modifier.padded(
+    shape: Shape,
+    horizontal: Dp,
+    vertical: Dp,
+    keepContentInPlace: Boolean,
+    interaction: Modifier,
+): Modifier =
     this
-        .then(if (keepContentInPlace) Modifier.horizontalOutset(horizontal) else Modifier)
-        .clip(shape)
+        .then(
+            if (keepContentInPlace) {
+                Modifier.bleedHorizontally(
+                    start = horizontal,
+                    end = horizontal,
+                )
+            } else {
+                Modifier
+            },
+        ).clip(shape)
         .returnsFocus()
         .handCursor()
-        .clickable(onClickLabel = onClickLabel, role = role, onClick = onClick)
+        .then(interaction)
         .padding(horizontal = horizontal, vertical = vertical)
 
 /**
@@ -87,28 +135,31 @@ val LinkRowInset = 8.dp
 val SmallTextLinkVerticalPadding = 16.dp
 
 /**
- * Lets the rest of the chain extend [outset] past this element's start and end edges without
- * changing the space it takes in its parent. Pair it with an equal inner padding to give a
- * highlight room around its content while the content keeps its position.
+ * Lets the rest of the chain extend [start] and [end] past this element's edges without changing
+ * the space it takes in its parent.
  */
-fun Modifier.horizontalOutset(outset: Dp): Modifier =
+internal fun Modifier.bleedHorizontally(
+    start: Dp,
+    end: Dp,
+): Modifier =
     layout { measurable, constraints ->
-        val outsetPx = outset.roundToPx()
-        val placeable = measurable.measure(outsetConstraints(constraints, outsetPx))
-        layout(outsetLayoutWidth(constraints, placeable.width, outsetPx), placeable.height) {
-            placeable.place(-outsetPx, 0)
+        val startPx = start.roundToPx()
+        val totalPx = startPx + end.roundToPx()
+        val placeable = measurable.measure(bleedConstraints(constraints, totalPx))
+        layout(bleedLayoutWidth(constraints, placeable.width, totalPx), placeable.height) {
+            placeable.placeRelative(-startPx, 0)
         }
     }
 
-/** The constraints for the outset content: [outsetPx] wider on each side. */
-internal fun outsetConstraints(
+/** Constraints for the bled content: [totalPx] wider than the element's own. */
+internal fun bleedConstraints(
     constraints: Constraints,
-    outsetPx: Int,
-): Constraints = constraints.offset(horizontal = 2 * outsetPx)
+    totalPx: Int,
+): Constraints = constraints.offset(horizontal = totalPx)
 
-/** The width the outset element reports to its parent: the content's, less both outsets. */
-internal fun outsetLayoutWidth(
+/** The width the bled element reports to its parent: the content's, less [totalPx]. */
+internal fun bleedLayoutWidth(
     constraints: Constraints,
     contentWidth: Int,
-    outsetPx: Int,
-): Int = constraints.constrainWidth(contentWidth - 2 * outsetPx)
+    totalPx: Int,
+): Int = constraints.constrainWidth(contentWidth - totalPx)
