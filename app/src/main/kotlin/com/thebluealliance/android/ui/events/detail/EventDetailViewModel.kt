@@ -19,7 +19,6 @@ import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
-import com.thebluealliance.android.ui.common.isFetchFailure
 import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -39,10 +38,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = EventDetailViewModel.Factory::class)
@@ -332,54 +328,8 @@ class EventDetailViewModel
             }
         }
 
-        /**
-         * Runs [tasks] like [refreshing], recording each tab's outcome so an empty tab can tell
-         * "failed" from "none", and reporting a failed refresh over cached data once it ends.
-         * A null tab marks a supporting fetch that no tab's state depends on.
-         */
         private fun refreshTracked(vararg tasks: Pair<EventDetailTab?, suspend () -> Unit>) {
-            val failed = ConcurrentHashMap.newKeySet<EventDetailTab>()
-            val remaining = AtomicInteger(tasks.size)
-            val tracked: List<suspend () -> Unit> =
-                tasks.map { (tab, task) ->
-                    {
-                        try {
-                            task()
-                            if (tab != null) markSucceeded(tab, failed)
-                        } catch (e: CancellationException) {
-                            throw e
-                        } catch (e: Exception) {
-                            if (tab != null) {
-                                if (e.isFetchFailure()) {
-                                    failed += tab
-                                    loadOutcomes.update { it + (tab to RefreshOutcome.FAILED) }
-                                } else {
-                                    // TBA answered with nothing for this event: empty, not failed.
-                                    markSucceeded(tab, failed)
-                                }
-                            }
-                            throw e
-                        } finally {
-                            if (remaining.decrementAndGet() == 0) reportFailedRefresh(failed)
-                        }
-                    }
-                }
-            refreshing(*tracked.toTypedArray())
-        }
-
-        private fun markSucceeded(
-            tab: EventDetailTab,
-            failed: Set<EventDetailTab>,
-        ) {
-            loadOutcomes.update {
-                if (tab in
-                    failed
-                ) {
-                    it
-                } else {
-                    it + (tab to RefreshOutcome.SUCCEEDED)
-                }
-            }
+            refreshTabs(loadOutcomes, ::reportFailedRefresh, *tasks)
         }
 
         // Reads the cache itself: an offline refresh can fail before the screen has collected it.
