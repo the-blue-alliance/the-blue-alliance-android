@@ -322,6 +322,11 @@ fun TBANavigation(
                                     onNavigateToMatch = { matchKey ->
                                         navigator.navigate(Screen.MatchDetail(matchKey))
                                     },
+                                    onNavigateToTeamAtEvent = { teamKey, eventKey ->
+                                        navigator.navigate(
+                                            Screen.TeamEventDetail(teamKey, eventKey),
+                                        )
+                                    },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
                                     onNavigateUp = { navigator.navigateUp() },
                                     reselectFlow = tabReselectFlows[Screen.MyTBA] ?: emptyFlow(),
