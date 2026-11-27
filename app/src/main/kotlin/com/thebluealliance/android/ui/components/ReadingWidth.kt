@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -19,6 +21,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -88,14 +91,46 @@ fun ReadingWidthBox(
     BoxWithConstraints(modifier) {
         val inset = readingInset(this.maxWidth)
         val direction = LocalLayoutDirection.current
-        content(
-            PaddingValues(
-                start = contentPadding.calculateStartPadding(direction) + inset,
-                top = contentPadding.calculateTopPadding(),
-                end = contentPadding.calculateEndPadding(direction) + inset,
-                bottom = contentPadding.calculateBottomPadding(),
-            ),
-        )
+        val density = LocalDensity.current
+        val bleed =
+            with(density) {
+                bandBleed(
+                    constraints.maxWidth.toFloat(),
+                    ReadingMaxWidth.toPx(),
+                    MinSheetMargin.toPx(),
+                ).toDp()
+            }
+        CompositionLocalProvider(LocalReadingBandBleed provides bleed) {
+            content(
+                PaddingValues(
+                    start = contentPadding.calculateStartPadding(direction) + inset,
+                    top = contentPadding.calculateTopPadding(),
+                    end = contentPadding.calculateEndPadding(direction) + inset,
+                    bottom = contentPadding.calculateBottomPadding(),
+                ),
+            )
+        }
+    }
+}
+
+/**
+ * How far a band in a [ReadingWidthBox] list paints past the reading column on each side: the
+ * whole side inset while [pageBackground] hides margins narrower than [MinSheetMargin], so the band
+ * reaches the window's edges as it does on a window no wider than the column; zero otherwise, so
+ * beside drawn margins it ends at the column's edges.
+ */
+val LocalReadingBandBleed = compositionLocalOf { 0.dp }
+
+/**
+ * Fills a full-width band, such as a section header, with [color], painted past its bounds by
+ * [LocalReadingBandBleed] so it never stops a sliver short of the window's edges.
+ */
+@Composable
+fun Modifier.readingBand(color: Color): Modifier {
+    val bleed = LocalReadingBandBleed.current
+    return drawBehind {
+        val px = bleed.toPx()
+        drawRect(color, topLeft = Offset(-px, 0f), size = Size(size.width + px * 2, size.height))
     }
 }
 
@@ -148,6 +183,19 @@ internal fun drawsSheetMargins(
     inset: Float,
     minMargin: Float,
 ): Boolean = inset >= minMargin
+
+/**
+ * How far a band paints past a centered [column] in [width] on each side: the whole margin while
+ * margins narrower than [minMargin] are hidden, else nothing. Whole pixels, like [sheetInset].
+ */
+internal fun bandBleed(
+    width: Float,
+    column: Float,
+    minMargin: Float,
+): Float {
+    val inset = sheetInset(width, column)
+    return if (inset > 0f && !drawsSheetMargins(inset, minMargin)) inset else 0f
+}
 
 private val ColorScheme.isDark: Boolean get() = background.luminance() < 0.5f
 

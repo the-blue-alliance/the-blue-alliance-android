@@ -97,6 +97,20 @@ class ReadingWidthTest {
     }
 
     @Test
+    fun `bands reach the window edges while margins are hidden`() {
+        assertEquals(10f, bandBleed(860f, 840f, 24f))
+        assertEquals(23f, bandBleed(886f, 840f, 24f))
+    }
+
+    @Test
+    fun `bands end at the column beside drawn margins and fill narrow windows unaided`() {
+        assertEquals(0f, bandBleed(888f, 840f, 24f))
+        assertEquals(0f, bandBleed(1280f, 840f, 24f))
+        assertEquals(0f, bandBleed(840f, 840f, 24f))
+        assertEquals(0f, bandBleed(412f, 840f, 24f))
+    }
+
+    @Test
     fun `centred messages sit on the plain page colour in both themes`() {
         val light = lightColorScheme()
         val dark = darkColorScheme()
