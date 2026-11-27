@@ -12,4 +12,7 @@ data class MyTBAUiState(
     val subscriptions: List<Subscription> = emptyList(),
     val displayNames: Map<String, String> = emptyMap(),
     val canPinShortcuts: Boolean = false,
+    // Set when the list is empty because its last refresh failed, not because it is empty.
+    val favoritesError: String? = null,
+    val subscriptionsError: String? = null,
 )

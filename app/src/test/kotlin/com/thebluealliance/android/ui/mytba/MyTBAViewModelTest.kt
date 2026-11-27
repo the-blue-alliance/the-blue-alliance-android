@@ -1,0 +1,122 @@
+package com.thebluealliance.android.ui.mytba
+
+import android.util.Log
+import com.google.firebase.auth.FirebaseUser
+import com.thebluealliance.android.data.repository.AuthRepository
+import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.data.repository.MatchRepository
+import com.thebluealliance.android.data.repository.MyTBARepository
+import com.thebluealliance.android.data.repository.MyTBAServerException
+import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.model.Favorite
+import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.messaging.DeviceRegistrationManager
+import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import io.mockk.coEvery
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class MyTBAViewModelTest {
+    private val user: FirebaseUser =
+        mockk {
+            every { displayName } returns "Test User"
+            every { email } returns null
+            every { photoUrl } returns null
+        }
+    private val authRepository: AuthRepository =
+        mockk {
+            every { currentUser } returns flowOf(user)
+            every { isSignedIn() } returns true
+        }
+    private val myTBARepository: MyTBARepository = mockk()
+    private val deviceRegistrationManager: DeviceRegistrationManager = mockk(relaxed = true)
+    private val shortcutManager: TBAShortcutManager =
+        mockk { every { canPinShortcuts() } returns false }
+    private val teamRepository: TeamRepository =
+        mockk { every { observeTeams(any()) } returns flowOf(emptyList()) }
+    private val eventRepository: EventRepository =
+        mockk { every { observeEvents(any()) } returns flowOf(emptyList()) }
+    private val matchRepository: MatchRepository =
+        mockk { every { observeMatches(any()) } returns flowOf(emptyList()) }
+
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        mockkStatic(Log::class)
+        every { Log.w(any(), any<String>(), any()) } returns 0
+        every { myTBARepository.observeSubscriptions() } returns flowOf(emptyList())
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+        unmockkStatic(Log::class)
+    }
+
+    private fun viewModel() =
+        MyTBAViewModel(
+            authRepository,
+            myTBARepository,
+            deviceRegistrationManager,
+            shortcutManager,
+            teamRepository,
+            eventRepository,
+            matchRepository,
+        )
+
+    @Test
+    fun `failed fetches with nothing cached show errors, not empty lists`() =
+        runTest {
+            every { myTBARepository.observeFavorites() } returns flowOf(emptyList())
+            coEvery { myTBARepository.refreshFavorites() } throws MyTBAServerException(401, "")
+            coEvery { myTBARepository.refreshSubscriptions() } throws MyTBAServerException(401, "")
+
+            val state = viewModel().uiState.first { it.isSignedIn }
+
+            assertEquals("Couldn't load favorites", state.favoritesError)
+            assertEquals("Couldn't load notifications", state.subscriptionsError)
+        }
+
+    @Test
+    fun `successful empty fetches show empty lists`() =
+        runTest {
+            every { myTBARepository.observeFavorites() } returns flowOf(emptyList())
+            coEvery { myTBARepository.refreshFavorites() } returns Unit
+            coEvery { myTBARepository.refreshSubscriptions() } returns Unit
+
+            val state = viewModel().uiState.first { it.isSignedIn }
+
+            assertNull(state.favoritesError)
+            assertNull(state.subscriptionsError)
+        }
+
+    @Test
+    fun `failed fetch keeps showing cached favorites`() =
+        runTest {
+            val cached = listOf(Favorite(modelKey = "frc254", modelType = ModelType.TEAM))
+            every { myTBARepository.observeFavorites() } returns flowOf(cached)
+            coEvery { myTBARepository.refreshFavorites() } throws MyTBAServerException(401, "")
+            coEvery { myTBARepository.refreshSubscriptions() } returns Unit
+
+            val state = viewModel().uiState.first { it.isSignedIn }
+
+            assertEquals(cached, state.favorites)
+            assertNull(state.favoritesError)
+        }
+}

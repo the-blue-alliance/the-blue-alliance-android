@@ -14,10 +14,13 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -41,6 +44,9 @@ class MyTBAViewModel
         eventRepository: EventRepository,
         matchRepository: MatchRepository,
     ) : RefreshableViewModel() {
+        private val favoritesOutcome = MutableStateFlow(RefreshOutcome.PENDING)
+        private val subscriptionsOutcome = MutableStateFlow(RefreshOutcome.PENDING)
+
         private val displayNames: Flow<Map<String, String>> =
             combine(
                 myTBARepository.observeFavorites(),
@@ -83,7 +89,14 @@ class MyTBAViewModel
                 myTBARepository.observeFavorites(),
                 myTBARepository.observeSubscriptions(),
                 displayNames,
-            ) { user, favorites, subscriptions, displayNames ->
+                combine(favoritesOutcome, subscriptionsOutcome, ::Pair),
+            ) {
+                user,
+                favorites,
+                subscriptions,
+                displayNames,
+                (favoritesResult, subscriptionsResult),
+                ->
                 MyTBAUiState(
                     isSignedIn = user != null,
                     userName = user?.displayName,
@@ -93,6 +106,14 @@ class MyTBAViewModel
                     subscriptions = subscriptions,
                     displayNames = displayNames,
                     canPinShortcuts = shortcutManager.canPinShortcuts(),
+                    favoritesError =
+                        "Couldn't load favorites".takeIf {
+                            favorites.isEmpty() && favoritesResult == RefreshOutcome.FAILED
+                        },
+                    subscriptionsError =
+                        "Couldn't load notifications".takeIf {
+                            subscriptions.isEmpty() && subscriptionsResult == RefreshOutcome.FAILED
+                        },
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MyTBAUiState())
 
@@ -103,6 +124,8 @@ class MyTBAViewModel
                     .map { it != null }
                     .distinctUntilChanged()
                     .collect { signedIn ->
+                        favoritesOutcome.value = RefreshOutcome.PENDING
+                        subscriptionsOutcome.value = RefreshOutcome.PENDING
                         if (signedIn) {
                             launch {
                                 try {
@@ -160,8 +183,8 @@ class MyTBAViewModel
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
                 refreshing(
-                    { myTBARepository.refreshFavorites() },
-                    { myTBARepository.refreshSubscriptions() },
+                    { tracked(favoritesOutcome) { myTBARepository.refreshFavorites() } },
+                    { tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() } },
                 )
             }
         }
@@ -170,10 +193,30 @@ class MyTBAViewModel
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
                 when (tab) {
-                    MyTBATab.FAVORITES -> refreshing({ myTBARepository.refreshFavorites() })
+                    MyTBATab.FAVORITES ->
+                        refreshing({
+                            tracked(favoritesOutcome) { myTBARepository.refreshFavorites() }
+                        })
                     MyTBATab.NOTIFICATIONS ->
-                        refreshing({ myTBARepository.refreshSubscriptions() })
+                        refreshing({
+                            tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() }
+                        })
                 }
+            }
+        }
+
+        private suspend fun tracked(
+            outcome: MutableStateFlow<RefreshOutcome>,
+            task: suspend () -> Unit,
+        ) {
+            try {
+                task()
+                outcome.value = RefreshOutcome.SUCCEEDED
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                outcome.value = RefreshOutcome.FAILED
+                throw e
             }
         }
 
