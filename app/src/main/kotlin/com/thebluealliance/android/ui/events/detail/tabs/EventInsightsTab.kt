@@ -338,13 +338,14 @@ private fun StatSelectorDialog(
     onDismiss: () -> Unit,
     onSelect: (StatType, InputMode) -> Unit,
 ) {
-    // The dialog is its own window, so read the input mode the choice was made with from it.
-    val inputModeManager = LocalInputModeManager.current
-    val onSelect: (StatType) -> Unit = { onSelect(it, inputModeManager.inputMode) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Stat Type") },
         text = {
+            // The dialog is its own window with its own input mode: read the mode the choice was
+            // made with here, inside the dialog, not from the screen behind it.
+            val inputModeManager = LocalInputModeManager.current
+            val onSelect: (StatType) -> Unit = { onSelect(it, inputModeManager.inputMode) }
             LazyColumn(modifier = Modifier.selectableGroup()) {
                 item {
                     StatTypeOption(

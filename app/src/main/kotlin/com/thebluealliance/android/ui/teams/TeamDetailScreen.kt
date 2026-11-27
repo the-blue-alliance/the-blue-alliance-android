@@ -119,7 +119,7 @@ fun TeamDetailScreen(
         eventsFocus,
         current = selectedYear,
         hasContent = !uiState.events.isNullOrEmpty(),
-        controlShown = uiState.events?.isEmpty() == true,
+        controlShown = previousYear != null && uiState.events?.isEmpty() == true,
     )
     val hasMediaTiles =
         uiState.media?.any { it.type != "avatar" && mediaUrl(it.type, it.foreignKey) != null }
@@ -127,7 +127,7 @@ fun TeamDetailScreen(
         mediaFocus,
         current = selectedYear,
         hasContent = hasMediaTiles == true,
-        controlShown = uiState.media?.none { it.type != "avatar" } == true,
+        controlShown = previousYear != null && uiState.media?.none { it.type != "avatar" } == true,
     )
     val pagerState =
         rememberPagerState(initialPage = initialTab, pageCount = { TeamDetailTab.entries.size })

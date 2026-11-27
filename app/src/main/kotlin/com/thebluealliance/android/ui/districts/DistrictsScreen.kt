@@ -68,7 +68,7 @@ fun DistrictsScreen(
         seasonFocus,
         current = selectedYear,
         hasContent = uiState is UiState.Success,
-        controlShown = uiState is UiState.Empty,
+        controlShown = uiState is UiState.Empty && selectedYear > FIRST_DISTRICT_YEAR,
     )
 
     // Reset scroll position when year changes (but not on initial composition/back navigation)
