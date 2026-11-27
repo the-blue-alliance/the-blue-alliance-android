@@ -26,6 +26,7 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.handOverListItems
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -68,7 +69,8 @@ fun AboutScreen(
                         .fillMaxSize()
                         .pageBackground()
                         // Each library row is clickable, but the rows take no modifier of their own.
-                        .handOverListItems(listState, readingPadding) { it !in BuildInfoKeys },
+                        .handOverListItems(listState, readingPadding) { it !in BuildInfoKeys }
+                        .verticalScrollbar(listState, readingPadding),
                 contentPadding = readingPadding,
                 header = { buildInfoSection() },
             )
