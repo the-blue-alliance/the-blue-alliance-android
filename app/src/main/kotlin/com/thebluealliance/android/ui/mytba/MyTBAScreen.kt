@@ -333,7 +333,10 @@ private fun FavoritesTab(
     onRemoveFavorite: (Favorite) -> Unit,
 ) {
     if (favorites.isEmpty()) {
-        EmptyTabMessage(title = "No favorites yet")
+        EmptyTabMessage(
+            title = "No favorites yet",
+            hint = "Tap the star on any team or event to add it here.",
+        )
         return
     }
     ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
@@ -365,7 +368,10 @@ private fun FavoritesTab(
 }
 
 @Composable
-private fun EmptyTabMessage(title: String) {
+private fun EmptyTabMessage(
+    title: String,
+    hint: String,
+) {
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -374,7 +380,7 @@ private fun EmptyTabMessage(title: String) {
         ) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
             Text(
-                text = "Tap the star on any team or event to add it here.",
+                text = hint,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -413,7 +419,10 @@ private fun NotificationsTab(
     onRemoveSubscription: (Subscription) -> Unit,
 ) {
     if (subscriptions.isEmpty()) {
-        EmptyTabMessage(title = "No notifications yet")
+        EmptyTabMessage(
+            title = "No notifications yet",
+            hint = "Tap the bell on any team or event to add it here.",
+        )
         return
     }
     ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
