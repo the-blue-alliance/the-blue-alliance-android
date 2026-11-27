@@ -29,7 +29,6 @@ import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -68,6 +67,7 @@ import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.LocalDetailPaneChrome
 import com.thebluealliance.android.ui.components.MediaGridItem
@@ -206,7 +206,7 @@ fun MatchDetailScreen(
             }
         },
     ) { innerPadding ->
-        PullToRefreshBox(
+        TouchPullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = viewModel::refresh,
             modifier =

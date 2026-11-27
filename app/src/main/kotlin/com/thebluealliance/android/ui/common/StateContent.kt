@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.common
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
@@ -20,7 +19,7 @@ fun <T> StateContent(
     empty: @Composable () -> Unit = { EmptyBox("Nothing here yet") },
     content: @Composable (T) -> Unit,
 ) {
-    PullToRefreshBox(
+    TouchPullToRefreshBox(
         // Suppress the pull spinner during the initial load; LoadingBox already shows one.
         isRefreshing = isRefreshing && state !is UiState.Loading,
         onRefresh = onRefresh,

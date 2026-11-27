@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import com.thebluealliance.android.domain.model.DistrictEventPoints
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -149,7 +149,7 @@ fun DistrictDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
-            PullToRefreshBox(
+            TouchPullToRefreshBox(
                 isRefreshing =
                     isRefreshing && uiState.eventSections != null && uiState.rankings != null,
                 onRefresh = { viewModel.refreshTab(DistrictDetailTab.entries[page]) },

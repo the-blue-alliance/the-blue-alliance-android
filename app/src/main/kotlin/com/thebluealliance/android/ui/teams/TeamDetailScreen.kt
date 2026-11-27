@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,6 +58,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.previousSeason
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
@@ -270,7 +270,7 @@ fun TeamDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
-            PullToRefreshBox(
+            TouchPullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
                 onRefresh = { viewModel.refreshTab(TeamDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize(),
