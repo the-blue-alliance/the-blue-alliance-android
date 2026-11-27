@@ -65,17 +65,25 @@ internal fun isFocusKey(key: Key): Boolean =
 
 /**
  * Wraps the window's regions so that the first keyboard focus starts at [entry]'s navigation
- * region when one is showing (see [isFirstKeyboardFocus]).
+ * region when [navigationShown] (see [isFirstKeyboardFocus]).
  */
-fun Modifier.focusEntersAt(entry: WindowFocusEntry): Modifier =
+fun Modifier.focusEntersAt(
+    entry: WindowFocusEntry,
+    navigationShown: Boolean,
+): Modifier =
     this
         .onPreviewKeyEvent { event ->
-            event.type == KeyEventType.KeyDown &&
-                isFocusKey(event.key) &&
-                causedEntry(event.nativeKeyEvent.eventTime, entry.enteredAt)
+            val swallow =
+                event.type == KeyEventType.KeyDown &&
+                    isFocusKey(event.key) &&
+                    causedEntry(event.nativeKeyEvent.eventTime, entry.enteredAt)
+            // One entry swallows one key, however close the next one comes.
+            if (swallow) entry.enteredAt = -1L
+            swallow
         }.focusProperties {
             onEnter = {
-                if (isFirstKeyboardFocus(requestedFocusDirection) &&
+                if (navigationShown &&
+                    isFirstKeyboardFocus(requestedFocusDirection) &&
                     entry.navigation.requestFocus()
                 ) {
                     entry.enteredAt = SystemClock.uptimeMillis()

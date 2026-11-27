@@ -159,6 +159,7 @@ fun TBANavigation(
 
     NavigationFrame(
         showRail = useRail,
+        navigationShown = useRail || bottomBarShown,
         focusEntry = focusEntry,
         rail = {
             TBANavigationRail(
@@ -563,6 +564,7 @@ fun TBANavigation(
 @Composable
 private fun NavigationFrame(
     showRail: Boolean,
+    navigationShown: Boolean,
     focusEntry: WindowFocusEntry,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
@@ -573,7 +575,7 @@ private fun NavigationFrame(
             modifier =
                 modifier
                     .then(if (showRail) Modifier.statusBarStrip() else Modifier)
-                    .focusEntersAt(focusEntry),
+                    .focusEntersAt(focusEntry, navigationShown),
         ) {
             AnimatedVisibility(
                 visible = showRail,
