@@ -209,7 +209,7 @@ class TbaDeepLinksTest {
             listOf(Screen.Events(2024)),
             match("https://www.thebluealliance.com/events/2024/district"),
         )
-        assertEquals(listOf(Screen.Events()), match("https://www.thebluealliance.com/events/abc"))
+        assertEquals(listOf(Screen.Events()), match("https://www.thebluealliance.com/events/20x4"))
     }
 
     @Test
