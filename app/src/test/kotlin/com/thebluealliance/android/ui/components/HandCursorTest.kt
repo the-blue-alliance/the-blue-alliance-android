@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.unit.dp
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -28,6 +29,8 @@ class HandCursorTest {
         val header =
             Modifier.sortableHeader(
                 shape = RoundedCornerShape(8),
+                gutter = 8.dp,
+                labelAtEnd = false,
                 label = "Rank",
                 sorted = false,
                 ascending = true,
@@ -41,14 +44,67 @@ class HandCursorTest {
     }
 
     @Test
-    fun `arrowCursor sets the default pointer`() {
+    fun `a disabled control keeps the arrow`() {
+        assertFalse(Modifier.handCursor(enabled = false).showsHand())
+    }
+
+    @Test
+    fun `the hand shows over a clickable item inside the column`() {
         assertTrue(
-            Modifier.arrowCursor().any { it == Modifier.pointerHoverIcon(PointerIcon.Default) },
+            isOverListItem(
+                x = 500f,
+                y = 150f,
+                left = 100,
+                right = 900,
+                items =
+                    listOf(
+                        100 until 200,
+                    ),
+            ),
         )
     }
 
     @Test
-    fun `a disabled control keeps the arrow`() {
-        assertFalse(Modifier.handCursor(enabled = false).showsHand())
+    fun `the side margins keep the arrow`() {
+        assertFalse(
+            isOverListItem(
+                x = 50f,
+                y = 150f,
+                left = 100,
+                right = 900,
+                items =
+                    listOf(
+                        100 until 200,
+                    ),
+            ),
+        )
+        assertFalse(
+            isOverListItem(
+                x = 950f,
+                y = 150f,
+                left = 100,
+                right = 900,
+                items =
+                    listOf(
+                        100 until 200,
+                    ),
+            ),
+        )
+    }
+
+    @Test
+    fun `blank space past the last item keeps the arrow`() {
+        assertFalse(
+            isOverListItem(
+                x = 500f,
+                y = 250f,
+                left = 100,
+                right = 900,
+                items =
+                    listOf(
+                        100 until 200,
+                    ),
+            ),
+        )
     }
 }

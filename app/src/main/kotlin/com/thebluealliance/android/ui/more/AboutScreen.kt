@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.more
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,8 +22,8 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
-import com.thebluealliance.android.ui.components.arrowCursor
 import com.thebluealliance.android.ui.components.handCursor
+import com.thebluealliance.android.ui.components.handOverListItems
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -58,15 +59,16 @@ fun AboutScreen(
                 .padding(innerPadding.withoutBottom())
                 .fillMaxSize(),
         ) { readingPadding ->
+            val listState = rememberLazyListState()
             LibrariesContainer(
                 libraries = libs,
+                lazyListState = listState,
                 modifier =
                     Modifier
                         .fillMaxSize()
                         .pageBackground()
-                        // Every library row is clickable, and the rows take no modifier, so the
-                        // list shows the hand and the build info above it opts back out.
-                        .handCursor(),
+                        // Each library row is clickable, but the rows take no modifier of their own.
+                        .handOverListItems(listState, readingPadding) { it !in BuildInfoKeys },
                 contentPadding = readingPadding,
                 header = { buildInfoSection() },
             )
@@ -74,14 +76,16 @@ fun AboutScreen(
     }
 }
 
+/** Keys of the build info items above the library rows, which aren't clickable. */
+private val BuildInfoKeys =
+    setOf("build-header", "build-version", "build-commit", "build-time", "libraries-header")
+
 private fun LazyListScope.buildInfoSection() {
-    item(key = "build-header") { SectionHeader("Build", Modifier.arrowCursor()) }
+    item(key = "build-header") { SectionHeader("Build") }
     item(key = "build-version") { BuildInfoRow("Version", BuildConfig.VERSION_NAME) }
     item(key = "build-commit") { BuildInfoRow("Commit", BuildConfig.GIT_HASH) }
     item(key = "build-time") { BuildInfoRow("Built", buildTimeLabel()) }
-    item(key = "libraries-header") {
-        SectionHeader("Open source libraries", Modifier.arrowCursor())
-    }
+    item(key = "libraries-header") { SectionHeader("Open source libraries") }
 }
 
 @Composable
@@ -91,7 +95,6 @@ private fun BuildInfoRow(
 ) {
     ListItem(
         headlineContent = { Text(label) },
-        modifier = Modifier.arrowCursor(),
         supportingContent = { Text(value) },
     )
 }
