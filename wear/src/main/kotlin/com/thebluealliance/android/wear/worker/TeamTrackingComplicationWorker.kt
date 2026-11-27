@@ -160,7 +160,10 @@ class TeamTrackingComplicationWorker
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update complications", e)
                 trackerPrefs.lastRefreshFailed = true
-                Result.retry()
+                when (RefreshFailure.of(e)) {
+                    RefreshFailure.TEAM_NOT_FOUND -> Result.failure()
+                    RefreshFailure.TRANSIENT -> Result.retry()
+                }
             } finally {
                 // Close any batch a failed updateAppTracker left open, so this write commits.
                 trackerPrefs.applyBatch()

@@ -33,6 +33,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import com.thebluealliance.android.wear.BuildConfig
 import com.thebluealliance.android.wear.R
+import com.thebluealliance.android.wear.tracker.TeamNumber
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -53,7 +54,7 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
         // silently repoint the tracked team. Normalize to digits so the intent path cannot bypass
         // the validation the on-screen field applies.
         if (BuildConfig.DEBUG) {
-            val intentTeam = intent?.getStringExtra("team_number")?.let(::normalizeTeamNumber)
+            val intentTeam = intent?.getStringExtra("team_number")?.let(TeamNumber::normalize)
             if (!intentTeam.isNullOrBlank()) {
                 saveAndFinish(intentTeam)
                 return
@@ -109,9 +110,6 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
     }
 }
 
-/** Strip everything but digits, matching what the on-screen team-number field accepts. */
-private fun normalizeTeamNumber(raw: String): String = raw.filter { it.isDigit() }
-
 @Composable
 private fun ConfigScreen(
     initialTeam: String,
@@ -120,8 +118,8 @@ private fun ConfigScreen(
     val textFieldState = rememberTextFieldState()
 
     fun save() {
-        val value = normalizeTeamNumber(textFieldState.text.toString())
-        onSave(value.ifBlank { initialTeam })
+        val value = TeamNumber.normalize(textFieldState.text.toString())
+        onSave(value ?: initialTeam)
     }
 
     Column(
