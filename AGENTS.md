@@ -23,6 +23,17 @@ scripts/emu screenshot artifacts/<name>.png
 `top` to confirm which activity is in front, `qs` to open Quick Settings (it waits
 until the shade has focus, so a following `find` sees the tiles).
 
+Mouse and keyboard (`scripts/emu -h` for every flag):
+
+- `emu hover <text>` parks a stylus: enough for hover highlights (what a Quest laser looks like).
+- `emu mouse …` drives a real virtual USB mouse. Use it for pointer icons, right-click and the wheel:
+  `mouse move <text> --shot a.png` (pointer and icon stay in the shot), `mouse click <text> --right`,
+  `mouse scroll down 3 --at <text>` (`left`/`right` use the horizontal wheel), `mouse drag x1 y1 x2 y2`,
+  `mouse cursor` (prints the icon: `HAND`, `TEXT`, `ARROW`), `mouse stop`. The device starts on first
+  use. `hover` and `mouse` release each other.
+- `emu key tab`, `emu key ctrl+f`, `emu key shift+tab esc`, `emu key meta+slash`.
+- Coordinates are screenshot pixels, including under a `wm size` override.
+
 ### Getting to a screen fast
 
 Open screens with a deep link, not taps. It takes about a second, and it doesn't flake the way UI-dump-then-tap does:
@@ -35,6 +46,7 @@ scripts/navigate.sh /events/2024            # Events list for a year
 scripts/navigate.sh /teams                  # also /regional_advancement and /event/<key>/pitmap
 ```
 
+- `navigate.sh` pins the intent to the installed TBA app (debug first; `TBA_PACKAGE` overrides), so links never open in Chrome.
 - Only use `scripts/emu find`/`tap` for states a URL can't express, such as a tab, an open menu or a selection.
 - Capture with `scripts/emu screenshot`.
 - For window sizes, use `adb shell wm size 2400x1080 && adb shell wm density 420` for phone landscape. Reset with `wm size reset; wm density reset`.
