@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -58,6 +59,9 @@ fun SearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    // Search is a temporary surface (Ctrl+F opens it over any screen), so with focus anywhere but
+    // the field, Esc closes it. The field handles Esc itself first: clear, then leave the field.
+    EscapeHandler(onEscape = onNavigateUp)
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
