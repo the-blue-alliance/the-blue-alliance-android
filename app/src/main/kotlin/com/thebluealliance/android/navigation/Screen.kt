@@ -3,11 +3,11 @@ package com.thebluealliance.android.navigation
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import kotlinx.serialization.Serializable
-import java.time.Year
 
 sealed interface Screen : NavKey {
+    /** The event list for [year], or TBA's current season when null, as the website opens on. */
     @Serializable data class Events(
-        val year: Int = Year.now().value,
+        val year: Int? = null,
     ) : Screen
 
     @Serializable data object Teams : Screen

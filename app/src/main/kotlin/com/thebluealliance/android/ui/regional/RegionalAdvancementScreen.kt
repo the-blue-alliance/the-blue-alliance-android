@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +62,9 @@ import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.Flow
 
+/** The first season TBA published regional advancement rankings for. */
+private const val FIRST_REGIONAL_ADVANCEMENT_YEAR = 2025
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegionalAdvancementScreen(
@@ -99,7 +104,7 @@ fun RegionalAdvancementScreen(
                             if (selectedYear >
                                 0
                             ) {
-                                (maxYear downTo 2025).toList()
+                                (maxYear downTo FIRST_REGIONAL_ADVANCEMENT_YEAR).toList()
                             } else {
                                 emptyList()
                             },
@@ -135,7 +140,22 @@ fun RegionalAdvancementScreen(
                         innerPadding.withoutBottom(),
                     ).fillMaxSize(),
             empty = {
-                EmptyBox("No regional advancement rankings for $selectedYear")
+                EmptyBox(
+                    message = "No regional advancement rankings for $selectedYear",
+                    action =
+                        if (selectedYear > FIRST_REGIONAL_ADVANCEMENT_YEAR) {
+                            {
+                                FilledTonalButton(
+                                    onClick = { viewModel.selectYear(selectedYear - 1) },
+                                    modifier = Modifier.handCursor().heightIn(min = 48.dp),
+                                ) {
+                                    Text("Show ${selectedYear - 1} rankings")
+                                }
+                            }
+                        } else {
+                            null
+                        },
+                )
             },
         ) { rankings ->
             val contentWidths = regionalColumnContentWidths(rankings)
