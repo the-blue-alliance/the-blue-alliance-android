@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.regional
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.navigation.regionalAdvancement
 import com.thebluealliance.android.ui.common.UiState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -77,5 +78,37 @@ class RegionalAdvancementViewModelTest {
         viewModel.selectYear(2019)
         assertEquals(false, viewModel.isRefreshing.value)
         assertEquals(UiState.Empty, viewModel.uiState.value)
+    }
+
+    @Test
+    fun `opens on the year from the link`() {
+        assertEquals(2019, linkedViewModel(2019).selectedYear.value)
+    }
+
+    @Test
+    fun `loads only the year from the link`() {
+        linkedViewModel(2019)
+        coVerify(exactly = 1) { repository.getRegionalRankings(2019) }
+        coVerify(exactly = 1) { repository.getRegionalRankings(any()) }
+    }
+
+    @Test
+    fun `a late default doesn't override the year from the link`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val viewModel = linkedViewModel(2019)
+        default.complete(2025)
+        assertEquals(2019, viewModel.selectedYear.value)
+    }
+
+    /** Opened from /events/regional/[year]; built by parameter type so this compiles before the key is injected. */
+    private fun linkedViewModel(year: Int): RegionalAdvancementViewModel {
+        val navKey = regionalAdvancement(year)
+        val constructor = RegionalAdvancementViewModel::class.java.constructors.single()
+        val args =
+            constructor.parameterTypes.map { type ->
+                listOf(navKey, repository, seasons).first { type.isInstance(it) }
+            }
+        return constructor.newInstance(*args.toTypedArray()) as RegionalAdvancementViewModel
     }
 }

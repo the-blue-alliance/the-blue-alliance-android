@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.components
 import androidx.window.core.layout.WindowSizeClass
 import androidx.window.core.layout.computeWindowSizeClass
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.navigation.regionalAdvancement
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -56,6 +57,15 @@ class TopLevelNavigationTest {
         ).forEach {
             assertEquals(listOf("More"), selectedLabels(it))
         }
+    }
+
+    @Test
+    fun `more tab is selected on regional advancement for any year`() {
+        assertEquals(listOf("More"), selectedLabels(regionalAdvancement(2025)))
+        assertEquals(
+            listOf("More"),
+            railSelectedLabels(regionalAdvancement(2025), Screen.More, true),
+        )
     }
 
     private fun railSelectedLabels(

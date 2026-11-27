@@ -186,6 +186,27 @@ class TbaDeepLinksTest {
     }
 
     @Test
+    fun `regional events deeplink opens regional advancement on that year`() {
+        assertEquals(
+            listOf(Screen.More, regionalAdvancement(2025)),
+            match("https://www.thebluealliance.com/events/regional/2025"),
+        )
+    }
+
+    @Test
+    fun `regional events deeplink without a year opens the default season`() {
+        assertEquals(
+            listOf(Screen.More, regionalAdvancement()),
+            match("https://www.thebluealliance.com/events/regional"),
+        )
+    }
+
+    @Test
+    fun `regional_advancement is not a website url`() {
+        assertNull(match("https://www.thebluealliance.com/regional_advancement"))
+    }
+
+    @Test
     fun `match deeplink sits on its event's matches tab`() {
         assertEquals(
             listOf(
