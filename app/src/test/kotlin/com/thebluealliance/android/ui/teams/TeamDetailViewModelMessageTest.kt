@@ -30,6 +30,7 @@ class TeamDetailViewModelMessageTest {
             navKey = Screen.TeamDetail("frc254"),
             teamRepository = mockk(relaxed = true),
             eventRepository = mockk(relaxed = true),
+            districtRepository = mockk(relaxed = true),
             myTBARepository = myTBA,
             authRepository = auth,
             tbaApi = mockk(relaxed = true),

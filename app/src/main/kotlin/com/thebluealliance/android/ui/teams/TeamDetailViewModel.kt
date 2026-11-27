@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.teams
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.AuthRepository
+import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.SeasonRepository
@@ -34,8 +35,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,6 +56,7 @@ class TeamDetailViewModel
         @Assisted val navKey: Screen.TeamDetail,
         private val teamRepository: TeamRepository,
         private val eventRepository: EventRepository,
+        private val districtRepository: DistrictRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
         private val tbaApi: TbaApi,
@@ -86,7 +92,37 @@ class TeamDetailViewModel
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
 
-        private val state: Flow<TeamDetailUiState> =
+        /** District rankings already fetched by this screen, so revisits read the cache. */
+        private val fetchedDistrictKeys = mutableSetOf<String>()
+
+        /** The districts the selected year's events point at; rankings say which is the team's. */
+        private var currentDistrictKeys: List<String> = emptyList()
+
+        private val districtStanding: Flow<TeamDistrictStanding?> =
+            selection.year.flatMapLatest { year ->
+                eventRepository
+                    .observeTeamEvents(teamKey, year)
+                    .map { teamDistrictKeys(it, year) }
+                    .distinctUntilChanged()
+                    .onEach { keys ->
+                        currentDistrictKeys = keys
+                        refreshDistrictRankings(year, keys.filter { fetchedDistrictKeys.add(it) })
+                    }.flatMapLatest { keys -> observeDistrictStanding(keys) }
+            }
+
+        private fun observeDistrictStanding(keys: List<String>): Flow<TeamDistrictStanding?> {
+            if (keys.isEmpty()) return flowOf(null)
+            val snapshots =
+                keys.map { key ->
+                    combine(
+                        districtRepository.observeDistrict(key),
+                        districtRepository.observeDistrictRankings(key),
+                    ) { district, rankings -> DistrictRankingsSnapshot(key, district, rankings) }
+                }
+            return combine(snapshots) { teamDistrictStanding(teamKey, it.toList()) }
+        }
+
+        private val baseState: Flow<TeamDetailUiState> =
             combine(
                 teamRepository.observeTeam(teamKey),
                 selection.year.flatMapLatest { year ->
@@ -107,8 +143,46 @@ class TeamDetailViewModel
                 )
             }
 
+        private val state: Flow<TeamDetailUiState> =
+            combine(baseState, districtStanding) { base, standing ->
+                base.copy(districtStanding = standing)
+            }
+
         val uiState: StateFlow<TeamDetailUiState> =
             state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamDetailUiState())
+
+        /**
+         * Fetches [keys]' rankings, plus the year's districts if a name is missing. Quietly: the Info
+         * row just stays hidden if this fails, so it doesn't drive the refresh indicator.
+         */
+        private fun refreshDistrictRankings(
+            year: Int,
+            keys: List<String>,
+        ) {
+            if (keys.isEmpty()) return
+            viewModelScope.launch {
+                keys.forEach { key ->
+                    launch { quietly { districtRepository.refreshDistrictRankings(key) } }
+                }
+                launch {
+                    quietly {
+                        if (keys.any { districtRepository.observeDistrict(it).first() == null }) {
+                            districtRepository.refreshDistrictsForYear(year)
+                        }
+                    }
+                }
+            }
+        }
+
+        private suspend fun quietly(task: suspend () -> Unit) {
+            try {
+                task()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                // The district row stays hidden.
+            }
+        }
 
         val isFavorite: StateFlow<Boolean> =
             myTBARepository
@@ -237,6 +311,7 @@ class TeamDetailViewModel
                 TeamDetailTab.EVENTS to { eventRepository.refreshTeamEvents(teamKey, year) },
                 TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
             )
+            refreshDistrictRankings(year, currentDistrictKeys)
         }
 
         /** Retries a tab's failed load; with no team cached, every tab failed, so retry them all. */
@@ -254,6 +329,7 @@ class TeamDetailViewModel
                         year,
                         TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
                     )
+                    refreshDistrictRankings(year, currentDistrictKeys)
                 }
                 TeamDetailTab.EVENTS ->
                     refreshSeasonTabs(

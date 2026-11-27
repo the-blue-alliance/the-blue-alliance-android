@@ -55,6 +55,7 @@ import com.thebluealliance.android.ui.components.isSelectedFor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.useNavigationRail
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
+import com.thebluealliance.android.ui.districts.DistrictDetailTab
 import com.thebluealliance.android.ui.districts.DistrictDetailViewModel
 import com.thebluealliance.android.ui.districts.DistrictsScreen
 import com.thebluealliance.android.ui.events.EventsScreen
@@ -446,6 +447,7 @@ fun TBANavigation(
                                         navigator.navigate(Screen.TeamDetail(teamKey))
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                                    initialTab = districtDetail.initialTab,
                                 )
                             }
                             entry<Screen.TeamDetail> { teamDetail ->
@@ -468,6 +470,14 @@ fun TBANavigation(
                                         )
                                     },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
+                                    onNavigateToDistrictRankings = { districtKey ->
+                                        navigator.navigate(
+                                            Screen.DistrictDetail(
+                                                districtKey,
+                                                initialTab = DistrictDetailTab.RANKINGS,
+                                            ),
+                                        )
+                                    },
                                     initialTab = teamDetail.initialTab,
                                 )
                             }

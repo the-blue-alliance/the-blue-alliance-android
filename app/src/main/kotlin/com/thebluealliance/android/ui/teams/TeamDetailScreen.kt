@@ -48,7 +48,13 @@ import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.core.theme.TbaAllianceColors
@@ -102,6 +108,7 @@ fun TeamDetailScreen(
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToSearch: () -> Unit,
+    onNavigateToDistrictRankings: (districtKey: String) -> Unit = {},
     initialTab: Int = 0,
     viewModel: TeamDetailViewModel,
 ) {
@@ -351,6 +358,8 @@ fun TeamDetailScreen(
                         InfoTab(
                             team = uiState.team,
                             media = uiState.media,
+                            districtStanding = uiState.districtStanding,
+                            onNavigateToDistrictRankings = onNavigateToDistrictRankings,
                             innerPadding = bottomPadding,
                         )
                     TeamDetailTab.EVENTS ->
@@ -415,6 +424,8 @@ private fun TeamDetailTab.loadErrorMessage(): String =
 private fun InfoTab(
     team: Team?,
     media: List<Media>?,
+    districtStanding: TeamDistrictStanding?,
+    onNavigateToDistrictRankings: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (team == null) {
@@ -528,8 +539,61 @@ private fun InfoTab(
                     )
                 }
             }
+            if (districtStanding != null) {
+                item(key = "district_standing") {
+                    DistrictStandingText(
+                        standing = districtStanding,
+                        onNavigateToDistrictRankings = onNavigateToDistrictRankings,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+            }
         }
     }
+}
+
+/**
+ * "District: FIRST in Michigan · Rank 12 · 187 pts", the district name an inline link to its
+ * rankings. A text link, not a 48dp row: it sits in a line of prose like the rows around it.
+ */
+@Composable
+private fun DistrictStandingText(
+    standing: TeamDistrictStanding,
+    onNavigateToDistrictRankings: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val linkColor = MaterialTheme.colorScheme.primary
+    val text =
+        remember(standing, linkColor, onNavigateToDistrictRankings) {
+            buildAnnotatedString {
+                append("District: ")
+                withLink(
+                    LinkAnnotation.Clickable(
+                        tag = "district_rankings",
+                        styles =
+                            TextLinkStyles(
+                                style =
+                                    SpanStyle(
+                                        color = linkColor,
+                                        textDecoration = TextDecoration.Underline,
+                                    ),
+                            ),
+                        linkInteractionListener = {
+                            onNavigateToDistrictRankings(standing.districtKey)
+                        },
+                    ),
+                ) {
+                    append(standing.districtName)
+                }
+                append(" \u00b7 ")
+                append(standing.rankAndPoints())
+            }
+        }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = modifier,
+    )
 }
 
 @Composable
