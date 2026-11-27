@@ -82,6 +82,7 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
@@ -430,6 +431,7 @@ private fun EventInfo(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .returnsFocus()
                         .handCursor()
                         .clickable(onClickLabel = "View event", role = Role.Button) {
                             onNavigateToEvent(eventKey)

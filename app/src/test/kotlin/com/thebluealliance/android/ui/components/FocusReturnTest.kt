@@ -79,6 +79,32 @@ class FocusReturnTest {
     }
 
     @Test
+    fun `a pending return survives recreation`() {
+        list.focusChanged(ROW, focused = true)
+        focusReturn.onNavigate()
+        val saved = list.savedReturn()
+        val recreated = FocusReturn().entry("Events")
+        recreated.restoreReturn(saved!!)
+        assertEquals(ROW, recreated.takeReturn(InputMode.Keyboard))
+    }
+
+    @Test
+    fun `a spent return is not saved`() {
+        list.focusChanged(ROW, focused = true)
+        focusReturn.onNavigate()
+        list.takeReturn(InputMode.Keyboard)
+        assertNull(list.savedReturn())
+    }
+
+    @Test
+    fun `restoring keeps a newer return`() {
+        list.focusChanged(OTHER_ROW, focused = true)
+        focusReturn.onNavigate()
+        list.restoreReturn(ROW)
+        assertEquals(OTHER_ROW, list.takeReturn(InputMode.Keyboard))
+    }
+
+    @Test
     fun `focus returns only in keyboard mode`() {
         assertTrue(returnsFocusIn(InputMode.Keyboard))
         assertFalse(returnsFocusIn(InputMode.Touch))

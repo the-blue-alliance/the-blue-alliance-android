@@ -40,6 +40,14 @@ class EntryFocus internal constructor(
         }
     }
 
+    /** The pending return to keep across activity recreation, or null when there is none. */
+    internal fun savedReturn(): Long? = returnTo
+
+    /** Restores a return saved by [savedReturn] after the activity was recreated. */
+    internal fun restoreReturn(key: Long) {
+        if (returnTo == null) returnTo = key
+    }
+
     /** Takes the launcher to focus now that the entry shows again, if focus should go back. */
     internal fun takeReturn(inputMode: InputMode): Long? {
         val key = returnTo ?: return null
