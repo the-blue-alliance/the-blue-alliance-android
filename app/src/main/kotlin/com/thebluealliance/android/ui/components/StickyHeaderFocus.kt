@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -39,17 +40,24 @@ class StickyHeaderFocusOrder internal constructor(
     internal val list = FocusRequester()
     internal var listHasFocus = false
 
+    /**
+     * How many headers are composed right now. A list can have none at all (Teams without
+     * favorites), and then Tab moves through the rows as usual.
+     */
+    internal var attachedHeaders = 0
+
     /** The list itself takes focus only for the moment [leaveBackward] needs it. */
     internal var listFocusable = false
 
     /** Focuses the header's first target, the way Tab reaches it. */
-    internal fun focusHeaderStart(): Boolean = header.requestFocus()
+    internal fun focusHeaderStart(): Boolean = attachedHeaders > 0 && header.requestFocus()
 
     /**
      * Focuses the header's last target, the way Shift+Tab reaches it. A group can't be entered
      * with a one-dimensional direction, so this enters from the end side instead.
      */
-    internal fun focusHeaderEnd(): Boolean = header.requestFocus(headerEndEntry(layoutDirection))
+    internal fun focusHeaderEnd(): Boolean =
+        attachedHeaders > 0 && header.requestFocus(headerEndEntry(layoutDirection))
 
     /**
      * Moves focus to whatever comes before the list. The header is last in placement order, so
@@ -114,7 +122,11 @@ fun Modifier.stickyHeaderFocusOrder(order: StickyHeaderFocusOrder): Modifier =
             }
         }.focusTarget()
 
-/** A sticky header that Tab reaches before the rows under it (see [StickyHeaderFocusOrder]). */
+/**
+ * A sticky header that Tab reaches before the rows under it (see [StickyHeaderFocusOrder]). The
+ * rows must hold focus targets: with none, use [inPlaceStickyHeader], since Tab from the header
+ * would search downward for a row and scroll the list looking for one.
+ */
 fun LazyListScope.tabOrderedStickyHeader(
     focusOrder: StickyHeaderFocusOrder,
     key: Any? = null,
@@ -122,15 +134,35 @@ fun LazyListScope.tabOrderedStickyHeader(
     content: @Composable LazyItemScope.(Int) -> Unit,
 ) {
     stickyHeader(key = key, contentType = contentType) { index ->
-        Box(
-            Modifier
-                .stickyHeaderFocus(focusOrder)
-                .then(KeepStuckHeaderInPlace),
-            propagateMinConstraints = true,
-        ) {
-            content(index)
+        DisposableEffect(focusOrder) {
+            focusOrder.attachedHeaders++
+            onDispose { focusOrder.attachedHeaders-- }
         }
+        StuckHeaderBox(Modifier.stickyHeaderFocus(focusOrder)) { content(index) }
     }
+}
+
+/**
+ * A sticky header over rows that take no focus (a table of figures). The header's targets are
+ * then the list's only ones, so Tab already reaches them in order; this only keeps a focused
+ * header from scrolling the list (see [KeepStuckHeaderInPlace]).
+ */
+fun LazyListScope.inPlaceStickyHeader(
+    key: Any? = null,
+    contentType: Any? = null,
+    content: @Composable LazyItemScope.(Int) -> Unit,
+) {
+    stickyHeader(key = key, contentType = contentType) { index ->
+        StuckHeaderBox(Modifier) { content(index) }
+    }
+}
+
+@Composable
+private fun StuckHeaderBox(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(modifier.then(KeepStuckHeaderInPlace), propagateMinConstraints = true) { content() }
 }
 
 private fun Modifier.stickyHeaderFocus(order: StickyHeaderFocusOrder): Modifier =

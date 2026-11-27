@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.components
 
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.LayoutDirection
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -40,5 +41,18 @@ class StickyHeaderFocusTest {
     fun `shift tab enters the header at its end side`() {
         assertEquals(FocusDirection.Left, headerEndEntry(LayoutDirection.Ltr))
         assertEquals(FocusDirection.Right, headerEndEntry(LayoutDirection.Rtl))
+    }
+
+    @Test
+    fun `a list without a composed header leaves focus to the rows`() {
+        val order = StickyHeaderFocusOrder(NoFocusManager, LayoutDirection.Ltr)
+        assertFalse(order.focusHeaderStart())
+        assertFalse(order.focusHeaderEnd())
+    }
+
+    private object NoFocusManager : FocusManager {
+        override fun clearFocus(force: Boolean) = Unit
+
+        override fun moveFocus(focusDirection: FocusDirection): Boolean = false
     }
 }
