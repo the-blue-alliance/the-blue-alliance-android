@@ -9,6 +9,7 @@ import com.thebluealliance.android.data.local.entity.FavoriteEntity
 import com.thebluealliance.android.data.local.entity.SubscriptionEntity
 import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.dto.ModelPreferenceRequestDto
+import com.thebluealliance.android.data.remote.dto.SubscriptionDto
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Subscription
 import kotlinx.coroutines.flow.Flow
@@ -88,47 +89,14 @@ class MyTBARepository
         }
 
         suspend fun refreshSubscriptions() {
-            val response = clientApi.listSubscriptions()
-            ensureListSuccess(response.code, response.message)
-            db.withTransaction {
-                subscriptionDao.deleteAll()
-                subscriptionDao.insertAll(
-                    response.subscriptions.map {
-                        SubscriptionEntity(
-                            modelKey = it.modelKey,
-                            modelType = it.modelType,
-                            notifications = it.notifications.joinToString(","),
-                        )
-                    },
-                )
-            }
+            storeSubscriptions(fetchSubscriptions())
         }
 
         suspend fun addFavorite(
             modelKey: String,
             modelType: Int,
         ) {
-            val response =
-                clientApi.updateModelPreferences(
-                    ModelPreferenceRequestDto(
-                        modelKey = modelKey,
-                        modelType = modelType,
-                        deviceKey = deviceRegistrationManager.deviceUuid,
-                        favorite = true,
-                    ),
-                )
-            Log.d(
-                "MyTBARepository",
-                "addFavorite: code=${response.code} message=${response.message}",
-            )
-            if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                try {
-                    refreshFavorites()
-                } catch (_: Exception) {
-                }
-                throw MyTBAServerException(response.code, response.message)
-            }
-            ensureUpdateSuccess(response.code, response.message)
+            setFavorite(modelKey, modelType, favorite = true)
             favoriteDao.insertAll(
                 listOf(FavoriteEntity(modelKey = modelKey, modelType = modelType)),
             )
@@ -138,15 +106,37 @@ class MyTBARepository
             modelKey: String,
             modelType: Int,
         ) {
+            setFavorite(modelKey, modelType, favorite = false)
+            favoriteDao.delete(modelKey, modelType)
+        }
+
+        // setPreferences replaces both the favorite and the subscription, and an empty
+        // notification list deletes the subscription, so send the server's current types.
+        private suspend fun setFavorite(
+            modelKey: String,
+            modelType: Int,
+            favorite: Boolean,
+        ) {
+            val subscriptions = fetchSubscriptions()
+            val notifications =
+                subscriptions
+                    .firstOrNull { it.modelKey == modelKey && it.modelType == modelType }
+                    ?.notifications
+                    .orEmpty()
             val response =
                 clientApi.updateModelPreferences(
                     ModelPreferenceRequestDto(
                         modelKey = modelKey,
                         modelType = modelType,
                         deviceKey = deviceRegistrationManager.deviceUuid,
-                        favorite = false,
+                        favorite = favorite,
+                        notifications = notifications,
                     ),
                 )
+            Log.d(
+                "MyTBARepository",
+                "setFavorite($favorite): code=${response.code} message=${response.message}",
+            )
             if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 try {
                     refreshFavorites()
@@ -155,7 +145,28 @@ class MyTBARepository
                 throw MyTBAServerException(response.code, response.message)
             }
             ensureUpdateSuccess(response.code, response.message)
-            favoriteDao.delete(modelKey, modelType)
+            storeSubscriptions(subscriptions)
+        }
+
+        private suspend fun fetchSubscriptions(): List<SubscriptionDto> {
+            val response = clientApi.listSubscriptions()
+            ensureListSuccess(response.code, response.message)
+            return response.subscriptions
+        }
+
+        private suspend fun storeSubscriptions(subscriptions: List<SubscriptionDto>) {
+            db.withTransaction {
+                subscriptionDao.deleteAll()
+                subscriptionDao.insertAll(
+                    subscriptions.map {
+                        SubscriptionEntity(
+                            modelKey = it.modelKey,
+                            modelType = it.modelType,
+                            notifications = it.notifications.joinToString(","),
+                        )
+                    },
+                )
+            }
         }
 
         suspend fun updatePreferences(
