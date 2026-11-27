@@ -2,7 +2,10 @@ package com.thebluealliance.android.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.LocalRippleThemeConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleDefaults
+import androidx.compose.material3.RippleThemeConfiguration
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -146,6 +149,14 @@ internal val TbaDarkColorScheme =
         onTertiaryFixedVariant = Dark.OnTertiaryFixedVariant,
     )
 
+/**
+ * Keyboard focus draws Material's inset focus ring (a secondary outer stroke over an onSecondary
+ * inner stroke) on every ripple, instead of the faint 10% focus state layer that disappears on
+ * the brand bars. Clickables are only focusable outside touch mode, so touch never shows it.
+ */
+internal val TbaRippleThemeConfiguration: RippleThemeConfiguration =
+    RippleDefaults.InsetFocusRingThemeConfiguration
+
 @Composable
 fun TBATheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -164,6 +175,7 @@ fun TBATheme(
 
     CompositionLocalProvider(
         LocalAllianceColors provides if (darkTheme) DarkAllianceColors else LightAllianceColors,
+        LocalRippleThemeConfiguration provides TbaRippleThemeConfiguration,
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
