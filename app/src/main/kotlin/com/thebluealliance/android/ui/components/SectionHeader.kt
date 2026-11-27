@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -47,7 +46,7 @@ fun SectionHeader(
 ) {
     SectionHeaderRow(
         label = label,
-        modifier = modifier.background(BrandHeaderContainer),
+        modifier = modifier.readingBand(BrandHeaderContainer),
         trailingContent = trailingContent,
     )
 }
@@ -66,7 +65,7 @@ fun SectionHeader(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .background(BrandHeaderContainer)
+                    .readingBand(BrandHeaderContainer)
                     // Only the stuck header opens the jump menu; a disabled clickable on the others
                     // would announce them as unavailable controls.
                     .then(

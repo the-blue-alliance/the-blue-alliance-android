@@ -4,6 +4,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.unit.dp
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -69,6 +70,44 @@ class ReadingWidthTest {
     fun `sheet margins are even whole pixels`() {
         assertEquals(92f, sheetInset(1024f, 840f))
         assertEquals(2f, sheetInset(843f, 840f))
+    }
+
+    @Test
+    fun `margins narrower than the minimum are not drawn`() {
+        val min = MinSheetMargin.value
+        // 850-888dp windows, and 930-968dp beside the 80dp rail, leave 5-23dp margins.
+        listOf(850f, 886f, 930f - 80f, 966f - 80f).forEach {
+            assertFalse(drawsSheetMargins(sheetInset(it, 840f), min), "width $it")
+        }
+    }
+
+    @Test
+    fun `no margins at or below the column width`() {
+        val min = MinSheetMargin.value
+        assertFalse(drawsSheetMargins(sheetInset(840f, 840f), min))
+        assertFalse(drawsSheetMargins(sheetInset(800f, 840f), min))
+    }
+
+    @Test
+    fun `margins at least the minimum are drawn`() {
+        val min = MinSheetMargin.value
+        assertTrue(drawsSheetMargins(sheetInset(888f, 840f), min))
+        assertTrue(drawsSheetMargins(sheetInset(1024f - 80f, 840f), min))
+        assertTrue(drawsSheetMargins(sheetInset(1280f, 840f), min))
+    }
+
+    @Test
+    fun `bands reach the window edges while margins are hidden`() {
+        assertEquals(10f, bandBleed(860f, 840f, 24f))
+        assertEquals(23f, bandBleed(886f, 840f, 24f))
+    }
+
+    @Test
+    fun `bands end at the column beside drawn margins and fill narrow windows unaided`() {
+        assertEquals(0f, bandBleed(888f, 840f, 24f))
+        assertEquals(0f, bandBleed(1280f, 840f, 24f))
+        assertEquals(0f, bandBleed(840f, 840f, 24f))
+        assertEquals(0f, bandBleed(412f, 840f, 24f))
     }
 
     @Test
