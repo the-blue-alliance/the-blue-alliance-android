@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,15 +22,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -54,16 +64,23 @@ data class MediaGridItem(
 /**
  * Returns a thumbnail URL for a media item, or null if the type isn't supported. imgur tiles use
  * its 640px "l" thumbnail rather than the full-size original, which [mediaLinkUrl] opens.
+ *
+ * [large] tiles, one or two to a row, ask for a bigger variant where the source has one: imgur's
+ * 1024px "h", Instagram's 1080px "l" and YouTube's 1280px maxresdefault. YouTube lacks
+ * maxresdefault for some videos, so callers fall back to the small URL when it fails.
  */
 fun mediaUrl(
     type: String,
     foreignKey: String,
+    large: Boolean = false,
 ): String? =
     when (type) {
-        "imgur" -> "https://i.imgur.com/${foreignKey}l.jpg"
+        "imgur" -> "https://i.imgur.com/$foreignKey${if (large) "h" else "l"}.jpg"
         "cdphotothread" -> "https://www.chiefdelphi.com/media/img/$foreignKey"
-        "instagram-image" -> "https://www.instagram.com/p/$foreignKey/media/"
-        "youtube" -> "https://img.youtube.com/vi/$foreignKey/hqdefault.jpg"
+        "instagram-image" ->
+            "https://www.instagram.com/p/$foreignKey/media/${if (large) "?size=l" else ""}"
+        "youtube" ->
+            "https://img.youtube.com/vi/$foreignKey/${if (large) "maxresdefault" else "hqdefault"}.jpg"
         "grabcad" -> null
         "onshape" -> null
         else -> null
@@ -96,7 +113,46 @@ internal fun mediaClickLabel(type: String): String =
     if (type == "youtube") "Open in YouTube" else "Open full image"
 
 /**
+ * Grid columns for [count] media tiles when [columnsThatFit] fit: a lone tile spans the column, two
+ * split it in half, and three or more fill the columns that fit.
+ */
+internal fun mediaColumns(
+    count: Int,
+    columnsThatFit: Int,
+): Int {
+    val fit = columnsThatFit.coerceAtLeast(1)
+    return if (count >= 3) fit else count.coerceIn(1, fit)
+}
+
+/** [GridCells.Adaptive] of [minSize], but never more columns than [mediaColumns] gives [count]. */
+internal data class MediaGridCells(
+    private val minSize: Dp,
+    private val count: Int,
+) : GridCells {
+    override fun Density.calculateCrossAxisCellSizes(
+        availableSize: Int,
+        spacing: Int,
+    ): List<Int> {
+        val fit = (availableSize + spacing) / (minSize.roundToPx() + spacing)
+        val columns = mediaColumns(count, fit)
+        val gridSize = availableSize - spacing * (columns - 1)
+        val slot = gridSize / columns
+        val remaining = gridSize % columns
+        return List(columns) { slot + if (it < remaining) 1 else 0 }
+    }
+}
+
+/** Shape of a lone photo's tile until the photo loads and gives its own. */
+private const val LONE_PHOTO_PLACEHOLDER_RATIO = 4f / 3f
+
+/** A lone photo is no taller than this share of the window, so its tile stays on screen. */
+private const val LONE_MEDIA_MAX_HEIGHT_FRACTION = 0.6f
+
+/**
  * A single media item with thumbnail, optional play overlay for YouTube, and click-to-open.
+ *
+ * [large] loads [mediaUrl]'s bigger variant, falling back to the small one if it fails.
+ * [naturalAspect] shows the whole photo at its own shape instead of cropping it to [aspectRatio].
  */
 @Composable
 fun MediaItem(
@@ -106,15 +162,23 @@ fun MediaItem(
     count: Int,
     modifier: Modifier = Modifier,
     aspectRatio: Float = 1f,
+    large: Boolean = false,
+    naturalAspect: Boolean = false,
 ) {
-    val url = mediaUrl(type, foreignKey) ?: return
+    val smallUrl = mediaUrl(type, foreignKey) ?: return
+    val largeUrl = if (large) mediaUrl(type, foreignKey, large = true) else null
+    var largeFailed by remember(largeUrl) { mutableStateOf(false) }
+    val url = largeUrl?.takeUnless { largeFailed } ?: smallUrl
+    // Saved so the tile comes back at the photo's shape rather than the placeholder's.
+    var photoRatio by rememberSaveable(type, foreignKey) { mutableStateOf<Float?>(null) }
+    val ratio = if (naturalAspect) photoRatio ?: LONE_PHOTO_PLACEHOLDER_RATIO else aspectRatio
     val linkUrl = mediaLinkUrl(type, foreignKey)
     val context = LocalContext.current
 
     Box(
         modifier =
             modifier
-                .aspectRatio(aspectRatio)
+                .aspectRatio(ratio)
                 .clip(MaterialTheme.shapes.medium)
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .then(
@@ -136,8 +200,15 @@ fun MediaItem(
                     .crossfade(true)
                     .build(),
             contentDescription = mediaTileDescription(type, index, count),
-            contentScale = ContentScale.Crop,
+            contentScale = if (naturalAspect) ContentScale.Fit else ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
+            onSuccess = { state ->
+                val size = state.painter.intrinsicSize
+                if (naturalAspect && size.isSpecified && size.width > 0f && size.height > 0f) {
+                    photoRatio = size.width / size.height
+                }
+            },
+            onError = { if (url == largeUrl) largeFailed = true },
         )
         if (type == "youtube") {
             Box(
@@ -187,6 +258,7 @@ fun MediaGridRow(
                     count = items.size,
                     modifier = Modifier.weight(1f),
                     aspectRatio = aspectRatio,
+                    large = items.size <= 2,
                 )
             }
             repeat(columns - rowItems.size) {
@@ -208,8 +280,10 @@ internal fun mediaTileMinSize(windowSizeClass: WindowSizeClass): Dp =
     }
 
 /**
- * A full-screen tab that displays a team's media in an adaptive grid sized by [mediaTileMinSize].
- * Shared between Team detail and Team@Event detail screens.
+ * A full-screen tab that displays a team's media in an adaptive grid sized by [mediaTileMinSize],
+ * with no more columns than [mediaColumns] gives. A lone photo shows whole, at its own shape, no
+ * taller than [LONE_MEDIA_MAX_HEIGHT_FRACTION] of the window. Shared between Team detail and
+ * Team@Event detail screens.
  */
 @Composable
 fun MediaTab(
@@ -240,13 +314,19 @@ fun MediaTab(
                 null
             }
         }
+    val lone = gridItems.size == 1
+    val loneMaxHeight =
+        with(LocalDensity.current) {
+            (LocalWindowInfo.current.containerSize.height * LONE_MEDIA_MAX_HEIGHT_FRACTION).toDp()
+        }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
         val scrollbarState = rememberLazyGridState()
         LazyVerticalGrid(
             state = scrollbarState,
             columns =
-                GridCells.Adaptive(
+                MediaGridCells(
                     minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
+                    count = gridItems.size,
                 ),
             modifier =
                 Modifier
@@ -263,21 +343,36 @@ fun MediaTab(
                 ->
                 "${it.type}_${it.foreignKey}"
             }) { index, item ->
-                MediaItem(
-                    type = item.type,
-                    foreignKey = item.foreignKey,
-                    index = index,
-                    count = gridItems.size,
-                    modifier =
+                val focus =
+                    if (index == 0 && firstItemFocus != null) {
+                        Modifier.focusRequester(firstItemFocus)
+                    } else {
                         Modifier
-                            .then(
-                                if (index == 0 && firstItemFocus != null) {
-                                    Modifier.focusRequester(firstItemFocus)
-                                } else {
-                                    Modifier
-                                },
-                            ).fillMaxWidth(),
-                )
+                    }
+                if (lone) {
+                    // A capped tile narrows to keep its shape, centred in the column.
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                        MediaItem(
+                            type = item.type,
+                            foreignKey = item.foreignKey,
+                            index = index,
+                            count = gridItems.size,
+                            modifier = focus.heightIn(max = loneMaxHeight),
+                            aspectRatio = 16f / 9f,
+                            large = true,
+                            naturalAspect = item.type != "youtube",
+                        )
+                    }
+                } else {
+                    MediaItem(
+                        type = item.type,
+                        foreignKey = item.foreignKey,
+                        index = index,
+                        count = gridItems.size,
+                        modifier = focus.fillMaxWidth(),
+                        large = gridItems.size <= 2,
+                    )
+                }
             }
         }
     }
