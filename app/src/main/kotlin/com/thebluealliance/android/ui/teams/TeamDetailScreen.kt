@@ -267,7 +267,8 @@ fun TeamDetailScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(top = innerPadding.calculateTopPadding()),
+                    .padding(top = innerPadding.calculateTopPadding())
+                    .pageBackground(),
         ) { page ->
             PullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
@@ -340,7 +341,6 @@ private fun InfoTab(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .pageBackground()
                     .padding(16.dp),
             contentPadding = readingPadding,
         ) {
