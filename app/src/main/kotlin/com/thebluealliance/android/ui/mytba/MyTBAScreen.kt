@@ -48,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -56,7 +55,6 @@ import androidx.compose.ui.unit.round
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.NotificationType
@@ -550,8 +548,8 @@ private fun MyTbaEntityRow(
     onRemove: () -> Unit,
     onAddShortcut: (() -> Unit)? = null,
 ) {
-    var menuExpanded by remember { mutableStateOf(false) }
-    var contextMenuExpanded by remember { mutableStateOf(false) }
+    // One state for both menus, so opening either closes the other.
+    var openMenu by remember { mutableStateOf(MyTbaRowMenu.None) }
     var contextMenuAt by remember { mutableStateOf(IntOffset.Zero) }
 
     Box {
@@ -563,7 +561,7 @@ private fun MyTbaEntityRow(
                     .height(IntrinsicSize.Min)
                     .onSecondaryClick { position ->
                         contextMenuAt = position.round()
-                        contextMenuExpanded = true
+                        openMenu = MyTbaRowMenu.Pointer
                     }.padding(end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -588,31 +586,37 @@ private fun MyTbaEntityRow(
                 )
             }
             Box(modifier = Modifier.padding(vertical = 8.dp)) {
-                IconButton(onClick = { menuExpanded = true }, modifier = Modifier.handCursor()) {
+                IconButton(
+                    onClick = { openMenu = MyTbaRowMenu.Button },
+                    modifier = Modifier.handCursor(),
+                ) {
                     Icon(
                         imageVector = TbaIcons.MoreVert,
                         contentDescription = "More options for $title",
                     )
                 }
                 DropdownMenu(
-                    expanded = menuExpanded,
-                    onDismissRequest = { menuExpanded = false },
+                    expanded = openMenu == MyTbaRowMenu.Button,
+                    onDismissRequest = { openMenu = MyTbaRowMenu.None },
                 ) {
-                    MyTbaEntityMenuItems(onRemove, onAddShortcut) { menuExpanded = false }
+                    MyTbaEntityMenuItems(onRemove, onAddShortcut) { openMenu = MyTbaRowMenu.None }
                 }
             }
         }
         // A zero-size anchor at the pointer, so the menu opens where the row was right-clicked.
         Box(modifier = Modifier.offset { contextMenuAt }) {
             DropdownMenu(
-                expanded = contextMenuExpanded,
-                onDismissRequest = { contextMenuExpanded = false },
+                expanded = openMenu == MyTbaRowMenu.Pointer,
+                onDismissRequest = { openMenu = MyTbaRowMenu.None },
             ) {
-                MyTbaEntityMenuItems(onRemove, onAddShortcut) { contextMenuExpanded = false }
+                MyTbaEntityMenuItems(onRemove, onAddShortcut) { openMenu = MyTbaRowMenu.None }
             }
         }
     }
 }
+
+/** Which of a myTBA row's two menus is open: the More options button's, or the right-click one. */
+private enum class MyTbaRowMenu { None, Button, Pointer }
 
 @Composable
 private fun MyTbaEntityMenuItems(
@@ -625,7 +629,7 @@ private fun MyTbaEntityMenuItems(
             text = { Text("Add shortcut to home screen") },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_add_to_home_screen),
+                    imageVector = TbaIcons.AddToHomeScreen,
                     contentDescription = null,
                 )
             },
