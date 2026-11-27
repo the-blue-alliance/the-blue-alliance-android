@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,9 @@ import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.LocalRefreshTargets
 import com.thebluealliance.android.ui.components.TBABottomBar
 import com.thebluealliance.android.ui.components.TBANavigationRail
+import com.thebluealliance.android.ui.components.WindowFocusEntry
+import com.thebluealliance.android.ui.components.focusEntersAt
+import com.thebluealliance.android.ui.components.focusRegion
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.useNavigationRail
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
@@ -150,9 +154,12 @@ fun TBANavigation(
     val useRail = useNavigationRail(currentWindowAdaptiveInfo().windowSizeClass)
 
     val bottomBarShown = showBottomBar && !useRail
+    // The rail or the bottom bar, whichever shows: keyboard focus starts there.
+    val focusEntry = remember { WindowFocusEntry() }
 
     NavigationFrame(
         showRail = useRail,
+        focusEntry = focusEntry,
         rail = {
             TBANavigationRail(
                 currentRoute = navState.currentRoute,
@@ -536,6 +543,7 @@ fun TBANavigation(
                 ),
         ) {
             TBABottomBar(
+                modifier = Modifier.focusRegion(focusEntry.navigation),
                 currentRoute = navState.currentRoute,
                 onNavigate = { navigator.navigate(it) },
                 onReselect = onReselect,
@@ -547,16 +555,26 @@ fun TBANavigation(
 /**
  * Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. The frame
  * leaves the bottom inset to the screens, so their backgrounds reach the window's bottom edge.
+ *
+ * Keyboard focus moves through the frame by region: the navigation ([focusEntry], the rail or a
+ * bottom bar placed in [content]) first, then the screen's top bar and body, then any second
+ * pane. Tab wraps from the end back to the navigation.
  */
 @Composable
 private fun NavigationFrame(
     showRail: Boolean,
+    focusEntry: WindowFocusEntry,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     CompositionLocalProvider(LocalNavigationRailShown provides showRail) {
-        Row(modifier = modifier.then(if (showRail) Modifier.statusBarStrip() else Modifier)) {
+        Row(
+            modifier =
+                modifier
+                    .then(if (showRail) Modifier.statusBarStrip() else Modifier)
+                    .focusEntersAt(focusEntry),
+        ) {
             AnimatedVisibility(
                 visible = showRail,
                 enter =
@@ -570,13 +588,14 @@ private fun NavigationFrame(
                         targetOffsetX = { -it },
                     ),
             ) {
-                rail()
+                Box(Modifier.focusRegion(focusEntry.navigation)) { rail() }
             }
             Column(
                 modifier =
                     Modifier
                         .weight(1f)
                         .fillMaxHeight()
+                        .focusRegion()
                         .pageBackground()
                         .then(
                             // The rail owns the start inset.
