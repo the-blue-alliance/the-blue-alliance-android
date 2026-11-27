@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -641,6 +642,18 @@ private fun AllianceTeams(
     }
 }
 
+/**
+ * Smallest a team number's tap target gets, in both directions. The default leaves today's
+ * targets as they are: a 24dp line plus 4dp above and below.
+ */
+private val TeamTargetMinSize = 32.dp
+
+/**
+ * Space between neighbouring team number targets, in a row or a stack. Targets already carry
+ * 12dp side padding, so numbers in a row sit 24dp apart, and stacked targets touch as before.
+ */
+private val TeamTargetSpacing = 0.dp
+
 @Composable
 private fun RowScope.AllianceTeamColumn(
     teamKeys: List<String>,
@@ -648,18 +661,15 @@ private fun RowScope.AllianceTeamColumn(
     playoffAllianceTitle: String?,
     alliance: String,
     onTeamClick: (String) -> Unit,
+    targetMinSize: Dp = TeamTargetMinSize,
+    targetSpacing: Dp = TeamTargetSpacing,
 ) {
-    Column(
-        modifier = Modifier.weight(1f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    AllianceTeamNumbers(spacing = targetSpacing, modifier = Modifier.weight(1f)) {
         teamKeys.forEach { key ->
-            Text(
-                text = key.teamNumber,
-                style = MaterialTheme.typography.bodyLarge,
-                color = color,
+            Box(
                 modifier =
                     Modifier
+                        .sizeIn(minWidth = targetMinSize, minHeight = targetMinSize)
                         .paddedClickable(
                             MaterialTheme.shapes.small,
                             horizontal = 12.dp,
@@ -674,10 +684,74 @@ private fun RowScope.AllianceTeamColumn(
                                     key.teamNumber,
                                 )
                         },
-            )
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = key.teamNumber,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = color,
+                )
+            }
         }
     }
 }
+
+/**
+ * Lays an alliance's team targets out in one row centred in this column, under that alliance's
+ * score, when they all fit side by side; otherwise stacks them, each centred. Never wraps part of
+ * the row.
+ */
+@Composable
+private fun AllianceTeamNumbers(
+    spacing: Dp,
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Layout(content = content, modifier = modifier) { measurables, constraints ->
+        val spacingPx = spacing.roundToPx()
+        val placeables =
+            measurables.map {
+                it.measure(
+                    constraints.copy(minWidth = 0, minHeight = 0),
+                )
+            }
+        val widths = placeables.map { it.width }
+        val gaps = spacingPx * (placeables.size - 1).coerceAtLeast(0)
+        val inRow = teamsFitInRow(widths, spacingPx, constraints.maxWidth)
+        val contentWidth = if (inRow) widths.sum() + gaps else widths.maxOrNull() ?: 0
+        val width =
+            if (constraints.hasBoundedWidth) constraints.maxWidth else contentWidth
+        if (inRow) {
+            val height = placeables.maxOfOrNull { it.height } ?: 0
+            layout(width, height) {
+                var x = (width - contentWidth) / 2
+                placeables.forEach {
+                    it.placeRelative(x, (height - it.height) / 2)
+                    x += it.width + spacingPx
+                }
+            }
+        } else {
+            val height = placeables.sumOf { it.height } + gaps
+            layout(width, height) {
+                var y = 0
+                placeables.forEach {
+                    it.place(
+                        Alignment.CenterHorizontally.align(it.width, width, layoutDirection),
+                        y,
+                    )
+                    y += it.height + spacingPx
+                }
+            }
+        }
+    }
+}
+
+/** Whether targets of [widths], [spacing] apart, fit side by side in [availableWidth]. */
+internal fun teamsFitInRow(
+    widths: List<Int>,
+    spacing: Int,
+    availableWidth: Int,
+): Boolean = widths.sum() + spacing * (widths.size - 1).coerceAtLeast(0) <= availableWidth
 
 /** Widest the score breakdown grows on wide windows. */
 private val BreakdownMaxWidth = 560.dp
