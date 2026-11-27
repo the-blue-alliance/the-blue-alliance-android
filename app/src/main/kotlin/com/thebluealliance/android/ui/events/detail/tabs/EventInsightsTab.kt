@@ -71,7 +71,10 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableCellTarget
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandFocusRing
@@ -713,11 +716,13 @@ private fun StandardOPRsView(
         }
     }
 
+    // Team numbers are links, so Tab needs the header ordered before them.
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        inPlaceStickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(
                 onShowStatSelector = onShowStatSelector,
                 statSelectorFocus = statSelectorFocus,
@@ -814,11 +819,13 @@ private fun COPRView(
             }
         }
 
+    // Team numbers are links, so Tab needs the header ordered before them.
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        inPlaceStickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(
                 onShowStatSelector = onShowStatSelector,
                 statSelectorFocus = statSelectorFocus,
