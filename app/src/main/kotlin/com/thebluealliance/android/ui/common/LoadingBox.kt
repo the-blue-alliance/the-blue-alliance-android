@@ -8,11 +8,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.thebluealliance.android.ui.components.messageBackground
 
 @Composable
 fun LoadingBox(modifier: Modifier = Modifier) {
     Box(
-        modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        // The fill sits outside the caller's padding, so it also covers the strip behind the gesture bar.
+        Modifier
+            .fillMaxSize()
+            .messageBackground()
+            .then(modifier)
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator()

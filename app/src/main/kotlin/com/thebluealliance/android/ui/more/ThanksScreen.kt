@@ -38,6 +38,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -86,7 +87,7 @@ fun ThanksScreen(
                 Column(
                     modifier =
                         Modifier
-                            .pageBackground()
+                            .messageBackground()
                             .padding(innerPadding.withoutBottom())
                             .fillMaxSize()
                             .padding(16.dp),
