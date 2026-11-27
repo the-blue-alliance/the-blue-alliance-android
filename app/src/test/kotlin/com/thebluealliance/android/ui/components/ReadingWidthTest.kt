@@ -82,6 +82,13 @@ class ReadingWidthTest {
     }
 
     @Test
+    fun `no margins at or below the column width`() {
+        val min = MinSheetMargin.value
+        assertFalse(drawsSheetMargins(sheetInset(840f, 840f), min))
+        assertFalse(drawsSheetMargins(sheetInset(800f, 840f), min))
+    }
+
+    @Test
     fun `margins at least the minimum are drawn`() {
         val min = MinSheetMargin.value
         assertTrue(drawsSheetMargins(sheetInset(888f, 840f), min))
