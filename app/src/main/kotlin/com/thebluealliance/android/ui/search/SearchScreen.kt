@@ -45,6 +45,9 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
@@ -187,13 +190,14 @@ fun SearchScreen(
                 return@Column
             }
             ReadingWidthBox(innerPadding.onlyBottom(), Modifier.fillMaxSize()) { readingPadding ->
+                val headerFocus = rememberStickyHeaderFocusOrder()
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
                     state = lazyListState,
                     contentPadding = readingPadding,
                 ) {
                     if (uiState.teams.isNotEmpty()) {
-                        stickyHeader(key = "teams_header") {
+                        tabOrderedStickyHeader(headerFocus, key = "teams_header") {
                             SectionHeader(
                                 label = "Teams",
                                 isStuck = stuckHeaderKey == "teams_header",
@@ -210,7 +214,7 @@ fun SearchScreen(
                         }
                     }
                     if (uiState.events.isNotEmpty()) {
-                        stickyHeader(key = "events_header") {
+                        tabOrderedStickyHeader(headerFocus, key = "events_header") {
                             SectionHeader(
                                 label = "Events",
                                 isStuck = stuckHeaderKey == "events_header",

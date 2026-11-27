@@ -30,6 +30,9 @@ import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -136,16 +139,18 @@ fun TeamsScreen(
                     innerPadding.onlyBottom(),
                     Modifier.fillMaxSize(),
                 ) { readingPadding ->
+                    val headerFocus = rememberStickyHeaderFocusOrder()
                     LazyColumn(
                         state = listState,
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .pageBackground(),
+                                .pageBackground()
+                                .stickyHeaderFocusOrder(headerFocus),
                         contentPadding = readingPadding,
                     ) {
                         if (hasFavorites) {
-                            stickyHeader(key = "favorites_header") {
+                            tabOrderedStickyHeader(headerFocus, key = "favorites_header") {
                                 SectionHeader(
                                     label = "Favorites",
                                     isStuck = stuckHeaderKey == "favorites_header",
@@ -163,7 +168,7 @@ fun TeamsScreen(
                                     onClick = { onNavigateToTeam(team.key) },
                                 )
                             }
-                            stickyHeader(key = "all_teams_header") {
+                            tabOrderedStickyHeader(headerFocus, key = "all_teams_header") {
                                 SectionHeader(
                                     label = "All teams",
                                     isStuck = stuckHeaderKey == "all_teams_header",

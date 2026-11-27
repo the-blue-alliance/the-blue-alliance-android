@@ -73,9 +73,12 @@ import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.rankingRowDescription
 import com.thebluealliance.android.ui.components.recordDescription
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.statRowWidth
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableCellTarget
 import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
@@ -239,11 +242,12 @@ fun EventRankingsTab(
         // Rank and Team stay put, so every scrolled value keeps its team beside it.
         val cueColor = MaterialTheme.colorScheme.scrim.copy(alpha = 0.24f)
         val rowScroll = rowWidth?.let { RowScroll(sideScroll, it, cueColor) }
+        val headerFocus = rememberStickyHeaderFocusOrder()
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
             contentPadding = innerPadding,
         ) {
-            stickyHeader {
+            tabOrderedStickyHeader(headerFocus) {
                 RankingHeaderRow(
                     primaryLabel = primaryLabel,
                     secondaryLabel = secondaryLabel,

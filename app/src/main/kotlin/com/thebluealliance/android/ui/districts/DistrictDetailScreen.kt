@@ -52,6 +52,9 @@ import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
@@ -233,13 +236,14 @@ private fun EventsTab(
     }
 
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        val headerFocus = rememberStickyHeaderFocusOrder()
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
             contentPadding = readingPadding,
         ) {
             if (thisWeekResult != null) {
-                stickyHeader(key = "this_week_header") {
+                tabOrderedStickyHeader(headerFocus, key = "this_week_header") {
                     SectionHeader(
                         label = thisWeekResult.label,
                         isStuck = stuckHeaderKey == "this_week_header",
@@ -260,7 +264,7 @@ private fun EventsTab(
             }
             sections.forEach { section ->
                 val headerKey = "header_${section.label}"
-                stickyHeader(key = headerKey) {
+                tabOrderedStickyHeader(headerFocus, key = headerKey) {
                     SectionHeader(
                         label = section.label,
                         isStuck = stuckHeaderKey == headerKey,
