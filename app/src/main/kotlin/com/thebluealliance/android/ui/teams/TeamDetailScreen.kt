@@ -73,6 +73,7 @@ import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -273,7 +274,7 @@ fun TeamDetailScreen(
             TouchPullToRefreshBox(
                 isRefreshing = isRefreshing && uiState.team != null,
                 onRefresh = { viewModel.refreshTab(TeamDetailTab.entries[page]) },
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 when (TeamDetailTab.entries[page]) {
                     TeamDetailTab.INFO ->

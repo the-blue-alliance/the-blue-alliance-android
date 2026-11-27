@@ -69,9 +69,10 @@ fun MatchListDetailPanes(
     BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val listWidth = matchListPaneWidth(maxWidth)
         Row(Modifier.fillMaxSize()) {
-            Box(Modifier.width(listWidth).fillMaxHeight()) { list() }
+            // Each pane is its own focus region, so Tab finishes the list before the match.
+            Box(Modifier.width(listWidth).fillMaxHeight().focusRegion()) { list() }
             VerticalDivider()
-            Box(Modifier.weight(1f).fillMaxHeight()) {
+            Box(Modifier.weight(1f).fillMaxHeight().focusRegion()) {
                 host.detail?.invoke() ?: MatchDetailPlaceholder()
             }
         }

@@ -71,6 +71,7 @@ import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -263,7 +264,7 @@ fun MyTBAScreen(
                 TouchPullToRefreshBox(
                     isRefreshing = isRefreshing,
                     onRefresh = { viewModel.refreshTab(MyTBATab.entries[page]) },
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
                 ) {
                     when (MyTBATab.entries[page]) {
                         MyTBATab.FAVORITES ->
