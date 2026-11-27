@@ -35,13 +35,18 @@ val tbaLocalProperties =
         rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use(::load)
     }
 
+// A Gradle property (-Ptba.url.debug=…) overrides the local.properties line, so one build can
+// target another server without editing the file (scripts/local-backend.sh prints the command).
+fun tbaProperty(name: String): String? =
+    providers.gradleProperty(name).orNull ?: tbaLocalProperties.getProperty(name)
+
 // The existing properties are read raw, exactly as the modules always did (an empty
 // tba.api.key.debug stays empty, e.g. the TV app's mock-data mode).
-val tbaDebugUrl: String? = tbaLocalProperties.getProperty("tba.url.debug")
+val tbaDebugUrl: String? = tbaProperty("tba.url.debug")
 val tbaDebugHost: String? = tbaDebugUrl?.let { runCatching { java.net.URI(it).host }.getOrNull() }
 val tbaUrlIsProd =
     tbaDebugHost == "thebluealliance.com" || tbaDebugHost?.endsWith(".thebluealliance.com") == true
 extra["tbaDebugUrl"] = tbaDebugUrl
 extra["tbaDebugKey"] =
-    tbaLocalProperties.getProperty("tba.api.key.prod")?.takeIf { tbaUrlIsProd && it.isNotBlank() }
-        ?: tbaLocalProperties.getProperty("tba.api.key.debug")
+    tbaProperty("tba.api.key.prod")?.takeIf { tbaUrlIsProd && it.isNotBlank() }
+        ?: tbaProperty("tba.api.key.debug")
