@@ -58,6 +58,7 @@ import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.verticalWheelScrollsSideways
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
@@ -435,6 +436,7 @@ private fun WeekFilterChips(
                 modifier =
                     Modifier
                         .weight(1f)
+                        .verticalWheelScrollsSideways(chipRowState)
                         .then(
                             if (fadeStart) {
                                 Modifier.drawWithContent {
