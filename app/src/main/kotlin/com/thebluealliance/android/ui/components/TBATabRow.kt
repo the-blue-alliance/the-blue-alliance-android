@@ -61,7 +61,7 @@ fun TBATab(
     Tab(
         selected = selected,
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.handCursor(),
         selectedContentColor = OnBrand,
         unselectedContentColor = OnBrandMuted,
         text = {

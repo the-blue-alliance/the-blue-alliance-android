@@ -265,7 +265,7 @@ private fun TBATopAppBarContent(
 
 @Composable
 private fun TopBarIconButton(action: TopBarAction) {
-    IconButton(onClick = action.onClick, modifier = Modifier.actionState(action)) {
+    IconButton(onClick = action.onClick, modifier = Modifier.handCursor().actionState(action)) {
         Icon(action.icon, contentDescription = action.label)
     }
 }
@@ -275,7 +275,7 @@ private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
     var expanded by remember { mutableStateOf(false) }
     val close = { expanded = false }
     Box {
-        IconButton(onClick = { expanded = true }) {
+        IconButton(onClick = { expanded = true }, modifier = Modifier.handCursor()) {
             Icon(TbaIcons.MoreVert, contentDescription = "More options")
         }
         DropdownMenu(expanded = expanded, onDismissRequest = close) {
@@ -284,7 +284,7 @@ private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
                     DropdownMenuItem(
                         text = { Text(action.label) },
                         leadingIcon = { Icon(action.icon, contentDescription = null) },
-                        modifier = Modifier.actionState(action),
+                        modifier = Modifier.handCursor().actionState(action),
                         onClick = {
                             close()
                             action.onClick()

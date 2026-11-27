@@ -16,6 +16,7 @@ fun Modifier.expandableRow(
 ): Modifier =
     this
         .semantics { stateDescription = if (expanded) "Expanded" else "Collapsed" }
+        .handCursor()
         .clickable(
             onClickLabel = if (expanded) "Collapse details" else "Expand details",
             role = Role.Button,

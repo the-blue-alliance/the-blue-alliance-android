@@ -21,6 +21,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -38,7 +39,7 @@ fun AboutScreen(
             TBATopAppBar(
                 title = { TopBarTitle("About") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
+                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")
                     }
                 },

@@ -37,6 +37,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
@@ -95,7 +96,7 @@ fun RegionalAdvancementScreen(
                 },
                 navigationIcon = {
                     if (onNavigateUp != null) {
-                        IconButton(onClick = onNavigateUp) {
+                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                             Icon(
                                 imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
@@ -206,6 +207,7 @@ private fun RegionalRankingRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .handCursor()
                 .clickable {
                     onNavigateToTeam(ranking.teamKey)
                 }.padding(horizontal = 16.dp, vertical = 8.dp),

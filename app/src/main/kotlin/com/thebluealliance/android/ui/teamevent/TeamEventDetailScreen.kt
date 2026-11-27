@@ -65,6 +65,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
@@ -179,7 +180,7 @@ fun TeamEventDetailScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp) {
+                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                             Icon(
                                 imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
@@ -581,6 +582,7 @@ private fun InfoRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .handCursor()
                 .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

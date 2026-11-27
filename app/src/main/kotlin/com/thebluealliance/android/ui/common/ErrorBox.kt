@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.components.ProseMaxWidth
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.messageBackground
 
 @Composable
@@ -45,7 +46,7 @@ fun ErrorBox(
                 textAlign = TextAlign.Center,
             )
             if (onRetry != null) {
-                Button(onClick = onRetry) { Text("Retry") }
+                Button(onClick = onRetry, modifier = Modifier.handCursor()) { Text("Retry") }
             }
         }
     }

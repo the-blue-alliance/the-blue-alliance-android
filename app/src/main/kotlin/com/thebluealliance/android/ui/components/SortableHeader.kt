@@ -93,7 +93,7 @@ fun Modifier.sortableHeader(
             gutter = gutter,
             labelAtEnd = labelAtEnd,
             interaction =
-                Modifier.clickable(
+                Modifier.handCursor().clickable(
                     onClickLabel = "Sort by $label",
                     role = Role.Button,
                     onClick = onClick,

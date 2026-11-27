@@ -88,6 +88,7 @@ fun TBANavigationRail(
                             indicatorColor = MaterialTheme.colorScheme.primaryContainer,
                             selectedTextColor = MaterialTheme.colorScheme.primary,
                         ),
+                    modifier = Modifier.handCursor(),
                 )
             }
         }

@@ -70,6 +70,7 @@ import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.fitColumnWidths
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.rankingRowDescription
 import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
@@ -749,7 +750,7 @@ private fun RankingItem(
                                 gutter = COLUMN_GUTTER,
                                 labelAtEnd = false,
                                 interaction =
-                                    Modifier.clickable(
+                                    Modifier.handCursor().clickable(
                                         onClickLabel = "View team ${ranking.teamKey.teamNumber}",
                                         role = Role.Button,
                                     ) { onTeamClick(ranking.teamKey) },

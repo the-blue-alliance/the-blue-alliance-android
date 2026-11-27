@@ -42,6 +42,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -149,7 +150,10 @@ fun SearchScreen(
                             ),
                         trailingIcon = {
                             if (viewModel.queryState.text.isNotEmpty()) {
-                                IconButton(onClick = { viewModel.queryState.clearText() }) {
+                                IconButton(
+                                    onClick = { viewModel.queryState.clearText() },
+                                    modifier = Modifier.handCursor(),
+                                ) {
                                     Icon(TbaIcons.Close, contentDescription = "Clear")
                                 }
                             }
@@ -157,7 +161,7 @@ fun SearchScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
+                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")
                     }
                 },

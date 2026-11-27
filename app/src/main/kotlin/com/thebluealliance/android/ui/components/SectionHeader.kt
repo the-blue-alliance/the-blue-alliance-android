@@ -71,7 +71,7 @@ fun SectionHeader(
                     // would announce them as unavailable controls.
                     .then(
                         if (isStuck) {
-                            Modifier.clickable(
+                            Modifier.handCursor().clickable(
                                 onClickLabel = "Jump to section",
                                 role = Role.DropdownList,
                             ) { menuExpanded = true }
@@ -123,7 +123,7 @@ fun SectionHeader(
                                 menuExpanded = false
                                 onHeaderSelected(info)
                             },
-                            modifier = Modifier.selectedIfCurrent(isSelected),
+                            modifier = Modifier.handCursor().selectedIfCurrent(isSelected),
                         )
                     }
                 }

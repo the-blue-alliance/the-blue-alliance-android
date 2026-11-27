@@ -306,7 +306,8 @@ fun MatchItem(
                     } else {
                         Modifier
                     },
-                ).clickable(onClick = onClick)
+                ).handCursor()
+                .clickable(onClick = onClick)
                 .clearAndSetSemantics {
                     contentDescription = description
                     role = Role.Button

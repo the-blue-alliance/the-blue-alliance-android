@@ -78,6 +78,7 @@ import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
@@ -189,7 +190,7 @@ fun MatchDetailScreen(
                     isRefreshing = isRefreshing,
                     title = title,
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp) {
+                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                             Icon(
                                 imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
@@ -429,6 +430,7 @@ private fun EventInfo(
                 modifier =
                     Modifier
                         .fillMaxWidth()
+                        .handCursor()
                         .clickable(onClickLabel = "View event", role = Role.Button) {
                             onNavigateToEvent(eventKey)
                         }.padding(horizontal = 16.dp, vertical = 2.dp),

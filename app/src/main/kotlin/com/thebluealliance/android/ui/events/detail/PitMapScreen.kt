@@ -21,6 +21,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.buildNexusPitMapUrl
 import com.thebluealliance.android.util.buildTbaPitMapUrl
@@ -78,7 +79,7 @@ fun PitMapScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
+                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                         Icon(
                             imageVector = TbaIcons.ArrowBack,
                             contentDescription = "Back",

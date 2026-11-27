@@ -32,6 +32,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -115,7 +116,7 @@ fun DistrictsScreen(
                             {
                                 FilledTonalButton(
                                     onClick = { viewModel.selectYear(selectedYear - 1) },
-                                    modifier = Modifier.heightIn(min = 48.dp),
+                                    modifier = Modifier.handCursor().heightIn(min = 48.dp),
                                 ) {
                                     Text("Show ${selectedYear - 1} districts")
                                 }
@@ -155,6 +156,7 @@ private fun DistrictItem(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .handCursor()
                 .clickable(onClickLabel = "View district", onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
     )

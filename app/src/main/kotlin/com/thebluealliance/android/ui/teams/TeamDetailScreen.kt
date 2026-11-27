@@ -71,6 +71,7 @@ import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
@@ -122,13 +123,21 @@ fun TeamDetailScreen(
             title = { Text("Sign in required") },
             text = { Text("Sign in to save your favorite teams and events.") },
             confirmButton = {
-                TextButton(onClick = {
-                    showSignInDialog = false
-                    onNavigateToMyTBA()
-                }) { Text("Sign in") }
+                TextButton(
+                    onClick = {
+                        showSignInDialog = false
+                        onNavigateToMyTBA()
+                    },
+                    modifier = Modifier.handCursor(),
+                ) { Text("Sign in") }
             },
             dismissButton = {
-                TextButton(onClick = { showSignInDialog = false }) { Text("Cancel") }
+                TextButton(
+                    onClick = {
+                        showSignInDialog = false
+                    },
+                    modifier = Modifier.handCursor(),
+                ) { Text("Cancel") }
             },
         )
     }
@@ -188,7 +197,7 @@ fun TeamDetailScreen(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp) {
+                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                             Icon(
                                 imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
@@ -371,6 +380,7 @@ private fun InfoTab(
                                         .size(64.dp)
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(bgColor)
+                                        .handCursor()
                                         .toggleable(
                                             value = showRed,
                                             role = Role.Switch,
@@ -481,7 +491,7 @@ private fun ShowSeasonButton(
     label: String,
     onClick: () -> Unit,
 ) {
-    FilledTonalButton(onClick = onClick, modifier = Modifier.heightIn(min = 48.dp)) {
+    FilledTonalButton(onClick = onClick, modifier = Modifier.handCursor().heightIn(min = 48.dp)) {
         Text(label)
     }
 }

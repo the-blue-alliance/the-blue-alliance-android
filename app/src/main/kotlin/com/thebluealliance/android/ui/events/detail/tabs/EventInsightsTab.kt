@@ -57,6 +57,7 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
@@ -375,7 +376,7 @@ private fun StatSelectorDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, modifier = Modifier.handCursor()) {
                 Text("Close")
             }
         },
@@ -396,8 +397,12 @@ private fun StatTypeOption(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .selectable(selected = selected, onClick = onClick, role = Role.RadioButton)
-                .padding(vertical = 8.dp),
+                .handCursor()
+                .selectable(
+                    selected = selected,
+                    onClick = onClick,
+                    role = Role.RadioButton,
+                ).padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         RadioButton(
@@ -480,7 +485,7 @@ private fun InsightsView(
                     )
                     IconButton(
                         onClick = onShowStatSelector,
-                        modifier = Modifier.padding(0.dp),
+                        modifier = Modifier.handCursor().padding(0.dp),
                     ) {
                         Icon(
                             imageVector = TbaIcons.MoreVert,
@@ -860,7 +865,7 @@ private fun InsightsTableHeaderRow(
                         .padding(end = COLUMN_GUTTER),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = onShowStatSelector) {
+                IconButton(onClick = onShowStatSelector, modifier = Modifier.handCursor()) {
                     Icon(
                         imageVector = TbaIcons.MoreVert,
                         contentDescription = "Select stat type",

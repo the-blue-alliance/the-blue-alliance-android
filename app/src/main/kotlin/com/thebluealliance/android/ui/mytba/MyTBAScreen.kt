@@ -68,6 +68,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
@@ -122,13 +123,21 @@ fun MyTBAScreen(
             title = { Text("Sign out?") },
             text = { Text("Your favorites and notifications won't apply to the app anymore.") },
             confirmButton = {
-                TextButton(onClick = {
-                    showSignOutDialog = false
-                    viewModel.signOut()
-                }) { Text("Sign out") }
+                TextButton(
+                    onClick = {
+                        showSignOutDialog = false
+                        viewModel.signOut()
+                    },
+                    modifier = Modifier.handCursor(),
+                ) { Text("Sign out") }
             },
             dismissButton = {
-                TextButton(onClick = { showSignOutDialog = false }) { Text("Cancel") }
+                TextButton(
+                    onClick = {
+                        showSignOutDialog = false
+                    },
+                    modifier = Modifier.handCursor(),
+                ) { Text("Cancel") }
             },
         )
     }
@@ -148,7 +157,7 @@ fun MyTBAScreen(
                 navigationIcon =
                     onNavigateUp?.let { navigateUp ->
                         {
-                            IconButton(onClick = navigateUp) {
+                            IconButton(onClick = navigateUp, modifier = Modifier.handCursor()) {
                                 Icon(
                                     imageVector = TbaIcons.ArrowBack,
                                     contentDescription = "Back",
@@ -220,7 +229,10 @@ fun MyTBAScreen(
                     }
                 }
                 Box {
-                    IconButton(onClick = { menuExpanded = true }) {
+                    IconButton(
+                        onClick = { menuExpanded = true },
+                        modifier = Modifier.handCursor(),
+                    ) {
                         Icon(
                             imageVector = TbaIcons.MoreVert,
                             contentDescription = "More options",
@@ -236,6 +248,7 @@ fun MyTBAScreen(
                                 menuExpanded = false
                                 showSignOutDialog = true
                             },
+                            modifier = Modifier.handCursor(),
                         )
                     }
                 }
@@ -325,7 +338,7 @@ private fun SignInPrompt(onSignIn: () -> Unit) {
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            Button(onClick = onSignIn) {
+            Button(onClick = onSignIn, modifier = Modifier.handCursor()) {
                 Text("Sign in with Google")
             }
         }
@@ -542,6 +555,7 @@ private fun MyTbaEntityRow(
                 Modifier
                     .weight(1f)
                     .fillMaxHeight()
+                    .handCursor()
                     .clickable(onClickLabel = onClickLabel, onClick = onClick)
                     .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalArrangement = Arrangement.Center,
@@ -557,7 +571,7 @@ private fun MyTbaEntityRow(
             )
         }
         Box(modifier = Modifier.padding(vertical = 8.dp)) {
-            IconButton(onClick = { menuExpanded = true }) {
+            IconButton(onClick = { menuExpanded = true }, modifier = Modifier.handCursor()) {
                 Icon(
                     imageVector = TbaIcons.MoreVert,
                     contentDescription = "More options for $title",
@@ -580,6 +594,7 @@ private fun MyTbaEntityRow(
                             menuExpanded = false
                             onAddShortcut()
                         },
+                        modifier = Modifier.handCursor(),
                     )
                 }
                 DropdownMenuItem(
@@ -594,6 +609,7 @@ private fun MyTbaEntityRow(
                         menuExpanded = false
                         onRemove()
                     },
+                    modifier = Modifier.handCursor(),
                 )
             }
         }

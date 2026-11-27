@@ -38,6 +38,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
@@ -60,7 +61,7 @@ fun ThanksScreen(
             TBATopAppBar(
                 title = { TopBarTitle("Thanks") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp) {
+                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                         Icon(TbaIcons.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -100,7 +101,7 @@ fun ThanksScreen(
                         color = MaterialTheme.colorScheme.error,
                     )
                     Spacer(modifier = Modifier.size(16.dp))
-                    Button(onClick = { viewModel.retry() }) {
+                    Button(onClick = { viewModel.retry() }, modifier = Modifier.handCursor()) {
                         Text("Retry")
                     }
                 }
@@ -136,6 +137,7 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
         modifier =
             Modifier
                 .fillMaxWidth()
+                .handCursor()
                 .clickable(onClickLabel = "Open in browser") {
                     context.openUrl(contributor.htmlUrl)
                 }.padding(horizontal = 16.dp, vertical = 12.dp),

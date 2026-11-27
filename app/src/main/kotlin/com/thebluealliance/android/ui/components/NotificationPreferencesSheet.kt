@@ -152,6 +152,7 @@ fun NotificationPreferencesSheet(
                     onClick = {
                         scope.hideThen({ sheetState.hide() }, onDismiss)
                     },
+                    modifier = Modifier.handCursor(),
                 ) {
                     Text("Cancel")
                 }
@@ -174,6 +175,7 @@ fun NotificationPreferencesSheet(
                         // Animate out like Cancel; the caller removes the sheet in onSave.
                         scope.hideThen({ sheetState.hide() }) { onSave(favorite, notifications) }
                     },
+                    modifier = Modifier.handCursor(),
                 ) {
                     Text("Save")
                 }
@@ -214,6 +216,7 @@ private fun SwitchRow(
             Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
+                .handCursor()
                 .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
                 .padding(vertical = SwitchRowVerticalPadding),
         verticalAlignment = Alignment.CenterVertically,
