@@ -59,7 +59,11 @@ fun TopBarYearPicker(
             modifier =
                 Modifier
                     .clip(MaterialTheme.shapes.small)
-                    .clickable(onClickLabel = "Change year", role = Role.DropdownList) {
+                    .handCursor()
+                    .clickable(
+                        onClickLabel = "Change year",
+                        role = Role.DropdownList,
+                    ) {
                         yearDropdownExpanded = true
                     }.padding(horizontal = HORIZONTAL_TARGET_PADDING, vertical = 4.dp),
         ) {
@@ -107,7 +111,7 @@ fun TopBarYearPicker(
                             } else {
                                 null
                             },
-                        modifier = Modifier.selectedIfCurrent(isSelected),
+                        modifier = Modifier.handCursor().selectedIfCurrent(isSelected),
                         onClick = {
                             onYearSelected(year)
                             yearDropdownExpanded = false

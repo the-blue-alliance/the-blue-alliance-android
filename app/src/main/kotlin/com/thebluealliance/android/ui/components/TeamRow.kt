@@ -26,8 +26,11 @@ fun TeamRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable(onClickLabel = "View team ${team.number}", onClick = onClick)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
+                .handCursor()
+                .clickable(
+                    onClickLabel = "View team ${team.number}",
+                    onClick = onClick,
+                ).padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {

@@ -29,6 +29,7 @@ import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.formatEventDateRange
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.events.weekLabel
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
@@ -251,6 +252,7 @@ private fun EventInfoLinkRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .handCursor()
                 .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = CONTENT_INSET, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,

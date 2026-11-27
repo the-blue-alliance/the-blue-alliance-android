@@ -49,6 +49,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.tableWidth
@@ -110,7 +111,7 @@ fun DistrictDetailScreen(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp) {
+                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
                             Icon(
                                 imageVector = TbaIcons.ArrowBack,
                                 contentDescription = "Back",
@@ -389,7 +390,10 @@ private fun RankingsTab(
                 modifier =
                     Modifier
                         .tableWidth()
-                        .clickable(onClickLabel = "View team ${ranking.teamKey.teamNumber}") {
+                        .handCursor()
+                        .clickable(
+                            onClickLabel = "View team ${ranking.teamKey.teamNumber}",
+                        ) {
                             onNavigateToTeam(ranking.teamKey)
                         }.semantics { contentDescription = description }
                         .padding(horizontal = 16.dp, vertical = 12.dp),

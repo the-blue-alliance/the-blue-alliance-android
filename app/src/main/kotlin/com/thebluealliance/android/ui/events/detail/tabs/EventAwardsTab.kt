@@ -17,6 +17,7 @@ import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.util.teamNumber
 
 @Composable
@@ -55,7 +56,7 @@ fun EventAwardsTab(
                             .fillMaxWidth()
                             .then(
                                 if (award.teamKey.isNotEmpty()) {
-                                    Modifier.clickable(
+                                    Modifier.handCursor().clickable(
                                         onClickLabel = "View team ${award.teamKey.teamNumber}",
                                     ) { onTeamClick(award.teamKey) }
                                 } else {

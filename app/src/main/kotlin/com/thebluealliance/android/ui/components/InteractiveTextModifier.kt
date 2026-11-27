@@ -44,5 +44,6 @@ fun Modifier.paddedClickable(
 ): Modifier =
     this
         .clip(shape)
+        .handCursor()
         .clickable(onClickLabel = onClickLabel, role = role, onClick = onClick)
         .padding(horizontal = horizontal, vertical = vertical)

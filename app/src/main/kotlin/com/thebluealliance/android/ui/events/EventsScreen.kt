@@ -57,6 +57,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.verticalWheelScrollsSideways
@@ -413,7 +414,7 @@ private fun WeekFilterChips(
                             modifier = Modifier.size(18.dp),
                         )
                     },
-                    modifier = Modifier.padding(start = 12.dp, bottom = 4.dp),
+                    modifier = Modifier.handCursor().padding(start = 12.dp, bottom = 4.dp),
                     colors = weekChipColors,
                     elevation = null,
                     border = weekChipBorder,
@@ -483,6 +484,7 @@ private fun WeekFilterChips(
                         colors = weekChipColors,
                         elevation = null,
                         border = weekChipBorder,
+                        modifier = Modifier.handCursor(),
                     )
                 }
             }

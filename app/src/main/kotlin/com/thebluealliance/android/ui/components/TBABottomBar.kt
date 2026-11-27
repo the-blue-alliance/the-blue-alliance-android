@@ -25,6 +25,7 @@ fun TBABottomBar(
                 onClick = topLevelDestinationClick(dest, currentRoute, onNavigate, onReselect),
                 icon = { TopLevelDestinationIcon(dest, selected) },
                 label = { Text(dest.label) },
+                modifier = Modifier.handCursor(),
             )
         }
     }

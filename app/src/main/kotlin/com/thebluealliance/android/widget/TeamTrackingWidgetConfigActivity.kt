@@ -42,6 +42,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thebluealliance.android.R
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBATheme
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -107,7 +108,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 )
                                 IconButton(
                                     onClick = { finish() },
-                                    modifier = Modifier.size(36.dp),
+                                    modifier = Modifier.handCursor().size(36.dp),
                                 ) {
                                     Icon(
                                         imageVector = TbaIcons.Close,
@@ -170,7 +171,10 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 Button(
                                     onClick = { confirmWidget(appWidgetId, teamNumber) },
                                     enabled = teamNumber.isNotBlank(),
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier =
+                                        Modifier
+                                            .handCursor(enabled = teamNumber.isNotBlank())
+                                            .fillMaxWidth(),
                                 ) {
                                     Text("Save")
                                 }

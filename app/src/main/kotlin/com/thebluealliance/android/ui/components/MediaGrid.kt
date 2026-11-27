@@ -116,7 +116,7 @@ fun MediaItem(
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .then(
                     if (linkUrl != null) {
-                        Modifier.clickable(
+                        Modifier.handCursor().clickable(
                             onClickLabel = mediaClickLabel(type),
                             role = Role.Button,
                         ) { context.openUrl(linkUrl) }
