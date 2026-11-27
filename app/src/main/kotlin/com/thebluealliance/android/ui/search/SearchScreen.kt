@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,22 +22,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.EventRow
+import com.thebluealliance.android.ui.components.ReadingMaxWidth
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
@@ -45,6 +59,7 @@ import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.readingColumnFit
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
@@ -108,6 +123,28 @@ fun SearchScreen(
         }
     }
 
+    // The field shares the reading column's edges with the results below it. Until both have been
+    // placed it fills its slot, as it does wherever the column fills the window.
+    var fieldBounds by remember { mutableStateOf<Rect?>(null) }
+    var contentBounds by remember { mutableStateOf<Rect?>(null) }
+    val density = LocalDensity.current
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val fieldFit by remember(density, rtl) {
+        derivedStateOf {
+            val field = fieldBounds ?: return@derivedStateOf null
+            val content = contentBounds ?: return@derivedStateOf null
+            val fit =
+                readingColumnFit(
+                    fieldStart = if (rtl) field.right else field.left,
+                    areaLeft = content.left,
+                    areaRight = content.right,
+                    column = with(density) { ReadingMaxWidth.toPx() },
+                    rtl = rtl,
+                )
+            with(density) { SearchFieldFit(fit.start.toDp(), fit.maxWidth.toDp()) }
+        }
+    }
+
     Scaffold(
         topBar = {
             TBATopAppBar(
@@ -118,6 +155,9 @@ fun SearchScreen(
                         lineLimits = TextFieldLineLimits.SingleLine,
                         modifier =
                             Modifier
+                                .onGloballyPositioned { fieldBounds = it.unclippedBoundsInRoot() }
+                                .padding(start = fieldFit?.start ?: 0.dp)
+                                .widthIn(max = fieldFit?.maxWidth ?: Dp.Unspecified)
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester)
                                 .onPreviewKeyEvent { event ->
@@ -176,7 +216,8 @@ fun SearchScreen(
                 Modifier
                     .pageBackground()
                     .padding(innerPadding.withoutBottom())
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .onGloballyPositioned { contentBounds = it.unclippedBoundsInRoot() },
         ) {
             if (uiState.query.isBlank()) {
                 EmptyBox(message = "Search teams and events")
@@ -245,3 +286,13 @@ internal enum class SearchFieldEscape { ClearText, ClearFocus }
 
 internal fun searchFieldEscape(query: CharSequence): SearchFieldEscape =
     if (query.isEmpty()) SearchFieldEscape.ClearFocus else SearchFieldEscape.ClearText
+
+/** Start offset and widest size of the search field, in its top-bar slot. */
+private data class SearchFieldFit(
+    val start: Dp,
+    val maxWidth: Dp,
+)
+
+/** Bounds in the root, unclipped, so a screen sliding in during a transition still measures whole. */
+private fun LayoutCoordinates.unclippedBoundsInRoot(): Rect =
+    Rect(positionInRoot(), Size(size.width.toFloat(), size.height.toFloat()))

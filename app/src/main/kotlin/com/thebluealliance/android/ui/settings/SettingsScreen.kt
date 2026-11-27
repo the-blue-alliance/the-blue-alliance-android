@@ -31,11 +31,15 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.controlWidth
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
+
+/** Inset of the settings column inside the reading column. */
+private val SettingsPadding = 16.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +78,7 @@ fun SettingsScreen(
                     .fillMaxSize()
                     .readingWidth()
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(SettingsPadding),
         ) {
             Text(
                 text = "Appearance",
@@ -88,7 +92,9 @@ fun SettingsScreen(
                 modifier = Modifier.padding(top = 12.dp, bottom = 8.dp),
             )
 
-            SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.controlWidth(SettingsPadding).fillMaxWidth(),
+            ) {
                 ThemeMode.entries.forEachIndexed { index, mode ->
                     SegmentedButton(
                         selected = themeMode == mode,
@@ -125,8 +131,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth(SettingsPadding)
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Match score notification")
                 }
@@ -136,8 +143,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth(SettingsPadding)
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Upcoming match notification")
                 }
@@ -147,8 +155,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth(SettingsPadding)
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Event update notification")
                 }
@@ -158,8 +167,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth(SettingsPadding)
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Duplicate match (2 followed teams)")
                 }
@@ -169,8 +179,9 @@ fun SettingsScreen(
                     modifier =
                         Modifier
                             .handCursor()
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
+                            .padding(top = 8.dp)
+                            .controlWidth(SettingsPadding)
+                            .fillMaxWidth(),
                 ) {
                     Text("Test: Seed event_team subscription (myTBA)")
                 }

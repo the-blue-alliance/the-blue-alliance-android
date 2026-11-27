@@ -74,6 +74,77 @@ fun Modifier.readingWidth(): Modifier =
         .wrapContentWidth(Alignment.CenterHorizontally)
         .widthIn(max = ReadingMaxWidth)
 
+/**
+ * Widest a control row, such as a segmented button row or a full-width button, grows once the
+ * reading column is at its full width, so its segments stay a comfortable size.
+ */
+val ControlMaxWidth = 400.dp
+
+/**
+ * Width a control row lays out in [available], where [fullColumn] is the width it gets in a reading
+ * column at [ReadingMaxWidth]: all of it while the column is narrower, else [ControlMaxWidth].
+ */
+internal fun controlWidth(
+    available: Dp,
+    fullColumn: Dp,
+): Dp = if (available < fullColumn) available else ControlMaxWidth
+
+/**
+ * Caps a control row at [ControlMaxWidth] once its reading column, inset [columnPadding] on each
+ * side, has stopped growing, so any window up to the reading width lays out as without it.
+ */
+fun Modifier.controlWidth(columnPadding: Dp): Modifier =
+    layout { measurable, constraints ->
+        val max =
+            if (constraints.hasBoundedWidth) {
+                controlWidth(
+                    constraints.maxWidth.toDp(),
+                    ReadingMaxWidth - columnPadding * 2,
+                ).roundToPx()
+            } else {
+                constraints.maxWidth
+            }
+        val placeable =
+            measurable.measure(
+                constraints.copy(minWidth = minOf(constraints.minWidth, max), maxWidth = max),
+            )
+        layout(placeable.width, placeable.height) { placeable.placeRelative(0, 0) }
+    }
+
+/**
+ * Where a field in a top bar sits so it shares the reading column's edges: [start] is its offset
+ * from the start of its slot and [maxWidth] the most it may grow, both in pixels.
+ */
+internal data class ReadingColumnFit(
+    val start: Float,
+    val maxWidth: Float,
+)
+
+/**
+ * Fits a field whose slot begins at [fieldStart] (left edge, or right edge in RTL) to the reading
+ * column of a content area from [areaLeft] to [areaRight], all in the same pixel coordinates. The
+ * field starts no earlier than the column's start edge and ends no later than its end edge. Where
+ * the column fills the area, its edges are the window's, so the field is as wide as its slot.
+ */
+internal fun readingColumnFit(
+    fieldStart: Float,
+    areaLeft: Float,
+    areaRight: Float,
+    column: Float,
+    rtl: Boolean,
+): ReadingColumnFit {
+    val inset = sheetInset(areaRight - areaLeft, column).coerceAtLeast(0f)
+    val columnLeft = areaLeft + inset
+    val columnRight = areaRight - inset
+    return if (rtl) {
+        val start = (fieldStart - columnRight).coerceAtLeast(0f)
+        ReadingColumnFit(start, (fieldStart - start - columnLeft).coerceAtLeast(0f))
+    } else {
+        val start = (columnLeft - fieldStart).coerceAtLeast(0f)
+        ReadingColumnFit(start, (columnRight - fieldStart - start).coerceAtLeast(0f))
+    }
+}
+
 /** Side inset that centers the reading column in [availableWidth]; zero when narrower. */
 internal fun readingInset(availableWidth: Dp): Dp =
     ((availableWidth - ReadingMaxWidth) / 2).coerceAtLeast(0.dp)
