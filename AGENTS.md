@@ -51,6 +51,26 @@ scripts/navigate.sh /teams                  # also /regional_advancement and /ev
 - Capture with `scripts/emu screenshot`.
 - For window sizes, use `adb shell wm size 2400x1080 && adb shell wm density 420` for phone landscape. Reset with `wm size reset; wm density reset`.
 
+### Signed-in screens
+
+myTBA (Favorites, Notifications, a team's or event's notification sheet) needs a signed-in
+user with data, so capture it against a local TBA server, not production:
+
+```bash
+scripts/local-backend.sh up       # server docker compose + Firebase emulators (or reuses one on :8080)
+scripts/local-backend.sh seed     # 3 real 2026 events + uid 2's favorites and subscriptions
+./gradlew :app:assembleDebug -Ptba.url.debug=http://10.0.2.2:8080/ -Ptba.api.key.debug=tba-dev-key
+adb -s "$ANDROID_SERIAL" install -r app/build/outputs/apk/debug/app-debug.apk
+scripts/emu launch com.thebluealliance.androidclient.development/com.thebluealliance.android.MainActivity
+scripts/emu tap More && scripts/emu tap myTBA && scripts/emu tap "Sign in with Google"
+scripts/local-backend.sh down     # when done
+```
+
+- The `-P` flags beat `local.properties`, so leave that file alone even when it points debug builds at production.
+- Debug builds always use the Firebase Auth emulator at `10.0.2.2:9099`. There, "Sign in with Google" signs in as the seeded user (uid 2) with no Google account.
+- `seed` reads a thebluealliance.com key from `TBA_APIV3_KEY`, or from `tba auth login` if that is unset. `TBA_SEED_EVENTS` changes the events, and `TBA_SERVER_DIR` picks the server checkout.
+- `seed` writes favorites through the app's own `setPreferences` call, so rerunning it is safe. `status` prints what uid 2 has.
+
 ### Keeping the loop short
 
 - **Several agents capturing at once:** use the read-only fleet below, one emulator per agent. Don't use a single shared emulator behind a lock.
