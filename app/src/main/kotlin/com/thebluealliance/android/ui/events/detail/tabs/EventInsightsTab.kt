@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -54,7 +56,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.constrainHeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.offset
 import com.thebluealliance.android.domain.model.EventCOPRs
 import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
@@ -66,7 +71,12 @@ import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
+import com.thebluealliance.android.ui.components.tableCellTarget
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -90,6 +100,19 @@ private val COLUMN_GUTTER = 4.dp
 
 /** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
 private val TABLE_ROW_PADDING = 12.dp
+
+/** How far the team cell's target reaches into the row's vertical padding: 48dp tall in all. */
+private val TEAM_TARGET_BLEED = 12.dp
+
+/** Lays the content out [bleed] taller on each side but reports its own height, so it overhangs. */
+private fun Modifier.bleedVertically(bleed: Dp): Modifier =
+    layout { measurable, constraints ->
+        val px = bleed.roundToPx()
+        val placeable = measurable.measure(constraints.offset(vertical = px * 2))
+        layout(placeable.width, constraints.constrainHeight(placeable.height - px * 2)) {
+            placeable.placeRelative(0, -px)
+        }
+    }
 
 /**
  * Width the header rows' overflow button occupies. The data rows reserve the same trailing slot,
@@ -130,6 +153,9 @@ internal fun coprRowDescription(
     statName: String,
     value: Double,
 ): String = "Team $team, $statName ${formatStatValue(value)}"
+
+/** What activating a team cell does, read after its number: the same as the rankings table. */
+internal fun teamCellClickLabel(teamKey: String): String = "View team ${teamKey.teamNumber}"
 
 /** OpenType tabular figures: every digit takes the same advance, so the columns grid up. */
 private const val TABULAR_FIGURES = "tnum"
@@ -198,6 +224,7 @@ fun EventInsightsTab(
     insights: EventInsights?,
     isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
+    onTeamClick: (String) -> Unit = {},
 ) {
     val hasOprData = oprs != null && oprs.oprs.isNotEmpty()
     val hasCoprData = coprs != null && coprs.coprs.isNotEmpty()
@@ -288,6 +315,7 @@ fun EventInsightsTab(
                     statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                    onTeamClick = onTeamClick,
                 )
             }
             is StatType.QualInsights -> {
@@ -325,6 +353,7 @@ fun EventInsightsTab(
                     statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                    onTeamClick = onTeamClick,
                 )
             }
         }
@@ -653,6 +682,7 @@ private fun StandardOPRsView(
     statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
+    onTeamClick: (String) -> Unit,
 ) {
     val teamKeys =
         oprs.oprs.keys
@@ -687,11 +717,13 @@ private fun StandardOPRsView(
         }
     }
 
+    // Team numbers are links, so Tab needs the header ordered before them.
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        inPlaceStickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(
                 onShowStatSelector = onShowStatSelector,
                 statSelectorFocus = statSelectorFocus,
@@ -741,7 +773,7 @@ private fun StandardOPRsView(
                 InsightsTableDataRow(
                     description = oprRowDescription(teamKey.teamNumber, opr, dpr, ccwm),
                 ) {
-                    TableDataCell(text = teamKey.teamNumber, column = OPR_TEAM_COLUMN)
+                    TableTeamCell(teamKey, OPR_TEAM_COLUMN, onTeamClick)
                     TableDataCell(text = formatStatValue(opr), column = OPR_VALUE_COLUMN)
                     TableDataCell(text = formatStatValue(dpr), column = OPR_VALUE_COLUMN)
                     TableDataCell(text = formatStatValue(ccwm), column = OPR_VALUE_COLUMN)
@@ -768,6 +800,7 @@ private fun COPRView(
     statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
+    onTeamClick: (String) -> Unit,
 ) {
     val teamKeys = coprData.keys.toList()
 
@@ -787,11 +820,13 @@ private fun COPRView(
             }
         }
 
+    // Team numbers are links, so Tab needs the header ordered before them.
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        inPlaceStickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(
                 onShowStatSelector = onShowStatSelector,
                 statSelectorFocus = statSelectorFocus,
@@ -831,7 +866,7 @@ private fun COPRView(
                 InsightsTableDataRow(
                     description = coprRowDescription(teamKey.teamNumber, statName, value),
                 ) {
-                    TableDataCell(text = teamKey.teamNumber, column = COPR_TEAM_COLUMN)
+                    TableTeamCell(teamKey, COPR_TEAM_COLUMN, onTeamClick)
                     TableDataCell(text = formatStatValue(value), column = COPR_VALUE_COLUMN)
                 }
                 HorizontalDivider()
@@ -928,7 +963,9 @@ private fun InsightsTableDataRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clearAndSetSemantics { contentDescription = description }
+                // The plain cells clear their own semantics, so the row reads as one stop; the team
+                // cell stays a separate target.
+                .semantics(mergeDescendants = true) { contentDescription = description }
                 .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -1015,9 +1052,38 @@ private fun RowScope.TableDataCell(
         modifier =
             Modifier
                 .weight(column.weight)
-                .padding(horizontal = COLUMN_GUTTER),
+                .padding(horizontal = COLUMN_GUTTER)
+                .clearAndSetSemantics {},
         style = if (column.numeric) style.copy(fontFeatureSettings = TABULAR_FIGURES) else style,
         textAlign = if (column.numeric) TextAlign.End else TextAlign.Start,
+    )
+}
+
+/** A data row's team number, a link to the team at this event like the rankings table's. */
+@Composable
+private fun RowScope.TableTeamCell(
+    teamKey: String,
+    column: TableColumn,
+    onTeamClick: (String) -> Unit,
+) {
+    Text(
+        text = teamKey.teamNumber,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.primary,
+        modifier =
+            Modifier
+                .weight(column.weight)
+                .bleedVertically(TEAM_TARGET_BLEED)
+                .tableCellTarget(
+                    shape = MaterialTheme.shapes.small,
+                    gutter = COLUMN_GUTTER,
+                    labelAtEnd = false,
+                    interaction =
+                        Modifier.returnsFocus().handCursor().clickable(
+                            onClickLabel = teamCellClickLabel(teamKey),
+                            role = Role.Button,
+                        ) { onTeamClick(teamKey) },
+                ).padding(vertical = TEAM_TARGET_BLEED),
     )
 }
 
