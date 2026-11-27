@@ -53,6 +53,12 @@ class MyTBARepositoryTest {
     fun setUp() {
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
+        coEvery { clientApi.listSubscriptions(any()) } returns SubscriptionCollectionDto(code = 200)
+    }
+
+    private fun stubServerSubscriptions(vararg subscriptions: SubscriptionDto) {
+        coEvery { clientApi.listSubscriptions(any()) } returns
+            SubscriptionCollectionDto(code = 200, subscriptions = subscriptions.toList())
     }
 
     @AfterEach
@@ -121,6 +127,123 @@ class MyTBARepositoryTest {
 
             coVerify(exactly = 1) { clientApi.listFavorites(any()) }
             coVerify(exactly = 0) { favoriteDao.insertAll(any()) }
+        }
+
+    @Test
+    fun `addFavorite keeps the model's existing notification types`() =
+        runTest {
+            stubServerSubscriptions(
+                SubscriptionDto("frc254", ModelType.TEAM, listOf("upcoming_match", "match_score")),
+                SubscriptionDto("frc177", ModelType.TEAM, listOf("awards_posted")),
+            )
+            val requestSlot = slot<ModelPreferenceRequestDto>()
+            coEvery { clientApi.updateModelPreferences(capture(requestSlot)) } returns
+                BaseResponseDto(code = 0)
+            coEvery { favoriteDao.insertAll(any()) } returns Unit
+            coEvery { subscriptionDao.insertAll(any()) } returns Unit
+
+            repo.addFavorite("frc254", ModelType.TEAM)
+
+            assertEquals(true, requestSlot.captured.favorite)
+            assertEquals(
+                listOf("upcoming_match", "match_score"),
+                requestSlot.captured.notifications,
+            )
+        }
+
+    @Test
+    fun `removeFavorite keeps the model's existing notification types`() =
+        runTest {
+            stubServerSubscriptions(
+                SubscriptionDto("2026nhgrs", ModelType.EVENT, listOf("awards_posted")),
+                SubscriptionDto("frc254", ModelType.TEAM, listOf("match_score")),
+            )
+            val requestSlot = slot<ModelPreferenceRequestDto>()
+            coEvery { clientApi.updateModelPreferences(capture(requestSlot)) } returns
+                BaseResponseDto(code = 0)
+            coEvery { subscriptionDao.insertAll(any()) } returns Unit
+
+            repo.removeFavorite("2026nhgrs", ModelType.EVENT)
+
+            assertEquals(false, requestSlot.captured.favorite)
+            assertEquals(listOf("awards_posted"), requestSlot.captured.notifications)
+        }
+
+    @Test
+    fun `removeFavorite sends no notification types for an unsubscribed model`() =
+        runTest {
+            stubServerSubscriptions(
+                SubscriptionDto("frc177", ModelType.TEAM, listOf("match_score")),
+            )
+            val requestSlot = slot<ModelPreferenceRequestDto>()
+            coEvery { clientApi.updateModelPreferences(capture(requestSlot)) } returns
+                BaseResponseDto(code = 0)
+            coEvery { subscriptionDao.insertAll(any()) } returns Unit
+
+            repo.removeFavorite("frc254", ModelType.TEAM)
+
+            assertEquals(emptyList<String>(), requestSlot.captured.notifications)
+        }
+
+    @Test
+    fun `addFavorite sends nothing when current subscriptions can't be loaded`() =
+        runTest {
+            coEvery { clientApi.listSubscriptions(any()) } returns
+                SubscriptionCollectionDto(code = 500, message = "Internal error")
+            coEvery { clientApi.updateModelPreferences(any()) } returns BaseResponseDto(code = 0)
+            coEvery { favoriteDao.insertAll(any()) } returns Unit
+
+            assertThrowsServerError(500) { repo.addFavorite("frc254", ModelType.TEAM) }
+
+            coVerify(exactly = 0) { clientApi.updateModelPreferences(any()) }
+            coVerify(exactly = 0) { favoriteDao.insertAll(any()) }
+        }
+
+    @Test
+    fun `removeFavorite sends nothing when current subscriptions can't be loaded`() =
+        runTest {
+            coEvery { clientApi.listSubscriptions(any()) } returns
+                SubscriptionCollectionDto(code = 401, message = "Unauthorized")
+            coEvery { clientApi.updateModelPreferences(any()) } returns BaseResponseDto(code = 0)
+
+            assertThrowsServerError(401) { repo.removeFavorite("frc254", ModelType.TEAM) }
+
+            coVerify(exactly = 0) { clientApi.updateModelPreferences(any()) }
+            coVerify(exactly = 0) { favoriteDao.delete(any(), any()) }
+        }
+
+    @Test
+    fun `addFavorite syncs local subscriptions with the server`() =
+        runTest {
+            stubServerSubscriptions(
+                SubscriptionDto("frc254", ModelType.TEAM, listOf("match_score")),
+            )
+            coEvery { clientApi.updateModelPreferences(any()) } returns BaseResponseDto(code = 0)
+            coEvery { favoriteDao.insertAll(any()) } returns Unit
+            val subscriptionsSlot = slot<List<SubscriptionEntity>>()
+            coEvery { subscriptionDao.insertAll(capture(subscriptionsSlot)) } returns Unit
+
+            repo.addFavorite("frc254", ModelType.TEAM)
+
+            coVerify(exactly = 1) { subscriptionDao.deleteAll() }
+            assertEquals("frc254", subscriptionsSlot.captured.single().modelKey)
+            assertEquals("match_score", subscriptionsSlot.captured.single().notifications)
+        }
+
+    @Test
+    fun `updatePreferences sends the favorite flag with the notification types`() =
+        runTest {
+            val requestSlot = slot<ModelPreferenceRequestDto>()
+            coEvery { clientApi.updateModelPreferences(capture(requestSlot)) } returns
+                BaseResponseDto(code = 0)
+            coEvery { clientApi.listFavorites(any()) } returns FavoriteCollectionDto(code = 200)
+            coEvery { favoriteDao.insertAll(any()) } returns Unit
+            coEvery { subscriptionDao.insertAll(any()) } returns Unit
+
+            repo.updatePreferences("frc254", ModelType.TEAM, true, listOf("match_score"))
+
+            assertEquals(true, requestSlot.captured.favorite)
+            assertEquals(listOf("match_score"), requestSlot.captured.notifications)
         }
 
     @Test
