@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.thebluealliance.android.core.network.ApiKeyProvider
+import com.thebluealliance.android.wear.tracker.AutoRefresh
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
 import dagger.hilt.android.HiltAndroidApp
@@ -27,10 +28,11 @@ class WearApplication :
     override fun onCreate() {
         super.onCreate()
         apiKeyProvider.init()
-        // Only schedule the periodic refresh when a team is actually tracked;
+        // Only schedule the periodic refresh when a team is tracked and exists;
         // otherwise the worker wakes every 6h to do nothing. Setting a team
-        // schedules it from the tracker/config activities.
-        if (TeamTrackerPreferences(this).teamNumber.isNotBlank()) {
+        // schedules it from the config activity.
+        val prefs = TeamTrackerPreferences(this)
+        if (AutoRefresh.allowed(prefs.teamNumber, prefs.teamNotFound)) {
             TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
         }
     }

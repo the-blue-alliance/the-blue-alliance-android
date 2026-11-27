@@ -16,6 +16,11 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -33,6 +38,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.watchface.complications.datasource.ComplicationDataSourceUpdateRequester
 import com.thebluealliance.android.wear.BuildConfig
 import com.thebluealliance.android.wear.R
+import com.thebluealliance.android.wear.tracker.TeamNumber
 import com.thebluealliance.android.wear.tracker.TeamTrackerPreferences
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
@@ -53,7 +59,7 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
         // silently repoint the tracked team. Normalize to digits so the intent path cannot bypass
         // the validation the on-screen field applies.
         if (BuildConfig.DEBUG) {
-            val intentTeam = intent?.getStringExtra("team_number")?.let(::normalizeTeamNumber)
+            val intentTeam = intent?.getStringExtra("team_number")?.let(TeamNumber::normalize)
             if (!intentTeam.isNullOrBlank()) {
                 saveAndFinish(intentTeam)
                 return
@@ -105,19 +111,30 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
     }
 }
 
-/** Strip everything but digits, matching what the on-screen team-number field accepts. */
-private fun normalizeTeamNumber(raw: String): String = raw.filter { it.isDigit() }
-
 @Composable
 private fun ConfigScreen(
     initialTeam: String,
     onSave: (String) -> Unit,
 ) {
     val textFieldState = rememberTextFieldState()
+    var showInvalid by remember { mutableStateOf(false) }
+    // The error is about what was typed when Save was pressed; editing clears it.
+    val typedText = textFieldState.text.toString()
+    LaunchedEffect(typedText) { showInvalid = false }
 
     fun save() {
-        val value = normalizeTeamNumber(textFieldState.text.toString())
-        onSave(value.ifBlank { initialTeam })
+        val typed = textFieldState.text.toString()
+        if (typed.isBlank()) {
+            // Nothing typed: keep the current team.
+            onSave(initialTeam)
+            return
+        }
+        val value = TeamNumber.normalize(typed)
+        if (value == null) {
+            showInvalid = true
+        } else {
+            onSave(value)
+        }
     }
 
     Column(
@@ -175,6 +192,15 @@ private fun ConfigScreen(
                 innerTextField()
             },
         )
+        if (showInvalid) {
+            Text(
+                text = stringResource(R.string.invalid_team_number),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
         FilledTonalButton(
             onClick = { save() },
             label = { Text(stringResource(R.string.save)) },

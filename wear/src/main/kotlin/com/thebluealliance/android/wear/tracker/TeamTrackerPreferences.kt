@@ -52,6 +52,12 @@ class TeamTrackerPreferences(
     var lastRefreshFailed: Boolean
         get() = prefs.getBoolean(KEY_LAST_REFRESH_FAILED, false)
         set(value) = put { putBoolean(KEY_LAST_REFRESH_FAILED, value) }
+
+    /** True when the API said the tracked team doesn't exist (HTTP 404); retrying can't help. */
+    var teamNotFound: Boolean
+        get() = prefs.getBoolean(KEY_TEAM_NOT_FOUND, false)
+        set(value) = put { putBoolean(KEY_TEAM_NOT_FOUND, value) }
+
     var avatarBase64: String?
         get() = prefs.getString(KEY_AVATAR_BASE64, null)
         set(value) = put { putString(KEY_AVATAR_BASE64, value) }
@@ -172,6 +178,7 @@ class TeamTrackerPreferences(
         private const val KEY_TEAM_NUMBER = "team_number"
         private const val KEY_IS_LOADING = "is_loading"
         private const val KEY_LAST_REFRESH_FAILED = "last_refresh_failed"
+        private const val KEY_TEAM_NOT_FOUND = "team_not_found"
         private const val KEY_AVATAR_BASE64 = "avatar_base64"
         private const val KEY_EVENT_NAME = "event_name"
         private const val KEY_RECORD = "record"
