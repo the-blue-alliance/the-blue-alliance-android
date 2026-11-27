@@ -107,9 +107,16 @@ fun ReadingWidthBox(
 ) = ReadingWidthBox(PaddingValues(), modifier, content = content)
 
 /**
+ * Narrowest margin drawn beside the reading column. A thinner strip of [pageBackdrop] reads as a
+ * rendering glitch rather than a margin, so [pageBackground] fills it with the sheet instead.
+ */
+val MinSheetMargin = 24.dp
+
+/**
  * Paints a screen's content area: [page] under the centered reading column and [backdrop] in the
  * margins beside it, full height, so on a wide window the column reads as a sheet and header bands
- * capped to it end at its edges. No wider than the column, it is a plain [narrow] fill.
+ * capped to it end at its edges. No wider than the column, it is a plain [narrow] fill; with
+ * margins narrower than [MinSheetMargin], a plain [page] fill.
  */
 fun Modifier.pageBackground(
     page: Color,
@@ -120,6 +127,8 @@ fun Modifier.pageBackground(
         val inset = sheetInset(size.width, ReadingMaxWidth.toPx())
         if (inset <= 0f) {
             drawRect(narrow)
+        } else if (!drawsSheetMargins(inset, MinSheetMargin.toPx())) {
+            drawRect(page)
         } else {
             drawRect(backdrop)
             drawRect(
@@ -135,6 +144,12 @@ internal fun sheetInset(
     width: Float,
     column: Float,
 ): Float = kotlin.math.round((width - column) / 2f)
+
+/** Whether margins [inset] wide are drawn: only once they are at least [minMargin] wide. */
+internal fun drawsSheetMargins(
+    inset: Float,
+    minMargin: Float,
+): Boolean = inset >= minMargin
 
 private val ColorScheme.isDark: Boolean get() = background.luminance() < 0.5f
 
