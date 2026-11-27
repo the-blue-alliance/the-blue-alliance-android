@@ -8,7 +8,9 @@ import kotlinx.serialization.json.jsonPrimitive
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * Pure match/record formatting logic for the complication worker, extracted so it can be unit
@@ -100,6 +102,26 @@ internal object MatchLogic {
             val prefix = if (includeEstimatePrefix && match.predictedTime != null) "~" else ""
             val amPm = if (zoned.hour < 12) "A" else "P"
             "$prefix${timeFormat.format(zoned)}$amPm"
+        } else {
+            zoned.format(DateTimeFormatter.ofPattern("EEE"))
+        }
+    }
+
+    /**
+     * Clock text for a match starting at [epochSeconds], as seen at [now]: the time alone when
+     * it's today, or the weekday and time otherwise.
+     */
+    @Suppress("UNUSED_PARAMETER")
+    fun formatMatchClock(
+        epochSeconds: Long,
+        now: ZonedDateTime,
+        use24Hour: Boolean,
+        locale: Locale,
+    ): String {
+        val zoned = Instant.ofEpochSecond(epochSeconds).atZone(now.zone)
+        return if (zoned.toLocalDate() == now.toLocalDate()) {
+            val amPm = if (zoned.hour < 12) "A" else "P"
+            "${timeFormat.format(zoned)}$amPm"
         } else {
             zoned.format(DateTimeFormatter.ofPattern("EEE"))
         }
