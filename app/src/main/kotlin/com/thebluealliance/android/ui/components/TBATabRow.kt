@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryScrollableTabRow
@@ -22,9 +23,11 @@ fun TBATabRow(
     modifier: Modifier = Modifier,
     tabs: @Composable () -> Unit,
 ) {
+    val scrollState = rememberScrollState()
     PrimaryScrollableTabRow(
         selectedTabIndex = selectedTabIndex,
-        modifier = modifier,
+        modifier = modifier.verticalWheelScrollsSideways(scrollState),
+        scrollState = scrollState,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = OnBrand,
         edgePadding = 0.dp,
