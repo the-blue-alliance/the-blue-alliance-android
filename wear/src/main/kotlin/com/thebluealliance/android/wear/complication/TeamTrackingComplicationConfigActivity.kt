@@ -16,6 +16,10 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -116,10 +120,21 @@ private fun ConfigScreen(
     onSave: (String) -> Unit,
 ) {
     val textFieldState = rememberTextFieldState()
+    var showInvalid by remember { mutableStateOf(false) }
 
     fun save() {
-        val value = TeamNumber.normalize(textFieldState.text.toString())
-        onSave(value ?: initialTeam)
+        val typed = textFieldState.text.toString()
+        if (typed.isBlank()) {
+            // Nothing typed: keep the current team.
+            onSave(initialTeam)
+            return
+        }
+        val value = TeamNumber.normalize(typed)
+        if (value == null) {
+            showInvalid = true
+        } else {
+            onSave(value)
+        }
     }
 
     Column(
@@ -177,6 +192,15 @@ private fun ConfigScreen(
                 innerTextField()
             },
         )
+        if (showInvalid) {
+            Text(
+                text = stringResource(R.string.invalid_team_number),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
         FilledTonalButton(
             onClick = { save() },
             label = { Text(stringResource(R.string.save)) },

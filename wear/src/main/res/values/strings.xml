@@ -11,4 +11,6 @@
     <string name="no_upcoming_events">No upcoming events</string>
     <string name="refresh_failed">Couldn\'t refresh</string>
     <string name="retry">Retry</string>
+    <string name="team_not_found">Team %1$s not found</string>
+    <string name="invalid_team_number">Not a team number</string>
 </resources>
