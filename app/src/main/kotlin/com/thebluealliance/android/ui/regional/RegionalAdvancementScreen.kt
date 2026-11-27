@@ -482,6 +482,7 @@ private fun EventScoreCell(
         modifier =
             modifier
                 .bleedHorizontally(start = PaddedClickableHorizontalPadding, end = 0.dp)
+                .returnsFocus()
                 .handCursor()
                 .clickable(
                     interactionSource = interactionSource,
