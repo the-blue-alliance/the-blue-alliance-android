@@ -87,6 +87,8 @@ fun ReadingTabRow(
 @Composable
 private fun Modifier.readingBandDivider(): Modifier {
     val bleed = LocalReadingBandBleed.current
+    // With no bleed the tab row's own divider already spans the row.
+    if (bleed <= 0.dp) return this
     return drawBehind {
         val px = bleed.toPx()
         val thickness = TabRowDividerThickness.toPx()
