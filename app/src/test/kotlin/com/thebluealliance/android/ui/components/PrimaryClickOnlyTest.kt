@@ -8,28 +8,28 @@ class PrimaryClickOnlyTest {
     @Test
     fun `a right-click release is held back`() {
         val tracker = SecondaryPressTracker()
-        tracker.onPress(id = 1, isMouse = true, secondaryOnly = true)
+        tracker.onPress(id = 1, isMouse = true, nonPrimary = true)
         assertTrue(tracker.onRelease(1))
     }
 
     @Test
     fun `a left click goes through`() {
         val tracker = SecondaryPressTracker()
-        tracker.onPress(id = 1, isMouse = true, secondaryOnly = false)
+        tracker.onPress(id = 1, isMouse = true, nonPrimary = false)
         assertFalse(tracker.onRelease(1))
     }
 
     @Test
     fun `a touch goes through`() {
         val tracker = SecondaryPressTracker()
-        tracker.onPress(id = 1, isMouse = false, secondaryOnly = true)
+        tracker.onPress(id = 1, isMouse = false, nonPrimary = true)
         assertFalse(tracker.onRelease(1))
     }
 
     @Test
     fun `only the right-click's own release is held back, once`() {
         val tracker = SecondaryPressTracker()
-        tracker.onPress(id = 1, isMouse = true, secondaryOnly = true)
+        tracker.onPress(id = 1, isMouse = true, nonPrimary = true)
         assertFalse(tracker.onRelease(2))
         assertTrue(tracker.onRelease(1))
         assertFalse(tracker.onRelease(1))
@@ -38,9 +38,9 @@ class PrimaryClickOnlyTest {
     @Test
     fun `a left click after a right-click goes through`() {
         val tracker = SecondaryPressTracker()
-        tracker.onPress(id = 1, isMouse = true, secondaryOnly = true)
+        tracker.onPress(id = 1, isMouse = true, nonPrimary = true)
         tracker.onRelease(1)
-        tracker.onPress(id = 1, isMouse = true, secondaryOnly = false)
+        tracker.onPress(id = 1, isMouse = true, nonPrimary = false)
         assertFalse(tracker.onRelease(1))
     }
 }
