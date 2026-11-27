@@ -513,6 +513,8 @@ BTN_LEFT, BTN_RIGHT, BTN_MIDDLE = 272, 273, 274
 UI_SET_RELBIT = 102
 MOUSE_NAME = "emu-mouse"
 MOUSE_TOLERANCE = 2.0
+# A relative move far larger than any display; the pointer stops at the corner.
+MOUSE_PARK_COUNTS = 100000
 
 # android.view.PointerIcon TYPE_* constants, as dumped by MouseCursorController.
 POINTER_ICONS = {
@@ -537,6 +539,26 @@ def _daemon_alive(pid):
     return "--mouse-daemon" in out
 
 
+def mouse_end_script():
+    """`uinput` commands that leave nothing of the mouse behind in the app.
+
+    Removing a uinput device sends InputDispatcher no HOVER_EXIT and no reset, so
+    whatever window the pointer last hovered keeps it hovered (a stuck hover
+    highlight) and the full-screen spy windows and gesture monitors keep a
+    `hoveringPointers` entry for the dead device. A relative mouse has no way to
+    report leaving, so release any held button, then park the pointer in the
+    top-left corner (the status bar on a phone or tablet), which sends the app
+    window its HOVER_EXIT. The spy and monitor entries stay; only a device
+    reset clears them, and nothing a uinput device sends causes one.
+    """
+    return [
+        _inject(EV_KEY, BTN_LEFT, 0, EV_KEY, BTN_RIGHT, 0, EV_KEY, BTN_MIDDLE, 0),
+        _inject(EV_REL, REL_X, -MOUSE_PARK_COUNTS, EV_REL, REL_Y, -MOUSE_PARK_COUNTS),
+        # Give InputReader time to read the last events before the device goes.
+        _delay(200),
+    ]
+
+
 def mouse_daemon(serial):
     """Own one `uinput -` process for serial and feed it JSON lines from the socket."""
     sock_path, pid_path, _ = mouse_paths(serial)
@@ -544,7 +566,10 @@ def mouse_daemon(serial):
                             stdin=subprocess.PIPE, text=True)
 
     def feed(obj):
-        proc.stdin.write(json.dumps(obj) + "\n")
+        feed_lines([obj])
+
+    def feed_lines(objs):
+        proc.stdin.write("".join(json.dumps(o) + "\n" for o in objs))
         proc.stdin.flush()
 
     feed({"id": 1, "command": "register", "name": MOUSE_NAME,
@@ -555,7 +580,9 @@ def mouse_daemon(serial):
               {"type": UI_SET_RELBIT, "data": [REL_X, REL_Y, REL_HWHEEL, REL_WHEEL]},
           ]})
 
-    signal.signal(signal.SIGTERM, lambda *_: sys.exit(0))
+    # Exit through the finally below, which parks the mouse before closing it.
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGHUP):
+        signal.signal(sig, lambda *_: sys.exit(0))
     srv = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     try:
         os.unlink(sock_path)
@@ -591,10 +618,13 @@ def mouse_daemon(serial):
             if stop:
                 break
     finally:
-        # EOF on stdin makes uinput exit, which unregisters the device.
         try:
+            if proc.poll() is None:
+                feed_lines(mouse_end_script())
+            # EOF on stdin makes uinput finish the script and exit, which
+            # unregisters the device.
             proc.stdin.close()
-            proc.wait(timeout=3)
+            proc.wait(timeout=5)
         except Exception:
             proc.kill()
         # A daemon that was signalled late (e.g. after being stopped) can outlive
