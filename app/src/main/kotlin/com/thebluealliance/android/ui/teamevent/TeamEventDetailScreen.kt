@@ -677,16 +677,18 @@ private fun StatsTab(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier =
-                    Modifier.paddedClickable(
-                        MaterialTheme.shapes.small,
-                        vertical = 4.dp,
-                        keepContentInPlace = true,
-                        onClickLabel = "Open in browser",
-                    ) {
-                        context.openUrl(
-                            "https://www.thebluealliance.com/opr",
-                        )
-                    },
+                    Modifier
+                        .fillMaxWidth()
+                        .paddedClickable(
+                            MaterialTheme.shapes.small,
+                            vertical = 4.dp,
+                            keepContentInPlace = true,
+                            onClickLabel = "Open in browser",
+                        ) {
+                            context.openUrl(
+                                "https://www.thebluealliance.com/opr",
+                            )
+                        },
             )
         }
 
