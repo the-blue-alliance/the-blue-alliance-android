@@ -6,6 +6,7 @@ package com.thebluealliance.android.widget
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.text.format.DateFormat
 import android.util.Base64
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
@@ -18,6 +19,7 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalContext
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
@@ -54,6 +56,7 @@ import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.TbaDarkColorScheme
 import com.thebluealliance.android.ui.theme.TbaLightColorScheme
 import com.thebluealliance.android.util.teamNumber
+import java.time.ZonedDateTime
 
 /**
  * Glance Compose widget for team tracking.
@@ -154,7 +157,9 @@ class TeamTrackingWidget : GlanceAppWidget() {
             eventName = prefs[TeamTrackingWidgetKeys.EVENT_NAME] ?: "No event",
             record = prefs[TeamTrackingWidgetKeys.RECORD] ?: "",
             upcomingEvents = prefs[TeamTrackingWidgetKeys.UPCOMING_EVENTS],
-            lastUpdated = prefs[TeamTrackingWidgetKeys.LAST_UPDATED] ?: "",
+            footer = footerText(prefs),
+            loadFailed =
+                prefs[TeamTrackingWidgetKeys.WIDGET_STATE] == WidgetState.LOAD_FAILED.value,
             lastMatchLabel = prefs[TeamTrackingWidgetKeys.LAST_MATCH_LABEL],
             lastRedTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_RED_TEAMS],
             lastBlueTeams = prefs[TeamTrackingWidgetKeys.LAST_MATCH_BLUE_TEAMS],
@@ -172,6 +177,26 @@ class TeamTrackingWidget : GlanceAppWidget() {
         )
     }
 
+    /** The footer line, or "" to hide it. Times are formatted here so the day stays current. */
+    @Composable
+    private fun footerText(prefs: androidx.datastore.preferences.core.Preferences): String {
+        val context = LocalContext.current
+        val lastSuccessAt = prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT]
+        val refreshFailed = prefs[TeamTrackingWidgetKeys.REFRESH_FAILED] ?: false
+        // Widgets last refreshed by an older version stored the time as text.
+        val legacy = prefs[TeamTrackingWidgetKeys.LAST_UPDATED]
+        if (lastSuccessAt == null && legacy != null) {
+            return if (refreshFailed) "Couldn't refresh · updated $legacy" else "Updated $legacy"
+        }
+        return WidgetRefreshState.footerText(
+            lastSuccessAtMillis = lastSuccessAt,
+            refreshFailed = refreshFailed,
+            now = ZonedDateTime.now(),
+            use24Hour = DateFormat.is24HourFormat(context),
+            locale = context.resources.configuration.locales[0],
+        ) ?: ""
+    }
+
     private data class WidgetData(
         val teamNumber: String,
         val teamKey: String,
@@ -181,7 +206,8 @@ class TeamTrackingWidget : GlanceAppWidget() {
         val eventName: String,
         val record: String,
         val upcomingEvents: String?,
-        val lastUpdated: String,
+        val footer: String,
+        val loadFailed: Boolean = false,
         val lastMatchLabel: String?,
         val lastRedTeams: String?,
         val lastBlueTeams: String?,
@@ -239,6 +265,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     record.isNotEmpty() -> record
                     eventName.isNotEmpty() && eventName != "No event" -> eventName
                     upcomingEvents != null -> "Upcoming events"
+                    loadFailed -> "Couldn't load"
                     else -> "No upcoming events"
                 }
 
@@ -281,7 +308,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                     eventName = "NE District Event",
                     record = "5-2-0",
                     upcomingEvents = null,
-                    lastUpdated = "just now",
+                    footer = "Updated just now",
                     lastMatchLabel = "Q12",
                     lastRedTeams = "195, 1519, 4909",
                     lastBlueTeams = "177, 1153, 2067",
@@ -311,7 +338,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                         "NE District WPI\tWorcester, MA\tMar 7\n" +
                             "NE District UNH\tDurham, NH\tMar 28\n" +
                             "NE FIRST Championship\tSpringfield, MA\tApr 16",
-                    lastUpdated = "just now",
+                    footer = "Updated just now",
                     lastMatchLabel = null,
                     lastRedTeams = null,
                     lastBlueTeams = null,
@@ -698,7 +725,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
             }
             Spacer(modifier = GlanceModifier.defaultWeight())
 
-            UpdatedFooter(data.lastUpdated)
+            UpdatedFooter(data.footer)
         }
     }
 
@@ -856,7 +883,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                 Spacer(modifier = GlanceModifier.defaultWeight())
             }
 
-            UpdatedFooter(data.lastUpdated)
+            UpdatedFooter(data.footer)
         }
     }
 
@@ -864,10 +891,10 @@ class TeamTrackingWidget : GlanceAppWidget() {
 
     /** "↻ Updated ..." footer with refresh-on-tap. Used by 2x2 and 4x2. */
     @Composable
-    private fun UpdatedFooter(lastUpdated: String) {
-        if (lastUpdated.isNotEmpty()) {
+    private fun UpdatedFooter(footer: String) {
+        if (footer.isNotEmpty()) {
             Text(
-                text = "\u21BB Updated $lastUpdated",
+                text = "\u21BB $footer",
                 style =
                     TextStyle(
                         color = GlanceTheme.colors.primary,

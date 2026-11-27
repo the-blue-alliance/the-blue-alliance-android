@@ -1,5 +1,7 @@
 package com.thebluealliance.android.widget
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object TeamTrackingWidgetKeys {
@@ -12,6 +14,12 @@ object TeamTrackingWidgetKeys {
     val EVENT_NAME = stringPreferencesKey("event_name")
     val RECORD = stringPreferencesKey("record")
     val LAST_UPDATED = stringPreferencesKey("last_updated")
+
+    /** When a refresh last fetched fresh data (epoch millis). Absent until the first success. */
+    val LAST_SUCCESS_AT = longPreferencesKey("last_success_at")
+
+    /** True when the latest refresh couldn't reach the API, so what's shown may be stale. */
+    val REFRESH_FAILED = booleanPreferencesKey("refresh_failed")
 
     // Last match
     val LAST_MATCH_LABEL = stringPreferencesKey("last_match_label")

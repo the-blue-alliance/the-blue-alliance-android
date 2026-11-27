@@ -68,14 +68,15 @@ class TeamTrackingWorker
 
             fun enqueuePeriodicRefresh(context: Context) {
                 val request =
+                    // No network constraint: offline, the run fails fast and re-renders the widget
+                    // as "Couldn't refresh · updated <when>", so the footer's day stays right.
                     PeriodicWorkRequestBuilder<TeamTrackingWorker>(
                         6,
                         TimeUnit.HOURS,
-                    ).setConstraints(networkConstraints)
-                        .build()
+                    ).build()
                 WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                     WORK_NAME,
-                    ExistingPeriodicWorkPolicy.KEEP,
+                    ExistingPeriodicWorkPolicy.UPDATE,
                     request,
                 )
             }
@@ -172,6 +173,8 @@ class TeamTrackingWorker
         ): Boolean {
             // Fetch team info and avatar
             val year = LocalDate.now().year
+            // Team info and media are cosmetic; the refresh counts as successful only if the
+            // events (and, at an event, its matches) were fetched.
             try {
                 teamRepository.refreshTeam(teamKey)
             } catch (
@@ -205,17 +208,12 @@ class TeamTrackingWorker
                 e: Exception,
             ) {
                 Log.w(TAG, "Failed to refresh team events $teamKey/$year", e)
+                return keepLastGoodData(glanceId, teamNickname, avatar)
             }
             val events =
                 eventRepository.observeTeamEvents(teamKey, year).firstOrNull()
                     ?: emptyList()
             val currentEvent = findCurrentEvent(events, teamKey)
-
-            val now =
-                Instant
-                    .now()
-                    .atZone(ZoneId.systemDefault())
-                    .format(timeFormat)
 
             if (currentEvent == null) {
                 val today = LocalDate.now()
@@ -245,7 +243,7 @@ class TeamTrackingWorker
                     }
 
                 updateAppWidgetState(applicationContext, glanceId) { prefs ->
-                    prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar, now)
+                    prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar)
                     prefs.remove(TeamTrackingWidgetKeys.EVENT_KEY)
                     prefs[TeamTrackingWidgetKeys.EVENT_NAME] = ""
                     prefs[TeamTrackingWidgetKeys.RECORD] = ""
@@ -280,6 +278,7 @@ class TeamTrackingWorker
                 e: Exception,
             ) {
                 Log.w(TAG, "Failed to refresh event matches $eventKey", e)
+                return keepLastGoodData(glanceId, teamNickname, avatar)
             }
 
             val event = eventRepository.observeEvent(eventKey).firstOrNull()
@@ -307,7 +306,7 @@ class TeamTrackingWorker
             val nextMatch = unplayedMatches.firstOrNull()
 
             updateAppWidgetState(applicationContext, glanceId) { prefs ->
-                prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar, now)
+                prefs.updateTeamInfo(teamNumber, teamKey, teamNickname, avatar)
                 prefs[TeamTrackingWidgetKeys.EVENT_KEY] = eventKey
                 prefs[TeamTrackingWidgetKeys.EVENT_NAME] = eventName
                 prefs[TeamTrackingWidgetKeys.RECORD] = record
@@ -421,12 +420,29 @@ class TeamTrackingWorker
             return null
         }
 
+        /**
+         * The API couldn't be reached: leave the widget's data as it was and note the failure.
+         * Returns whether the widget is still showing an event, to keep the fast refresh going.
+         */
+        private suspend fun keepLastGoodData(
+            glanceId: androidx.glance.GlanceId,
+            cachedNickname: String,
+            cachedAvatar: Media?,
+        ): Boolean {
+            var showingEvent = false
+            updateAppWidgetState(applicationContext, glanceId) { prefs ->
+                showingEvent = prefs[TeamTrackingWidgetKeys.EVENT_KEY] != null
+                WidgetRefreshState.markFailed(prefs, cachedNickname, cachedAvatar?.base64Image)
+            }
+            TeamTrackingWidget().update(applicationContext, glanceId)
+            return showingEvent
+        }
+
         private fun MutablePreferences.updateTeamInfo(
             teamNumber: String,
             teamKey: String,
             teamNickname: String,
             avatar: Media?,
-            now: String,
         ) {
             this[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
             this[TeamTrackingWidgetKeys.TEAM_KEY] = teamKey
@@ -436,7 +452,7 @@ class TeamTrackingWorker
             } else {
                 remove(TeamTrackingWidgetKeys.AVATAR_BASE64)
             }
-            this[TeamTrackingWidgetKeys.LAST_UPDATED] = now
+            WidgetRefreshState.markSucceeded(this, System.currentTimeMillis())
         }
 
         private fun formatMatchTime(match: Match): String {
