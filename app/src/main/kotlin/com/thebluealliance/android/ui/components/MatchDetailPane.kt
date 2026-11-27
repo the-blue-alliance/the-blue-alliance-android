@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -62,7 +63,10 @@ fun MatchListDetailPanes(
     host: MatchDetailPaneHost,
     list: @Composable () -> Unit,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    // Cover the sheet and margins the event pager paints for one centred column, which would
+    // otherwise cut across the list. The list pane is narrower than that column, so it takes the
+    // plain page colour as on a phone; a match in the detail pane paints its own page.
+    BoxWithConstraints(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         val listWidth = matchListPaneWidth(maxWidth)
         Row(Modifier.fillMaxSize()) {
             Box(Modifier.width(listWidth).fillMaxHeight()) { list() }
