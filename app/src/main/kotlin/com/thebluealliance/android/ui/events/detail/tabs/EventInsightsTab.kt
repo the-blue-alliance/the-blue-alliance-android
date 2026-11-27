@@ -890,10 +890,10 @@ private fun InsightsTableDataRow(
 /**
  * A column's header cell. Pass [onSortClick] to make the column sortable.
  *
- * Clip + clickable sit outside the cell's own [COLUMN_GUTTER], so the sort target is a rounded
- * band spanning the whole column with the label inset from both its edges, instead of a highlight
- * glued to the glyphs. The header row's height is set by its 48.dp icon button, so the vertical
- * padding does not change the header's layout, and every cell fills that height.
+ * The sort target is a rounded band spanning the whole column. It bleeds past the label's edge so
+ * the label keeps 8dp of room inside it while staying [COLUMN_GUTTER] from the column edge, in
+ * line with the data cells below. The header row's height is set by its 48.dp icon button, so the
+ * vertical padding does not change the header's layout, and every cell fills that height.
  *
  * A numeric column right-aligns its label onto the values' shared right edge (matching the data
  * cells below) and leads it with the sort carat, so the carat sits to the label's left and does not
@@ -917,14 +917,16 @@ private fun RowScope.TableHeaderCell(
 ) {
     val sortTarget =
         if (onSortClick == null) {
-            Modifier
+            Modifier.padding(horizontal = COLUMN_GUTTER)
         } else {
             Modifier.sortableHeader(
-                MaterialTheme.shapes.small,
-                text,
-                sorted,
-                ascending,
-                onSortClick,
+                shape = MaterialTheme.shapes.small,
+                label = text,
+                sorted = sorted,
+                ascending = ascending,
+                gutter = COLUMN_GUTTER,
+                labelAtEnd = column.numeric,
+                onClick = onSortClick,
             )
         }
     Row(
@@ -933,7 +935,7 @@ private fun RowScope.TableHeaderCell(
                 .weight(column.weight)
                 .fillMaxHeight()
                 .then(sortTarget)
-                .padding(horizontal = COLUMN_GUTTER, vertical = 8.dp),
+                .padding(vertical = 8.dp),
         horizontalArrangement = if (column.numeric) Arrangement.End else Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
     ) {

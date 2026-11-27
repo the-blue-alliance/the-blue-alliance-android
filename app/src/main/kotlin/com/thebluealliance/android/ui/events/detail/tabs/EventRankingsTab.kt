@@ -38,7 +38,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.IntrinsicMeasurable
@@ -76,6 +75,7 @@ import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.sideScrollRowWidth
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.statRowWidth
+import com.thebluealliance.android.ui.components.tableCellTarget
 import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
 import com.thebluealliance.android.ui.components.tableSpan
@@ -526,15 +526,21 @@ private fun RankingHeaderItem(
     onSortClick: () -> Unit,
 ) {
     val sorted = currentSort == sortColumn
-    // Clip + clickable outside the cell's own COLUMN_GUTTER, so the sort target is a rounded band
-    // spanning the whole column with the label inset from both its edges, instead of a highlight
-    // glued to the glyphs. The data cells carry the same gutter, so the label stays in line with
-    // the column below it.
+    // The sort target is a rounded band spanning the whole column. It bleeds past the label's
+    // edge so the label keeps 8dp of room inside it while staying COLUMN_GUTTER from the column
+    // edge, in line with the data cells below.
     val cellModifier =
         modifier
             .fillMaxHeight()
-            .sortableHeader(MaterialTheme.shapes.small, text, sorted, ascending, onSortClick)
-            .padding(horizontal = COLUMN_GUTTER, vertical = 6.dp)
+            .sortableHeader(
+                shape = MaterialTheme.shapes.small,
+                label = text,
+                sorted = sorted,
+                ascending = ascending,
+                gutter = COLUMN_GUTTER,
+                labelAtEnd = numeric,
+                onClick = onSortClick,
+            ).padding(vertical = 6.dp)
     if (numeric) {
         // Numeric column: right-align the label onto the values' shared right edge, with the sort
         // carat leading it (Material data-table convention — a leading carat keeps the numeric
@@ -734,15 +740,16 @@ private fun RankingItem(
                     modifier =
                         Modifier
                             .rankingColumn(this, TEAM_COLUMN, columnWidths)
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable(
-                                onClickLabel = "View team ${ranking.teamKey.teamNumber}",
-                                role = Role.Button,
-                            ) { onTeamClick(ranking.teamKey) }
-                            .padding(
-                                horizontal = COLUMN_GUTTER,
-                                vertical = ROW_CELL_PADDING + 4.dp,
-                            ),
+                            .tableCellTarget(
+                                shape = MaterialTheme.shapes.small,
+                                gutter = COLUMN_GUTTER,
+                                labelAtEnd = false,
+                                interaction =
+                                    Modifier.clickable(
+                                        onClickLabel = "View team ${ranking.teamKey.teamNumber}",
+                                        role = Role.Button,
+                                    ) { onTeamClick(ranking.teamKey) },
+                            ).padding(vertical = ROW_CELL_PADDING + 4.dp),
                     color = MaterialTheme.colorScheme.primary,
                 )
             },
