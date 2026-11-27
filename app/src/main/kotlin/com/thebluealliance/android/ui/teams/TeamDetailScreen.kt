@@ -228,25 +228,35 @@ fun TeamDetailScreen(
                             )
                         }
                     },
+                    // A missing key has nothing to favorite, subscribe to or pin.
                     secondaryActions =
-                        listOf(
-                            notificationPreferencesAction(
-                                notificationsOn = subscription?.notifications?.isNotEmpty() == true,
-                                onClick = {
-                                    if (!viewModel.isSignedIn()) {
-                                        showSignInDialog = true
-                                    } else {
-                                        showNotificationSheet = true
-                                    }
-                                },
-                            ),
-                            TopBarAction(
-                                label =
-                                    if (isFavorite) "Remove from favorites" else "Add to favorites",
-                                icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
-                                onClick = viewModel::toggleFavorite,
-                            ),
-                        ),
+                        if (uiState.notFound) {
+                            emptyList()
+                        } else {
+                            listOf(
+                                notificationPreferencesAction(
+                                    notificationsOn =
+                                        subscription?.notifications?.isNotEmpty() == true,
+                                    onClick = {
+                                        if (!viewModel.isSignedIn()) {
+                                            showSignInDialog = true
+                                        } else {
+                                            showNotificationSheet = true
+                                        }
+                                    },
+                                ),
+                                TopBarAction(
+                                    label =
+                                        if (isFavorite) {
+                                            "Remove from favorites"
+                                        } else {
+                                            "Add to favorites"
+                                        },
+                                    icon = if (isFavorite) TbaIcons.Star else TbaIcons.StarOutlined,
+                                    onClick = viewModel::toggleFavorite,
+                                ),
+                            )
+                        },
                     overflowActions =
                         listOfNotNull(
                             uiState.team?.let { team ->
@@ -265,7 +275,7 @@ fun TeamDetailScreen(
                                     },
                                 )
                             },
-                            if (viewModel.canPinShortcuts) {
+                            if (viewModel.canPinShortcuts && !uiState.notFound) {
                                 TopBarAction(
                                     label = "Add to home screen",
                                     icon = TbaIcons.AddToHomeScreen,
