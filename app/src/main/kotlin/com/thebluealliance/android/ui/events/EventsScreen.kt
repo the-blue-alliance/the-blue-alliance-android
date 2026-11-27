@@ -251,10 +251,14 @@ private fun EventsList(
 
     // Auto-select current week on first load
     var hasAutoSelected by rememberSaveable(selectedYear) { mutableStateOf(false) }
-    LaunchedEffect(currentTarget) {
-        if (!hasAutoSelected && currentTarget != null) {
+    // Keyed on whether there is a target, not on the target: favorites and fresh events loading
+    // during the scroll move its index, and restarting here would cancel the scroll partway.
+    val hasTarget = currentTarget != null
+    LaunchedEffect(selectedYear, hasTarget) {
+        val target = latestTarget
+        if (!hasAutoSelected && target != null) {
             hasAutoSelected = true
-            animateToTarget(currentTarget)
+            animateToTarget(target)
         }
     }
 
