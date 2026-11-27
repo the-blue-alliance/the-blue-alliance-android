@@ -33,6 +33,8 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.ui.common.ErrorBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.LocalMatchDetailPaneHost
@@ -287,7 +289,21 @@ fun EventDetailScreen(
                 onRefresh = { viewModel.refreshTab(EventDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
-                when (EventDetailTab.entries[page]) {
+                val tab = EventDetailTab.entries[page]
+                if (uiState.loadFailed(tab)) {
+                    // With no event the pull spinner is hidden, so show the retry in progress here.
+                    if (isRefreshing && uiState.event == null) {
+                        LoadingBox(modifier = Modifier.padding(bottomPadding))
+                    } else {
+                        ErrorBox(
+                            modifier = Modifier.padding(bottomPadding),
+                            message = tab.loadErrorMessage(uiState.event),
+                            onRetry = { viewModel.retry(tab) },
+                        )
+                    }
+                    return@TouchPullToRefreshBox
+                }
+                when (tab) {
                     EventDetailTab.INFO ->
                         EventInfoTab(
                             event = uiState.event,
@@ -384,3 +400,12 @@ fun EventDetailScreen(
         }
     }
 }
+
+private fun EventDetailTab.loadErrorMessage(event: Event?): String =
+    if (this ==
+        EventDetailTab.INFO
+    ) {
+        "Couldn't load event"
+    } else {
+        "Couldn't load ${readableName(event).lowercase()}"
+    }

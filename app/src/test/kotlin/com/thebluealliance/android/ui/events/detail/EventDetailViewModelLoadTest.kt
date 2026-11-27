@@ -27,6 +27,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import retrofit2.HttpException
+import retrofit2.Response
 import java.net.UnknownHostException
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -207,4 +210,39 @@ class EventDetailViewModelLoadTest {
         runTest {
             assertEquals(0, subscribedViewModel().uiState.value.teamCount)
         }
+
+    @Test
+    fun `an HTTP error other than 404 is a load error`() =
+        runTest {
+            refreshesThrow(HttpException(Response.error<Any>(403, "".toResponseBody())))
+            val state = subscribedViewModel().uiState.value
+            EventDetailTab.entries.forEach { tab -> assertTrue(state.loadFailed(tab), "$tab") }
+        }
+
+    @Test
+    fun `retrying any tab with no event cached retries every tab`() =
+        runTest {
+            refreshesThrow(UnknownHostException())
+            val viewModel = subscribedViewModel()
+            refreshesSucceed()
+            viewModel.retry(EventDetailTab.AWARDS)
+            val state = viewModel.uiState.value
+            EventDetailTab.entries.forEach { tab -> assertFalse(state.loadFailed(tab), "$tab") }
+        }
+
+    private fun refreshesSucceed() {
+        coEvery { events.refreshEvent(any()) } returns Unit
+        coEvery { events.refreshEventRankings(any()) } returns Unit
+        coEvery { events.refreshEventAlliances(any()) } returns Unit
+        coEvery { events.refreshEventAwards(any()) } returns Unit
+        coEvery { events.refreshEventDistrictPoints(any()) } returns Unit
+        coEvery { events.refreshEventRegionalPoints(any()) } returns Unit
+        coEvery { events.refreshEventOPRs(any()) } returns Unit
+        coEvery { events.refreshEventCOPRs(any()) } returns Unit
+        coEvery { events.refreshEventInsights(any()) } returns Unit
+        coEvery { events.refreshEventPitLocations(any()) } returns Unit
+        coEvery { teams.refreshEventTeams(any()) } returns Unit
+        coEvery { matches.refreshEventMatches(any()) } returns Unit
+        coEvery { districts.refreshDistrictsForYear(any()) } returns Unit
+    }
 }
