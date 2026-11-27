@@ -318,9 +318,7 @@ private fun AdvancementBadge(
                                 ) -> MaterialTheme.colorScheme.secondaryContainer
                                 else -> MaterialTheme.colorScheme.tertiaryContainer
                             },
-                        shape =
-                            androidx.compose.foundation.shape
-                                .RoundedCornerShape(4.dp),
+                        shape = MaterialTheme.shapes.extraSmall,
                     ).padding(horizontal = 8.dp, vertical = 4.dp),
         ) {
             Text(
