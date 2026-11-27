@@ -61,6 +61,7 @@ import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.NotificationType
 import com.thebluealliance.android.domain.model.Subscription
+import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -265,6 +266,8 @@ fun MyTBAScreen(
                         MyTBATab.FAVORITES ->
                             FavoritesTab(
                                 favorites = uiState.favorites,
+                                error = uiState.favoritesError,
+                                onRetry = { viewModel.refreshTab(MyTBATab.FAVORITES) },
                                 displayNames = uiState.displayNames,
                                 onNavigateToTeam = onNavigateToTeam,
                                 onNavigateToEvent = onNavigateToEvent,
@@ -278,6 +281,8 @@ fun MyTBAScreen(
                         MyTBATab.NOTIFICATIONS ->
                             NotificationsTab(
                                 subscriptions = uiState.subscriptions,
+                                error = uiState.subscriptionsError,
+                                onRetry = { viewModel.refreshTab(MyTBATab.NOTIFICATIONS) },
                                 displayNames = uiState.displayNames,
                                 onNavigateToTeam = onNavigateToTeam,
                                 onNavigateToEvent = onNavigateToEvent,
@@ -323,6 +328,8 @@ private fun SignInPrompt(onSignIn: () -> Unit) {
 @Composable
 private fun FavoritesTab(
     favorites: List<Favorite>,
+    error: String?,
+    onRetry: () -> Unit,
     displayNames: Map<String, String>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
@@ -332,6 +339,10 @@ private fun FavoritesTab(
     onAddShortcut: (Favorite) -> Unit,
     onRemoveFavorite: (Favorite) -> Unit,
 ) {
+    if (error != null) {
+        ErrorBox(message = error, onRetry = onRetry)
+        return
+    }
     if (favorites.isEmpty()) {
         EmptyTabMessage(title = "No favorites yet")
         return
@@ -405,6 +416,8 @@ private fun FavoriteItem(
 @Composable
 private fun NotificationsTab(
     subscriptions: List<Subscription>,
+    error: String?,
+    onRetry: () -> Unit,
     displayNames: Map<String, String>,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
@@ -412,6 +425,10 @@ private fun NotificationsTab(
     listState: LazyListState,
     onRemoveSubscription: (Subscription) -> Unit,
 ) {
+    if (error != null) {
+        ErrorBox(message = error, onRetry = onRetry)
+        return
+    }
     if (subscriptions.isEmpty()) {
         EmptyTabMessage(title = "No notifications yet")
         return
