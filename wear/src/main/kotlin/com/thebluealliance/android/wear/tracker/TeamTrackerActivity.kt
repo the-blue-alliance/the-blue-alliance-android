@@ -84,9 +84,9 @@ class TeamTrackerActivity : ComponentActivity() {
         loadState()
         trackerPrefs.registerOnChangeListener(prefListener)
 
-        // Trigger refresh to get latest data
-        TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
-        if (trackerPrefs.teamNumber.isNotBlank()) {
+        // Trigger refresh to get latest data, unless the last one said the team doesn't exist
+        if (AutoRefresh.allowed(trackerPrefs.teamNumber, trackerPrefs.teamNotFound)) {
+            TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
             TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
         }
 
@@ -124,6 +124,7 @@ class TeamTrackerActivity : ComponentActivity() {
                 hasActiveEvent = trackerPrefs.hasActiveEvent,
                 isLoading = trackerPrefs.isLoading,
                 lastRefreshFailed = trackerPrefs.lastRefreshFailed,
+                teamNotFound = trackerPrefs.teamNotFound,
                 lastMatchLabel = trackerPrefs.lastMatchLabel,
                 lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
                 lastMatchBlueTeams = trackerPrefs.lastMatchBlueTeams,
@@ -167,6 +168,7 @@ data class TeamTrackerState(
     val hasActiveEvent: Boolean = false,
     val isLoading: Boolean = false,
     val lastRefreshFailed: Boolean = false,
+    val teamNotFound: Boolean = false,
     val lastMatchLabel: String = "",
     val lastMatchRedTeams: String = "",
     val lastMatchBlueTeams: String = "",
@@ -238,7 +240,9 @@ private fun TeamTrackerScreen(
                 item { Spacer(modifier = Modifier.height(4.dp)) }
             }
 
-            if (state.isLoading) {
+            if (state.teamNotFound) {
+                item { TeamNotFoundState(state.teamNumber, onChangeTeam) }
+            } else if (state.isLoading) {
                 item {
                     Box(
                         modifier = Modifier.fillMaxWidth().height(48.dp),
@@ -405,6 +409,29 @@ private fun ErrorState(onRetry: () -> Unit) {
         FilledTonalButton(
             onClick = onRetry,
             label = { Text(stringResource(R.string.retry)) },
+            modifier = Modifier.padding(top = 6.dp),
+        )
+    }
+}
+
+@Composable
+private fun TeamNotFoundState(
+    teamNumber: String,
+    onChangeTeam: () -> Unit,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(vertical = 2.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.team_not_found, teamNumber),
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FilledTonalButton(
+            onClick = onChangeTeam,
+            label = { Text(stringResource(R.string.change_team)) },
             modifier = Modifier.padding(top = 6.dp),
         )
     }

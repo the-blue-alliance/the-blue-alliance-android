@@ -136,12 +136,19 @@ class TeamTrackingComplicationWorker
                 requestComplicationUpdate()
 
                 trackerPrefs.lastRefreshFailed = false
+                trackerPrefs.teamNotFound = false
                 Result.success()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to update complications", e)
                 trackerPrefs.lastRefreshFailed = true
                 when (RefreshFailure.of(e)) {
-                    RefreshFailure.TEAM_NOT_FOUND -> Result.failure()
+                    RefreshFailure.TEAM_NOT_FOUND -> {
+                        // Retrying a team that doesn't exist only wastes wakeups. Stop until the
+                        // user picks another team, which re-enqueues the refresh.
+                        trackerPrefs.teamNotFound = true
+                        cancelPeriodicRefresh(applicationContext)
+                        Result.failure()
+                    }
                     RefreshFailure.TRANSIENT -> Result.retry()
                 }
             } finally {
