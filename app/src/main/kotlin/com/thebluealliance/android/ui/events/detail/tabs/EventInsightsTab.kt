@@ -72,6 +72,7 @@ import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
@@ -1078,7 +1079,7 @@ private fun RowScope.TableTeamCell(
                     gutter = COLUMN_GUTTER,
                     labelAtEnd = false,
                     interaction =
-                        Modifier.handCursor().clickable(
+                        Modifier.returnsFocus().handCursor().clickable(
                             onClickLabel = teamCellClickLabel(teamKey),
                             role = Role.Button,
                         ) { onTeamClick(teamKey) },
