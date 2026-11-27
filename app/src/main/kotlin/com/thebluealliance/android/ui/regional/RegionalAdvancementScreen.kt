@@ -379,6 +379,8 @@ private fun RegionalRankingRow(
                 Text(
                     text = "${sortedEvents[0].total.toInt()}",
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
                             .regionalColumn(this, 2, columnWidths)
@@ -392,6 +394,8 @@ private fun RegionalRankingRow(
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.regionalColumn(this, 2, columnWidths),
                 )
@@ -400,6 +404,8 @@ private fun RegionalRankingRow(
                 Text(
                     text = "${sortedEvents[1].total.toInt()}",
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
                             .regionalColumn(this, 3, columnWidths)
@@ -413,6 +419,8 @@ private fun RegionalRankingRow(
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.regionalColumn(this, 3, columnWidths),
                 )
@@ -422,12 +430,16 @@ private fun RegionalRankingRow(
                 Text(
                     text = "+$totalBonus",
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier = Modifier.regionalColumn(this, 4, columnWidths),
                 )
             } else {
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.regionalColumn(this, 4, columnWidths),
                 )
@@ -435,6 +447,8 @@ private fun RegionalRankingRow(
             Text(
                 text = "${ranking.pointTotal.toInt()}",
                 style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                softWrap = false,
                 modifier = Modifier.regionalColumn(this, 5, columnWidths),
             )
             AdvancementBadge(

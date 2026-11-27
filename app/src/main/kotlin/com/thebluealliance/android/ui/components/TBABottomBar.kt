@@ -7,6 +7,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import androidx.navigation3.runtime.NavKey
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
@@ -36,6 +37,8 @@ fun TBABottomBar(
                     Text(
                         text = dest.label,
                         maxLines = 1,
+                        // At the smallest step a narrow split screen can still be too tight.
+                        overflow = TextOverflow.Ellipsis,
                         autoSize =
                             TextAutoSize.StepBased(
                                 minFontSize = MIN_LABEL_FONT_SIZE,
