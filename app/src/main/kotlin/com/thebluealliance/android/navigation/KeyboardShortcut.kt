@@ -10,7 +10,7 @@ sealed interface ShortcutAction {
     /** Refreshes the visible screen, as pull-to-refresh does; screens without one ignore it. */
     data object Refresh : ShortcutAction
 
-    /** System Back. */
+    /** Back within the app; never leaves it (see [keyboardBack]). */
     data object Back : ShortcutAction
 
     /** Opens [TOP_LEVEL_DESTINATIONS] at [index], as tapping it in the bar or rail does. */
