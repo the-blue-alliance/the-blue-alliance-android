@@ -200,4 +200,39 @@ class TeamDetailViewModelLoadTest {
             slow.complete(Unit)
             assertFalse(viewModel.uiState.value.loadFailed(TeamDetailTab.EVENTS))
         }
+
+    @Test
+    fun `a left season's late failure doesn't report over the new season`() =
+        runTest {
+            cache(team = team, events = listOf(event), media = listOf(photo))
+            val slow = CompletableDeferred<Unit>()
+            coEvery { events.refreshTeamEvents(any(), 2023) } throws UnknownHostException()
+            coEvery { teams.refreshTeamMedia(any(), 2023) } coAnswers { slow.await() }
+            val viewModel = subscribedViewModel()
+            viewModel.selectYear(2023)
+            viewModel.selectYear(2022)
+            bus.messages.test {
+                slow.complete(Unit)
+                expectNoEvents()
+            }
+        }
+
+    @Test
+    fun `a late failure from an earlier visit to the same season is ignored`() =
+        runTest {
+            val slow = CompletableDeferred<Unit>()
+            var calls = 0
+            coEvery { events.refreshTeamEvents(any(), 2023) } coAnswers {
+                if (calls++ == 0) {
+                    slow.await()
+                    throw UnknownHostException()
+                }
+            }
+            val viewModel = subscribedViewModel()
+            viewModel.selectYear(2023)
+            viewModel.selectYear(2022)
+            viewModel.selectYear(2023)
+            slow.complete(Unit)
+            assertFalse(viewModel.uiState.value.loadFailed(TeamDetailTab.EVENTS))
+        }
 }

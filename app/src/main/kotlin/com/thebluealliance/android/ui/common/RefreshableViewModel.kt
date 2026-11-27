@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
 enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
 
@@ -82,8 +83,9 @@ abstract class RefreshableViewModel : ViewModel() {
     /**
      * Runs [tasks] like [refreshing], recording each tab's outcome into [outcomes] so an empty
      * tab can tell "failed" from "none", then passes the tabs that failed to [onDone]. A null tab
-     * marks a supporting fetch that no tab's state depends on. Outcomes that land once [isCurrent]
-     * is false (say, the user picked another season) are dropped: they're no longer the tab's.
+     * marks a supporting fetch that no tab's state depends on. Outcomes and the [onDone] report
+     * that land once [isCurrent] is false (say, the user picked another season) are dropped:
+     * they're no longer the tab's.
      */
     protected fun <T : Any> refreshTabs(
         outcomes: MutableStateFlow<Map<T, RefreshOutcome>>,
@@ -92,9 +94,7 @@ abstract class RefreshableViewModel : ViewModel() {
         isCurrent: () -> Boolean = { true },
     ) {
         val failed = ConcurrentHashMap.newKeySet<T>()
-        val remaining =
-            java.util.concurrent.atomic
-                .AtomicInteger(tasks.size)
+        val remaining = AtomicInteger(tasks.size)
 
         fun markSucceeded(tab: T) {
             if (!isCurrent()) return
@@ -121,7 +121,8 @@ abstract class RefreshableViewModel : ViewModel() {
                         }
                         throw e
                     } finally {
-                        if (remaining.decrementAndGet() == 0) onDone(failed)
+                        // A batch that's no longer current doesn't report over the new one.
+                        if (remaining.decrementAndGet() == 0 && isCurrent()) onDone(failed)
                     }
                 }
             }

@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = TeamDetailViewModel.Factory::class)
@@ -69,6 +70,10 @@ class TeamDetailViewModel
                 // A year in the link counts as the user's pick, so later defaults leave it alone.
                 navKey.year?.let(::pick)
             }
+
+        // Bumped on every season load, so a fetch from an earlier visit to the same season
+        // (2023, 2022, then 2023 again) isn't mistaken for the current one.
+        private val seasonGeneration = AtomicInteger(0)
         val selectedYear: StateFlow<Int> = selection.year
 
         private val teamMissing = MutableStateFlow(false)
@@ -275,6 +280,7 @@ class TeamDetailViewModel
         }
 
         private fun refreshYearData() {
+            seasonGeneration.incrementAndGet()
             val year = selection.year.value
             // A new season's tabs haven't been fetched yet; the last season's outcome isn't theirs.
             loadOutcomes.update { it - TeamDetailTab.EVENTS - TeamDetailTab.MEDIA }
@@ -294,11 +300,14 @@ class TeamDetailViewModel
             year: Int,
             vararg tasks: Pair<TeamDetailTab?, suspend () -> Unit>,
         ) {
+            val generation = seasonGeneration.get()
             refreshTabs(
                 loadOutcomes,
                 ::reportFailedRefresh,
                 *tasks,
-                isCurrent = { selection.year.value == year },
+                isCurrent = {
+                    seasonGeneration.get() == generation && selection.year.value == year
+                },
             )
         }
 
