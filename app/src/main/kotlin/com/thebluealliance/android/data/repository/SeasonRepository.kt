@@ -1,5 +1,7 @@
 package com.thebluealliance.android.data.repository
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.remote.dto.ApiStatusDto
 import kotlinx.coroutines.CancellationException
@@ -18,6 +20,7 @@ class SeasonRepository
     @Inject
     constructor(
         private val api: TbaApi,
+        @Suppress("unused") private val dataStore: DataStore<Preferences>,
     ) {
         private val mutex = Mutex()
         private var status: ApiStatusDto? = null
