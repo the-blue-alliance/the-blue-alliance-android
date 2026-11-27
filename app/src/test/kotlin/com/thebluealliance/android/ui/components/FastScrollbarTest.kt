@@ -56,4 +56,19 @@ class FastScrollbarTest {
     fun `tap mid-row never grabs the scrollbar`() {
         assertFalse(claims(x = 500f, y = 1550f))
     }
+
+    @Test
+    fun `vertical drag past the touch slop becomes a fast scroll`() {
+        assertTrue(fastScrollbarClaimsDrag(dx = 2f, dy = 30f, touchSlop = 21f))
+    }
+
+    @Test
+    fun `small wobble during a tap stays with the row`() {
+        assertFalse(fastScrollbarClaimsDrag(dx = 3f, dy = 10f, touchSlop = 21f))
+    }
+
+    @Test
+    fun `sideways drag stays with the row`() {
+        assertFalse(fastScrollbarClaimsDrag(dx = 60f, dy = 30f, touchSlop = 21f))
+    }
 }
