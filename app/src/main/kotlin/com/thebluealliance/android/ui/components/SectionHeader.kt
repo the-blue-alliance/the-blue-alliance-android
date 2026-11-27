@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.OnBrandRipple
 import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
@@ -77,6 +78,8 @@ fun SectionHeader(
                     .focusProperties { canFocus = isStuck }
                     .handCursor()
                     .clickable(
+                        interactionSource = null,
+                        indication = OnBrandRipple,
                         onClickLabel = "Jump to section",
                         role = Role.DropdownList,
                     ) { menuExpanded = true },

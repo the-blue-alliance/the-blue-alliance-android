@@ -1,6 +1,7 @@
 package com.thebluealliance.android.ui.theme
 
 import android.os.Build
+import androidx.compose.foundation.IndicationNodeFactory
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.LocalRippleThemeConfiguration
@@ -12,6 +13,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
@@ -42,6 +44,13 @@ val BrandHeaderContainer: Color = TbaBrandColors.HeaderBlue
 val OnBrand: Color = TbaBrandColors.OnBlue
 val OnBrandMuted: Color = TbaBrandColors.OnBlueMuted
 val OnBrandOutline: Color = TbaBrandColors.OnBlueOutline
+
+/**
+ * Hover and press indication for clickables drawn straight on a brand surface: an [OnBrand] state
+ * layer that lightens the blue, as the top bar's icons and the tabs already do. A plain
+ * `clickable` there takes the surface's dark content color and darkens it instead.
+ */
+val OnBrandRipple: IndicationNodeFactory = ripple(color = OnBrand)
 
 /**
  * The strip painted behind the status bar while the navigation rail shows: Neutral10 in both

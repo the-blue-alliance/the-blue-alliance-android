@@ -29,6 +29,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -549,6 +550,8 @@ private fun InsightsView(
                                 .focusRequester(statSelectorFocus)
                                 .handCursor()
                                 .padding(0.dp),
+                        // On the header blue: an OnBrand content color makes the ripple lighten it.
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = OnBrand),
                     ) {
                         Icon(
                             imageVector = TbaIcons.MoreVert,
@@ -964,6 +967,7 @@ private fun InsightsTableHeaderRow(
                 IconButton(
                     onClick = onShowStatSelector,
                     modifier = Modifier.focusRequester(statSelectorFocus).handCursor(),
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = OnBrand),
                 ) {
                     Icon(
                         imageVector = TbaIcons.MoreVert,
