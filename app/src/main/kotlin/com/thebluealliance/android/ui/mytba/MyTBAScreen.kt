@@ -62,9 +62,9 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.ProseMaxWidth
+import com.thebluealliance.android.ui.components.ReadingTabRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
-import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
@@ -257,7 +257,7 @@ fun MyTBAScreen(
                 }
             }
 
-            TBATabRow(selectedTabIndex = pagerState.currentPage) {
+            ReadingTabRow(selectedTabIndex = pagerState.currentPage) {
                 MyTBATab.entries.forEach { tab ->
                     TBATab(
                         label = tab.readableName,

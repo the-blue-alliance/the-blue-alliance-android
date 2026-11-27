@@ -91,16 +91,9 @@ fun ReadingWidthBox(
     BoxWithConstraints(modifier) {
         val inset = readingInset(this.maxWidth)
         val direction = LocalLayoutDirection.current
-        val density = LocalDensity.current
-        val bleed =
-            with(density) {
-                bandBleed(
-                    constraints.maxWidth.toFloat(),
-                    ReadingMaxWidth.toPx(),
-                    MinSheetMargin.toPx(),
-                ).toDp()
-            }
-        CompositionLocalProvider(LocalReadingBandBleed provides bleed) {
+        CompositionLocalProvider(
+            LocalReadingBandBleed provides readingBandBleed(constraints.maxWidth),
+        ) {
             content(
                 PaddingValues(
                     start = contentPadding.calculateStartPadding(direction) + inset,
@@ -131,6 +124,31 @@ fun Modifier.readingBand(color: Color): Modifier {
     return drawBehind {
         val px = bleed.toPx()
         drawRect(color, topLeft = Offset(-px, 0f), size = Size(size.width + px * 2, size.height))
+    }
+}
+
+/** [LocalReadingBandBleed] for a band centered in [maxWidthPx], from [bandBleed]. */
+@Composable
+private fun readingBandBleed(maxWidthPx: Int): Dp =
+    with(LocalDensity.current) {
+        bandBleed(maxWidthPx.toFloat(), ReadingMaxWidth.toPx(), MinSheetMargin.toPx()).toDp()
+    }
+
+/**
+ * Lays out [content] at full width and provides [LocalReadingBandBleed] for it, so a band outside a
+ * [ReadingWidthBox] list, capped with [readingWidth] and painted with [readingBand], ends at the
+ * column's edges beside drawn margins and reaches the window's edges while they are hidden.
+ */
+@Composable
+fun ReadingBandBox(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        CompositionLocalProvider(
+            LocalReadingBandBleed provides readingBandBleed(constraints.maxWidth),
+            content = content,
+        )
     }
 }
 
