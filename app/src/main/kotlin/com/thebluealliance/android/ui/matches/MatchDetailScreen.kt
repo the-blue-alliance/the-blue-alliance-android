@@ -69,6 +69,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
+import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.LocalDetailPaneChrome
 import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
@@ -132,6 +133,8 @@ fun MatchDetailScreen(
     // As a detail pane the event's bar is above, so this bar is a surface-colored pane header
     // with Close instead of Back, and no Search.
     val paneChrome = LocalDetailPaneChrome.current
+    // Esc deselects the match and closes the pane, like its Close button.
+    EscapeHandler(enabled = paneChrome != null) { paneChrome?.onClose?.invoke() }
     val shareAction =
         uiState.match?.let { match ->
             TopBarAction(

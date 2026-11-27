@@ -26,9 +26,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -51,6 +58,10 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    // Search is a temporary surface (Ctrl+F opens it over any screen), so with focus anywhere but
+    // the field, Esc closes it. The field handles Esc itself first: clear, then leave the field.
+    EscapeHandler(onEscape = onNavigateUp)
     val lazyListState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -104,7 +115,20 @@ fun SearchScreen(
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .focusRequester(focusRequester),
+                                .focusRequester(focusRequester)
+                                .onPreviewKeyEvent { event ->
+                                    if (event.key != Key.Escape) return@onPreviewKeyEvent false
+                                    if (event.type == KeyEventType.KeyUp) {
+                                        when (searchFieldEscape(viewModel.queryState.text)) {
+                                            SearchFieldEscape.ClearText ->
+                                                viewModel.queryState.clearText()
+                                            SearchFieldEscape.ClearFocus ->
+                                                focusManager
+                                                    .clearFocus()
+                                        }
+                                    }
+                                    true
+                                },
                         colors =
                             TextFieldDefaults.colors(
                                 focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -207,3 +231,9 @@ fun SearchScreen(
         }
     }
 }
+
+/** What Esc does in the search field: the first clears the query, the next leaves the field. */
+internal enum class SearchFieldEscape { ClearText, ClearFocus }
+
+internal fun searchFieldEscape(query: CharSequence): SearchFieldEscape =
+    if (query.isEmpty()) SearchFieldEscape.ClearFocus else SearchFieldEscape.ClearText

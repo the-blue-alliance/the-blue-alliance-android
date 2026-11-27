@@ -25,12 +25,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -49,6 +57,7 @@ import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -152,6 +161,30 @@ fun MatchList(
 
     val coroutineScope = rememberCoroutineScope()
 
+    // When the detail pane closes (Esc, Close or Back), keyboard focus goes back to the match it
+    // showed, so a keyboard user keeps their place in the list instead of landing on the top bar.
+    // After a mouse click the window is still in touch mode, where nothing can take focus (Esc
+    // doesn't leave touch mode), so the row waits for the next key that does, such as Tab.
+    val inputModeManager = LocalInputModeManager.current
+    val returnFocus = remember { FocusRequester() }
+    var previousSelection by remember { mutableStateOf(selectedMatchKey) }
+    var focusReturnKey by remember { mutableStateOf<String?>(null) }
+    if (previousSelection != selectedMatchKey) {
+        focusReturnKey = matchFocusReturnKey(previousSelection, selectedMatchKey)
+        previousSelection = selectedMatchKey
+    }
+    LaunchedEffect(focusReturnKey) {
+        val key = focusReturnKey ?: return@LaunchedEffect
+        snapshotFlow { inputModeManager.inputMode }.first { it == InputMode.Keyboard }
+        val index = matchListItemIndex(grouped.values, key, headerOffset)
+        if (index != null && listState.layoutInfo.visibleItemsInfo.none { it.index == index }) {
+            listState.scrollToItem(index)
+        }
+        withFrameNanos {}
+        returnFocus.requestFocus()
+        focusReturnKey = null
+    }
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -183,6 +216,12 @@ fun MatchList(
                         playoffType = playoffType,
                         onClick = { onNavigateToMatch(match.key) },
                         selected = match.key == selectedMatchKey,
+                        modifier =
+                            if (match.key == focusReturnKey) {
+                                Modifier.focusRequester(returnFocus)
+                            } else {
+                                Modifier
+                            },
                     )
                     HorizontalDivider()
                 }
@@ -207,6 +246,12 @@ internal fun matchListItemIndex(
     return null
 }
 
+/** The match whose row should get focus back: the one just deselected with nothing replacing it. */
+internal fun matchFocusReturnKey(
+    previous: String?,
+    current: String?,
+): String? = if (current == null) previous else null
+
 /** Width of the accent bar on the selected row's start edge. */
 private val SelectedRowAccentWidth = 4.dp
 
@@ -215,6 +260,7 @@ fun MatchItem(
     match: Match,
     playoffType: PlayoffType,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     selected: Boolean = false,
 ) {
     val label = match.getShortLabel(playoffType)
@@ -240,7 +286,7 @@ fun MatchItem(
     val accent = MaterialTheme.colorScheme.primary
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .then(
                     if (selected) {
