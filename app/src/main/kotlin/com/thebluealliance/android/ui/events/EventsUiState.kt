@@ -5,6 +5,7 @@ import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.YearMonth
 import java.time.temporal.ChronoUnit
 
 data class EventSubSection(
@@ -80,7 +81,7 @@ private fun eventSectionKey(
         }
         EventType.CHAMPIONSHIP_DIVISION, EventType.CHAMPIONSHIP_FINALS ->
             SectionKey(SectionRank.DATED, "Championship")
-        EventType.OFFSEASON -> SectionKey(SectionRank.OFFSEASON, "Offseason")
+        EventType.OFFSEASON -> SectionKey(SectionRank.OFFSEASON, OFFSEASON_LABEL)
         else -> {
             // Unknown type but has a week — group with regular weeks
             if (event.week != null) {
@@ -226,6 +227,74 @@ fun buildHeaderInfos(
         }
     }
 
+/** Where the app-open autoscroll lands: a list item, and the chip highlighted while it scrolls. */
+data class AutoscrollTarget(
+    val chipLabel: String,
+    val itemIndex: Int,
+)
+
+/**
+ * The app-open autoscroll (and tab reselect) target: the current week's section header, or in the
+ * offseason the sub-header for this month's offseason events. A month with none falls forward to the
+ * next month that has some, else back to the latest past one. [today] is the device's local date.
+ * Returns null for other years and when there is no current week.
+ */
+fun autoscrollTarget(
+    sections: List<EventSection>,
+    favoriteEventKeys: Set<String>,
+    today: LocalDate,
+    selectedYear: Int,
+): AutoscrollTarget? {
+    val label =
+        currentWeekChipLabel(sections.flatMap { it.events }, today, selectedYear) ?: return null
+    val header =
+        buildHeaderInfos(sections, favoriteEventKeys).find { it.key == "header_$label" }
+            ?: return null
+    val section = sections.first { it.label == label }
+    val monthLabel =
+        (if (label == OFFSEASON_LABEL) offseasonMonthLabel(section, today) else null)
+            ?: return AutoscrollTarget(label, header.itemIndex)
+
+    // Skip the section header and its favorites block, then every sub-section before the month's.
+    var index = header.itemIndex + 1
+    val favCount = section.events.count { it.key in favoriteEventKeys }
+    if (favCount > 0) index += 1 + favCount
+    for (subSection in section.subSections) {
+        if (subSection.label == monthLabel) return AutoscrollTarget(label, index)
+        index += (if (subSection.label.isNotEmpty()) 1 else 0) + subSection.events.size
+    }
+    return AutoscrollTarget(label, header.itemIndex)
+}
+
+private const val OFFSEASON_LABEL = "Offseason"
+
+/** The label of the offseason month sub-section the autoscroll should land on, if any. */
+internal fun offseasonMonthLabel(
+    section: EventSection,
+    today: LocalDate,
+): String? {
+    val months =
+        section.subSections.mapNotNull { subSection ->
+            if (subSection.label.isEmpty() ||
+                subSection.events.any { it.type != EventType.OFFSEASON || it.district != null }
+            ) {
+                return@mapNotNull null
+            }
+            val month =
+                subSection.events
+                    .mapNotNull { parseDate(it.startDate)?.let(YearMonth::from) }
+                    .distinct()
+                    .singleOrNull() ?: return@mapNotNull null
+            month to subSection.label
+        }
+    val now = YearMonth.from(today)
+    return (
+        months.firstOrNull { it.first == now }
+            ?: months.filter { it.first.isAfter(now) }.minByOrNull { it.first }
+            ?: months.filter { it.first.isBefore(now) }.maxByOrNull { it.first }
+    )?.second
+}
+
 data class ThisWeekResult(
     val label: String,
     val subSections: List<EventSubSection>,
@@ -322,7 +391,7 @@ internal fun currentWeekChipLabel(
             .filter { it.type in EventType.OFFICIAL_TYPES }
             .mapNotNull { parseDate(it.endDate) }
             .maxOrNull()
-    if (latestOfficialEnd != null && today.isAfter(latestOfficialEnd)) return "Offseason"
+    if (latestOfficialEnd != null && today.isAfter(latestOfficialEnd)) return OFFSEASON_LABEL
 
     return null
 }

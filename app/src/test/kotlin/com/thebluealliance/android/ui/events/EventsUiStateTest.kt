@@ -587,4 +587,92 @@ class EventsUiStateTest {
             )
         assertNull(currentWeekChipLabel(events, today, selectedYear = 2025))
     }
+    // --- autoscrollTarget ---
+
+    private val championship =
+        makeEvent(
+            key = "2026cmptx",
+            type = EventType.CHAMPIONSHIP_FINALS,
+            startDate = "2026-04-29",
+            endDate = "2026-05-02",
+        )
+
+    private fun offseason(
+        key: String,
+        startDate: String,
+    ) = makeEvent(key = key, type = EventType.OFFSEASON, startDate = startDate, endDate = startDate)
+
+    private val offseasons =
+        listOf(
+            offseason("2026may", "2026-05-16"),
+            offseason("2026jul", "2026-07-18"),
+            offseason("2026sep1", "2026-09-12"),
+            offseason("2026sep2", "2026-09-26"),
+            offseason("2026nov", "2026-11-07"),
+        )
+
+    private fun target(
+        today: LocalDate,
+        events: List<Event> = listOf(championship) + offseasons,
+        favoriteEventKeys: Set<String> = emptySet(),
+        selectedYear: Int = 2026,
+    ) = autoscrollTarget(buildEventSections(events, today), favoriteEventKeys, today, selectedYear)
+
+    // Items: 0 Championship, 1 cmp, 2 Offseason, 3 May, 4, 5 July, 6, 7 Sep, 8, 9, 10 Nov, 11.
+    @Test
+    fun `offseason autoscroll lands on the current month's sub-header`() {
+        assertEquals(AutoscrollTarget("Offseason", 10), target(LocalDate.of(2026, 11, 27)))
+        assertEquals(AutoscrollTarget("Offseason", 7), target(LocalDate.of(2026, 9, 1)))
+    }
+
+    @Test
+    fun `offseason month with no events falls forward to the next month that has some`() {
+        assertEquals(AutoscrollTarget("Offseason", 5), target(LocalDate.of(2026, 6, 10)))
+    }
+
+    @Test
+    fun `offseason month after the last offseason falls back to the latest past month`() {
+        assertEquals(AutoscrollTarget("Offseason", 10), target(LocalDate.of(2026, 12, 15)))
+    }
+
+    // Top-level Favorites (2 items) plus the section's own Favorites block (2 items).
+    @Test
+    fun `offseason month index skips the section's favorites block`() {
+        assertEquals(
+            AutoscrollTarget("Offseason", 14),
+            target(LocalDate.of(2026, 11, 27), favoriteEventKeys = setOf("2026jul")),
+        )
+    }
+
+    @Test
+    fun `offseason with only undated events lands on the section header`() {
+        val undated = listOf(championship, makeEvent(key = "2026x", type = EventType.OFFSEASON))
+        assertEquals(AutoscrollTarget("Offseason", 2), target(LocalDate.of(2026, 11, 27), undated))
+    }
+
+    @Test
+    fun `in season autoscroll still lands on the week header`() {
+        val events =
+            listOf(
+                makeEvent(
+                    key = "2026w1",
+                    week = 0,
+                    startDate = "2026-03-05",
+                    endDate = "2026-03-08",
+                ),
+                makeEvent(
+                    key = "2026w2",
+                    week = 1,
+                    startDate = "2026-03-12",
+                    endDate = "2026-03-15",
+                ),
+                championship,
+            ) + offseasons
+        assertEquals(AutoscrollTarget("Week 2", 3), target(LocalDate.of(2026, 3, 13), events))
+    }
+
+    @Test
+    fun `autoscroll has no target for other years`() {
+        assertNull(target(LocalDate.of(2027, 11, 27)))
+    }
 }
