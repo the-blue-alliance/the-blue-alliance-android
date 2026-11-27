@@ -21,8 +21,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
@@ -78,6 +76,7 @@ import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.RpDots
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.handCursor
@@ -193,12 +192,7 @@ fun MatchDetailScreen(
                     isRefreshing = isRefreshing,
                     title = title,
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                            Icon(
-                                imageVector = TbaIcons.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
+                        TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                     },
                     secondaryActions =
                         listOfNotNull(
