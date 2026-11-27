@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +25,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,8 +36,6 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -145,8 +143,17 @@ internal data class MediaGridCells(
 /** Shape of a lone photo's tile until the photo loads and gives its own. */
 private const val LONE_PHOTO_PLACEHOLDER_RATIO = 4f / 3f
 
-/** A lone photo is no taller than this share of the window, so its tile stays on screen. */
+/** A lone photo is no taller than this share of the visible grid, so its tile stays on screen. */
 private const val LONE_MEDIA_MAX_HEIGHT_FRACTION = 0.6f
+
+/**
+ * The tallest a lone tile may be: [LONE_MEDIA_MAX_HEIGHT_FRACTION] of the grid's visible height,
+ * which is [gridHeight] less its [verticalContentPadding] (the bars it scrolls under).
+ */
+internal fun loneMediaMaxHeight(
+    gridHeight: Dp,
+    verticalContentPadding: Dp,
+): Dp = (gridHeight - verticalContentPadding).coerceAtLeast(0.dp) * LONE_MEDIA_MAX_HEIGHT_FRACTION
 
 /**
  * A single media item with thumbnail, optional play overlay for YouTube, and click-to-open.
@@ -167,7 +174,8 @@ fun MediaItem(
 ) {
     val smallUrl = mediaUrl(type, foreignKey) ?: return
     val largeUrl = if (large) mediaUrl(type, foreignKey, large = true) else null
-    var largeFailed by remember(largeUrl) { mutableStateOf(false) }
+    // Saved so a missing large thumbnail is not re-fetched when the tile comes back.
+    var largeFailed by rememberSaveable(largeUrl) { mutableStateOf(false) }
     val url = largeUrl?.takeUnless { largeFailed } ?: smallUrl
     // Saved so the tile comes back at the photo's shape rather than the placeholder's.
     var photoRatio by rememberSaveable(type, foreignKey) { mutableStateOf<Float?>(null) }
@@ -282,7 +290,7 @@ internal fun mediaTileMinSize(windowSizeClass: WindowSizeClass): Dp =
 /**
  * A full-screen tab that displays a team's media in an adaptive grid sized by [mediaTileMinSize],
  * with no more columns than [mediaColumns] gives. A lone photo shows whole, at its own shape, no
- * taller than [LONE_MEDIA_MAX_HEIGHT_FRACTION] of the window. Shared between Team detail and
+ * taller than [loneMediaMaxHeight] allows. Shared between Team detail and
  * Team@Event detail screens.
  */
 @Composable
@@ -315,63 +323,69 @@ fun MediaTab(
             }
         }
     val lone = gridItems.size == 1
-    val loneMaxHeight =
-        with(LocalDensity.current) {
-            (LocalWindowInfo.current.containerSize.height * LONE_MEDIA_MAX_HEIGHT_FRACTION).toDp()
-        }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
         val scrollbarState = rememberLazyGridState()
-        LazyVerticalGrid(
-            state = scrollbarState,
-            columns =
-                MediaGridCells(
-                    minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
-                    count = gridItems.size,
-                ),
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScrollbar(scrollbarState, readingPadding)
-                    .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = readingPadding,
+        BoxWithConstraints(
+            Modifier
+                .fillMaxSize()
+                .verticalScrollbar(scrollbarState, readingPadding)
+                .padding(8.dp),
         ) {
-            itemsIndexed(gridItems, key = {
-                _,
-                it,
-                ->
-                "${it.type}_${it.foreignKey}"
-            }) { index, item ->
-                val focus =
-                    if (index == 0 && firstItemFocus != null) {
-                        Modifier.focusRequester(firstItemFocus)
+            val loneMaxHeight =
+                loneMediaMaxHeight(
+                    gridHeight = maxHeight,
+                    verticalContentPadding =
+                        readingPadding.calculateTopPadding() +
+                            readingPadding.calculateBottomPadding(),
+                )
+            LazyVerticalGrid(
+                state = scrollbarState,
+                columns =
+                    MediaGridCells(
+                        minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
+                        count = gridItems.size,
+                    ),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = readingPadding,
+            ) {
+                itemsIndexed(gridItems, key = {
+                    _,
+                    it,
+                    ->
+                    "${it.type}_${it.foreignKey}"
+                }) { index, item ->
+                    val focus =
+                        if (index == 0 && firstItemFocus != null) {
+                            Modifier.focusRequester(firstItemFocus)
+                        } else {
+                            Modifier
+                        }
+                    if (lone) {
+                        // A capped tile narrows to keep its shape, centred in the column.
+                        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+                            MediaItem(
+                                type = item.type,
+                                foreignKey = item.foreignKey,
+                                index = index,
+                                count = gridItems.size,
+                                modifier = focus.heightIn(max = loneMaxHeight),
+                                aspectRatio = 16f / 9f,
+                                large = true,
+                                naturalAspect = item.type != "youtube",
+                            )
+                        }
                     } else {
-                        Modifier
-                    }
-                if (lone) {
-                    // A capped tile narrows to keep its shape, centred in the column.
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
                         MediaItem(
                             type = item.type,
                             foreignKey = item.foreignKey,
                             index = index,
                             count = gridItems.size,
-                            modifier = focus.heightIn(max = loneMaxHeight),
-                            aspectRatio = 16f / 9f,
-                            large = true,
-                            naturalAspect = item.type != "youtube",
+                            modifier = focus.fillMaxWidth(),
+                            large = gridItems.size <= 2,
                         )
                     }
-                } else {
-                    MediaItem(
-                        type = item.type,
-                        foreignKey = item.foreignKey,
-                        index = index,
-                        count = gridItems.size,
-                        modifier = focus.fillMaxWidth(),
-                        large = gridItems.size <= 2,
-                    )
                 }
             }
         }

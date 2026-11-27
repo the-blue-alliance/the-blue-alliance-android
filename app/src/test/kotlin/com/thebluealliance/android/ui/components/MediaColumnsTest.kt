@@ -60,6 +60,17 @@ class MediaColumnsTest {
         }
     }
 
+    @Test
+    fun `a lone tile is capped at 60 percent of the grid's visible height`() {
+        val cap = loneMediaMaxHeight(gridHeight = 500.dp, verticalContentPadding = 100.dp)
+        assertEquals(240f, cap.value, 0.01f)
+    }
+
+    @Test
+    fun `padding taller than the grid leaves no room`() {
+        assertEquals(0.dp, loneMediaMaxHeight(gridHeight = 50.dp, verticalContentPadding = 80.dp))
+    }
+
     private fun cells(
         gridCells: GridCells,
         width: Int,
