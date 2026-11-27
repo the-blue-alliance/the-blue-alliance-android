@@ -52,10 +52,11 @@ class RegionalAdvancementViewModel
         }
 
         fun refreshRankings() {
+            val year = selection.year.value
             refreshing({
-                _uiState.value =
+                val state =
                     try {
-                        val rankings = repository.getRegionalRankings(selection.year.value)
+                        val rankings = repository.getRegionalRankings(year)
                         if (rankings.isEmpty()) {
                             UiState.Empty
                         } else {
@@ -66,6 +67,8 @@ class RegionalAdvancementViewModel
                             e.message ?: "Unable to load regional advancement rankings",
                         )
                     }
+                // A slower load for a year no longer selected must not replace the current one.
+                if (selection.year.value == year) _uiState.value = state
             })
         }
     }

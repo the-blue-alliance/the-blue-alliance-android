@@ -7,9 +7,12 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Converter
 import retrofit2.Retrofit
 import java.io.File
+import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 
 /**
@@ -122,6 +125,43 @@ object TbaClientFactory {
             .Builder()
             .baseUrl(baseUrl)
             .client(client)
+            .addConverterFactory(NullBodyConverterFactory)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
+
+    /**
+     * Reads a JSON `null` body as an empty list or map. APIv3 answers some list calls (regional
+     * advancement for a season with no data yet, for one) with `200` and the literal body `null`,
+     * which its spec allows, but the kotlinx converter throws on it, and Retrofit can't return
+     * null from a suspend call even when the Kotlin type is nullable. Any other type gets null,
+     * which a suspend call still reports as an error.
+     */
+    internal object NullBodyConverterFactory : Converter.Factory() {
+        private const val PEEK_BYTES = 16L
+
+        override fun responseBodyConverter(
+            type: Type,
+            annotations: Array<out Annotation>,
+            retrofit: Retrofit,
+        ): Converter<ResponseBody, *> {
+            val delegate = retrofit.nextResponseBodyConverter<Any?>(this, type, annotations)
+            val raw = getRawType(type)
+            val empty: Any? =
+                when {
+                    Map::class.java.isAssignableFrom(raw) -> emptyMap<Any, Any>()
+                    Collection::class.java.isAssignableFrom(raw) -> emptyList<Any>()
+                    else -> null
+                }
+            return Converter<ResponseBody, Any?> { body ->
+                val peek = body.source().peek()
+                val short = !peek.request(PEEK_BYTES + 1)
+                if (short && peek.buffer.readUtf8().trim() == "null") {
+                    body.close()
+                    empty
+                } else {
+                    delegate.convert(body)
+                }
+            }
+        }
+    }
 }
