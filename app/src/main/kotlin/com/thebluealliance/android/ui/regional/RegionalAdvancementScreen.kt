@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -403,9 +404,13 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .regionalColumn(this, 2, columnWidths)
+                            // Highlight the score, not the whole cell, so its bleed stays clear
+                            // of the next column.
+                            .wrapContentWidth(Alignment.Start)
                             .paddedClickable(
                                 MaterialTheme.shapes.small,
                                 vertical = 6.dp,
+                                keepContentInPlace = true,
                                 onClickLabel = "View event",
                             ) { onNavigateToEvent(sortedEvents[0].eventKey) },
                 )
@@ -428,9 +433,13 @@ private fun RegionalRankingRow(
                     modifier =
                         Modifier
                             .regionalColumn(this, 3, columnWidths)
+                            // Highlight the score, not the whole cell, so its bleed stays clear
+                            // of the next column.
+                            .wrapContentWidth(Alignment.Start)
                             .paddedClickable(
                                 MaterialTheme.shapes.small,
                                 vertical = 6.dp,
+                                keepContentInPlace = true,
                                 onClickLabel = "View event",
                             ) { onNavigateToEvent(sortedEvents[1].eventKey) },
                 )

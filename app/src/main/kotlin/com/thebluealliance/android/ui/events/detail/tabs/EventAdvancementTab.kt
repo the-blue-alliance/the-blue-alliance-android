@@ -150,13 +150,12 @@ private fun AdvancementPointsItem(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .paddedClickable(
-                                MaterialTheme.shapes.small,
-                                vertical = 2.dp,
-                                onClickLabel = "View team ${points.teamKey.teamNumber}",
-                            ) { onTeamClick(points.teamKey) },
+                        Modifier.paddedClickable(
+                            MaterialTheme.shapes.small,
+                            vertical = 2.dp,
+                            keepContentInPlace = true,
+                            onClickLabel = "View team ${points.teamKey.teamNumber}",
+                        ) { onTeamClick(points.teamKey) },
                 )
                 if (teamName != null) {
                     Text(

@@ -203,6 +203,8 @@ internal val StringStateListSaver =
  */
 internal val SwitchRowVerticalPadding = 8.dp
 
+private val SwitchRowHighlightPadding = 12.dp
+
 /** A full-width row that toggles [checked]; the label and the switch are one target. */
 @Composable
 private fun SwitchRow(
@@ -215,10 +217,13 @@ private fun SwitchRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                // The highlight bleeds into the sheet's 16dp margin, so the label and switch keep
+                // their place but no longer sit against its edges.
+                .horizontalOutset(SwitchRowHighlightPadding)
                 .clip(MaterialTheme.shapes.small)
                 .handCursor()
                 .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-                .padding(vertical = SwitchRowVerticalPadding),
+                .padding(horizontal = SwitchRowHighlightPadding, vertical = SwitchRowVerticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = text, style = style, modifier = Modifier.weight(1f))
