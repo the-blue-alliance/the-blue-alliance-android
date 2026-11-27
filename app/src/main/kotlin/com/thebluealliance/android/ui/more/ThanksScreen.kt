@@ -156,10 +156,12 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = "${contributor.contributions} contributions",
+                text = contributionsLabel(contributor.contributions),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
+
+internal fun contributionsLabel(count: Int): String = "$count contributions"
