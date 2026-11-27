@@ -127,19 +127,16 @@ class ReadingWidthTest {
     }
 
     @Test
-    fun `controls fill every column narrower than the full reading column`() {
-        val full = ReadingMaxWidth - 32.dp
-        listOf(328.dp, 379.dp, 588.dp, 728.dp, full - 1.dp).forEach {
-            assertEquals(it, controlWidth(it, full))
+    fun `controls fill every phone width`() {
+        listOf(320.dp, 328.dp, 379.dp, 400.dp, 440.dp, 600.dp).forEach {
+            assertEquals(it, controlWidth(it))
         }
     }
 
     @Test
-    fun `controls cap once the reading column is full`() {
-        assertEquals(
-            ControlMaxWidth,
-            controlWidth(ReadingMaxWidth - 32.dp, ReadingMaxWidth - 32.dp),
-        )
+    fun `controls cap on wide panels`() {
+        assertEquals(ControlMaxWidth, controlWidth(601.dp))
+        assertEquals(ControlMaxWidth, controlWidth(808.dp))
     }
 
     @Test

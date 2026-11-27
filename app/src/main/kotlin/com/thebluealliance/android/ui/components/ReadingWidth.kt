@@ -38,8 +38,10 @@ val ProseMaxWidth = 600.dp
 /** Widest a label-and-value stat row grows on a wide panel, so the value stays near its label. */
 val StatRowMaxWidth = 360.dp
 
-/** Widest a stat row can be and still fill it; no phone in portrait is wider. */
-private val StatRowFillMaxWidth = 600.dp
+/**
+ * Widest a stat or control row can be and still fill it; no phone in portrait is wider.
+ */
+internal val StatRowFillMaxWidth = 600.dp
 
 /** Width a stat row lays out in [available]: all of it up to compact widths, else capped. */
 internal fun statRowWidth(available: Dp): Dp =
@@ -75,32 +77,24 @@ fun Modifier.readingWidth(): Modifier =
         .widthIn(max = ReadingMaxWidth)
 
 /**
- * Widest a control row, such as a segmented button row or a full-width button, grows once the
- * reading column is at its full width, so its segments stay a comfortable size.
+ * Widest a control row, such as a segmented button row or a full-width button, grows on a wide
+ * panel, so its segments stay a comfortable size.
  */
 val ControlMaxWidth = 400.dp
 
-/**
- * Width a control row lays out in [available], where [fullColumn] is the width it gets in a reading
- * column at [ReadingMaxWidth]: all of it while the column is narrower, else [ControlMaxWidth].
- */
-internal fun controlWidth(
-    available: Dp,
-    fullColumn: Dp,
-): Dp = if (available < fullColumn) available else ControlMaxWidth
+/** Width a control row lays out in [available]: all of it up to compact widths, else capped. */
+internal fun controlWidth(available: Dp): Dp =
+    if (available <= StatRowFillMaxWidth) available else ControlMaxWidth
 
 /**
- * Caps a control row at [ControlMaxWidth] once its reading column, inset [columnPadding] on each
- * side, has stopped growing, so any window up to the reading width lays out as without it.
+ * Caps a control row at [ControlMaxWidth] once it has more than a compact window's width, so
+ * phones lay out as without it.
  */
-fun Modifier.controlWidth(columnPadding: Dp): Modifier =
+fun Modifier.controlWidth(): Modifier =
     layout { measurable, constraints ->
         val max =
             if (constraints.hasBoundedWidth) {
-                controlWidth(
-                    constraints.maxWidth.toDp(),
-                    ReadingMaxWidth - columnPadding * 2,
-                ).roundToPx()
+                controlWidth(constraints.maxWidth.toDp()).roundToPx()
             } else {
                 constraints.maxWidth
             }

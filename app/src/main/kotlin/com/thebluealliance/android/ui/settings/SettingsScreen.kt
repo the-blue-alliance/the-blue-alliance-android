@@ -38,9 +38,6 @@ import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.ThemeMode
 
-/** Inset of the settings column inside the reading column. */
-private val SettingsPadding = 16.dp
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -78,7 +75,7 @@ fun SettingsScreen(
                     .fillMaxSize()
                     .readingWidth()
                     .fillMaxWidth()
-                    .padding(SettingsPadding),
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Appearance",
@@ -93,7 +90,7 @@ fun SettingsScreen(
             )
 
             SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.controlWidth(SettingsPadding).fillMaxWidth(),
+                modifier = Modifier.controlWidth().fillMaxWidth(),
             ) {
                 ThemeMode.entries.forEachIndexed { index, mode ->
                     SegmentedButton(
@@ -132,7 +129,7 @@ fun SettingsScreen(
                         Modifier
                             .handCursor()
                             .padding(top = 8.dp)
-                            .controlWidth(SettingsPadding)
+                            .controlWidth()
                             .fillMaxWidth(),
                 ) {
                     Text("Test: Match score notification")
@@ -144,7 +141,7 @@ fun SettingsScreen(
                         Modifier
                             .handCursor()
                             .padding(top = 8.dp)
-                            .controlWidth(SettingsPadding)
+                            .controlWidth()
                             .fillMaxWidth(),
                 ) {
                     Text("Test: Upcoming match notification")
@@ -156,7 +153,7 @@ fun SettingsScreen(
                         Modifier
                             .handCursor()
                             .padding(top = 8.dp)
-                            .controlWidth(SettingsPadding)
+                            .controlWidth()
                             .fillMaxWidth(),
                 ) {
                     Text("Test: Event update notification")
@@ -168,7 +165,7 @@ fun SettingsScreen(
                         Modifier
                             .handCursor()
                             .padding(top = 8.dp)
-                            .controlWidth(SettingsPadding)
+                            .controlWidth()
                             .fillMaxWidth(),
                 ) {
                     Text("Test: Duplicate match (2 followed teams)")
@@ -180,7 +177,7 @@ fun SettingsScreen(
                         Modifier
                             .handCursor()
                             .padding(top = 8.dp)
-                            .controlWidth(SettingsPadding)
+                            .controlWidth()
                             .fillMaxWidth(),
                 ) {
                     Text("Test: Seed event_team subscription (myTBA)")
