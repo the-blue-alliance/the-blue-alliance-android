@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.matches
 
+import com.thebluealliance.android.domain.BREAKDOWN_MISSING
 import com.thebluealliance.android.domain.formatBreakdownValue
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -62,7 +63,10 @@ class MatchScoreDescriptionTest {
 
     @Test
     fun `breakdown row reads a missing value as none`() {
-        assertEquals("Coral: Red none; Blue 3", breakdownRowDescription("Coral", "-", "3"))
+        assertEquals(
+            "Coral: Red none; Blue 3",
+            breakdownRowDescription("Coral", BREAKDOWN_MISSING, "3"),
+        )
     }
 
     @Test

@@ -114,7 +114,7 @@ fun SearchScreen(
                 title = {
                     TextField(
                         state = viewModel.queryState,
-                        placeholder = { Text("Search teams & events") },
+                        placeholder = { Text("Search teams and events") },
                         lineLimits = TextFieldLineLimits.SingleLine,
                         modifier =
                             Modifier
@@ -179,7 +179,7 @@ fun SearchScreen(
                     .fillMaxSize(),
         ) {
             if (uiState.query.isBlank()) {
-                EmptyBox(message = "Search teams and events")
+                EmptyBox(message = "Try a team number, team name or event name")
                 return@Column
             }
             // Only declare "no results" once the debounced search has caught up with

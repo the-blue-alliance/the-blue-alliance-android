@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.DistrictEventPoints
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -418,25 +419,25 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = event1Points?.toString() ?: "-",
+                    text = event1Points?.toString() ?: NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = event2Points?.toString() ?: "-",
+                    text = event2Points?.toString() ?: NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = dcmpPoints?.toString() ?: "-",
+                    text = dcmpPoints?.toString() ?: NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = if (rookieBonus > 0) "+$rookieBonus" else "-",
+                    text = if (rookieBonus > 0) "+$rookieBonus" else NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
