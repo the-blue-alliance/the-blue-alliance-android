@@ -92,4 +92,16 @@ class EventsViewModelSeasonTest {
         currentSeason.complete(2027)
         assertEquals(2019, viewModel.selectedYear.value)
     }
+
+    @Test
+    fun `resolves the opening season before asking for the max season`() {
+        val currentSeason = CompletableDeferred<Int>()
+        coEvery { seasons.maxSeason() } returns 2027
+        coEvery { seasons.defaultSeason() } coAnswers { currentSeason.await() }
+        viewModel(Screen.Events())
+        coVerify(exactly = 0) { seasons.maxSeason() }
+        currentSeason.complete(2026)
+        coVerify { events.refreshEventsForYear(2026) }
+        coVerify { seasons.maxSeason() }
+    }
 }

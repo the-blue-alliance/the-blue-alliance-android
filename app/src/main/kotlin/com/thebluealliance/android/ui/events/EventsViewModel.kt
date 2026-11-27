@@ -97,11 +97,17 @@ class EventsViewModel
                 )
 
         init {
-            fetchMaxYear()
-            if (navKey.year == null) openOnDefaultSeason() else refreshEvents()
+            if (navKey.year == null) {
+                openOnDefaultSeason()
+            } else {
+                refreshEvents()
+                fetchMaxYear()
+            }
             refreshFavorites()
         }
 
+        // Both bounds come from one status fetch, which isn't cached when it fails. Resolving the
+        // year first keeps a stalled network from holding the list for two timeouts.
         private fun openOnDefaultSeason() {
             viewModelScope.launch {
                 val year = seasons.defaultSeason()
@@ -111,6 +117,7 @@ class EventsViewModel
                     yearResolved.value = true
                     refreshEvents()
                 }
+                fetchMaxYear()
             }
         }
 
