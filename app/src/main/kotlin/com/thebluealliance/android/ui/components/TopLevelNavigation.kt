@@ -12,11 +12,15 @@ import com.thebluealliance.android.navigation.isSameTab
 import com.thebluealliance.android.ui.TopLevelDestination
 
 private val MORE_SUB_SCREENS: Set<NavKey> =
-    setOf(Screen.MyTBA, Screen.RegionalAdvancement, Screen.Settings, Screen.About, Screen.Thanks)
+    setOf(Screen.MyTBA, Screen.Settings, Screen.About, Screen.Thanks)
+
+/** Screens opened from More that keep its tab highlighted; Regional Advancement in any season. */
+private fun NavKey.isMoreSubScreen(): Boolean =
+    this is Screen.RegionalAdvancement || this in MORE_SUB_SCREENS
 
 /** Whether [this] tab is highlighted while [currentRoute] is showing. */
 internal fun TopLevelDestination.isSelectedFor(currentRoute: NavKey): Boolean =
-    key.isSameTab(currentRoute) || (key == Screen.More && currentRoute in MORE_SUB_SCREENS)
+    key.isSameTab(currentRoute) || (key == Screen.More && currentRoute.isMoreSubScreen())
 
 /**
  * Whether [this] tab is highlighted on the rail. Top-level screens match the bottom bar; detail

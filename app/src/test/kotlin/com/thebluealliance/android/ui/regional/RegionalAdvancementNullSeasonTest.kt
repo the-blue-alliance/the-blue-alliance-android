@@ -4,6 +4,7 @@ import com.thebluealliance.android.core.network.TbaClientFactory
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UiState
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -58,7 +59,11 @@ class RegionalAdvancementNullSeasonTest {
                 .retrofit(server.url("/").toString(), OkHttpClient())
                 .create(TbaApi::class.java)
         val viewModel =
-            RegionalAdvancementViewModel(RegionalAdvancementRepository(api, mockk()), seasons)
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(),
+                RegionalAdvancementRepository(api, mockk()),
+                seasons,
+            )
         return runBlocking {
             withTimeout(
                 5_000,

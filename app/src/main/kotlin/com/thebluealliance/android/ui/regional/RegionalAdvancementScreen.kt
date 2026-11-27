@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -56,7 +55,7 @@ fun RegionalAdvancementScreen(
     onNavigateUp: (() -> Unit)? = null,
     onNavigateToSearch: () -> Unit,
     reselectFlow: Flow<Unit>,
-    viewModel: RegionalAdvancementViewModel = hiltViewModel(),
+    viewModel: RegionalAdvancementViewModel,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()

@@ -101,7 +101,7 @@ private fun FirebaseAnalyticsEffect(navState: NavigationState) {
                         is Screen.Events -> "Events"
                         Screen.Teams -> "Teams"
                         Screen.Districts -> "Districts"
-                        Screen.RegionalAdvancement -> "RegionalAdvancement"
+                        is Screen.RegionalAdvancement -> "RegionalAdvancement"
                         Screen.More -> "More"
                         is Screen.EventDetail -> "EventDetail"
                         is Screen.TeamDetail -> "TeamDetail"
