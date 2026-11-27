@@ -14,4 +14,9 @@
     <string name="time_tbd">TBD</string>
     <string name="team_not_found">Team %1$s not found</string>
     <string name="invalid_team_number">Not a team number</string>
+    <string name="offline_waiting">Offline. Updates when connected.</string>
+    <string name="offline">Offline</string>
+    <string name="updated">Updated %1$s</string>
+    <string name="offline_updated">Offline · %1$s</string>
+    <string name="just_now">just now</string>
 </resources>
