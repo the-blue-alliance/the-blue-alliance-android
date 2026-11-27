@@ -80,6 +80,7 @@ import com.thebluealliance.android.ui.components.tableSideDrag
 import com.thebluealliance.android.ui.components.tableSideScroll
 import com.thebluealliance.android.ui.components.tableSpan
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
@@ -443,75 +444,78 @@ private fun RankingHeaderRow(
     sortState: RankingSortState,
     onSortSelected: (RankingSortColumn) -> Unit,
 ) {
-    RankingRow(
-        rowScroll = rowScroll,
-        modifier =
-            Modifier
-                .tableWidth(tableWidth)
-                .blocksRowsBeneath()
-                .background(BrandHeaderContainer),
-        // Sortable cells fill this height, so a wrapped label doesn't leave its neighbours with
-        // shorter hover bands.
-        contentModifier = Modifier.height(IntrinsicSize.Min),
-        // 6.dp here + 6.dp inside each sortable cell below: the sort targets get a full-height
-        // hover band without changing the header's height. The horizontal inset is the screen
-        // margin minus the cells' own COLUMN_GUTTER.
-        verticalPadding = 6.dp,
-        frozen = {
+    // The sort bands sit on the header blue, so their focus ring uses brand colors.
+    BrandFocusRing(BrandHeaderContainer) {
+        RankingRow(
+            rowScroll = rowScroll,
+            modifier =
+                Modifier
+                    .tableWidth(tableWidth)
+                    .blocksRowsBeneath()
+                    .background(BrandHeaderContainer),
+            // Sortable cells fill this height, so a wrapped label doesn't leave its neighbours with
+            // shorter hover bands.
+            contentModifier = Modifier.height(IntrinsicSize.Min),
+            // 6.dp here + 6.dp inside each sortable cell below: the sort targets get a full-height
+            // hover band without changing the header's height. The horizontal inset is the screen
+            // margin minus the cells' own COLUMN_GUTTER.
+            verticalPadding = 6.dp,
+            frozen = {
+                Text(
+                    text = "Rank",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = OnBrand,
+                    modifier =
+                        Modifier
+                            .rankingColumn(
+                                this,
+                                0,
+                                columnWidths,
+                            ).padding(horizontal = COLUMN_GUTTER),
+                )
+                RankingHeaderItem(
+                    text = "Team",
+                    modifier = Modifier.rankingColumn(this, TEAM_COLUMN, columnWidths),
+                    sortColumn = RankingSortColumn.TEAM,
+                    currentSort = sortState.column,
+                    ascending = sortState.ascending,
+                    onSortClick = { onSortSelected(RankingSortColumn.TEAM) },
+                )
+            },
+        ) {
             Text(
-                text = "Rank",
+                text = "Record",
                 style = MaterialTheme.typography.titleSmall,
                 color = OnBrand,
                 modifier =
                     Modifier
                         .rankingColumn(
                             this,
-                            0,
+                            2,
                             columnWidths,
                         ).padding(horizontal = COLUMN_GUTTER),
             )
             RankingHeaderItem(
-                text = "Team",
-                modifier = Modifier.rankingColumn(this, TEAM_COLUMN, columnWidths),
-                sortColumn = RankingSortColumn.TEAM,
+                text = primaryLabel,
+                modifier = Modifier.rankingColumn(this, PRIMARY_COLUMN, columnWidths),
+                numeric = true,
+                sortColumn = RankingSortColumn.PRIMARY,
                 currentSort = sortState.column,
                 ascending = sortState.ascending,
-                onSortClick = { onSortSelected(RankingSortColumn.TEAM) },
+                onSortClick = { onSortSelected(RankingSortColumn.PRIMARY) },
             )
-        },
-    ) {
-        Text(
-            text = "Record",
-            style = MaterialTheme.typography.titleSmall,
-            color = OnBrand,
-            modifier =
-                Modifier
-                    .rankingColumn(
-                        this,
-                        2,
-                        columnWidths,
-                    ).padding(horizontal = COLUMN_GUTTER),
-        )
-        RankingHeaderItem(
-            text = primaryLabel,
-            modifier = Modifier.rankingColumn(this, PRIMARY_COLUMN, columnWidths),
-            numeric = true,
-            sortColumn = RankingSortColumn.PRIMARY,
-            currentSort = sortState.column,
-            ascending = sortState.ascending,
-            onSortClick = { onSortSelected(RankingSortColumn.PRIMARY) },
-        )
-        RankingHeaderItem(
-            text = secondaryLabel,
-            modifier = Modifier.rankingColumn(this, SECONDARY_COLUMN, columnWidths),
-            numeric = true,
-            sortColumn = RankingSortColumn.SECONDARY,
-            currentSort = sortState.column,
-            ascending = sortState.ascending,
-            onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
-        )
-        // Spacer for chevron alignment
-        Spacer(modifier = Modifier.rankingColumn(this, 5, columnWidths))
+            RankingHeaderItem(
+                text = secondaryLabel,
+                modifier = Modifier.rankingColumn(this, SECONDARY_COLUMN, columnWidths),
+                numeric = true,
+                sortColumn = RankingSortColumn.SECONDARY,
+                currentSort = sortState.column,
+                ascending = sortState.ascending,
+                onSortClick = { onSortSelected(RankingSortColumn.SECONDARY) },
+            )
+            // Spacer for chevron alignment
+            Spacer(modifier = Modifier.rankingColumn(this, 5, columnWidths))
+        }
     }
 }
 

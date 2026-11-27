@@ -21,7 +21,6 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -196,6 +195,12 @@ internal val StringStateListSaver =
         restore = { it.toMutableStateList() },
     )
 
+/**
+ * Space above and below the 32dp switch inside its row's highlight: the row stays 48dp tall, and
+ * the hover band and focus ring get room around the switch instead of running along its edge.
+ */
+internal val SwitchRowVerticalPadding = 8.dp
+
 /** A full-width row that toggles [checked]; the label and the switch are one target. */
 @Composable
 private fun SwitchRow(
@@ -208,9 +213,9 @@ private fun SwitchRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .minimumInteractiveComponentSize()
                 .clip(MaterialTheme.shapes.small)
-                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange),
+                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
+                .padding(vertical = SwitchRowVerticalPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = text, style = style, modifier = Modifier.weight(1f))

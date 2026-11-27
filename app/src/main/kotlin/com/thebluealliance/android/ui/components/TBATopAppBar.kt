@@ -9,6 +9,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -35,7 +36,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
+import com.thebluealliance.android.ui.theme.brandFocusRing
 
 /**
  * A top-bar icon button that moves into the overflow menu, as a labelled item, when space is short.
@@ -151,6 +154,48 @@ fun TBATopAppBar(
         }
     // F5 and Ctrl+R refresh the screen in front through the same guarded call.
     RefreshShortcutEffect(titleRefresh)
+    // A brand bar (the default) draws its focus rings in brand colors; a bar on a surface, such as
+    // the match pane's, keeps the theme's.
+    val focusRing =
+        if (colors.containerColor == MaterialTheme.colorScheme.primaryContainer) {
+            brandFocusRing(colors.containerColor)
+        } else {
+            LocalRippleConfiguration.current
+        }
+    CompositionLocalProvider(LocalRippleConfiguration provides focusRing) {
+        TBATopAppBarContent(
+            title = title,
+            modifier = modifier,
+            showLamp = showLamp,
+            navigationIcon = navigationIcon,
+            hasNavigationIcon = hasNavigationIcon,
+            titleRefresh = titleRefresh,
+            windowInsets = windowInsets,
+            colors = colors,
+            scrollBehavior = scrollBehavior,
+            secondaryActions = secondaryActions,
+            overflowActions = overflowActions,
+            closeAction = closeAction,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TBATopAppBarContent(
+    title: @Composable () -> Unit,
+    modifier: Modifier,
+    showLamp: Boolean,
+    navigationIcon: (@Composable () -> Unit)?,
+    hasNavigationIcon: Boolean,
+    titleRefresh: (() -> Unit)?,
+    windowInsets: androidx.compose.foundation.layout.WindowInsets,
+    colors: TopAppBarColors,
+    scrollBehavior: TopAppBarScrollBehavior?,
+    secondaryActions: List<TopBarAction>,
+    overflowActions: List<TopBarAction>,
+    closeAction: TopBarAction?,
+) {
     TopAppBar(
         title = {
             // The title content owns its heading and Refresh action: TopBarTitle for plain text,
@@ -234,16 +279,18 @@ private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
             Icon(TbaIcons.MoreVert, contentDescription = "More options")
         }
         DropdownMenu(expanded = expanded, onDismissRequest = close) {
-            actions.forEach { action ->
-                DropdownMenuItem(
-                    text = { Text(action.label) },
-                    leadingIcon = { Icon(action.icon, contentDescription = null) },
-                    modifier = Modifier.actionState(action),
-                    onClick = {
-                        close()
-                        action.onClick()
-                    },
-                )
+            SurfaceFocusRing {
+                actions.forEach { action ->
+                    DropdownMenuItem(
+                        text = { Text(action.label) },
+                        leadingIcon = { Icon(action.icon, contentDescription = null) },
+                        modifier = Modifier.actionState(action),
+                        onClick = {
+                            close()
+                            action.onClick()
+                        },
+                    )
+                }
             }
         }
     }
