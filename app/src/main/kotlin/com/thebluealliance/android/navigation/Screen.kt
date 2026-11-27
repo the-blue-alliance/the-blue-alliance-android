@@ -14,7 +14,10 @@ sealed interface Screen : NavKey {
 
     @Serializable data object Districts : Screen
 
-    @Serializable data object RegionalAdvancement : Screen
+    @Serializable data class RegionalAdvancement(
+        /** The season to open on, from an /events/regional/{year} link; null opens the default. */
+        val year: Int? = null,
+    ) : Screen
 
     @Serializable data object More : Screen
 

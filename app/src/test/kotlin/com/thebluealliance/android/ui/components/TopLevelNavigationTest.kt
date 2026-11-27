@@ -49,13 +49,22 @@ class TopLevelNavigationTest {
         listOf(
             Screen.More,
             Screen.MyTBA,
-            Screen.RegionalAdvancement,
+            Screen.RegionalAdvancement(),
             Screen.Settings,
             Screen.About,
             Screen.Thanks,
         ).forEach {
             assertEquals(listOf("More"), selectedLabels(it))
         }
+    }
+
+    @Test
+    fun `more tab is selected on regional advancement for any year`() {
+        assertEquals(listOf("More"), selectedLabels(Screen.RegionalAdvancement(2025)))
+        assertEquals(
+            listOf("More"),
+            railSelectedLabels(Screen.RegionalAdvancement(2025), Screen.More, true),
+        )
     }
 
     private fun railSelectedLabels(
@@ -71,7 +80,7 @@ class TopLevelNavigationTest {
         assertEquals(listOf("More"), railSelectedLabels(Screen.MyTBA, Screen.More, true))
         assertEquals(
             listOf("More"),
-            railSelectedLabels(Screen.RegionalAdvancement, Screen.More, true),
+            railSelectedLabels(Screen.RegionalAdvancement(), Screen.More, true),
         )
     }
 

@@ -186,6 +186,27 @@ class TbaDeepLinksTest {
     }
 
     @Test
+    fun `regional events deeplink opens regional advancement on that year`() {
+        assertEquals(
+            listOf(Screen.More, Screen.RegionalAdvancement(2025)),
+            match("https://www.thebluealliance.com/events/regional/2025"),
+        )
+    }
+
+    @Test
+    fun `regional events deeplink without a year opens the default season`() {
+        assertEquals(
+            listOf(Screen.More, Screen.RegionalAdvancement()),
+            match("https://www.thebluealliance.com/events/regional"),
+        )
+    }
+
+    @Test
+    fun `regional_advancement is not a website url`() {
+        assertNull(match("https://www.thebluealliance.com/regional_advancement"))
+    }
+
+    @Test
     fun `match deeplink sits on its event's matches tab`() {
         assertEquals(
             listOf(
@@ -215,16 +236,6 @@ class TbaDeepLinksTest {
     fun `teams deeplinks ignore the page`() {
         assertEquals(listOf(Screen.Teams), match("https://www.thebluealliance.com/teams"))
         assertEquals(listOf(Screen.Teams), match("https://www.thebluealliance.com/teams/2"))
-    }
-
-    @Test
-    fun `regional advancement deeplinks sit under more`() {
-        val expected = listOf(Screen.More, Screen.RegionalAdvancement)
-        assertEquals(expected, match("https://www.thebluealliance.com/regional_advancement"))
-        assertEquals(
-            expected,
-            match("https://www.thebluealliance.com/regional_advancement/2026/rankings"),
-        )
     }
 
     @Test

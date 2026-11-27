@@ -3,6 +3,7 @@ package com.thebluealliance.android.ui.regional
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UiState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,7 +40,8 @@ class RegionalAdvancementViewModelTest {
 
     @Test
     fun `opens on the default season, not the max season`() {
-        val viewModel = RegionalAdvancementViewModel(repository, seasons)
+        val viewModel =
+            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
         assertEquals(2025, viewModel.selectedYear.value)
         assertEquals(2027, viewModel.maxYear.value)
         coVerify { repository.getRegionalRankings(2025) }
@@ -49,7 +51,8 @@ class RegionalAdvancementViewModelTest {
     fun `a late default doesn't override the user's pick`() {
         val default = CompletableDeferred<Int>()
         coEvery { seasons.defaultSeason() } coAnswers { default.await() }
-        val viewModel = RegionalAdvancementViewModel(repository, seasons)
+        val viewModel =
+            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
         viewModel.selectYear(2019)
         default.complete(2025)
         assertEquals(2019, viewModel.selectedYear.value)
@@ -62,7 +65,8 @@ class RegionalAdvancementViewModelTest {
         coEvery { repository.getRegionalRankings(launchYear) } coAnswers { stale.await() }
         val default = CompletableDeferred<Int>()
         coEvery { seasons.defaultSeason() } coAnswers { default.await() }
-        val viewModel = RegionalAdvancementViewModel(repository, seasons)
+        val viewModel =
+            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
         default.complete(launchYear + 1)
         stale.complete(listOf(mockk(relaxed = true)))
         assertEquals(UiState.Empty, viewModel.uiState.value)
@@ -72,10 +76,35 @@ class RegionalAdvancementViewModelTest {
     fun `switching year stops the spinner without waiting for the abandoned load`() {
         val stale = CompletableDeferred<List<RegionalRanking>>()
         coEvery { repository.getRegionalRankings(2025) } coAnswers { stale.await() }
-        val viewModel = RegionalAdvancementViewModel(repository, seasons)
+        val viewModel =
+            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
         assertEquals(true, viewModel.isRefreshing.value)
         viewModel.selectYear(2019)
         assertEquals(false, viewModel.isRefreshing.value)
         assertEquals(UiState.Empty, viewModel.uiState.value)
     }
+
+    @Test
+    fun `opens on the year from the link`() {
+        assertEquals(2019, linkedViewModel(2019).selectedYear.value)
+    }
+
+    @Test
+    fun `loads only the year from the link`() {
+        linkedViewModel(2019)
+        coVerify(exactly = 1) { repository.getRegionalRankings(2019) }
+        coVerify(exactly = 1) { repository.getRegionalRankings(any()) }
+    }
+
+    @Test
+    fun `a late default doesn't override the year from the link`() {
+        val default = CompletableDeferred<Int>()
+        coEvery { seasons.defaultSeason() } coAnswers { default.await() }
+        val viewModel = linkedViewModel(2019)
+        default.complete(2025)
+        assertEquals(2019, viewModel.selectedYear.value)
+    }
+
+    private fun linkedViewModel(year: Int) =
+        RegionalAdvancementViewModel(Screen.RegionalAdvancement(year), repository, seasons)
 }

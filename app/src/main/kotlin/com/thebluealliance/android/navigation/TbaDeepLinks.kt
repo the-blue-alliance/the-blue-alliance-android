@@ -49,7 +49,10 @@ class TbaDeepLinks {
             link<Screen.Events>("events") { listOf(it) }
             // /teams/{page} pages the web team list; the app shows every team on one screen.
             link<Screen.Teams>("teams") { listOf(it) }
-            link<Screen.RegionalAdvancement>("regional_advancement") { listOf(Screen.More, it) }
+            // The web's regional events and regional pool page. A non-numeric year fails to
+            // decode and falls through to the bare link, opening the default season.
+            link<Screen.RegionalAdvancement>("events/regional/{year}") { listOf(Screen.More, it) }
+            link<Screen.RegionalAdvancement>("events/regional") { listOf(Screen.More, it) }
         }
 
     /**
