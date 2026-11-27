@@ -114,4 +114,18 @@ class SeasonRepositoryTest {
             assertEquals(season + 1, seasons.defaultSeason())
             coVerify(exactly = 3) { api.getStatus() }
         }
+
+    @Test
+    fun `an offline start keeps the current and max seasons apart`() =
+        runTest {
+            val store = dataStore()
+            val season = nextSeason()
+            coEvery { api.getStatus() } returns
+                ApiStatusDto(currentSeason = season, maxSeason = season + 1)
+            session(store).defaultSeason()
+            coEvery { api.getStatus() } throws IOException()
+            val offline = session(store)
+            assertEquals(season, offline.defaultSeason())
+            assertEquals(season + 1, offline.maxSeason())
+        }
 }
