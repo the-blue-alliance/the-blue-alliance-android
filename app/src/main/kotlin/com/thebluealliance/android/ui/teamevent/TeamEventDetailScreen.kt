@@ -71,6 +71,7 @@ import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
@@ -582,6 +583,7 @@ private fun InfoRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .returnsFocus()
                 .handCursor()
                 .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),

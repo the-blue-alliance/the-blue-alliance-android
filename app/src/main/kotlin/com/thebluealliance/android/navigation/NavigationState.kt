@@ -18,6 +18,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.runtime.serialization.NavKeySerializer
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
+import com.thebluealliance.android.ui.components.FocusReturn
 
 @Composable
 fun rememberNavigationState(
@@ -131,6 +132,7 @@ class NavigationState(
 
 @Composable
 fun NavigationState.toEntries(
+    focusReturn: FocusReturn,
     entryProvider: (NavKey) -> NavEntry<NavKey>,
 ): SnapshotStateList<NavEntry<NavKey>> {
     val decoratedEntries =
@@ -139,6 +141,7 @@ fun NavigationState.toEntries(
                 listOf(
                     rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
                     rememberViewModelStoreNavEntryDecorator<NavKey>(),
+                    rememberFocusReturnNavEntryDecorator<NavKey>(focusReturn),
                 )
             rememberDecoratedNavEntries(
                 backStack = stack,

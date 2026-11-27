@@ -43,6 +43,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.common.UserMessageHost
+import com.thebluealliance.android.ui.components.FocusReturn
 import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.LocalRefreshTargets
 import com.thebluealliance.android.ui.components.TBABottomBar
@@ -92,7 +93,8 @@ fun TBANavigation(
     modifier: Modifier = Modifier,
 ) {
     val activity = LocalActivity.current as MainActivity
-    val navigator = remember { Navigator(navState, activity) }
+    val focusReturn = remember { FocusReturn() }
+    val navigator = remember { Navigator(navState, activity, focusReturn) }
 
     // Deeplinks and notification taps that arrive while the app is already running reach
     // MainActivity.onNewIntent rather than onCreate, so they navigate the live back stack here
@@ -230,6 +232,7 @@ fun TBANavigation(
             sceneStrategies = listOf(rememberEventMatchesSceneStrategy()),
             entries =
                 navState.toEntries(
+                    focusReturn = focusReturn,
                     entryProvider =
                         entryProvider {
                             entry<Screen.Events>(

@@ -76,6 +76,7 @@ import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
+import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -570,6 +571,7 @@ private fun MyTbaEntityRow(
                     Modifier
                         .weight(1f)
                         .fillMaxHeight()
+                        .returnsFocus()
                         .handCursor()
                         .clickable(onClickLabel = onClickLabel, onClick = onClick)
                         .padding(start = 16.dp, top = 8.dp, bottom = 8.dp),
