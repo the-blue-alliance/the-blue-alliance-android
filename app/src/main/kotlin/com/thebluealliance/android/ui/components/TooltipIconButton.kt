@@ -12,12 +12,9 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TooltipState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 /**
  * An icon button whose [label] is both the icon's content description and a plain tooltip below
@@ -37,7 +34,6 @@ fun TooltipIconButton(
     tint: Color = LocalContentColor.current,
 ) {
     val tooltipState = rememberTooltipState()
-    val scope = rememberCoroutineScope()
     TooltipBox(
         positionProvider =
             TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
@@ -45,7 +41,7 @@ fun TooltipIconButton(
         state = tooltipState,
     ) {
         IconButton(
-            onClick = dismissingTooltip(tooltipState, scope, onClick),
+            onClick = dismissingTooltip(tooltipState, onClick),
             modifier = modifier.handCursor(),
         ) {
             Icon(icon, contentDescription = label, tint = tint)
@@ -57,10 +53,9 @@ fun TooltipIconButton(
 @OptIn(ExperimentalMaterial3Api::class)
 internal fun dismissingTooltip(
     tooltipState: TooltipState,
-    scope: CoroutineScope,
     onClick: () -> Unit,
 ): () -> Unit =
     {
-        if (tooltipState.isVisible) scope.launch { tooltipState.dismiss() }
+        if (tooltipState.isVisible) tooltipState.dismiss()
         onClick()
     }
