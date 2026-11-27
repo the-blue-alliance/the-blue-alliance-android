@@ -7,7 +7,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -138,7 +137,7 @@ class TbaDeepLinksTest {
     @Test
     fun `team year deeplink opens that year`() {
         assertEquals(
-            listOf(Screen.Teams, teamDetail("254", year = 2024)),
+            listOf(Screen.Teams, Screen.TeamDetail("254", year = 2024)),
             match("https://www.thebluealliance.com/team/254/2024"),
         )
     }
@@ -236,12 +235,6 @@ class TbaDeepLinksTest {
         assertNull(match("https://www.thebluealliance.com/team/"))
         assertNull(match("https://www.example.com/event/2026miket"))
     }
-
-    /** A [Screen.TeamDetail] for [year], built by name so this compiles before the field exists. */
-    private fun teamDetail(
-        teamKey: String,
-        year: Int,
-    ): Screen.TeamDetail = Json.decodeFromString("""{"teamKey":"$teamKey","year":$year}""")
 
     private fun decode(s: String): String = URLDecoder.decode(s.replace("+", "%2B"), Charsets.UTF_8)
 

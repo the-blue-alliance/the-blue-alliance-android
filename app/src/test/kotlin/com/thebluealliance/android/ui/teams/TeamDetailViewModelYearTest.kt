@@ -15,7 +15,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
@@ -170,7 +169,6 @@ class TeamDetailViewModelYearTest {
         assertEquals(2023, viewModel.selectedYear.value)
     }
 
-    /** A /team/254/<year> link's key, built by name so this compiles before the field exists. */
-    private fun linkedYear(year: Int): Screen.TeamDetail =
-        Json.decodeFromString("""{"teamKey":"frc254","year":$year}""")
+    /** A /team/254/<year> link's key. */
+    private fun linkedYear(year: Int) = Screen.TeamDetail("frc254", year = year)
 }

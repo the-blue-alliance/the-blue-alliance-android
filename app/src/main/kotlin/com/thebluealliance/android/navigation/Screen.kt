@@ -26,6 +26,8 @@ sealed interface Screen : NavKey {
     @Serializable data class TeamDetail(
         val teamKey: String,
         val initialTab: Int = TAB_INFO,
+        /** The season to open on, from a /team/{number}/{year} link; null opens the default. */
+        val year: Int? = null,
     ) : Screen {
         companion object {
             const val TAB_INFO = 0
