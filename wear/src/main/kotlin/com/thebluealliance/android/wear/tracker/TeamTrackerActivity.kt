@@ -42,6 +42,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.EdgeButtonSize
@@ -49,7 +50,11 @@ import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.TitleCard
+import androidx.wear.compose.material3.lazy.rememberTransformationSpec
+import androidx.wear.compose.material3.lazy.transformedHeight
 import com.thebluealliance.android.core.theme.TbaAllianceColors
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.AvatarConverter
@@ -186,6 +191,7 @@ private fun TeamTrackerScreen(
     }
 
     val columnState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
 
     // Reset scroll position when team changes
     LaunchedEffect(state.teamNumber) {
@@ -244,7 +250,15 @@ private fun TeamTrackerScreen(
 
             if (state.lastMatchLabel.isNotBlank()) {
                 item {
-                    MatchSection(
+                    MatchCard(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                                .minimumVerticalContentPadding(
+                                    CardDefaults.minimumVerticalListContentPadding,
+                                ),
+                        transformation = SurfaceTransformation(transformationSpec),
                         title = stringResource(R.string.last_match),
                         matchLabel = state.lastMatchLabel,
                         redTeams = state.lastMatchRedTeams,
@@ -261,7 +275,15 @@ private fun TeamTrackerScreen(
 
             if (state.nextMatchLabel.isNotBlank()) {
                 item {
-                    MatchSection(
+                    MatchCard(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                                .minimumVerticalContentPadding(
+                                    CardDefaults.minimumVerticalListContentPadding,
+                                ),
+                        transformation = SurfaceTransformation(transformationSpec),
                         title = stringResource(R.string.next_match),
                         matchLabel = state.nextMatchLabel,
                         redTeams = state.nextMatchRedTeams,
@@ -417,8 +439,15 @@ private fun EventSubtitle(state: TeamTrackerState) {
     }
 }
 
+/**
+ * A match in a [TitleCard]. In the list, cards morph and scale down near the top and bottom of
+ * the screen, so on a round watch their rows stay inside the circle instead of running into its
+ * edge.
+ */
 @Composable
-private fun MatchSection(
+private fun MatchCard(
+    modifier: Modifier,
+    transformation: SurfaceTransformation,
     title: String,
     matchLabel: String,
     redTeams: String,
@@ -431,46 +460,35 @@ private fun MatchSection(
     bonusRp: Int = 0,
     timeText: String? = null,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
+    TitleCard(
+        title = {
+            Text(
+                text = "$title \u2014 $matchLabel",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+        // Under the title rather than in the time slot, which would squeeze out the match label.
+        subtitle = timeText?.let { { Text(it) } },
+        modifier = modifier,
+        transformation = transformation,
     ) {
-        Text(
-            text = "$title \u2014 $matchLabel",
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(bottom = 2.dp),
+        AllianceRow(
+            color = TbaAllianceColors.Dark.Red,
+            teams = redTeams,
+            score = redScore,
+            isWinner = winningAlliance == Alliance.RED,
+            trackedTeam = trackedTeam,
+            bonusRp = if (trackedAlliance == Alliance.RED) bonusRp else 0,
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                AllianceRow(
-                    color = TbaAllianceColors.Dark.Red,
-                    teams = redTeams,
-                    score = redScore,
-                    isWinner = winningAlliance == Alliance.RED,
-                    trackedTeam = trackedTeam,
-                    bonusRp = if (trackedAlliance == Alliance.RED) bonusRp else 0,
-                )
-                AllianceRow(
-                    color = TbaAllianceColors.Dark.Blue,
-                    teams = blueTeams,
-                    score = blueScore,
-                    isWinner = winningAlliance == Alliance.BLUE,
-                    trackedTeam = trackedTeam,
-                    bonusRp = if (trackedAlliance == Alliance.BLUE) bonusRp else 0,
-                )
-            }
-            if (timeText != null) {
-                Text(
-                    text = timeText,
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
-        }
+        AllianceRow(
+            color = TbaAllianceColors.Dark.Blue,
+            teams = blueTeams,
+            score = blueScore,
+            isWinner = winningAlliance == Alliance.BLUE,
+            trackedTeam = trackedTeam,
+            bonusRp = if (trackedAlliance == Alliance.BLUE) bonusRp else 0,
+        )
     }
 }
 
