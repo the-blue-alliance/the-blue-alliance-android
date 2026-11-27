@@ -23,6 +23,9 @@ enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
 fun Throwable.isFetchFailure(): Boolean =
     this is IOException || (this is HttpException && code() != 404)
 
+/** Whether the server answered that the requested thing doesn't exist. */
+fun Throwable.isNotFound(): Boolean = this is HttpException && code() == 404
+
 /**
  * Base for screens that pull-to-refresh. Owns the shared [isRefreshing] flag and runs
  * refresh tasks concurrently, logging (instead of swallowing) any failure. Overlapping refreshes

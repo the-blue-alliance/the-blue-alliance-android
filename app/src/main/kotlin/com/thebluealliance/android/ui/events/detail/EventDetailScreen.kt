@@ -33,6 +33,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
+import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
@@ -233,48 +234,59 @@ fun EventDetailScreen(
                         ),
                 )
 
-                TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    val teamCount = uiState.teamCount
-                    EventDetailTab.entries.forEach { tab ->
-                        TBATab(
-                            label = tab.readableName(uiState.event),
-                            selected = pagerState.currentPage == tab.ordinal,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        tab.ordinal,
-                                    )
-                                }
-                            },
-                            trailing =
-                                if (tab == EventDetailTab.TEAMS && teamCount != null) {
-                                    {
-                                        Surface(
-                                            shape = MaterialTheme.shapes.small,
-                                            color = MaterialTheme.colorScheme.surfaceVariant,
-                                            contentColor =
-                                                MaterialTheme.colorScheme.onSurfaceVariant,
-                                        ) {
-                                            Text(
-                                                text = "$teamCount",
-                                                style = MaterialTheme.typography.labelMedium,
-                                                modifier =
-                                                    Modifier.padding(
-                                                        horizontal = 4.dp,
-                                                        vertical = 2.dp,
-                                                    ),
-                                            )
-                                        }
+                // A missing event has no tabs to switch between.
+                if (!uiState.notFound) {
+                    TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                        val teamCount = uiState.teamCount
+                        EventDetailTab.entries.forEach { tab ->
+                            TBATab(
+                                label = tab.readableName(uiState.event),
+                                selected = pagerState.currentPage == tab.ordinal,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            tab.ordinal,
+                                        )
                                     }
-                                } else {
-                                    null
                                 },
-                        )
+                                trailing =
+                                    if (tab == EventDetailTab.TEAMS && teamCount != null) {
+                                        {
+                                            Surface(
+                                                shape = MaterialTheme.shapes.small,
+                                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                                contentColor =
+                                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                            ) {
+                                                Text(
+                                                    text = "$teamCount",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    modifier =
+                                                        Modifier.padding(
+                                                            horizontal = 4.dp,
+                                                            vertical = 2.dp,
+                                                        ),
+                                                )
+                                            }
+                                        }
+                                    } else {
+                                        null
+                                    },
+                            )
+                        }
                     }
                 }
             }
         },
     ) { innerPadding ->
+        if (uiState.notFound) {
+            // A 404 is TBA's answer, not a failed fetch, so Retry would only get it again.
+            EmptyBox(
+                message = "Event not found",
+                modifier = Modifier.padding(innerPadding),
+            )
+            return@Scaffold
+        }
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,

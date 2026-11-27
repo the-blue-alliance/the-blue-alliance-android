@@ -277,24 +277,35 @@ fun TeamDetailScreen(
                         ),
                 )
 
-                TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    TeamDetailTab.entries.forEach { tab ->
-                        TBATab(
-                            label = tab.readableName,
-                            selected = pagerState.currentPage == tab.ordinal,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(
-                                        tab.ordinal,
-                                    )
-                                }
-                            },
-                        )
+                // A missing team has no tabs to switch between.
+                if (!uiState.notFound) {
+                    TBATabRow(selectedTabIndex = pagerState.currentPage) {
+                        TeamDetailTab.entries.forEach { tab ->
+                            TBATab(
+                                label = tab.readableName,
+                                selected = pagerState.currentPage == tab.ordinal,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(
+                                            tab.ordinal,
+                                        )
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             }
         },
     ) { innerPadding ->
+        if (uiState.notFound) {
+            // A 404 is TBA's answer, not a failed fetch, so Retry would only get it again.
+            EmptyBox(
+                message = "Team not found",
+                modifier = Modifier.padding(innerPadding),
+            )
+            return@Scaffold
+        }
         val bottomPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
         HorizontalPager(
             state = pagerState,
