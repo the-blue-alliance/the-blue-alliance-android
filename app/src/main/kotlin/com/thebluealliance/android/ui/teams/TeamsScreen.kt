@@ -134,7 +134,7 @@ fun TeamsScreen(
                 }
             }
 
-            FastScrollbar(listState = listState) {
+            FastScrollbar(listState = listState, contentPadding = innerPadding.onlyBottom()) {
                 ReadingWidthBox(
                     innerPadding.onlyBottom(),
                     Modifier.fillMaxSize(),

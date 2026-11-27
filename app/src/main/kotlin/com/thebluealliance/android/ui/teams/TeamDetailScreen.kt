@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.selection.toggleable
@@ -80,6 +81,7 @@ import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
 
@@ -530,8 +532,10 @@ private fun EventsTab(
         )
     } else {
         ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+            val scrollbarState = rememberLazyListState()
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                state = scrollbarState,
+                modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, readingPadding),
                 contentPadding = readingPadding,
             ) {
                 itemsIndexed(events, key = { _, event -> event.key }) { index, event ->

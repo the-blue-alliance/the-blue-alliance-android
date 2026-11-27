@@ -285,7 +285,11 @@ private fun EventsList(
             },
         )
 
-        FastScrollbar(listState = listState, modifier = Modifier.weight(1f)) {
+        FastScrollbar(
+            listState = listState,
+            modifier = Modifier.weight(1f),
+            contentPadding = contentPadding,
+        ) {
             ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
                 LazyColumn(
                     state = listState,

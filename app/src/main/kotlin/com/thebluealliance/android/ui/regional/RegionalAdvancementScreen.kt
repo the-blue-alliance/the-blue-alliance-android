@@ -57,6 +57,7 @@ import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.tableSpan
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -160,7 +161,12 @@ fun RegionalAdvancementScreen(
         ) { rankings ->
             val contentWidths = regionalColumnContentWidths(rankings)
             val sideScroll = rememberScrollState()
-            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            // On the viewport, not the list: a list wider than the window scrolls sideways, and
+            // its end edge would be off screen.
+            BoxWithConstraints(
+                modifier =
+                    Modifier.fillMaxSize().verticalScrollbar(listState, innerPadding.onlyBottom()),
+            ) {
                 val layout = regionalColumnLayout(maxWidth, contentWidths)
                 LazyColumn(
                     state = listState,

@@ -63,6 +63,7 @@ import com.thebluealliance.android.ui.components.readingColumnFit
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
@@ -233,7 +234,11 @@ fun SearchScreen(
             ReadingWidthBox(innerPadding.onlyBottom(), Modifier.fillMaxSize()) { readingPadding ->
                 val headerFocus = rememberStickyHeaderFocusOrder()
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .stickyHeaderFocusOrder(headerFocus)
+                            .verticalScrollbar(lazyListState, readingPadding),
                     state = lazyListState,
                     contentPadding = readingPadding,
                 ) {

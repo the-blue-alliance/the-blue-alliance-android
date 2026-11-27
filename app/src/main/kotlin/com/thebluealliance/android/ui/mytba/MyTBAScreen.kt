@@ -77,6 +77,7 @@ import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.returnsFocus
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -381,7 +382,7 @@ private fun FavoritesTab(
     ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().verticalScrollbar(listState, readingPadding),
             contentPadding = readingPadding,
         ) {
             items(favorites, key = { "${it.modelType}_${it.modelKey}" }) { favorite ->
@@ -464,7 +465,7 @@ private fun NotificationsTab(
     ReadingWidthBox(contentPadding, Modifier.fillMaxSize()) { readingPadding ->
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().verticalScrollbar(listState, readingPadding),
             contentPadding = readingPadding,
         ) {
             items(subscriptions, key = { "${it.modelType}_${it.modelKey}" }) { subscription ->

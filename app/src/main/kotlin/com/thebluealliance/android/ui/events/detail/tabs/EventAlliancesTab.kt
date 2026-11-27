@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.readingInset
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.util.teamNumber
 
 @Composable
@@ -82,8 +84,10 @@ fun EventAlliancesTab(
                 }
             }
         } else {
+            val scrollbarState = rememberLazyListState()
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                state = scrollbarState,
+                modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, innerPadding),
                 contentPadding = innerPadding,
             ) {
                 items(alliances, key = { "${it.eventKey}_${it.number}" }) { alliance ->

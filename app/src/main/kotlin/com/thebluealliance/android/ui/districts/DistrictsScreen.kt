@@ -40,6 +40,7 @@ import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.returnsFocus
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.flow.Flow
@@ -156,7 +157,7 @@ fun DistrictsScreen(
             ReadingWidthBox(innerPadding.onlyBottom(), Modifier.fillMaxSize()) { readingPadding ->
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().verticalScrollbar(listState, readingPadding),
                     contentPadding = readingPadding,
                 ) {
                     itemsIndexed(districts, key = {

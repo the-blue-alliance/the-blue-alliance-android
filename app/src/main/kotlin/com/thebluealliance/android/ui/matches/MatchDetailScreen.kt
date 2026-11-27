@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -85,6 +86,7 @@ import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.returnsFocus
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
@@ -284,8 +286,14 @@ fun MatchDetailScreen(
                         )
                     }
                     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+                        val scrollbarState = rememberLazyListState()
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
+                            state = scrollbarState,
+                            modifier =
+                                Modifier.fillMaxSize().verticalScrollbar(
+                                    scrollbarState,
+                                    readingPadding,
+                                ),
                             contentPadding = readingPadding,
                         ) {
                             if (videoBesideScore) {

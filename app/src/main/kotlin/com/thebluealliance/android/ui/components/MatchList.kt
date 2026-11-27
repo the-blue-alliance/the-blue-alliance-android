@@ -192,7 +192,8 @@ fun MatchList(
         modifier =
             Modifier
                 .fillMaxSize()
-                .stickyHeaderFocusOrder(headerFocus),
+                .stickyHeaderFocusOrder(headerFocus)
+                .verticalScrollbar(listState, innerPadding),
         contentPadding = innerPadding,
     ) {
         if (headerContent != null) {

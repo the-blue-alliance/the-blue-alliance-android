@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,6 +45,7 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -86,8 +88,10 @@ fun EventAdvancementTab(
     }
     val isDistrictEvent = event?.district != null
     val teamsByKey = remember(teams) { teams?.associateBy { it.key } ?: emptyMap() }
+    val scrollbarState = rememberLazyListState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        state = scrollbarState,
+        modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, innerPadding),
         contentPadding = innerPadding,
     ) {
         itemsIndexed(advancementPoints, key = { _, points -> points.teamKey }) { index, points ->
