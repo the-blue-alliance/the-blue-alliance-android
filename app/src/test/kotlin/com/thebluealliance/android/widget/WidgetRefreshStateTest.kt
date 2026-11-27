@@ -95,6 +95,81 @@ class WidgetRefreshStateTest {
     }
 
     @Test
+    fun `a failed refresh keeps the cached nickname`() {
+        val prefs =
+            atEvent().apply {
+                this[TeamTrackingWidgetKeys.TEAM_NICKNAME] = "Bobcat Robotics"
+            }
+        WidgetRefreshState.markFailed(prefs)
+        assertEquals("Bobcat Robotics", prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME])
+    }
+
+    @Test
+    fun `a failed refresh after a team change shows the new team's cached nickname`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "1678")
+        WidgetRefreshState.markFailed(
+            prefs,
+            cachedNickname = "Citrus Circuits",
+            cachedAvatarBase64 = "abc",
+        )
+        assertEquals("Citrus Circuits", prefs[TeamTrackingWidgetKeys.TEAM_NICKNAME])
+        assertEquals("abc", prefs[TeamTrackingWidgetKeys.AVATAR_BASE64])
+        assertNull(prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+    }
+
+    @Test
+    fun `switching teams drops the previous team's data`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals("frc254", prefs[TeamTrackingWidgetKeys.TEAM_KEY])
+        assertNull(prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+        assertNull(prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT])
+        WidgetRefreshState.markFailed(prefs)
+        assertEquals(WidgetState.LOAD_FAILED.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `saving the same team keeps its data`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals("Q18", prefs[TeamTrackingWidgetKeys.NEXT_MATCH_LABEL])
+        assertEquals(todayAt0753, prefs[TeamTrackingWidgetKeys.LAST_SUCCESS_AT])
+    }
+
+    @Test
+    fun `saving the same team keeps its widget state`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals(WidgetState.CURRENT_EVENT.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `saving the same team after a failed first load keeps the load-failed state`() {
+        val prefs =
+            mutablePreferencesOf().apply {
+                this[TeamTrackingWidgetKeys.TEAM_KEY] = "frc177"
+                this[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.LOAD_FAILED.value
+            }
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals(WidgetState.LOAD_FAILED.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `switching teams resets the widget state`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals(WidgetState.NO_UPCOMING.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `a new widget starts as no upcoming events`() {
+        val prefs = mutablePreferencesOf()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals(WidgetState.NO_UPCOMING.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
     fun `footer shows today's update time`() {
         assertEquals("Updated 7:53 AM", footer(todayAt0753, refreshFailed = false))
         assertEquals("Updated 07:53", footer(todayAt0753, refreshFailed = false, use24Hour = true))
