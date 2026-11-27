@@ -232,7 +232,7 @@ fun EventDetailScreen(
                 )
 
                 TBATabRow(selectedTabIndex = pagerState.currentPage) {
-                    val teamCount = uiState.teams?.size
+                    val teamCount = uiState.teamCount
                     EventDetailTab.entries.forEach { tab ->
                         TBATab(
                             label = tab.readableName(uiState.event),

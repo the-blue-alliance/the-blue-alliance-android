@@ -30,4 +30,10 @@ data class EventDetailUiState(
     val districtDisplayName: String? = null,
     val pitLocations: Map<String, String> = emptyMap(),
     val favoriteTeamKeysAtEvent: List<String> = emptyList(),
-)
+) {
+    /** The tab's last fetch failed and there is nothing cached to show instead. */
+    fun loadFailed(tab: EventDetailTab): Boolean = false
+
+    /** The Teams tab badge. */
+    val teamCount: Int? get() = teams?.size
+}
