@@ -3,6 +3,7 @@ package com.thebluealliance.android.wear.tracker
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.format.DateUtils
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +41,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
@@ -50,12 +55,17 @@ import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import com.thebluealliance.android.core.theme.TbaAllianceColors
 import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.AvatarConverter
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.ui.TbaWearTheme
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class TeamTrackerActivity : ComponentActivity() {
     private lateinit var trackerPrefs: TeamTrackerPreferences
@@ -73,6 +83,8 @@ class TeamTrackerActivity : ComponentActivity() {
 
         loadState()
         trackerPrefs.registerOnChangeListener(prefListener)
+        observeRefreshWork()
+        observeNetwork()
 
         // Trigger refresh to get latest data
         TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
@@ -105,14 +117,17 @@ class TeamTrackerActivity : ComponentActivity() {
     }
 
     private fun loadState() {
+        val current = state.value
         state.value =
             TeamTrackerState(
+                work = current.work,
+                isOnline = current.isOnline,
+                lastSuccessAtMillis = trackerPrefs.lastSuccessAtMillis,
                 teamNumber = trackerPrefs.teamNumber,
                 avatarBase64 = trackerPrefs.avatarBase64,
                 eventName = trackerPrefs.eventName,
                 record = trackerPrefs.record,
                 hasActiveEvent = trackerPrefs.hasActiveEvent,
-                isLoading = trackerPrefs.isLoading,
                 lastRefreshFailed = trackerPrefs.lastRefreshFailed,
                 lastMatchLabel = trackerPrefs.lastMatchLabel,
                 lastMatchRedTeams = trackerPrefs.lastMatchRedTeams,
@@ -141,21 +156,63 @@ class TeamTrackerActivity : ComponentActivity() {
         )
     }
 
-    /** Re-run the fetch after a failed refresh; shows the spinner immediately for feedback. */
+    /** Re-run the fetch after a failed refresh. WorkManager's state drives the spinner. */
     private fun retryRefresh() {
         trackerPrefs.lastRefreshFailed = false
-        trackerPrefs.isLoading = true
         TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
+    }
+
+    /**
+     * Mirror the refresh worker's WorkManager state. Loading comes from here rather than a stored
+     * flag, so a refresh stuck behind its network constraint never reads as "loading".
+     */
+    private fun observeRefreshWork() {
+        val query =
+            WorkQuery.fromUniqueWorkNames(
+                TeamTrackingComplicationWorker.IMMEDIATE_WORK_NAME,
+                TeamTrackingComplicationWorker.FAST_WORK_NAME,
+                TeamTrackingComplicationWorker.WORK_NAME,
+            )
+        val workManager = WorkManager.getInstance(this)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                workManager.getWorkInfosFlow(query).collect { infos ->
+                    val work =
+                        when {
+                            infos.any { it.state == WorkInfo.State.RUNNING } -> RefreshWork.RUNNING
+                            // Only a one-off refresh means "now"; the periodic job is always queued.
+                            infos.any {
+                                it.state == WorkInfo.State.ENQUEUED &&
+                                    TeamTrackingComplicationWorker.IMMEDIATE_WORK_NAME in it.tags
+                            } -> RefreshWork.PENDING
+                            else -> RefreshWork.IDLE
+                        }
+                    state.value = state.value.copy(work = work)
+                }
+            }
+        }
+    }
+
+    private fun observeNetwork() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                networkAvailability(this@TeamTrackerActivity).collect { online ->
+                    state.value = state.value.copy(isOnline = online)
+                }
+            }
+        }
     }
 }
 
-data class TeamTrackerState(
+internal data class TeamTrackerState(
     val teamNumber: String = "",
     val avatarBase64: String? = null,
     val eventName: String = "",
     val record: String = "",
     val hasActiveEvent: Boolean = false,
-    val isLoading: Boolean = false,
+    val lastSuccessAtMillis: Long? = null,
+    val work: RefreshWork = RefreshWork.IDLE,
+    val isOnline: Boolean = true,
     val lastRefreshFailed: Boolean = false,
     val lastMatchLabel: String = "",
     val lastMatchRedTeams: String = "",
@@ -221,25 +278,42 @@ private fun TeamTrackerScreen(
                 hasMatchData || state.hasActiveEvent || state.upcomingEvents.isNotEmpty()
             // A failed refresh only surfaces an error when there's nothing cached to fall back on;
             // otherwise the (stale) data keeps showing.
-            val showError = state.lastRefreshFailed && !hasAnyData
+            val status =
+                TrackerStatusLogic.resolve(
+                    hasData = hasAnyData,
+                    lastSuccessAtMillis = state.lastSuccessAtMillis,
+                    lastRefreshFailed = state.lastRefreshFailed,
+                    work = state.work,
+                    isOnline = state.isOnline,
+                )
             val sparseContent = !hasMatchData && state.upcomingEvents.size <= 1
-            if (!state.isLoading && sparseContent) {
+            if (status != TrackerStatus.Loading && sparseContent) {
                 item { Spacer(modifier = Modifier.height(4.dp)) }
             }
 
-            if (state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator()
+            when (status) {
+                TrackerStatus.Loading ->
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(48.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                TrackerStatus.Offline ->
+                    item {
+                        StatusText(
+                            stringResource(R.string.offline_waiting),
+                        )
+                    }
+                TrackerStatus.LoadFailed -> item { ErrorState(onRetry) }
+                is TrackerStatus.Content -> {
+                    item { EventSubtitle(state) }
+                    if (status.updatedAtMillis != null || status.offline) {
+                        item { UpdatedLine(status) }
                     }
                 }
-            } else if (showError) {
-                item { ErrorState(onRetry) }
-            } else {
-                item { EventSubtitle(state) }
             }
 
             if (state.lastMatchLabel.isNotBlank()) {
@@ -370,6 +444,55 @@ private fun ErrorState(onRetry: () -> Unit) {
             modifier = Modifier.padding(top = 6.dp),
         )
     }
+}
+
+@Composable
+private fun StatusText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(vertical = 2.dp),
+    )
+}
+
+/** "Updated 12 min. ago", or "Offline · updated …" while there's no network. Ticks each minute. */
+@Composable
+private fun UpdatedLine(status: TrackerStatus.Content) {
+    val now by produceState(System.currentTimeMillis()) {
+        while (true) {
+            delay(60_000L)
+            value = System.currentTimeMillis()
+        }
+    }
+    val age =
+        status.updatedAtMillis?.let { updatedAt ->
+            if (now - updatedAt < DateUtils.MINUTE_IN_MILLIS) {
+                stringResource(R.string.just_now)
+            } else {
+                DateUtils
+                    .getRelativeTimeSpanString(
+                        updatedAt,
+                        now,
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_RELATIVE,
+                    ).toString()
+            }
+        }
+    val text =
+        when {
+            age == null -> stringResource(R.string.offline)
+            status.offline -> stringResource(R.string.offline_updated, age)
+            else -> stringResource(R.string.updated, age)
+        }
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        textAlign = TextAlign.Center,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 2,
+    )
 }
 
 @Composable
