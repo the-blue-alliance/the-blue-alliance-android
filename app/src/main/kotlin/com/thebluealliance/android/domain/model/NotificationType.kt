@@ -25,6 +25,7 @@ enum class NotificationType(
     companion object {
         fun fromServerKey(key: String): NotificationType? = entries.find { it.serverKey == key }
 
+        // Must match the server's ENABLED_*_NOTIFICATIONS (common/consts/notification_type.py).
         fun forModelType(modelType: Int): List<NotificationType> =
             when (modelType) {
                 ModelType.EVENT ->
@@ -35,9 +36,10 @@ enum class NotificationType(
                         ALLIANCE_SELECTION,
                         AWARDS,
                         SCHEDULE_UPDATED,
-                        FINAL_RESULTS,
+                        MATCH_VIDEO,
                     )
-                ModelType.TEAM -> listOf(UPCOMING_MATCH, MATCH_SCORE, AWARDS)
+                ModelType.TEAM ->
+                    listOf(UPCOMING_MATCH, MATCH_SCORE, ALLIANCE_SELECTION, AWARDS, MATCH_VIDEO)
                 ModelType.MATCH -> listOf(UPCOMING_MATCH, MATCH_SCORE, MATCH_VIDEO)
                 else -> emptyList()
             }
