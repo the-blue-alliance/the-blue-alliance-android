@@ -2,15 +2,20 @@ package com.thebluealliance.android.ui.regional
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,11 +26,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.domain.NO_VALUE
@@ -37,11 +47,13 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.returnsFocus
+import com.thebluealliance.android.ui.components.tableSpan
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -126,21 +138,36 @@ fun RegionalAdvancementScreen(
                 EmptyBox("No regional advancement rankings for $selectedYear")
             },
         ) { rankings ->
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = innerPadding.onlyBottom(),
-            ) {
-                item(key = "header") {
-                    Box(modifier = Modifier.tableWidth()) { RankingsTableHeader() }
-                }
-                items(rankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
-                    Box(modifier = Modifier.tableWidth()) {
-                        RegionalRankingRow(
-                            ranking = ranking,
-                            onNavigateToTeam = onNavigateToTeam,
-                            onNavigateToEvent = onNavigateToEvent,
-                        )
+            val contentWidths = regionalColumnContentWidths(rankings)
+            val sideScroll = rememberScrollState()
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val layout = regionalColumnLayout(maxWidth, contentWidths)
+                LazyColumn(
+                    state = listState,
+                    modifier =
+                        Modifier.fillMaxSize().then(
+                            // Columns too wide for the window, e.g. at a large font scale, scroll
+                            // sideways together instead of breaking their values.
+                            layout.rowWidth?.let {
+                                Modifier.horizontalScroll(sideScroll).width(it)
+                            } ?: Modifier,
+                        ),
+                    contentPadding = innerPadding.onlyBottom(),
+                ) {
+                    val tableModifier =
+                        layout.rowWidth?.let { Modifier.tableWidth(it) } ?: Modifier.tableWidth()
+                    item(key = "header") {
+                        Box(modifier = tableModifier) { RankingsTableHeader(layout.columnWidths) }
+                    }
+                    items(rankings, key = { "${it.year}_${it.teamKey}" }) { ranking ->
+                        Box(modifier = tableModifier) {
+                            RegionalRankingRow(
+                                ranking = ranking,
+                                columnWidths = layout.columnWidths,
+                                onNavigateToTeam = onNavigateToTeam,
+                                onNavigateToEvent = onNavigateToEvent,
+                            )
+                        }
                     }
                 }
             }
@@ -148,8 +175,124 @@ fun RegionalAdvancementScreen(
     }
 }
 
+/** Rank, Team, Event 1, Event 2, Bonus, Total Points, Qualified. */
+private val COLUMN_WEIGHTS = listOf(0.12f, 0.18f, 0.15f, 0.15f, 0.15f, 0.18f, 0.25f)
+
+/** Horizontal inset of the header and each row. */
+private val ROW_PADDING = 16.dp
+
+/** Least space after a column's widest value, so neighbouring values never touch. */
+private val COLUMN_GUTTER = 8.dp
+
+/** Horizontal padding inside an advancement badge, on each side. */
+private val BADGE_PADDING = 8.dp
+
+/**
+ * Column widths, null when the plain weights fit; and the width of a row that needs to scroll
+ * sideways, null when the rows fit the window.
+ */
+internal data class RegionalColumnLayout(
+    val columnWidths: List<Dp>?,
+    val rowWidth: Dp?,
+)
+
+/**
+ * Lays the columns out in a [windowWidth]-wide window: weighted while every column's widest value,
+ * [contentWidths], fits its weight. Otherwise each column gets at least its content plus a
+ * [COLUMN_GUTTER] before the next, and the table scrolls sideways if that no longer fits.
+ */
+internal fun regionalColumnLayout(
+    windowWidth: Dp,
+    contentWidths: List<Dp>,
+): RegionalColumnLayout {
+    val tableWidth = tableSpan(windowWidth).width
+    val available = (tableWidth - ROW_PADDING * 2).value
+    fitColumnWidths(available, COLUMN_WEIGHTS, contentWidths.map { it.value })
+        ?: return RegionalColumnLayout(null, null)
+    val minWidths =
+        contentWidths.mapIndexed { i, width ->
+            if (i < COLUMN_WEIGHTS.lastIndex) width + COLUMN_GUTTER else width
+        }
+    val columnWidths =
+        fitColumnWidths(available, COLUMN_WEIGHTS, minWidths.map { it.value })
+            ?: return RegionalColumnLayout(null, null)
+    val rowWidth = columnWidths.sum().dp + ROW_PADDING * 2
+    return RegionalColumnLayout(
+        columnWidths.map { it.dp },
+        rowWidth.takeIf { it > tableWidth },
+    )
+}
+
+/** Narrowest each column can be without breaking a header word or any row's value. */
 @Composable
-private fun RankingsTableHeader() {
+private fun regionalColumnContentWidths(rankings: List<RegionalRanking>): List<Dp> {
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val typography = MaterialTheme.typography
+    return remember(rankings, typography, density) {
+        fun widest(
+            texts: List<String>,
+            style: TextStyle,
+        ): Dp =
+            texts.distinct().maxOfOrNull { text ->
+                with(density) {
+                    measurer
+                        .measure(text, style, softWrap = false, maxLines = 1)
+                        .size.width
+                        .toDp()
+                }
+            } ?: 0.dp
+
+        fun headerWords(label: String) = widest(label.split(' '), typography.labelSmall)
+        val eventTotals =
+            rankings.flatMap { r -> r.eventPoints.map { "${it.total.toInt()}" } } + NO_VALUE
+        listOf(
+            maxOf(
+                headerWords("Rank"),
+                widest(rankings.map { "${it.rank}" }, typography.labelLarge),
+            ),
+            maxOf(
+                headerWords("Team"),
+                widest(rankings.map { it.teamKey.teamNumber }, typography.titleMedium),
+            ),
+            maxOf(headerWords("Event 1"), widest(eventTotals, typography.bodyMedium)),
+            maxOf(headerWords("Event 2"), widest(eventTotals, typography.bodyMedium)),
+            maxOf(
+                headerWords("Bonus"),
+                widest(
+                    rankings.map { "+${(it.rookieBonus + it.singleEventBonus).toInt()}" },
+                    typography.bodyMedium,
+                ),
+            ),
+            maxOf(
+                headerWords("Total Points"),
+                widest(rankings.map { "${it.pointTotal.toInt()}" }, typography.labelLarge),
+            ),
+            maxOf(
+                headerWords("Qualified"),
+                widest(
+                    rankings.flatMap { it.advancementMethod.orEmpty().split(' ') },
+                    typography.labelSmall,
+                ) + BADGE_PADDING * 2,
+            ),
+        )
+    }
+}
+
+/** Sizes column [index] of [row]: its weight, or its fitted width from [columnWidths]. */
+private fun Modifier.regionalColumn(
+    row: RowScope,
+    index: Int,
+    columnWidths: List<Dp>?,
+): Modifier =
+    if (columnWidths == null) {
+        with(row) { weight(COLUMN_WEIGHTS[index]) }
+    } else {
+        width(columnWidths[index])
+    }
+
+@Composable
+private fun RankingsTableHeader(columnWidths: List<Dp>?) {
     Column(
         modifier =
             Modifier
@@ -162,37 +305,37 @@ private fun RankingsTableHeader() {
             Text(
                 text = "Rank",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.12f),
+                modifier = Modifier.regionalColumn(this, 0, columnWidths),
             )
             Text(
                 text = "Team",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.18f),
+                modifier = Modifier.regionalColumn(this, 1, columnWidths),
             )
             Text(
                 text = "Event 1",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.15f),
+                modifier = Modifier.regionalColumn(this, 2, columnWidths),
             )
             Text(
                 text = "Event 2",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.15f),
+                modifier = Modifier.regionalColumn(this, 3, columnWidths),
             )
             Text(
                 text = "Bonus",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.15f),
+                modifier = Modifier.regionalColumn(this, 4, columnWidths),
             )
             Text(
                 text = "Total Points",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.18f),
+                modifier = Modifier.regionalColumn(this, 5, columnWidths),
             )
             Text(
                 text = "Qualified",
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.weight(0.25f),
+                modifier = Modifier.regionalColumn(this, 6, columnWidths),
             )
         }
     }
@@ -201,6 +344,7 @@ private fun RankingsTableHeader() {
 @Composable
 private fun RegionalRankingRow(
     ranking: RegionalRanking,
+    columnWidths: List<Dp>?,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
 ) {
@@ -218,21 +362,27 @@ private fun RegionalRankingRow(
             Text(
                 text = "${ranking.rank}",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.12f),
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.regionalColumn(this, 0, columnWidths),
             )
             Text(
                 text = ranking.teamKey.teamNumber,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(0.18f),
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.regionalColumn(this, 1, columnWidths),
             )
             val sortedEvents = ranking.eventPoints.sortedBy { it.eventKey }
             if (sortedEvents.isNotEmpty()) {
                 Text(
                     text = "${sortedEvents[0].total.toInt()}",
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
-                            .weight(0.15f)
+                            .regionalColumn(this, 2, columnWidths)
                             .paddedClickable(
                                 MaterialTheme.shapes.small,
                                 vertical = 6.dp,
@@ -243,17 +393,21 @@ private fun RegionalRankingRow(
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.regionalColumn(this, 2, columnWidths),
                 )
             }
             if (sortedEvents.size > 1) {
                 Text(
                     text = "${sortedEvents[1].total.toInt()}",
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
-                            .weight(0.15f)
+                            .regionalColumn(this, 3, columnWidths)
                             .paddedClickable(
                                 MaterialTheme.shapes.small,
                                 vertical = 6.dp,
@@ -264,8 +418,10 @@ private fun RegionalRankingRow(
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.regionalColumn(this, 3, columnWidths),
                 )
             }
             val totalBonus = (ranking.rookieBonus + ranking.singleEventBonus).toInt()
@@ -273,22 +429,31 @@ private fun RegionalRankingRow(
                 Text(
                     text = "+$totalBonus",
                     style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.weight(0.15f),
+                    maxLines = 1,
+                    softWrap = false,
+                    modifier = Modifier.regionalColumn(this, 4, columnWidths),
                 )
             } else {
                 Text(
                     text = NO_VALUE,
                     style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(0.15f),
+                    modifier = Modifier.regionalColumn(this, 4, columnWidths),
                 )
             }
             Text(
                 text = "${ranking.pointTotal.toInt()}",
                 style = MaterialTheme.typography.labelLarge,
-                modifier = Modifier.weight(0.18f),
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.regionalColumn(this, 5, columnWidths),
             )
-            AdvancementBadge(method = ranking.advancementMethod, modifier = Modifier.weight(0.25f))
+            AdvancementBadge(
+                method = ranking.advancementMethod,
+                modifier = Modifier.regionalColumn(this, 6, columnWidths),
+            )
         }
     }
 }
@@ -321,7 +486,7 @@ private fun AdvancementBadge(
                                 else -> MaterialTheme.colorScheme.tertiaryContainer
                             },
                         shape = MaterialTheme.shapes.extraSmall,
-                    ).padding(horizontal = 8.dp, vertical = 4.dp),
+                    ).padding(horizontal = BADGE_PADDING, vertical = 4.dp),
         ) {
             Text(
                 text = method,

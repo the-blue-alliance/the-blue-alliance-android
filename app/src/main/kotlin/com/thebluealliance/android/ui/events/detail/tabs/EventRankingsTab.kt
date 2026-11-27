@@ -236,7 +236,14 @@ fun EventRankingsTab(
 
     // Narrow windows widen the columns whose header words would otherwise break, and scroll
     // sideways if even that doesn't fit.
-    val minWidths = rankingColumnMinWidths(primaryLabel, secondaryLabel, sortState.column)
+    val minWidths =
+        rankingColumnMinWidths(
+            primaryLabel,
+            secondaryLabel,
+            sortState.column,
+            rankings,
+            rankingSortOrders,
+        )
     val sideScroll = rememberScrollState()
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val (columnWidths, rowWidth, tableWidth) = rankingColumnLayout(maxWidth, minWidths)
@@ -314,23 +321,35 @@ internal fun rankingColumnLayout(
     return RankingColumnLayout(columnWidths?.map { it.dp }, rowWidth?.dp, tableWidth)
 }
 
-/** Narrowest each column can be without breaking a header word or the team number. */
+/**
+ * Narrowest each column can be without breaking a header word, the team number or any row's value,
+ * at the current font scale.
+ */
 @Composable
 private fun rankingColumnMinWidths(
     primaryLabel: String,
     secondaryLabel: String,
     sortColumn: RankingSortColumn,
+    rankings: List<Ranking>,
+    sortOrders: List<RankingSortOrder>?,
 ): List<Dp> {
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
     val headerStyle = MaterialTheme.typography.titleSmall
     val teamStyle = MaterialTheme.typography.titleMedium
+    val rankStyle = MaterialTheme.typography.labelLarge
+    val recordStyle = MaterialTheme.typography.bodyMedium
+    val valueStyle = rankStyle.copy(fontFeatureSettings = TABULAR_FIGURES)
     return remember(
         primaryLabel,
         secondaryLabel,
         sortColumn,
+        rankings,
+        sortOrders,
         headerStyle,
         teamStyle,
+        rankStyle,
+        recordStyle,
         density,
     ) {
         fun widest(
@@ -345,22 +364,70 @@ private fun rankingColumnMinWidths(
                         .toDp()
                 }
             }
+
+        // Widest whole value of a data column, so a cell never wraps a number onto two lines.
+        fun widestValue(
+            values: List<String>,
+            style: TextStyle,
+        ): Dp =
+            values.distinct().maxOfOrNull { value ->
+                with(density) {
+                    measurer
+                        .measure(value, style, softWrap = false, maxLines = 1)
+                        .size.width
+                        .toDp()
+                }
+            } ?: 0.dp
         val gutters = COLUMN_GUTTER * 2
 
         fun caret(column: RankingSortColumn) = if (sortColumn == column) ICON_WIDTH else 0.dp
+
+        fun sortValues(index: Int) =
+            rankings.map {
+                sortOrderValue(it, index, sortOrders)
+                    ?: NO_VALUE
+            }
         listOf(
-            widest("Rank", headerStyle) + gutters,
+            maxOf(
+                widest("Rank", headerStyle),
+                widestValue(rankings.map { rankLabel(it) }, rankStyle),
+            ) + gutters,
             maxOf(
                 widest("Team", headerStyle) + caret(RankingSortColumn.TEAM),
                 widest(WIDEST_TEAM_NUMBER, teamStyle),
             ) + gutters,
-            widest("Record", headerStyle) + gutters,
-            widest(primaryLabel, headerStyle) + caret(RankingSortColumn.PRIMARY) + gutters,
-            widest(secondaryLabel, headerStyle) + caret(RankingSortColumn.SECONDARY) + gutters,
+            maxOf(
+                widest("Record", headerStyle),
+                widestValue(rankings.map { recordLabel(it) }, recordStyle),
+            ) + gutters,
+            maxOf(
+                widest(primaryLabel, headerStyle) + caret(RankingSortColumn.PRIMARY),
+                widestValue(sortValues(0), valueStyle),
+            ) + gutters,
+            maxOf(
+                widest(secondaryLabel, headerStyle) + caret(RankingSortColumn.SECONDARY),
+                widestValue(sortValues(1), valueStyle),
+            ) + gutters,
             ICON_WIDTH + gutters,
         )
     }
 }
+
+private fun rankLabel(ranking: Ranking): String = "#${ranking.rank}"
+
+private fun recordLabel(ranking: Ranking): String =
+    "${ranking.wins}-${ranking.losses}-${ranking.ties}"
+
+/** Sort order [index] of [ranking], formatted to its declared precision, or null if missing. */
+private fun sortOrderValue(
+    ranking: Ranking,
+    index: Int,
+    sortOrders: List<RankingSortOrder>?,
+): String? =
+    ranking.sortOrders.getOrNull(index)?.let { value ->
+        val precision = sortOrders?.getOrNull(index)?.precision ?: 2
+        String.format(Locale.US, "%.${precision}f", value)
+    }
 
 /** Sideways scrolling shared by the header and row grids when the columns overflow. */
 private class RowScroll(
@@ -703,13 +770,7 @@ private fun RankingItem(
     )
 
     // The first two sort order values, without labels (the header has them).
-    val (primaryValue, secondaryValue) =
-        (0..1).map { i ->
-            ranking.sortOrders.getOrNull(i)?.let { value ->
-                val precision = sortOrders?.getOrNull(i)?.precision ?: 2
-                String.format(Locale.US, "%.${precision}f", value)
-            }
-        }
+    val (primaryValue, secondaryValue) = (0..1).map { i -> sortOrderValue(ranking, i, sortOrders) }
     val rowDescription =
         rankingRowDescription(
             rank = ranking.rank,
@@ -737,8 +798,10 @@ private fun RankingItem(
                     .expandableRow(expanded) { expanded = !expanded },
             frozen = {
                 Text(
-                    text = "#${ranking.rank}",
+                    text = rankLabel(ranking),
                     style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
                             .rankingColumn(this, 0, columnWidths)
@@ -748,6 +811,8 @@ private fun RankingItem(
                 Text(
                     text = ranking.teamKey.teamNumber,
                     style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    softWrap = false,
                     modifier =
                         Modifier
                             .rankingColumn(this, TEAM_COLUMN, columnWidths)
@@ -766,8 +831,10 @@ private fun RankingItem(
             },
         ) {
             Text(
-                text = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
+                text = recordLabel(ranking),
                 style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                softWrap = false,
                 modifier =
                     Modifier
                         .rankingColumn(this, 2, columnWidths)
@@ -781,6 +848,8 @@ private fun RankingItem(
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
                 textAlign = TextAlign.End,
+                maxLines = 1,
+                softWrap = false,
                 modifier =
                     Modifier
                         .rankingColumn(this, PRIMARY_COLUMN, columnWidths)
@@ -794,6 +863,8 @@ private fun RankingItem(
                     MaterialTheme.typography.labelLarge
                         .copy(fontFeatureSettings = TABULAR_FIGURES),
                 textAlign = TextAlign.End,
+                maxLines = 1,
+                softWrap = false,
                 modifier =
                     Modifier
                         .rankingColumn(this, SECONDARY_COLUMN, columnWidths)
