@@ -188,6 +188,9 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                 TextField(
                                     state = teamNumberState,
                                     inputTransformation = DigitsOnly,
+                                    // Hold the number still while it's checked, so the result
+                                    // can't land on (or save) a different one.
+                                    readOnly = checking,
                                     label = { Text("Team Number") },
                                     placeholder = { Text("e.g. 9180") },
                                     isError = error != null,
