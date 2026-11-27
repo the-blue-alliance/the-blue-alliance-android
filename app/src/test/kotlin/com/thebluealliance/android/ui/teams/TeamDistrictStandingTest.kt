@@ -111,6 +111,25 @@ class TeamDistrictStandingTest {
     }
 
     @Test
+    fun `hidden before any district event has scored`() {
+        val rookie = DistrictRanking("2027fim", "frc9999", 1, 10.0, rookieBonus = 10.0)
+        val snapshot =
+            DistrictRankingsSnapshot("2027fim", fim, listOf(rookie, ranking("frc254", 135, 0.0)))
+        assertNull(teamDistrictStanding("frc254", listOf(snapshot)))
+    }
+
+    @Test
+    fun `shows a team yet to play once the district has points`() {
+        val snapshot =
+            DistrictRankingsSnapshot(
+                "2026fim",
+                fim,
+                listOf(ranking("frc33", 1, 60.0), ranking("frc254", 135, 0.0)),
+            )
+        assertEquals(0, teamDistrictStanding("frc254", listOf(snapshot))?.points)
+    }
+
+    @Test
     fun `hidden for a team the district doesn't rank`() {
         val snapshot = DistrictRankingsSnapshot("2026fim", fim, listOf(ranking("frc33", 1, 210.0)))
         assertNull(teamDistrictStanding("frc254", listOf(snapshot)))

@@ -62,13 +62,17 @@ fun teamDistrictKeys(
 /**
  * The team's standing in the first district whose rankings list it. A district's rankings only
  * hold its own teams, so an event played in another district doesn't match. Null while rankings
- * load, when they fail, and when the team isn't ranked in any district.
+ * load, when they fail, before any of the district's events have scored, and when the team
+ * isn't ranked in any district.
  */
 fun teamDistrictStanding(
     teamKey: String,
     snapshots: List<DistrictRankingsSnapshot>,
 ): TeamDistrictStanding? =
     snapshots.firstNotNullOfOrNull { snapshot ->
+        // Before any event, the rankings hold only rookie bonuses and the rest in team order.
+        val scored = snapshot.rankings.any { it.pointTotal > it.rookieBonus }
+        if (!scored) return@firstNotNullOfOrNull null
         snapshot.rankings.firstOrNull { it.teamKey == teamKey }?.let { ranking ->
             TeamDistrictStanding(
                 districtKey = snapshot.districtKey,
