@@ -4,9 +4,11 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
+import com.thebluealliance.android.data.repository.LiveWebcastRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UiState
@@ -14,12 +16,15 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Year
@@ -35,6 +40,7 @@ class EventsViewModel
         private val seasons: SeasonRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
+        private val liveWebcastRepository: LiveWebcastRepository,
     ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Year.now().value)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
@@ -43,6 +49,25 @@ class EventsViewModel
         val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
 
         private val hasLoaded = MutableStateFlow(false)
+
+        /**
+         * Online webcasts by event key for the current season, re-read every few minutes while the
+         * list is on screen (the repository caches between reads). Other seasons have none.
+         */
+        val liveWebcasts: StateFlow<Map<String, List<Webcast>>> =
+            _selectedYear
+                .flatMapLatest { year ->
+                    if (year != Year.now().value) {
+                        flowOf(emptyMap())
+                    } else {
+                        flow {
+                            while (true) {
+                                emit(liveWebcastRepository.onlineWebcasts())
+                                delay(liveWebcastRepository.ttlMillis)
+                            }
+                        }
+                    }
+                }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyMap())
 
         val uiState: StateFlow<UiState<EventsData>> =
             _selectedYear

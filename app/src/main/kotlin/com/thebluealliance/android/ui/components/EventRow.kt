@@ -24,6 +24,7 @@ fun EventRow(
     onClick: () -> Unit,
     showYear: Boolean = false,
     showChevron: Boolean = false,
+    trailing: (@Composable () -> Unit)? = null,
 ) {
     Row(
         modifier =
@@ -59,6 +60,8 @@ fun EventRow(
                 )
             }
         }
+        // A trailing control (such as a live event's Watch button) is its own click target.
+        trailing?.invoke()
         if (showChevron) {
             Icon(
                 imageVector = TbaIcons.KeyboardArrowRight,

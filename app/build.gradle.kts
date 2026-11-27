@@ -78,6 +78,12 @@ android {
 
         buildConfigField("String", "TBA_BASE_URL", "\"https://www.thebluealliance.com/\"")
         buildConfigField("String", "TBA_API_KEY", "\"\"")
+        // GameDay's live-events feed (TBA's Firebase Realtime Database), read over public REST.
+        buildConfigField(
+            "String",
+            "LIVE_EVENTS_URL",
+            "\"https://tbatv-prod-hrd.firebaseio.com/live_events.json\"",
+        )
         buildConfigField("String", "BUILD_TIME", "\"${Instant.now()}\"")
         buildConfigField(
             "String",
@@ -118,6 +124,11 @@ android {
                 "TBA_API_KEY",
                 "\"${rootProject.extra["tbaDebugKey"] as String? ?: "tba-dev-key"}\"",
             )
+            // -Ptba.live_events.url.debug=http://10.0.2.2:<port>/live_events.json serves a fake
+            // feed, to see the live-webcast buttons when nothing is live.
+            providers.gradleProperty("tba.live_events.url.debug").orNull?.let { url ->
+                buildConfigField("String", "LIVE_EVENTS_URL", "\"$url\"")
+            }
         }
         release {
             signingConfig = signingConfigs.getByName("release")

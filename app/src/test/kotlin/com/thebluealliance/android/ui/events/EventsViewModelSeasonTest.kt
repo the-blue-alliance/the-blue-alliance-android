@@ -29,6 +29,7 @@ class EventsViewModelSeasonTest {
             seasons = seasons,
             myTBARepository = mockk(relaxed = true),
             authRepository = auth,
+            liveWebcastRepository = mockk(relaxed = true),
         )
 
     @BeforeEach

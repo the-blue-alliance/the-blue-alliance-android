@@ -11,17 +11,23 @@ import com.thebluealliance.android.data.remote.AuthTokenInterceptor
 import com.thebluealliance.android.data.remote.ClientApi
 import com.thebluealliance.android.data.remote.GitHubApi
 import com.thebluealliance.android.data.remote.TbaApi
+import com.thebluealliance.android.data.repository.LiveWebcastRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.Cache
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -34,6 +40,8 @@ object NetworkModule {
     // resetting the per-byte read timeout) can't hang indefinitely. Generous vs TBA's small
     // payloads, so it won't abort a legitimately slow load. (#1446)
     private const val TBA_CALL_TIMEOUT_SECONDS = 45L
+
+    private const val LIVE_EVENTS_CALL_TIMEOUT_SECONDS = 15L
 
     // Canonical JSON for every client in this module (TBA read, authenticated ClientApi,
     // GitHub) so they cannot drift — see TbaClientFactory.json for the flag rationale.
@@ -128,6 +136,30 @@ object NetworkModule {
             ).addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
             .create(GitHubApi::class.java)
+
+    // The live-events feed is a public Firebase REST read: no TBA key, no HTTP cache (the
+    // repository caches it for a few minutes itself).
+    @Provides
+    @Singleton
+    fun provideLiveWebcastRepository(json: Json): LiveWebcastRepository {
+        val client =
+            OkHttpClient
+                .Builder()
+                .callTimeout(LIVE_EVENTS_CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .build()
+        return LiveWebcastRepository(
+            fetchBody = {
+                withContext(Dispatchers.IO) {
+                    val request = Request.Builder().url(BuildConfig.LIVE_EVENTS_URL).build()
+                    client.newCall(request).execute().use { response ->
+                        if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
+                        response.body.string()
+                    }
+                }
+            },
+            json = json,
+        )
+    }
 
     @Provides
     @Singleton

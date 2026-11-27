@@ -45,6 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.domain.model.Event
+import com.thebluealliance.android.domain.model.Webcast
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
@@ -70,6 +72,7 @@ import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.ui.theme.brandFocusRing
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.Instant
 import java.time.LocalDate
 
 /** Sentinel for [scrollOverride] indicating a scroll-to-favorites is in progress. */
@@ -87,6 +90,7 @@ fun EventsScreen(
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val liveWebcasts by viewModel.liveWebcasts.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
     var yearDropdownExpanded by remember { mutableStateOf(false) }
@@ -133,6 +137,7 @@ fun EventsScreen(
                 sections = data.sections,
                 favoriteEventKeys = data.favoriteEventKeys,
                 selectedYear = selectedYear,
+                liveWebcasts = liveWebcasts,
                 onNavigateToEvent = onNavigateToEvent,
                 listState = listState,
                 reselectFlow = reselectFlow,
@@ -147,12 +152,24 @@ private fun EventsList(
     sections: List<EventSection>,
     favoriteEventKeys: Set<String>,
     selectedYear: Int,
+    liveWebcasts: Map<String, List<Webcast>>,
     onNavigateToEvent: (String) -> Unit,
     listState: LazyListState,
     reselectFlow: Flow<Unit>,
     contentPadding: PaddingValues,
 ) {
     val allEvents = remember(sections) { sections.flatMap { it.events } }
+
+    // Rows of live events get a Watch button for their online webcasts.
+    val eventRow: @Composable (Event) -> Unit = { event ->
+        val live =
+            remember(event, liveWebcasts) { liveWebcastsFor(event, liveWebcasts, Instant.now()) }
+        EventRow(
+            event = event,
+            onClick = { onNavigateToEvent(event.key) },
+            trailing = if (live.isEmpty()) null else ({ LiveWebcastButton(event, live) }),
+        )
+    }
     val today = remember { LocalDate.now() }
 
     val favoriteEvents =
@@ -298,7 +315,7 @@ private fun EventsList(
                             SectionHeader(label = "Favorites")
                         }
                         items(favoriteEvents, key = { "fav_top_${it.key}" }) { event ->
-                            EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                            eventRow(event)
                         }
                     }
                     // Week sections
@@ -317,7 +334,7 @@ private fun EventsList(
                                 sectionFavorites,
                                 key = { "fav_${section.label}_${it.key}" },
                             ) { event ->
-                                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                                eventRow(event)
                             }
                         }
                         section.subSections.forEach { subSection ->
@@ -327,7 +344,7 @@ private fun EventsList(
                                 }
                             }
                             items(subSection.events, key = { it.key }) { event ->
-                                EventRow(event = event, onClick = { onNavigateToEvent(event.key) })
+                                eventRow(event)
                             }
                         }
                     }
