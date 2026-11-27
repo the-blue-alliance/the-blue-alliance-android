@@ -2,7 +2,6 @@ package com.thebluealliance.android.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
@@ -66,19 +65,46 @@ private val TopAppBarEdgePadding = 4.dp
  * Whether [secondaryCount] secondary actions should collapse into the overflow menu: they leave
  * the title under [minTitleWidth] in a bar of [barWidth] with [fixedWidth] taken by everything
  * else, and collapsing them saves space. With [hasOverflowMenu] false, collapsing adds the menu.
+ * [pinnedCount] buttons, such as Close, never collapse but take their width either way.
  */
 internal fun topBarCollapsesActions(
     barWidth: Dp,
     fixedWidth: Dp,
     secondaryCount: Int,
     hasOverflowMenu: Boolean,
+    pinnedCount: Int = 0,
     actionWidth: Dp = TopBarActionWidth,
     minTitleWidth: Dp = TopBarMinTitleWidth,
 ): Boolean {
     if (secondaryCount == 0) return false
-    val buttons = secondaryCount + if (hasOverflowMenu) 1 else 0
-    return buttons > 1 && barWidth - fixedWidth - actionWidth * buttons < minTitleWidth
+    val collapsible = secondaryCount + if (hasOverflowMenu) 1 else 0
+    val buttons = collapsible + pinnedCount
+    return collapsible > 1 && barWidth - fixedWidth - actionWidth * buttons < minTitleWidth
 }
+
+/** The bar's trailing buttons. [MenuItem] is a lone menu item shown as an icon button. */
+internal enum class TopBarSlot { Secondary, Overflow, MenuItem, Close }
+
+/**
+ * The bar's trailing buttons in order: secondary actions unless [collapse], then More options for
+ * a menu of two or more items, or the lone item itself as an icon, then Close, which is always last
+ * and never collapses. The menu holds the collapsed secondary actions and [overflowCount] items.
+ */
+internal fun topBarSlots(
+    secondaryCount: Int,
+    overflowCount: Int,
+    hasClose: Boolean,
+    collapse: Boolean,
+): List<TopBarSlot> =
+    buildList {
+        if (!collapse) repeat(secondaryCount) { add(TopBarSlot.Secondary) }
+        when ((if (collapse) secondaryCount else 0) + overflowCount) {
+            0 -> Unit
+            1 -> add(TopBarSlot.MenuItem)
+            else -> add(TopBarSlot.Overflow)
+        }
+        if (hasClose) add(TopBarSlot.Close)
+    }
 
 /**
  * The app's top bar. Pass [navigationIcon] as null when there is none, so the bar's measurement
@@ -86,9 +112,10 @@ internal fun topBarCollapsesActions(
  * heading. A non-null [onRefresh] puts the Refresh accessibility action on the title, for screens
  * whose pull-to-refresh gesture has no semantic equivalent; it does nothing while [isRefreshing].
  *
- * [secondaryActions] show as icon buttons, then a More options button opens [overflowMenu]. When
- * the bar is too narrow to keep the title readable, the secondary actions move to the top of that
- * menu.
+ * [secondaryActions] show as icon buttons, then a More options button opens a menu of
+ * [overflowActions]. When the bar is too narrow to keep the title readable, the secondary actions
+ * move to the top of that menu. A menu that would hold one item shows that item as an icon button
+ * instead. [closeAction], when set, is the last button, after More options, and never collapses.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -109,7 +136,8 @@ fun TBATopAppBar(
     onRefresh: (() -> Unit)? = null,
     isRefreshing: Boolean = false,
     secondaryActions: List<TopBarAction> = emptyList(),
-    overflowMenu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)? = null,
+    overflowActions: List<TopBarAction> = emptyList(),
+    closeAction: TopBarAction? = null,
 ) {
     // Beside a rail the lamp is in the rail's header.
     val showLamp = showLamp && !LocalNavigationRailShown.current
@@ -155,22 +183,28 @@ fun TBATopAppBar(
                             TopAppBarEdgePadding * 2 +
                                 if (hasNavigationIcon) TopBarActionWidth else 0.dp,
                         secondaryCount = secondaryActions.size,
-                        hasOverflowMenu = overflowMenu != null,
+                        hasOverflowMenu = overflowActions.isNotEmpty(),
+                        pinnedCount = if (closeAction != null) 1 else 0,
                     )
+                val slots =
+                    topBarSlots(
+                        secondaryCount = secondaryActions.size,
+                        overflowCount = overflowActions.size,
+                        hasClose = closeAction != null,
+                        collapse = collapse,
+                    )
+                val menuActions =
+                    if (collapse) secondaryActions + overflowActions else overflowActions
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!collapse) {
-                        secondaryActions.forEach { action ->
-                            IconButton(
-                                onClick = action.onClick,
-                                modifier = Modifier.actionState(action),
-                            ) {
-                                Icon(action.icon, contentDescription = action.label)
-                            }
+                    var secondaryIndex = 0
+                    slots.forEach { slot ->
+                        when (slot) {
+                            TopBarSlot.Secondary ->
+                                TopBarIconButton(secondaryActions[secondaryIndex++])
+                            TopBarSlot.Overflow -> TopBarOverflowMenu(menuActions)
+                            TopBarSlot.MenuItem -> TopBarIconButton(menuActions.single())
+                            TopBarSlot.Close -> closeAction?.let { TopBarIconButton(it) }
                         }
-                    }
-                    val menuActions = if (collapse) secondaryActions else emptyList()
-                    if (overflowMenu != null || menuActions.isNotEmpty()) {
-                        TopBarOverflowMenu(menuActions, overflowMenu)
                     }
                 }
             }
@@ -182,10 +216,14 @@ fun TBATopAppBar(
 }
 
 @Composable
-private fun TopBarOverflowMenu(
-    actions: List<TopBarAction>,
-    menu: (@Composable ColumnScope.(close: () -> Unit) -> Unit)?,
-) {
+private fun TopBarIconButton(action: TopBarAction) {
+    IconButton(onClick = action.onClick, modifier = Modifier.actionState(action)) {
+        Icon(action.icon, contentDescription = action.label)
+    }
+}
+
+@Composable
+private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
     var expanded by remember { mutableStateOf(false) }
     val close = { expanded = false }
     Box {
@@ -204,7 +242,6 @@ private fun TopBarOverflowMenu(
                     },
                 )
             }
-            menu?.invoke(this, close)
         }
     }
 }
