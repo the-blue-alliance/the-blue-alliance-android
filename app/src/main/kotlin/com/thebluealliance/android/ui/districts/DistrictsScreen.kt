@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -20,6 +20,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +29,7 @@ import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.components.FocusHandoffEffect
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
@@ -35,6 +38,7 @@ import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -55,6 +59,17 @@ fun DistrictsScreen(
     val maxYear by viewModel.maxYear.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+
+    // Pressing "Show <year> districts" by keyboard removes the button; focus moves to that
+    // year's first district, or back to the button when that year is empty too.
+    val inputModeManager = LocalInputModeManager.current
+    val seasonFocus = rememberFocusHandoff()
+    FocusHandoffEffect(
+        seasonFocus,
+        current = selectedYear,
+        hasContent = uiState is UiState.Success,
+        controlShown = uiState is UiState.Empty && selectedYear > FIRST_DISTRICT_YEAR,
+    )
 
     // Reset scroll position when year changes (but not on initial composition/back navigation)
     var previousYear by rememberSaveable { mutableIntStateOf(selectedYear) }
@@ -116,8 +131,18 @@ fun DistrictsScreen(
                         if (selectedYear > FIRST_DISTRICT_YEAR) {
                             {
                                 FilledTonalButton(
-                                    onClick = { viewModel.selectYear(selectedYear - 1) },
-                                    modifier = Modifier.handCursor().heightIn(min = 48.dp),
+                                    onClick = {
+                                        seasonFocus.arm(
+                                            selectedYear - 1,
+                                            inputModeManager.inputMode,
+                                        )
+                                        viewModel.selectYear(selectedYear - 1)
+                                    },
+                                    modifier =
+                                        Modifier
+                                            .focusRequester(seasonFocus.requester)
+                                            .handCursor()
+                                            .heightIn(min = 48.dp),
                                 ) {
                                     Text("Show ${selectedYear - 1} districts")
                                 }
@@ -134,10 +159,21 @@ fun DistrictsScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = readingPadding,
                 ) {
-                    items(districts, key = { it.key }) { district ->
+                    itemsIndexed(districts, key = {
+                        _,
+                        district,
+                        ->
+                        district.key
+                    }) { index, district ->
                         DistrictItem(
                             district = district,
                             onClick = { onNavigateToDistrict(district.key) },
+                            modifier =
+                                if (index == 0) {
+                                    Modifier.focusRequester(seasonFocus.requester)
+                                } else {
+                                    Modifier
+                                },
                         )
                     }
                 }
@@ -150,12 +186,13 @@ fun DistrictsScreen(
 private fun DistrictItem(
     district: District,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Text(
         text = district.displayName,
         style = MaterialTheme.typography.titleMedium,
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .returnsFocus()
                 .handCursor()

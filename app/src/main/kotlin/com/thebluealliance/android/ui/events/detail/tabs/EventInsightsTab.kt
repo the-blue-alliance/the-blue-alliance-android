@@ -42,7 +42,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -56,10 +60,12 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.FocusHandoffEffect
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandFocusRing
@@ -235,12 +241,18 @@ fun EventInsightsTab(
             coprs?.coprs?.keys?.sorted() ?: emptyList()
         }
 
+    // A new stat type swaps the whole table, taking the focused ⋮ with it, so the dialog's own
+    // focus restore has nothing to return to. Send keyboard focus to the new table's ⋮ instead.
+    val statSelectorFocus = rememberFocusHandoff()
+    FocusHandoffEffect(statSelectorFocus, current = selectedStatType, hasContent = true)
+
     if (showStatSelector) {
         StatSelectorDialog(
             currentSelection = selectedStatType,
             availableCoprStats = coprStatNames,
             onDismiss = { showStatSelector = false },
-            onSelect = { statType ->
+            onSelect = { statType, inputMode ->
+                statSelectorFocus.arm(statType, inputMode)
                 selectedStatType = statType
                 showStatSelector = false
                 if (statType is StatType.COPR) {
@@ -273,6 +285,7 @@ fun EventInsightsTab(
                         oprSortAscending = ascending
                     },
                     onShowStatSelector = { showStatSelector = true },
+                    statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
@@ -282,6 +295,7 @@ fun EventInsightsTab(
                     title = "Qual Insights",
                     insightsData = insights?.qual,
                     onShowStatSelector = { showStatSelector = true },
+                    statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
@@ -291,6 +305,7 @@ fun EventInsightsTab(
                     title = "Playoff Insights",
                     insightsData = insights?.playoff,
                     onShowStatSelector = { showStatSelector = true },
+                    statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
@@ -307,6 +322,7 @@ fun EventInsightsTab(
                         coprSortAscending = ascending
                     },
                     onShowStatSelector = { showStatSelector = true },
+                    statSelectorFocus = statSelectorFocus.requester,
                     innerPadding = innerPadding,
                     onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
                 )
@@ -320,12 +336,16 @@ private fun StatSelectorDialog(
     currentSelection: StatType,
     availableCoprStats: List<String>,
     onDismiss: () -> Unit,
-    onSelect: (StatType) -> Unit,
+    onSelect: (StatType, InputMode) -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Select Stat Type") },
         text = {
+            // The dialog is its own window with its own input mode: read the mode the choice was
+            // made with here, inside the dialog, not from the screen behind it.
+            val inputModeManager = LocalInputModeManager.current
+            val onSelect: (StatType) -> Unit = { onSelect(it, inputModeManager.inputMode) }
             LazyColumn(modifier = Modifier.selectableGroup()) {
                 item {
                     StatTypeOption(
@@ -424,6 +444,7 @@ private fun InsightsView(
     title: String,
     insightsData: String?,
     onShowStatSelector: () -> Unit,
+    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
@@ -486,7 +507,11 @@ private fun InsightsView(
                     )
                     IconButton(
                         onClick = onShowStatSelector,
-                        modifier = Modifier.handCursor().padding(0.dp),
+                        modifier =
+                            Modifier
+                                .focusRequester(statSelectorFocus)
+                                .handCursor()
+                                .padding(0.dp),
                     ) {
                         Icon(
                             imageVector = TbaIcons.MoreVert,
@@ -625,6 +650,7 @@ private fun StandardOPRsView(
     sortAscending: Boolean,
     onSortChange: (OprSortColumn, Boolean) -> Unit,
     onShowStatSelector: () -> Unit,
+    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
@@ -666,7 +692,10 @@ private fun StandardOPRsView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         inPlaceStickyHeader {
-            InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
+            InsightsTableHeaderRow(
+                onShowStatSelector = onShowStatSelector,
+                statSelectorFocus = statSelectorFocus,
+            ) {
                 TableHeaderCell(
                     text = "Team",
                     column = OPR_TEAM_COLUMN,
@@ -736,6 +765,7 @@ private fun COPRView(
     sortAscending: Boolean,
     onSortChange: (CoprSortColumn, Boolean) -> Unit,
     onShowStatSelector: () -> Unit,
+    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
@@ -762,7 +792,10 @@ private fun COPRView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         inPlaceStickyHeader {
-            InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
+            InsightsTableHeaderRow(
+                onShowStatSelector = onShowStatSelector,
+                statSelectorFocus = statSelectorFocus,
+            ) {
                 TableHeaderCell(
                     text = "Team",
                     column = COPR_TEAM_COLUMN,
@@ -839,6 +872,7 @@ private fun OprLearnMoreLink(onClick: () -> Unit) {
 @Composable
 private fun InsightsTableHeaderRow(
     onShowStatSelector: () -> Unit,
+    statSelectorFocus: FocusRequester,
     cells: @Composable RowScope.() -> Unit,
 ) {
     // The sort bands and the overflow button sit on the header blue, so their focus ring uses
@@ -866,7 +900,10 @@ private fun InsightsTableHeaderRow(
                         .padding(end = COLUMN_GUTTER),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = onShowStatSelector, modifier = Modifier.handCursor()) {
+                IconButton(
+                    onClick = onShowStatSelector,
+                    modifier = Modifier.focusRequester(statSelectorFocus).handCursor(),
+                ) {
                     Icon(
                         imageVector = TbaIcons.MoreVert,
                         contentDescription = "Select stat type",
