@@ -42,6 +42,13 @@
                 <data android:pathPrefix="/teams" />
                 <data android:pathPrefix="/regional_advancement" />
             </intent-filter>
+            <!-- Opening size of a desktop (freeform) window; full screen and split screen ignore
+                 it. Wider than the 840dp expanded breakpoint, so a new window opens with the rail
+                 and list/detail panes rather than at phone size. -->
+            <layout
+                android:defaultWidth="960dp"
+                android:defaultHeight="720dp"
+                android:gravity="center" />
         </activity>
 
         <!-- This alias insulates our shortcuts (which maintain the same Intent data through app updates)
