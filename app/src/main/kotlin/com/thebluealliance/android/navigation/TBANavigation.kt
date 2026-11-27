@@ -51,6 +51,7 @@ import com.thebluealliance.android.ui.components.TBANavigationRail
 import com.thebluealliance.android.ui.components.WindowFocusEntry
 import com.thebluealliance.android.ui.components.focusEntersAt
 import com.thebluealliance.android.ui.components.focusRegion
+import com.thebluealliance.android.ui.components.isSelectedFor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.useNavigationRail
 import com.thebluealliance.android.ui.districts.DistrictDetailScreen
@@ -70,6 +71,7 @@ import com.thebluealliance.android.ui.more.MoreViewModel
 import com.thebluealliance.android.ui.more.ThanksScreen
 import com.thebluealliance.android.ui.mytba.MyTBAScreen
 import com.thebluealliance.android.ui.regional.RegionalAdvancementScreen
+import com.thebluealliance.android.ui.regional.RegionalAdvancementViewModel
 import com.thebluealliance.android.ui.search.SearchScreen
 import com.thebluealliance.android.ui.settings.SettingsScreen
 import com.thebluealliance.android.ui.teamevent.TeamEventDetailScreen
@@ -140,16 +142,8 @@ fun TBANavigation(
         }
     }
 
-    val showBottomBar =
-        TOP_LEVEL_DESTINATIONS.any { it.key.isSameTab(navState.currentRoute) } ||
-            navState.currentRoute in
-            setOf(
-                Screen.MyTBA,
-                Screen.Settings,
-                Screen.About,
-                Screen.Thanks,
-                Screen.RegionalAdvancement,
-            )
+    // Top-level screens, and the screens opened from More, which keep its tab highlighted.
+    val showBottomBar = TOP_LEVEL_DESTINATIONS.any { it.isSelectedFor(navState.currentRoute) }
 
     // Once in use, the rail stays put on every screen, so pushing or popping a detail screen
     // doesn't slide it out and reflow the content beside it.
@@ -277,8 +271,14 @@ fun TBANavigation(
                             }
                             entry<Screen.RegionalAdvancement>(
                                 metadata = Transitions.topLevelTransitionSpec,
-                            ) {
+                            ) { regional ->
+                                val viewModel =
+                                    hiltViewModel<
+                                        RegionalAdvancementViewModel,
+                                        RegionalAdvancementViewModel.Factory,
+                                    >(creationCallback = { factory -> factory.create(regional) })
                                 RegionalAdvancementScreen(
+                                    viewModel = viewModel,
                                     onNavigateToTeam = { teamKey ->
                                         navigator.navigate(Screen.TeamDetail(teamKey))
                                     },
@@ -287,8 +287,8 @@ fun TBANavigation(
                                     },
                                     onNavigateUp = { navigator.navigateUp() },
                                     onNavigateToSearch = { navigator.navigate(Screen.Search) },
-                                    reselectFlow =
-                                        tabReselectFlows[Screen.RegionalAdvancement] ?: emptyFlow(),
+                                    // Not a tab: tapping More pops back to it instead.
+                                    reselectFlow = emptyFlow(),
                                 )
                             }
                             entry<Screen.More>(
@@ -299,9 +299,7 @@ fun TBANavigation(
                                 MoreScreen(
                                     onNavigateToMyTBA = { navigator.navigate(Screen.MyTBA) },
                                     onNavigateToRegionalAdvancement = {
-                                        navigator.navigate(
-                                            Screen.RegionalAdvancement,
-                                        )
+                                        navigator.navigate(Screen.RegionalAdvancement())
                                     },
                                     onNavigateToSettings = { navigator.navigate(Screen.Settings) },
                                     onNavigateToAbout = { navigator.navigate(Screen.About) },

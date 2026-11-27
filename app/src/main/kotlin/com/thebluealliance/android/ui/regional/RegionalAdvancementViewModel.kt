@@ -4,9 +4,13 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.RegionalRanking
+import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -15,12 +19,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import javax.inject.Inject
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = RegionalAdvancementViewModel.Factory::class)
 class RegionalAdvancementViewModel
-    @Inject
+    @AssistedInject
     constructor(
+        @Assisted navKey: Screen.RegionalAdvancement,
         private val repository: RegionalAdvancementRepository,
         private val seasons: SeasonRepository,
     ) : RefreshableViewModel() {
@@ -29,7 +33,11 @@ class RegionalAdvancementViewModel
         private val _maxYear = MutableStateFlow(fallbackYear)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
-        private val selection = SeasonSelection(fallbackYear)
+        private val selection =
+            SeasonSelection(fallbackYear).apply {
+                // A year in the link counts as the user's pick, so later defaults leave it alone.
+                navKey.year?.let(::pick)
+            }
         val selectedYear: StateFlow<Int> = selection.year
 
         private val _uiState = MutableStateFlow<UiState<List<RegionalRanking>>>(UiState.Loading)
@@ -79,5 +87,10 @@ class RegionalAdvancementViewModel
                     // A slower load for a year no longer selected must not replace the current one.
                     if (selection.year.value == year) _uiState.value = state
                 })
+        }
+
+        @AssistedFactory
+        interface Factory {
+            fun create(navKey: Screen.RegionalAdvancement): RegionalAdvancementViewModel
         }
     }
