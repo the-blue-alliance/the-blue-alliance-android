@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events.detail
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.DistrictRepository
@@ -15,13 +16,17 @@ import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
+import com.thebluealliance.android.ui.common.isFetchFailure
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -33,7 +38,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = EventDetailViewModel.Factory::class)
@@ -57,6 +65,9 @@ class EventDetailViewModel
         private val regionalCmpAdvancementByTeam =
             MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
 
+        private val loadOutcomes =
+            MutableStateFlow<Map<EventDetailTab, RefreshOutcome>>(emptyMap())
+
         private val teamKeysFlow = teamRepository.observeEventTeamKeys(eventKey)
 
         private val teamsFlow =
@@ -64,7 +75,7 @@ class EventDetailViewModel
                 if (keys.isEmpty()) flowOf(emptyList()) else teamRepository.observeTeams(keys)
             }
 
-        val uiState: StateFlow<EventDetailUiState> =
+        private val state: Flow<EventDetailUiState> =
             eventRepository
                 .observeEvent(eventKey)
                 .flatMapLatest { event ->
@@ -178,11 +189,14 @@ class EventDetailViewModel
                             favoriteTeamKeysAtEvent = favTeamKeys,
                         )
                     }
-                }.stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(5000),
-                    EventDetailUiState(),
-                )
+                }.combine(loadOutcomes) { state, outcomes -> state.copy(loadOutcomes = outcomes) }
+
+        val uiState: StateFlow<EventDetailUiState> =
+            state.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                EventDetailUiState(),
+            )
 
         val isFavorite: StateFlow<Boolean> =
             myTBARepository
@@ -250,58 +264,130 @@ class EventDetailViewModel
         fun isSignedIn(): Boolean = authRepository.isSignedIn()
 
         fun refreshAll() {
-            refreshing(
-                {
+            refreshTracked(
+                EventDetailTab.INFO to {
                     eventRepository.refreshEvent(eventKey)
-                    refreshRegionalCmpAdvancement()
+                    refreshRegionalCmpAdvancementLogged()
                 },
-                { teamRepository.refreshEventTeams(eventKey) },
-                { matchRepository.refreshEventMatches(eventKey) },
-                { eventRepository.refreshEventRankings(eventKey) },
-                { eventRepository.refreshEventAlliances(eventKey) },
-                { eventRepository.refreshEventAwards(eventKey) },
-                { eventRepository.refreshEventDistrictPoints(eventKey) },
-                { eventRepository.refreshEventRegionalPoints(eventKey) },
-                { eventRepository.refreshEventOPRs(eventKey) },
-                { eventRepository.refreshEventCOPRs(eventKey) },
-                { eventRepository.refreshEventInsights(eventKey) },
-                { districtRepository.refreshDistrictsForYear(eventYear) },
-                { eventRepository.refreshEventPitLocations(eventKey) },
+                EventDetailTab.TEAMS to { teamRepository.refreshEventTeams(eventKey) },
+                EventDetailTab.MATCHES to { matchRepository.refreshEventMatches(eventKey) },
+                EventDetailTab.RANKINGS to { eventRepository.refreshEventRankings(eventKey) },
+                EventDetailTab.ALLIANCES to { eventRepository.refreshEventAlliances(eventKey) },
+                EventDetailTab.AWARDS to { eventRepository.refreshEventAwards(eventKey) },
+                EventDetailTab.ADVANCEMENT_POINTS to {
+                    eventRepository.refreshEventDistrictPoints(eventKey)
+                },
+                EventDetailTab.ADVANCEMENT_POINTS to {
+                    eventRepository.refreshEventRegionalPoints(eventKey)
+                },
+                EventDetailTab.INSIGHTS to { eventRepository.refreshEventOPRs(eventKey) },
+                EventDetailTab.INSIGHTS to { eventRepository.refreshEventCOPRs(eventKey) },
+                EventDetailTab.INSIGHTS to { eventRepository.refreshEventInsights(eventKey) },
+                null to { districtRepository.refreshDistrictsForYear(eventYear) },
+                null to { eventRepository.refreshEventPitLocations(eventKey) },
             )
         }
 
         fun refreshTab(tab: EventDetailTab) {
             when (tab) {
                 EventDetailTab.INFO ->
-                    refreshing(
-                        { eventRepository.refreshEvent(eventKey) },
-                        { districtRepository.refreshDistrictsForYear(eventYear) },
+                    refreshTracked(
+                        tab to { eventRepository.refreshEvent(eventKey) },
+                        null to { districtRepository.refreshDistrictsForYear(eventYear) },
                     )
                 EventDetailTab.TEAMS ->
-                    refreshing(
-                        { teamRepository.refreshEventTeams(eventKey) },
-                        { eventRepository.refreshEventPitLocations(eventKey) },
+                    refreshTracked(
+                        tab to { teamRepository.refreshEventTeams(eventKey) },
+                        null to { eventRepository.refreshEventPitLocations(eventKey) },
                     )
                 EventDetailTab.RANKINGS ->
-                    refreshing({ eventRepository.refreshEventRankings(eventKey) })
+                    refreshTracked(tab to { eventRepository.refreshEventRankings(eventKey) })
                 EventDetailTab.MATCHES ->
-                    refreshing({ matchRepository.refreshEventMatches(eventKey) })
+                    refreshTracked(tab to { matchRepository.refreshEventMatches(eventKey) })
                 EventDetailTab.ALLIANCES ->
-                    refreshing({ eventRepository.refreshEventAlliances(eventKey) })
+                    refreshTracked(tab to { eventRepository.refreshEventAlliances(eventKey) })
                 EventDetailTab.INSIGHTS ->
-                    refreshing(
-                        { eventRepository.refreshEventOPRs(eventKey) },
-                        { eventRepository.refreshEventCOPRs(eventKey) },
-                        { eventRepository.refreshEventInsights(eventKey) },
+                    refreshTracked(
+                        tab to { eventRepository.refreshEventOPRs(eventKey) },
+                        tab to { eventRepository.refreshEventCOPRs(eventKey) },
+                        tab to { eventRepository.refreshEventInsights(eventKey) },
                     )
                 EventDetailTab.ADVANCEMENT_POINTS ->
-                    refreshing(
-                        { eventRepository.refreshEventDistrictPoints(eventKey) },
-                        { eventRepository.refreshEventRegionalPoints(eventKey) },
-                        { refreshRegionalCmpAdvancement(forceRefresh = true) },
+                    refreshTracked(
+                        tab to { eventRepository.refreshEventDistrictPoints(eventKey) },
+                        tab to { eventRepository.refreshEventRegionalPoints(eventKey) },
+                        null to { refreshRegionalCmpAdvancement(forceRefresh = true) },
                     )
                 EventDetailTab.AWARDS ->
-                    refreshing({ eventRepository.refreshEventAwards(eventKey) })
+                    refreshTracked(tab to { eventRepository.refreshEventAwards(eventKey) })
+            }
+        }
+
+        /**
+         * Runs [tasks] like [refreshing], recording each tab's outcome so an empty tab can tell
+         * "failed" from "none", and reporting a failed refresh over cached data once it ends.
+         * A null tab marks a supporting fetch that no tab's state depends on.
+         */
+        private fun refreshTracked(vararg tasks: Pair<EventDetailTab?, suspend () -> Unit>) {
+            val failed = ConcurrentHashMap.newKeySet<EventDetailTab>()
+            val remaining = AtomicInteger(tasks.size)
+            val tracked: List<suspend () -> Unit> =
+                tasks.map { (tab, task) ->
+                    {
+                        try {
+                            task()
+                            if (tab != null) markSucceeded(tab, failed)
+                        } catch (e: CancellationException) {
+                            throw e
+                        } catch (e: Exception) {
+                            if (tab != null) {
+                                if (e.isFetchFailure()) {
+                                    failed += tab
+                                    loadOutcomes.update { it + (tab to RefreshOutcome.FAILED) }
+                                } else {
+                                    // TBA answered with nothing for this event: empty, not failed.
+                                    markSucceeded(tab, failed)
+                                }
+                            }
+                            throw e
+                        } finally {
+                            if (remaining.decrementAndGet() == 0) reportFailedRefresh(failed)
+                        }
+                    }
+                }
+            refreshing(*tracked.toTypedArray())
+        }
+
+        private fun markSucceeded(
+            tab: EventDetailTab,
+            failed: Set<EventDetailTab>,
+        ) {
+            loadOutcomes.update {
+                if (tab in
+                    failed
+                ) {
+                    it
+                } else {
+                    it + (tab to RefreshOutcome.SUCCEEDED)
+                }
+            }
+        }
+
+        // Reads the cache itself: an offline refresh can fail before the screen has collected it.
+        private suspend fun reportFailedRefresh(failed: Set<EventDetailTab>) {
+            if (failed.isEmpty()) return
+            val cached = state.first()
+            if (failed.any { cached.hasData(it) }) userMessages.show("Couldn't refresh event")
+        }
+
+        // Advancement needs the stored event, so it follows it; its failure isn't Info's.
+        private suspend fun refreshRegionalCmpAdvancementLogged() {
+            try {
+                refreshRegionalCmpAdvancement()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                Log.w(TAG, "regional advancement refresh failed", e)
             }
         }
 
@@ -317,6 +403,10 @@ class EventDetailViewModel
         @AssistedFactory
         interface Factory {
             fun create(navKey: Screen.EventDetail): EventDetailViewModel
+        }
+
+        private companion object {
+            const val TAG = "EventDetailViewModel"
         }
     }
 

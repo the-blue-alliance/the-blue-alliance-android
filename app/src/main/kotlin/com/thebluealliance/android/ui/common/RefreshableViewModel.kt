@@ -10,8 +10,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 
 enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
+
+/**
+ * Whether a refresh failed to get an answer from the server: no connection, a timeout or a
+ * server error. A 404 or an empty body means the server has no such data, which is not a failure.
+ */
+fun Throwable.isFetchFailure(): Boolean =
+    this is IOException || (this is HttpException && code() >= 500)
 
 /**
  * Base for screens that pull-to-refresh. Owns the shared [isRefreshing] flag and runs
