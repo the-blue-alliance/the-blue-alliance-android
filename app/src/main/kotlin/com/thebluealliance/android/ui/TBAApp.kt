@@ -6,6 +6,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -13,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.google.firebase.Firebase
@@ -26,6 +29,7 @@ import com.thebluealliance.android.navigation.TBANavigation
 import com.thebluealliance.android.navigation.rememberNavigationState
 import com.thebluealliance.android.ui.components.LocalRefreshTargets
 import com.thebluealliance.android.ui.components.RefreshTargets
+import com.thebluealliance.android.ui.components.primaryClicksOnly
 import com.thebluealliance.android.ui.theme.TBATheme
 import com.thebluealliance.android.ui.theme.ThemeMode
 import kotlinx.coroutines.flow.collectLatest
@@ -76,9 +80,12 @@ fun TBAApp(
     val refreshTargets = remember { RefreshTargets() }
     TBATheme(darkTheme = darkTheme) {
         CompositionLocalProvider(LocalRefreshTargets provides refreshTargets) {
-            TBANavigation(
-                navState = navState,
-            )
+            // A right-click is for context menus: it never acts as a click anywhere in the app.
+            Box(Modifier.fillMaxSize().primaryClicksOnly()) {
+                TBANavigation(
+                    navState = navState,
+                )
+            }
         }
     }
 }
