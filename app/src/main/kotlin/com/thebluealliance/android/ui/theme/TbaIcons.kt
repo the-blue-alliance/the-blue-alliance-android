@@ -14,6 +14,7 @@ import com.thebluealliance.android.R
  * https://developer.android.com/develop/ui/compose/graphics/images/material
  */
 object TbaIcons {
+    val AddToHomeScreen: ImageVector @Composable get() = icon(R.drawable.ic_add_to_home_screen)
     val ArrowBack: ImageVector @Composable get() = icon(R.drawable.ic_arrow_back)
     val ArrowDropDown: ImageVector @Composable get() = icon(R.drawable.ic_arrow_drop_down)
     val ArrowDropUp: ImageVector @Composable get() = icon(R.drawable.ic_arrow_drop_up)
