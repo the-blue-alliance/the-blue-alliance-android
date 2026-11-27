@@ -288,6 +288,11 @@ class EventDetailViewModel
             )
         }
 
+        /** Retries a tab's failed load; with no event cached, every tab failed, so retry them all. */
+        fun retry(tab: EventDetailTab) {
+            if (uiState.value.event == null) refreshAll() else refreshTab(tab)
+        }
+
         fun refreshTab(tab: EventDetailTab) {
             when (tab) {
                 EventDetailTab.INFO ->

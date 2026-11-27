@@ -16,11 +16,12 @@ import java.io.IOException
 enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
 
 /**
- * Whether a refresh failed to get an answer from the server: no connection, a timeout or a
- * server error. A 404 or an empty body means the server has no such data, which is not a failure.
+ * Whether a refresh failed to get the data: no connection, a timeout, or any HTTP error but a 404
+ * (a rejected key, rate limiting or a server error). A 404 or an empty body means the server has
+ * no such data, which is not a failure.
  */
 fun Throwable.isFetchFailure(): Boolean =
-    this is IOException || (this is HttpException && code() >= 500)
+    this is IOException || (this is HttpException && code() != 404)
 
 /**
  * Base for screens that pull-to-refresh. Owns the shared [isRefreshing] flag and runs

@@ -298,7 +298,7 @@ fun EventDetailScreen(
                         ErrorBox(
                             modifier = Modifier.padding(bottomPadding),
                             message = tab.loadErrorMessage(uiState.event),
-                            onRetry = { viewModel.refreshTab(tab) },
+                            onRetry = { viewModel.retry(tab) },
                         )
                     }
                     return@TouchPullToRefreshBox
