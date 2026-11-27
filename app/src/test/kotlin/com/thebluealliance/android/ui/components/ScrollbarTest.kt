@@ -1,7 +1,11 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerType
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class ScrollbarTest {
@@ -48,5 +52,35 @@ class ScrollbarTest {
     @Test
     fun `a thumb filling the track does not scroll`() {
         assertEquals(0f, scrollbarDragDistance(10f, 4000, 1000, 800f, 800f))
+    }
+
+    @Test
+    fun `a mouse on the edge strip keeps the scrollbar awake`() {
+        assertTrue(hoversStrip(PointerEventType.Enter, PointerType.Mouse, onStrip = true))
+        assertTrue(hoversStrip(PointerEventType.Move, PointerType.Mouse, onStrip = true))
+    }
+
+    @Test
+    fun `leaving the strip or the list lets the scrollbar fade`() {
+        assertFalse(hoversStrip(PointerEventType.Move, PointerType.Mouse, onStrip = false))
+        assertFalse(hoversStrip(PointerEventType.Exit, PointerType.Mouse, onStrip = true))
+    }
+
+    @Test
+    fun `touch and stylus moves never hover the strip`() {
+        assertFalse(hoversStrip(PointerEventType.Move, PointerType.Touch, onStrip = true))
+        assertFalse(hoversStrip(PointerEventType.Move, PointerType.Stylus, onStrip = true))
+    }
+
+    @Test
+    fun `only a mouse's primary button grabs the thumb`() {
+        assertTrue(canGrabThumb(PointerType.Mouse, primaryPressed = true))
+        assertFalse(canGrabThumb(PointerType.Mouse, primaryPressed = false))
+    }
+
+    @Test
+    fun `touch and stylus presses grab the thumb`() {
+        assertTrue(canGrabThumb(PointerType.Touch, primaryPressed = false))
+        assertTrue(canGrabThumb(PointerType.Stylus, primaryPressed = false))
     }
 }

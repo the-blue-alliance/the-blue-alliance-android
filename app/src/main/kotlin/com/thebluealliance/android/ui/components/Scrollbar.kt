@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,6 +19,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerType
+import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Density
@@ -38,6 +38,25 @@ private val GrabWidth = 16.dp
 
 /** How long the scrollbar stays after scrolling stops. */
 private const val FADE_DELAY_MS = 1500L
+
+private val HoverEventTypes =
+    setOf(PointerEventType.Enter, PointerEventType.Move, PointerEventType.Exit)
+
+/**
+ * Whether a hover event of [eventType] leaves the scrollbar awake: a mouse inside the list and
+ * [onStrip], the edge strip where the thumb is grabbed. Touch and stylus moves never hover it.
+ */
+internal fun hoversStrip(
+    eventType: PointerEventType,
+    pointerType: PointerType,
+    onStrip: Boolean,
+): Boolean = pointerType == PointerType.Mouse && eventType != PointerEventType.Exit && onStrip
+
+/** Whether a press can grab the thumb: any touch or stylus, but only a mouse's primary button. */
+internal fun canGrabThumb(
+    pointerType: PointerType,
+    primaryPressed: Boolean,
+): Boolean = pointerType != PointerType.Mouse || primaryPressed
 
 /** Where the thumb sits on a track: [start] past the track's top, [length] long. */
 internal data class ScrollbarThumb(
@@ -105,8 +124,8 @@ private fun Density.thumbFor(
 
 /**
  * Draws a thin scrollbar at the end edge of a vertically scrolling list or grid using [state]. It
- * fades in while the list scrolls, while [keepVisible], or while a mouse rests near the edge, and
- * fades out shortly after. While shown, its thumb can be dragged with a mouse or finger. The track
+ * fades in while the list scrolls, while [keepVisible], or while a mouse rests on the edge strip,
+ * and fades out shortly after. While shown, its thumb can be dragged with a mouse or finger. The track
  * stays clear of the list's vertical [contentPadding], such as the space under a navigation bar.
  */
 @Composable
@@ -119,11 +138,12 @@ fun Modifier.verticalScrollbar(
     val direction = LocalLayoutDirection.current
     val alpha = remember { Animatable(0f) }
     var dragging by remember { mutableStateOf(false) }
-    var hovers by remember { mutableIntStateOf(0) }
-    val active = state.isScrollInProgress || dragging || keepVisible
-    LaunchedEffect(active, hovers) {
-        if (active || hovers > 0) alpha.animateTo(1f, TBAMotionTokens.fastEffectsSpec())
-        if (!active) {
+    var hovering by remember { mutableStateOf(false) }
+    val active = state.isScrollInProgress || dragging || keepVisible || hovering
+    LaunchedEffect(active) {
+        if (active) {
+            alpha.animateTo(1f, TBAMotionTokens.fastEffectsSpec())
+        } else {
             delay(FADE_DELAY_MS)
             alpha.animateTo(0f, TBAMotionTokens.defaultEffectsSpec())
         }
@@ -131,52 +151,59 @@ fun Modifier.verticalScrollbar(
     return this
         .pointerInput(state, contentPadding, direction) {
             awaitPointerEventScope {
-                while (true) {
-                    val event = awaitPointerEvent(PointerEventPass.Initial)
-                    val change = event.changes.firstOrNull() ?: continue
-                    val grab = GrabWidth.toPx()
-                    val onStrip =
-                        if (direction == LayoutDirection.Ltr) {
-                            change.position.x >= size.width - grab
-                        } else {
-                            change.position.x <= grab
-                        }
-                    if (!onStrip) continue
-                    if (event.type == PointerEventType.Move &&
-                        change.type == PointerType.Mouse &&
-                        !change.pressed
-                    ) {
-                        hovers++
-                        continue
-                    }
-                    if (event.type != PointerEventType.Press || alpha.value <= 0f) continue
-                    val indicator = state.scrollIndicatorState ?: continue
-                    val track = scrollbarTrack(size.height.toFloat(), contentPadding)
-                    val thumb = thumbFor(indicator, track) ?: continue
-                    val thumbTop = track.start + thumb.start
-                    if (change.position.y !in thumbTop..thumbTop + thumb.length) continue
-                    change.consume()
-                    dragging = true
-                    var lastY = change.position.y
+                try {
                     while (true) {
-                        val move = awaitPointerEvent(PointerEventPass.Initial)
-                        val drag = move.changes.firstOrNull { it.id == change.id } ?: break
-                        drag.consume()
-                        if (!drag.pressed) break
-                        val delta = drag.position.y - lastY
-                        lastY = drag.position.y
-                        val current = state.scrollIndicatorState ?: break
-                        val length = thumbFor(current, track)?.length ?: break
-                        state.dispatchRawDelta(
-                            scrollbarDragDistance(
-                                thumbDelta = delta,
-                                contentSize = current.contentSize,
-                                viewportSize = current.viewportSize,
-                                trackLength = track.endInclusive - track.start,
-                                thumbLength = length,
-                            ),
-                        )
+                        val event = awaitPointerEvent(PointerEventPass.Initial)
+                        val change = event.changes.firstOrNull() ?: continue
+                        val grab = GrabWidth.toPx()
+                        val onStrip =
+                            if (direction == LayoutDirection.Ltr) {
+                                change.position.x >= size.width - grab
+                            } else {
+                                change.position.x <= grab
+                            }
+                        if (event.type in HoverEventTypes) {
+                            hovering = hoversStrip(event.type, change.type, onStrip)
+                            continue
+                        }
+                        if (event.type != PointerEventType.Press || !onStrip) continue
+                        if (alpha.value <= 0f) continue
+                        if (!canGrabThumb(change.type, event.buttons.isPrimaryPressed)) continue
+                        val indicator = state.scrollIndicatorState ?: continue
+                        val track = scrollbarTrack(size.height.toFloat(), contentPadding)
+                        val thumb = thumbFor(indicator, track) ?: continue
+                        val thumbTop = track.start + thumb.start
+                        if (change.position.y !in thumbTop..thumbTop + thumb.length) continue
+                        change.consume()
+                        dragging = true
+                        try {
+                            var lastY = change.position.y
+                            while (true) {
+                                val move = awaitPointerEvent(PointerEventPass.Initial)
+                                val drag = move.changes.firstOrNull { it.id == change.id } ?: break
+                                drag.consume()
+                                if (!drag.pressed) break
+                                val delta = drag.position.y - lastY
+                                lastY = drag.position.y
+                                val current = state.scrollIndicatorState ?: break
+                                val length = thumbFor(current, track)?.length ?: break
+                                state.dispatchRawDelta(
+                                    scrollbarDragDistance(
+                                        thumbDelta = delta,
+                                        contentSize = current.contentSize,
+                                        viewportSize = current.viewportSize,
+                                        trackLength = track.endInclusive - track.start,
+                                        thumbLength = length,
+                                    ),
+                                )
+                            }
+                        } finally {
+                            dragging = false
+                        }
                     }
+                } finally {
+                    // A restarted or removed pointerInput must not leave the scrollbar pinned.
+                    hovering = false
                     dragging = false
                 }
             }
