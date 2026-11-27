@@ -196,9 +196,6 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
 
             updateAppWidgetState(this@TeamTrackingWidgetConfigActivity, glanceId) { prefs ->
                 WidgetRefreshState.setTeam(prefs, teamNumber)
-                // Sane default until the first worker run stamps the real state — shrinks the
-                // "unknown" widget_state window for analytics.
-                prefs[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.NO_UPCOMING.value
             }
 
             // Update widget UI to show loading state

@@ -26,6 +26,9 @@ class TeamTrackingWidgetReceiver : GlanceAppWidgetReceiver() {
         // re-fire it on app update, so schedule here too. KEEP makes it idempotent and it only
         // runs when a widget actually exists (never wakes widget-less devices).
         WidgetMetricsWorker.enqueueDaily(context)
+        // Same for the refresh: UPDATE swaps in the current request (no network constraint) for
+        // widgets scheduled by an older version, keeping their next run time.
+        TeamTrackingWorker.enqueuePeriodicRefresh(context)
     }
 
     override fun onDisabled(context: Context) {

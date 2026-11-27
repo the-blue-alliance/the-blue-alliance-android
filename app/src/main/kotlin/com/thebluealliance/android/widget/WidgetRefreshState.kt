@@ -38,7 +38,8 @@ internal object WidgetRefreshState {
 
     /**
      * Point the widget at [teamNumber]. Switching teams drops the previous team's data, so a
-     * failed first refresh can't show it under the new team's name.
+     * failed first refresh can't show it under the new team's name. Saving the same team keeps
+     * everything, including its widget state.
      */
     fun setTeam(
         prefs: MutablePreferences,
@@ -58,6 +59,12 @@ internal object WidgetRefreshState {
             prefs.remove(TeamTrackingWidgetKeys.LAST_SUCCESS_AT)
             prefs.remove(TeamTrackingWidgetKeys.LAST_UPDATED)
             prefs.remove(TeamTrackingWidgetKeys.REFRESH_FAILED)
+            prefs.remove(TeamTrackingWidgetKeys.WIDGET_STATE)
+        }
+        // Sane default until the first worker run stamps the real state — shrinks the
+        // "unknown" widget_state window for analytics.
+        if (prefs[TeamTrackingWidgetKeys.WIDGET_STATE] == null) {
+            prefs[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.NO_UPCOMING.value
         }
         prefs[TeamTrackingWidgetKeys.TEAM_NUMBER] = teamNumber
         prefs[TeamTrackingWidgetKeys.TEAM_KEY] = teamKey

@@ -138,6 +138,38 @@ class WidgetRefreshStateTest {
     }
 
     @Test
+    fun `saving the same team keeps its widget state`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals(WidgetState.CURRENT_EVENT.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `saving the same team after a failed first load keeps the load-failed state`() {
+        val prefs =
+            mutablePreferencesOf().apply {
+                this[TeamTrackingWidgetKeys.TEAM_KEY] = "frc177"
+                this[TeamTrackingWidgetKeys.WIDGET_STATE] = WidgetState.LOAD_FAILED.value
+            }
+        WidgetRefreshState.setTeam(prefs, "177")
+        assertEquals(WidgetState.LOAD_FAILED.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `switching teams resets the widget state`() {
+        val prefs = atEvent()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals(WidgetState.NO_UPCOMING.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
+    fun `a new widget starts as no upcoming events`() {
+        val prefs = mutablePreferencesOf()
+        WidgetRefreshState.setTeam(prefs, "254")
+        assertEquals(WidgetState.NO_UPCOMING.value, prefs[TeamTrackingWidgetKeys.WIDGET_STATE])
+    }
+
+    @Test
     fun `footer shows today's update time`() {
         assertEquals("Updated 7:53 AM", footer(todayAt0753, refreshFailed = false))
         assertEquals("Updated 07:53", footer(todayAt0753, refreshFailed = false, use24Hour = true))
