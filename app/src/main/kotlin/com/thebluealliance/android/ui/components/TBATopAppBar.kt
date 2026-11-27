@@ -110,7 +110,8 @@ internal fun topBarSlots(
  * The app's top bar. Pass [navigationIcon] as null when there is none, so the bar's measurement
  * reserves no room for it. A plain-text [title] should be a [TopBarTitle], which makes it the
  * heading. A non-null [onRefresh] puts the Refresh accessibility action on the title, for screens
- * whose pull-to-refresh gesture has no semantic equivalent; it does nothing while [isRefreshing].
+ * whose pull-to-refresh gesture has no semantic equivalent, and lets F5 and Ctrl+R refresh the
+ * screen (see [RefreshTargets]); it does nothing while [isRefreshing].
  *
  * [secondaryActions] show as icon buttons, then a More options button opens a menu of
  * [overflowActions]. When the bar is too narrow to keep the title readable, the secondary actions
@@ -148,6 +149,8 @@ fun TBATopAppBar(
         onRefresh?.let { refresh ->
             remember(refresh) { { if (!currentRefreshing) refresh() } }
         }
+    // F5 and Ctrl+R refresh the screen in front through the same guarded call.
+    RefreshShortcutEffect(titleRefresh)
     TopAppBar(
         title = {
             // The title content owns its heading and Refresh action: TopBarTitle for plain text,

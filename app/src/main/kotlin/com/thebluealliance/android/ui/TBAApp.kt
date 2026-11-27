@@ -7,6 +7,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +24,8 @@ import com.thebluealliance.android.navigation.NavigationState
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.navigation.TBANavigation
 import com.thebluealliance.android.navigation.rememberNavigationState
+import com.thebluealliance.android.ui.components.LocalRefreshTargets
+import com.thebluealliance.android.ui.components.RefreshTargets
 import com.thebluealliance.android.ui.theme.TBATheme
 import com.thebluealliance.android.ui.theme.ThemeMode
 import kotlinx.coroutines.flow.collectLatest
@@ -69,10 +72,14 @@ fun TBAApp(
         )
     }
 
+    // F5 and Ctrl+R refresh whichever screen is in front (see RefreshTargets).
+    val refreshTargets = remember { RefreshTargets() }
     TBATheme(darkTheme = darkTheme) {
-        TBANavigation(
-            navState = navState,
-        )
+        CompositionLocalProvider(LocalRefreshTargets provides refreshTargets) {
+            TBANavigation(
+                navState = navState,
+            )
+        }
     }
 }
 
