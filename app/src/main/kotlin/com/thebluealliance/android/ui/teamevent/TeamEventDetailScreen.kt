@@ -68,12 +68,12 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.readingWidth
 import com.thebluealliance.android.ui.components.recordDescription
-import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
@@ -591,7 +591,6 @@ private fun InfoRow(
                 .fillMaxWidth()
                 .padding(horizontal = LinkRowInset)
                 .heightIn(min = MinLinkHeight)
-                .returnsFocus()
                 .paddedClickable(
                     MaterialTheme.shapes.small,
                     horizontal = LinkRowInset,
