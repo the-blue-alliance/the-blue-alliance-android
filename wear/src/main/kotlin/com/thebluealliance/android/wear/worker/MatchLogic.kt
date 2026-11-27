@@ -6,8 +6,6 @@ import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -15,11 +13,9 @@ import java.util.Locale
 /**
  * Pure match/record formatting logic for the complication worker, extracted so it can be unit
  * tested without constructing a WorkManager worker. Everything here is a pure function of its
- * arguments (aside from [formatMatchTime], which reads the current date/zone).
+ * arguments.
  */
 internal object MatchLogic {
-    private val timeFormat = DateTimeFormatter.ofPattern("h:mm")
-
     /** Sort key placing quals first, then elimination rounds; unknown levels last. */
     fun compLevelOrder(compLevel: String): Int =
         when (compLevel) {
@@ -84,34 +80,9 @@ internal object MatchLogic {
     }
 
     /**
-     * Format a match time for display. When [includeEstimatePrefix] is true, a predicted (rather
-     * than official) time is prefixed with "~"; the app tracker passes false because it stores the
-     * estimate flag separately.
-     */
-    fun formatMatchTime(
-        match: MatchDto,
-        includeEstimatePrefix: Boolean,
-    ): String {
-        val epochSeconds = match.predictedTime ?: match.time ?: return "TBD"
-        val instant = Instant.ofEpochSecond(epochSeconds)
-        val zoned = instant.atZone(ZoneId.systemDefault())
-        val today = LocalDate.now()
-        val matchDate = zoned.toLocalDate()
-
-        return if (matchDate == today) {
-            val prefix = if (includeEstimatePrefix && match.predictedTime != null) "~" else ""
-            val amPm = if (zoned.hour < 12) "A" else "P"
-            "$prefix${timeFormat.format(zoned)}$amPm"
-        } else {
-            zoned.format(DateTimeFormatter.ofPattern("EEE"))
-        }
-    }
-
-    /**
      * Clock text for a match starting at [epochSeconds], as seen at [now]: the time alone when
      * it's today, or the weekday and time otherwise.
      */
-    @Suppress("UNUSED_PARAMETER")
     fun formatMatchClock(
         epochSeconds: Long,
         now: ZonedDateTime,
@@ -119,11 +90,8 @@ internal object MatchLogic {
         locale: Locale,
     ): String {
         val zoned = Instant.ofEpochSecond(epochSeconds).atZone(now.zone)
-        return if (zoned.toLocalDate() == now.toLocalDate()) {
-            val amPm = if (zoned.hour < 12) "A" else "P"
-            "${timeFormat.format(zoned)}$amPm"
-        } else {
-            zoned.format(DateTimeFormatter.ofPattern("EEE"))
-        }
+        val time = if (use24Hour) "H:mm" else "h:mm a"
+        val pattern = if (zoned.toLocalDate() == now.toLocalDate()) time else "EEE $time"
+        return zoned.format(DateTimeFormatter.ofPattern(pattern, locale))
     }
 }

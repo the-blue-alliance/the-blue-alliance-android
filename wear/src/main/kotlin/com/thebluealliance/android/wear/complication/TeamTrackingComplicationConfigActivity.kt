@@ -87,10 +87,6 @@ class TeamTrackingComplicationConfigActivity : ComponentActivity() {
             // Single source of truth for tracked team
             prefs.teamNumber = teamNumber
 
-            if (complicationId >= 0) {
-                TeamTrackingComplicationPreferences.addComplicationId(this, complicationId)
-            }
-
             TeamTrackingComplicationWorker.enqueueImmediateRefresh(this)
             TeamTrackingComplicationWorker.enqueuePeriodicRefresh(this)
 
