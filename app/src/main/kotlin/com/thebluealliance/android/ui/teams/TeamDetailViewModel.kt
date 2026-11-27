@@ -58,7 +58,11 @@ class TeamDetailViewModel
                 if (key.all { it.isDigit() }) "frc$key" else key
             }
 
-        private val selection = SeasonSelection(Calendar.getInstance().get(Calendar.YEAR))
+        private val selection =
+            SeasonSelection(Calendar.getInstance().get(Calendar.YEAR)).apply {
+                // A year in the link counts as the user's pick, so later defaults leave it alone.
+                navKey.year?.let(::pick)
+            }
         val selectedYear: StateFlow<Int> = selection.year
 
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
@@ -98,6 +102,7 @@ class TeamDetailViewModel
             // Year data waits for the default season, so nothing is fetched for a season the
             // picker is about to leave.
             refreshing({ teamRepository.refreshTeam(teamKey) })
+            if (navKey.year != null) refreshYearData()
             loadSeasons()
         }
 
