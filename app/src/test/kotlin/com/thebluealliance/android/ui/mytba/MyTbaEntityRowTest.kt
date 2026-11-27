@@ -27,8 +27,8 @@ class MyTbaEntityRowTest {
     }
 
     @Test
-    fun `team at event rows open the event`() {
-        assertEquals("View event", modelTypeClickLabel(ModelType.EVENT_TEAM))
+    fun `team at event rows open Team @ Event`() {
+        assertEquals("View team at event", modelTypeClickLabel(ModelType.EVENT_TEAM))
     }
 
     @Test
