@@ -8,4 +8,7 @@ data class TeamDetailUiState(
     val team: Team? = null,
     val events: List<Event>? = null,
     val media: List<Media>? = null,
-)
+) {
+    /** TBA has no team with this key, and none is cached. */
+    val notFound: Boolean get() = false
+}

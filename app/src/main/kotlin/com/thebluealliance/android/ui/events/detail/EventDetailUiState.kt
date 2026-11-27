@@ -50,6 +50,9 @@ data class EventDetailUiState(
             EventDetailTab.AWARDS -> !awards.isNullOrEmpty()
         }
 
+    /** TBA has no event with this key, and none is cached. */
+    val notFound: Boolean get() = false
+
     /** The tab's last fetch failed and there is nothing cached to show instead. */
     fun loadFailed(tab: EventDetailTab): Boolean =
         loadOutcomes[tab] == RefreshOutcome.FAILED && !hasData(tab)
