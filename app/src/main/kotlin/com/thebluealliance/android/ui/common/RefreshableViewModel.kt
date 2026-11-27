@@ -82,20 +82,24 @@ abstract class RefreshableViewModel : ViewModel() {
     /**
      * Runs [tasks] like [refreshing], recording each tab's outcome into [outcomes] so an empty
      * tab can tell "failed" from "none", then passes the tabs that failed to [onDone]. A null tab
-     * marks a supporting fetch that no tab's state depends on.
+     * marks a supporting fetch that no tab's state depends on. Outcomes that land once [isCurrent]
+     * is false (say, the user picked another season) are dropped: they're no longer the tab's.
      */
     protected fun <T : Any> refreshTabs(
         outcomes: MutableStateFlow<Map<T, RefreshOutcome>>,
         onDone: suspend (failed: Set<T>) -> Unit,
         vararg tasks: Pair<T?, suspend () -> Unit>,
+        isCurrent: () -> Boolean = { true },
     ) {
         val failed = ConcurrentHashMap.newKeySet<T>()
         val remaining =
             java.util.concurrent.atomic
                 .AtomicInteger(tasks.size)
 
-        fun markSucceeded(tab: T) =
+        fun markSucceeded(tab: T) {
+            if (!isCurrent()) return
             outcomes.update { if (tab in failed) it else it + (tab to RefreshOutcome.SUCCEEDED) }
+        }
         val tracked: List<suspend () -> Unit> =
             tasks.map { (tab, task) ->
                 {
@@ -107,6 +111,7 @@ abstract class RefreshableViewModel : ViewModel() {
                     } catch (e: Exception) {
                         if (tab != null) {
                             if (e.isFetchFailure()) {
+                                if (!isCurrent()) throw e
                                 failed += tab
                                 outcomes.update { it + (tab to RefreshOutcome.FAILED) }
                             } else {

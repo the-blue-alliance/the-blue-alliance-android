@@ -340,7 +340,7 @@ fun TeamDetailScreen(
                         ErrorBox(
                             modifier = Modifier.padding(bottomPadding),
                             message = tab.loadErrorMessage(),
-                            onRetry = { viewModel.refreshTab(tab) },
+                            onRetry = { viewModel.retry(tab) },
                         )
                     }
                     return@TouchPullToRefreshBox

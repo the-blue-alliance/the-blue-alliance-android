@@ -226,26 +226,40 @@ class TeamDetailViewModel
         fun refreshAll() {
             refreshFailureReported.set(false)
             val year = selection.year.value
-            refreshTracked(
-                TeamDetailTab.INFO to { refreshTeam() },
+            refreshTracked(TeamDetailTab.INFO to { refreshTeam() })
+            refreshSeasonTabs(
+                year,
                 TeamDetailTab.EVENTS to { eventRepository.refreshTeamEvents(teamKey, year) },
                 TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
             )
+        }
+
+        /** Retries a tab's failed load; with no team cached, every tab failed, so retry them all. */
+        fun retry(tab: TeamDetailTab) {
+            if (uiState.value.team == null) refreshAll() else refreshTab(tab)
         }
 
         fun refreshTab(tab: TeamDetailTab) {
             refreshFailureReported.set(false)
             val year = selection.year.value
             when (tab) {
-                TeamDetailTab.INFO ->
-                    refreshTracked(
-                        tab to { refreshTeam() },
+                TeamDetailTab.INFO -> {
+                    refreshTracked(tab to { refreshTeam() })
+                    refreshSeasonTabs(
+                        year,
                         TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
                     )
+                }
                 TeamDetailTab.EVENTS ->
-                    refreshTracked(tab to { eventRepository.refreshTeamEvents(teamKey, year) })
+                    refreshSeasonTabs(
+                        year,
+                        tab to { eventRepository.refreshTeamEvents(teamKey, year) },
+                    )
                 TeamDetailTab.MEDIA ->
-                    refreshTracked(tab to { teamRepository.refreshTeamMedia(teamKey, year) })
+                    refreshSeasonTabs(
+                        year,
+                        tab to { teamRepository.refreshTeamMedia(teamKey, year) },
+                    )
             }
         }
 
@@ -264,7 +278,8 @@ class TeamDetailViewModel
             val year = selection.year.value
             // A new season's tabs haven't been fetched yet; the last season's outcome isn't theirs.
             loadOutcomes.update { it - TeamDetailTab.EVENTS - TeamDetailTab.MEDIA }
-            refreshTracked(
+            refreshSeasonTabs(
+                year,
                 TeamDetailTab.EVENTS to { eventRepository.refreshTeamEvents(teamKey, year) },
                 TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
             )
@@ -272,6 +287,19 @@ class TeamDetailViewModel
 
         private fun refreshTracked(vararg tasks: Pair<TeamDetailTab?, suspend () -> Unit>) {
             refreshTabs(loadOutcomes, ::reportFailedRefresh, *tasks)
+        }
+
+        // A slow fetch for a season the user has left doesn't decide the new season's tabs.
+        private fun refreshSeasonTabs(
+            year: Int,
+            vararg tasks: Pair<TeamDetailTab?, suspend () -> Unit>,
+        ) {
+            refreshTabs(
+                loadOutcomes,
+                ::reportFailedRefresh,
+                *tasks,
+                isCurrent = { selection.year.value == year },
+            )
         }
 
         // Reads the cache itself: an offline refresh can fail before the screen has collected it.
