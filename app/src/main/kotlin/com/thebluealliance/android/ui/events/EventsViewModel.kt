@@ -9,6 +9,7 @@ import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.time.Year
@@ -39,14 +41,22 @@ class EventsViewModel
         private val _maxYear = MutableStateFlow(Year.now().value)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
 
-        private val _selectedYear = MutableStateFlow(navKey.year)
-        val selectedYear: StateFlow<Int> = _selectedYear.asStateFlow()
+        // Without a year in the link, the list waits for TBA's current season, like every picker.
+        private val selection = SeasonSelection(navKey.year ?: Year.now().value)
+        val selectedYear: StateFlow<Int> = selection.year
+
+        private val yearResolved = MutableStateFlow(navKey.year != null)
 
         private val hasLoaded = MutableStateFlow(false)
 
         val uiState: StateFlow<UiState<EventsData>> =
-            _selectedYear
+            combine(selection.year, yearResolved) { year, resolved -> year.takeIf { resolved } }
                 .flatMapLatest { year ->
+                    if (year ==
+                        null
+                    ) {
+                        return@flatMapLatest flowOf<UiState<EventsData>>(UiState.Loading)
+                    }
                     hasLoaded.value = false
                     combine(
                         eventRepository.observeEventsForYear(year),
@@ -87,9 +97,28 @@ class EventsViewModel
                 )
 
         init {
-            fetchMaxYear()
-            refreshEvents()
+            if (navKey.year == null) {
+                openOnDefaultSeason()
+            } else {
+                refreshEvents()
+                fetchMaxYear()
+            }
             refreshFavorites()
+        }
+
+        // Both bounds come from one status fetch, which isn't cached when it fails. Resolving the
+        // year first keeps a stalled network from holding the list for two timeouts.
+        private fun openOnDefaultSeason() {
+            viewModelScope.launch {
+                val year = seasons.defaultSeason()
+                if (!selection.hasUserPick) {
+                    selection.offerDefault(year)
+                    _maxYear.value = maxOf(_maxYear.value, year)
+                    yearResolved.value = true
+                    refreshEvents()
+                }
+                fetchMaxYear()
+            }
         }
 
         private fun refreshFavorites() {
@@ -105,20 +134,21 @@ class EventsViewModel
         private fun fetchMaxYear() {
             viewModelScope.launch {
                 // Falls back to the calendar year (already set) without a status.
-                seasons.maxSeason()?.let { _maxYear.value = it }
+                seasons.maxSeason()?.let { _maxYear.value = maxOf(it, selection.year.value) }
             }
         }
 
         fun selectYear(year: Int) {
-            _selectedYear.value = year
+            selection.pick(year)
+            yearResolved.value = true
             refreshEvents()
         }
 
         fun refreshEvents() {
             refreshing({
                 try {
-                    eventRepository.refreshEventsForYear(_selectedYear.value)
-                    districtRepository.refreshDistrictsForYear(_selectedYear.value)
+                    eventRepository.refreshEventsForYear(selection.year.value)
+                    districtRepository.refreshDistrictsForYear(selection.year.value)
                 } finally {
                     hasLoaded.value = true
                 }
