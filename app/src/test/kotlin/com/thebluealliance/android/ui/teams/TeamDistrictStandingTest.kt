@@ -146,4 +146,12 @@ class TeamDistrictStandingTest {
         assertEquals("Rank 12 · 187 pts", standing.rankAndPoints())
         assertEquals("Rank 40 · 1 pt", standing.copy(rank = 40, points = 1).rankAndPoints())
     }
+
+    @Test
+    fun `the district link covers exactly the name in the line`() {
+        val standing = TeamDistrictStanding("2026ca", "FIRST California", rank = 2, points = 364)
+        val line = districtStandingLine(standing)
+        assertEquals("District: FIRST California · Rank 2 · 364 pts", line)
+        assertEquals("FIRST California", line.substring(districtLinkRange(standing)))
+    }
 }
