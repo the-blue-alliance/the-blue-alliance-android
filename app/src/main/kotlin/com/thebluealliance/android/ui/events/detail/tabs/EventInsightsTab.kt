@@ -1071,7 +1071,7 @@ private fun RowScope.TableTeamCell(
                     gutter = COLUMN_GUTTER,
                     labelAtEnd = false,
                     interaction =
-                        Modifier.clickable(
+                        Modifier.handCursor().clickable(
                             onClickLabel = teamCellClickLabel(teamKey),
                             role = Role.Button,
                         ) { onTeamClick(teamKey) },
