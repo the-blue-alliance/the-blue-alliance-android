@@ -1,10 +1,12 @@
 package com.thebluealliance.android.ui.more
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.remote.GitHubApi
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -37,10 +39,17 @@ class ThanksViewModel
                             repo = "the-blue-alliance-android",
                         )
                     _uiState.value = ThanksUiState.Success(contributors)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
-                    _uiState.value = ThanksUiState.Error(e.message ?: "Failed to load contributors")
+                    Log.w(TAG, "Couldn't load contributors", e)
+                    _uiState.value = ThanksUiState.Error("Couldn't load contributors")
                 }
             }
+        }
+
+        private companion object {
+            const val TAG = "ThanksViewModel"
         }
     }
 

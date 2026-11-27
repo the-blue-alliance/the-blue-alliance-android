@@ -1,8 +1,6 @@
 package com.thebluealliance.android.ui.more
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,13 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
+import com.thebluealliance.android.ui.common.ErrorBox
+import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
-import com.thebluealliance.android.ui.components.messageBackground
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.withoutBottom
@@ -73,39 +70,16 @@ fun ThanksScreen(
         },
     ) { innerPadding ->
         when (val state = uiState) {
-            is ThanksUiState.Loading -> {
-                Box(
-                    modifier =
-                        Modifier
-                            .padding(innerPadding.withoutBottom())
-                            .fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-            is ThanksUiState.Error -> {
-                Column(
-                    modifier =
-                        Modifier
-                            .messageBackground()
-                            .padding(innerPadding.withoutBottom())
-                            .fillMaxSize()
-                            .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        text = state.message,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                    Spacer(modifier = Modifier.size(16.dp))
-                    Button(onClick = { viewModel.retry() }, modifier = Modifier.handCursor()) {
-                        Text("Retry")
-                    }
-                }
-            }
+            is ThanksUiState.Loading ->
+                LoadingBox(
+                    modifier = Modifier.padding(innerPadding.withoutBottom()),
+                )
+            is ThanksUiState.Error ->
+                ErrorBox(
+                    modifier = Modifier.padding(innerPadding.withoutBottom()),
+                    message = state.message,
+                    onRetry = viewModel::retry,
+                )
             is ThanksUiState.Success -> {
                 ReadingWidthBox(
                     innerPadding.onlyBottom(),
@@ -156,10 +130,13 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = "${contributor.contributions} contributions",
+                text = contributionsLabel(contributor.contributions),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
     }
 }
+
+internal fun contributionsLabel(count: Int): String =
+    "$count ${if (count == 1) "contribution" else "contributions"}"
