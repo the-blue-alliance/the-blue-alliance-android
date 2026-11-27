@@ -16,7 +16,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.thebluealliance.android.data.remote.dto.EventDto
 import com.thebluealliance.android.data.remote.dto.MatchDto
-import com.thebluealliance.android.wear.complication.TeamTrackingComplicationPreferences
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationService
 import com.thebluealliance.android.wear.data.WearTbaApi
 import com.thebluealliance.android.wear.tracker.Alliance
@@ -115,25 +114,6 @@ class TeamTrackingComplicationWorker
                     val teamKey = "frc$trackerTeam"
                     val data = fetchTeamEventData(teamKey)
 
-                    // Update all active complications
-                    val complicationIds =
-                        TeamTrackingComplicationPreferences.getActiveComplicationIds(
-                            applicationContext,
-                        )
-                    for (complicationId in complicationIds) {
-                        try {
-                            val prefs =
-                                TeamTrackingComplicationPreferences(
-                                    applicationContext,
-                                    complicationId,
-                                )
-                            val hasActive = updateComplication(prefs, data)
-                            if (hasActive) anyActiveEvent = true
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to update complication $complicationId", e)
-                        }
-                    }
-
                     // Update app-level team tracker
                     try {
                         val hasActive = updateAppTracker(trackerPrefs, trackerTeam, data)
@@ -152,7 +132,7 @@ class TeamTrackingComplicationWorker
                     enqueueFastRefresh(applicationContext)
                 }
 
-                // Request complication data update from the watch face
+                // The complication reads the tracker prefs just written; ask the watch face for it.
                 requestComplicationUpdate()
 
                 trackerPrefs.lastRefreshFailed = false
@@ -235,54 +215,6 @@ class TeamTrackingComplicationWorker
 
         // endregion
 
-        // region Complication update
-
-        /** Returns true if the team has an active event. */
-        private fun updateComplication(
-            prefs: TeamTrackingComplicationPreferences,
-            data: TeamEventData,
-        ): Boolean {
-            // Batch all writes into a single commit instead of ~6 separate edit/apply calls.
-            prefs.beginBatch()
-            if (data.currentEvent == null) {
-                prefs.matchLabel = ""
-                prefs.matchTime = ""
-                prefs.activeEventName = ""
-
-                val nextEvent = findUpcomingEvent(data.events)
-                if (nextEvent != null) {
-                    prefs.upcomingEventName = nextEvent.shortName ?: nextEvent.name
-                    prefs.upcomingEventDate = nextEvent.startDate?.let {
-                        LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
-                    } ?: ""
-                } else {
-                    prefs.upcomingEventName = ""
-                    prefs.upcomingEventDate = ""
-                }
-
-                if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
-                prefs.applyBatch()
-                return false
-            }
-
-            val nextMatch = data.teamMatches.firstOrNull { (it.alliances?.red?.score ?: -1) < 0 }
-            if (nextMatch != null) {
-                prefs.matchLabel = MatchLogic.getShortLabel(nextMatch)
-                prefs.matchTime =
-                    MatchLogic.formatMatchTime(nextMatch, includeEstimatePrefix = true)
-            } else {
-                prefs.matchLabel = ""
-                prefs.matchTime = ""
-            }
-            prefs.activeEventName = data.currentEvent.shortName ?: data.currentEvent.name
-
-            if (data.avatarBase64 != null) prefs.avatarBase64 = data.avatarBase64
-            prefs.applyBatch()
-            return true
-        }
-
-        // endregion
-
         // region App tracker update
 
         /** Returns true if the team has an active event. */
@@ -304,6 +236,12 @@ class TeamTrackingComplicationWorker
                 clearNextMatch(prefs)
 
                 val upcoming = findAllUpcomingEvents(data.events)
+                prefs.upcomingEventName =
+                    upcoming.firstOrNull()?.let { it.shortName ?: it.name } ?: ""
+                prefs.upcomingEventDate =
+                    upcoming.firstOrNull()?.startDate?.let {
+                        LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
+                    } ?: ""
                 prefs.upcomingEvents =
                     if (upcoming.isNotEmpty()) {
                         upcoming.joinToString("|") { event ->
@@ -324,6 +262,8 @@ class TeamTrackingComplicationWorker
             prefs.hasActiveEvent = true
             prefs.eventName = data.currentEvent.shortName ?: data.currentEvent.name
             prefs.upcomingEvents = ""
+            prefs.upcomingEventName = ""
+            prefs.upcomingEventDate = ""
 
             prefs.record = MatchLogic.qualRecord(data.teamMatches, teamKey)
 
@@ -350,8 +290,7 @@ class TeamTrackingComplicationWorker
                 prefs.nextMatchRedTeams = teamKeysToNumbers(nextMatch.alliances?.red?.teamKeys)
                 prefs.nextMatchBlueTeams = teamKeysToNumbers(nextMatch.alliances?.blue?.teamKeys)
                 prefs.nextMatchTimeIsEstimate = nextMatch.predictedTime != null
-                prefs.nextMatchTime =
-                    MatchLogic.formatMatchTime(nextMatch, includeEstimatePrefix = false)
+                prefs.nextMatchEpochSeconds = nextMatch.predictedTime ?: nextMatch.time
                 prefs.nextAlliance = Alliance.of(nextMatch, teamKey)?.key ?: ""
             } else {
                 clearNextMatch(prefs)
@@ -376,7 +315,7 @@ class TeamTrackingComplicationWorker
             prefs.nextMatchLabel = ""
             prefs.nextMatchRedTeams = ""
             prefs.nextMatchBlueTeams = ""
-            prefs.nextMatchTime = ""
+            prefs.nextMatchEpochSeconds = null
             prefs.nextMatchTimeIsEstimate = false
             prefs.nextAlliance = ""
         }
@@ -387,9 +326,6 @@ class TeamTrackingComplicationWorker
 
         private fun teamKeysToNumbers(keys: List<String>?): String =
             keys?.joinToString(", ") { it.removePrefix("frc") } ?: ""
-
-        private fun findUpcomingEvent(events: List<EventDto>): EventDto? =
-            findAllUpcomingEvents(events).firstOrNull()
 
         private fun findAllUpcomingEvents(events: List<EventDto>): List<EventDto> {
             val today = LocalDate.now()

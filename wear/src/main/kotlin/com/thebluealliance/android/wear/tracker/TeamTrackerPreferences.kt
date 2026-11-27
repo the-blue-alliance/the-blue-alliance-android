@@ -116,9 +116,10 @@ class TeamTrackerPreferences(
         get() = prefs.getString(KEY_NEXT_MATCH_BLUE_TEAMS, "") ?: ""
         set(value) = put { putString(KEY_NEXT_MATCH_BLUE_TEAMS, value) }
 
-    var nextMatchTime: String
-        get() = prefs.getString(KEY_NEXT_MATCH_TIME, "") ?: ""
-        set(value) = put { putString(KEY_NEXT_MATCH_TIME, value) }
+    /** When the next match starts (epoch seconds), or null if it isn't scheduled. */
+    var nextMatchEpochSeconds: Long?
+        get() = prefs.getLong(KEY_NEXT_MATCH_EPOCH_SECONDS, 0L).takeIf { it > 0L }
+        set(value) = put { putLong(KEY_NEXT_MATCH_EPOCH_SECONDS, value ?: 0L) }
 
     var nextMatchTimeIsEstimate: Boolean
         get() = prefs.getBoolean(KEY_NEXT_MATCH_TIME_IS_ESTIMATE, false)
@@ -134,6 +135,16 @@ class TeamTrackerPreferences(
     var upcomingEvents: String
         get() = prefs.getString(KEY_UPCOMING_EVENTS, "") ?: ""
         set(value) = put { putString(KEY_UPCOMING_EVENTS, value) }
+
+    /** Short name of the first upcoming event, for the complication. */
+    var upcomingEventName: String
+        get() = prefs.getString(KEY_UPCOMING_EVENT_NAME, "") ?: ""
+        set(value) = put { putString(KEY_UPCOMING_EVENT_NAME, value) }
+
+    /** Start date of the first upcoming event ("Mar 27"), for the complication. */
+    var upcomingEventDate: String
+        get() = prefs.getString(KEY_UPCOMING_EVENT_DATE, "") ?: ""
+        set(value) = put { putString(KEY_UPCOMING_EVENT_DATE, value) }
 
     fun registerOnChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
         prefs.registerOnSharedPreferenceChangeListener(listener)
@@ -176,9 +187,11 @@ class TeamTrackerPreferences(
         private const val KEY_NEXT_MATCH_LABEL = "next_match_label"
         private const val KEY_NEXT_MATCH_RED_TEAMS = "next_match_red_teams"
         private const val KEY_NEXT_MATCH_BLUE_TEAMS = "next_match_blue_teams"
-        private const val KEY_NEXT_MATCH_TIME = "next_match_time"
+        private const val KEY_NEXT_MATCH_EPOCH_SECONDS = "next_match_epoch_seconds"
         private const val KEY_NEXT_MATCH_TIME_IS_ESTIMATE = "next_match_time_is_estimate"
         private const val KEY_NEXT_ALLIANCE = "next_alliance"
         private const val KEY_UPCOMING_EVENTS = "upcoming_events"
+        private const val KEY_UPCOMING_EVENT_NAME = "upcoming_event_name"
+        private const val KEY_UPCOMING_EVENT_DATE = "upcoming_event_date"
     }
 }

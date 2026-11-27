@@ -52,19 +52,33 @@ internal object ComplicationContentLogic {
      */
     val NEXT_MATCH_GRACE: Duration = Duration.ofMinutes(30)
 
-    /**
-     * Each complication shows its own copy of the data, written only by the refresh worker for the
-     * complications active when it last ran. A newly added complication has no copy yet, so it
-     * shows only the team number, whatever the tracker holds.
-     */
-    @Suppress("UNUSED_PARAMETER")
     fun resolve(
         tracker: TrackerSnapshot,
         now: Instant,
-    ): ComplicationContent =
-        if (tracker.teamNumber.isBlank()) {
-            ComplicationContent.NotConfigured
-        } else {
-            ComplicationContent.TeamOnly(tracker.teamNumber)
+    ): ComplicationContent {
+        if (tracker.teamNumber.isBlank()) return ComplicationContent.NotConfigured
+        if (tracker.nextMatchLabel.isNotBlank()) {
+            val validUntil = tracker.nextMatchTime?.plus(NEXT_MATCH_GRACE)
+            // Past its time and no refresh has replaced it: the match has been played, so don't
+            // keep presenting it as "next".
+            if (validUntil == null || now <= validUntil) {
+                return ComplicationContent.NextMatch(
+                    teamNumber = tracker.teamNumber,
+                    matchLabel = tracker.nextMatchLabel,
+                    matchTime = tracker.nextMatchTime,
+                    isEstimate = tracker.nextMatchIsEstimate,
+                    eventName = tracker.eventName,
+                    validUntil = validUntil,
+                )
+            }
         }
+        if (tracker.upcomingEventName.isNotBlank()) {
+            return ComplicationContent.UpcomingEvent(
+                teamNumber = tracker.teamNumber,
+                eventName = tracker.upcomingEventName,
+                date = tracker.upcomingEventDate,
+            )
+        }
+        return ComplicationContent.TeamOnly(tracker.teamNumber)
+    }
 }

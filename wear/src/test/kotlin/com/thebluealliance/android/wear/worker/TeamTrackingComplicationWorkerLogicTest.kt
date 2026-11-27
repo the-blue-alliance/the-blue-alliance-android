@@ -9,11 +9,7 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 /**
  * Unit tests for the pure match/record logic in [MatchLogic]. These helpers do the parsing and
@@ -217,66 +213,6 @@ class TeamTrackingComplicationWorkerLogicTest {
                 scoreBreakdown = buildJsonObject { putJsonObject("red") { put("foulPoints", 0) } },
             )
         assertEquals(0, logic.extractBonusRp(m, Alliance.RED))
-    }
-
-    // endregion
-
-    // region formatMatchTime
-
-    @Test
-    fun `formatMatchTime is TBD when no time is known`() {
-        assertEquals(
-            "TBD",
-            logic.formatMatchTime(
-                match(time = null, predictedTime = null),
-                includeEstimatePrefix = true,
-            ),
-        )
-    }
-
-    @Test
-    fun `formatMatchTime prefixes a predicted time today with a tilde when requested`() {
-        val now = Instant.now().epochSecond
-        val result = logic.formatMatchTime(match(predictedTime = now), includeEstimatePrefix = true)
-        assertTrue(result.startsWith("~"), "expected estimate prefix, got '$result'")
-    }
-
-    @Test
-    fun `formatMatchTime omits the tilde for a predicted time when not requested`() {
-        val now = Instant.now().epochSecond
-        val result =
-            logic.formatMatchTime(
-                match(predictedTime = now),
-                includeEstimatePrefix = false,
-            )
-        assertTrue(result.first().isDigit(), "expected a clock time with no prefix, got '$result'")
-    }
-
-    @Test
-    fun `formatMatchTime omits the tilde for an official time today`() {
-        val now = Instant.now().epochSecond
-        val result =
-            logic.formatMatchTime(
-                match(time = now, predictedTime = null),
-                includeEstimatePrefix = true,
-            )
-        assertTrue(result.first().isDigit(), "expected a clock time, got '$result'")
-    }
-
-    @Test
-    fun `formatMatchTime shows a weekday abbreviation for matches on other days`() {
-        // ~30 days ago is definitely not today, so the day-of-week branch runs. Compare against
-        // the same formatter so the assertion is locale-independent.
-        val past = Instant.now().epochSecond - 30L * 24 * 60 * 60
-        val expected =
-            Instant
-                .ofEpochSecond(past)
-                .atZone(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("EEE"))
-        assertEquals(
-            expected,
-            logic.formatMatchTime(match(time = past), includeEstimatePrefix = false),
-        )
     }
 
     // endregion

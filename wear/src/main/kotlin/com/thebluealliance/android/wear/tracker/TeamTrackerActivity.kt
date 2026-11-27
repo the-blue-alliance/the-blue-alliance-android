@@ -3,6 +3,7 @@ package com.thebluealliance.android.wear.tracker
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.format.DateFormat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -28,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -55,7 +58,9 @@ import com.thebluealliance.android.wear.R
 import com.thebluealliance.android.wear.complication.AvatarConverter
 import com.thebluealliance.android.wear.complication.TeamTrackingComplicationConfigActivity
 import com.thebluealliance.android.wear.ui.TbaWearTheme
+import com.thebluealliance.android.wear.worker.MatchLogic
 import com.thebluealliance.android.wear.worker.TeamTrackingComplicationWorker
+import java.time.ZonedDateTime
 
 class TeamTrackerActivity : ComponentActivity() {
     private lateinit var trackerPrefs: TeamTrackerPreferences
@@ -125,7 +130,7 @@ class TeamTrackerActivity : ComponentActivity() {
                 nextMatchLabel = trackerPrefs.nextMatchLabel,
                 nextMatchRedTeams = trackerPrefs.nextMatchRedTeams,
                 nextMatchBlueTeams = trackerPrefs.nextMatchBlueTeams,
-                nextMatchTime = trackerPrefs.nextMatchTime,
+                nextMatchEpochSeconds = trackerPrefs.nextMatchEpochSeconds,
                 nextMatchTimeIsEstimate = trackerPrefs.nextMatchTimeIsEstimate,
                 nextAlliance = Alliance.fromKey(trackerPrefs.nextAlliance),
                 upcomingEvents =
@@ -168,7 +173,7 @@ data class TeamTrackerState(
     val nextMatchLabel: String = "",
     val nextMatchRedTeams: String = "",
     val nextMatchBlueTeams: String = "",
-    val nextMatchTime: String = "",
+    val nextMatchEpochSeconds: Long? = null,
     val nextMatchTimeIsEstimate: Boolean = false,
     val nextAlliance: Alliance? = null,
     val upcomingEvents: List<String> = emptyList(),
@@ -267,16 +272,27 @@ private fun TeamTrackerScreen(
                         redTeams = state.nextMatchRedTeams,
                         blueTeams = state.nextMatchBlueTeams,
                         trackedTeam = state.teamNumber,
-                        timeText =
-                            buildString {
-                                if (state.nextMatchTimeIsEstimate) append("~")
-                                append(state.nextMatchTime)
-                            }.takeIf { state.nextMatchTime.isNotBlank() },
+                        timeText = nextMatchTimeText(state),
                     )
                 }
             }
         }
     }
+}
+
+/** "~2:30 PM" (or "~14:30", per the 12/24-hour setting), "Sat 9:15 AM" on another day, or "TBD". */
+@Composable
+private fun nextMatchTimeText(state: TeamTrackerState): String {
+    val epochSeconds = state.nextMatchEpochSeconds ?: return stringResource(R.string.time_tbd)
+    val context = LocalContext.current
+    val clock =
+        MatchLogic.formatMatchClock(
+            epochSeconds = epochSeconds,
+            now = ZonedDateTime.now(),
+            use24Hour = DateFormat.is24HourFormat(context),
+            locale = LocalConfiguration.current.locales[0],
+        )
+    return if (state.nextMatchTimeIsEstimate) "~$clock" else clock
 }
 
 @Composable
