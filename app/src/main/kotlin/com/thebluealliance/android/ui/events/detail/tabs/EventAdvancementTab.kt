@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -274,8 +273,10 @@ private fun CmpAdvancementBadge(advancement: CmpAdvancement) {
         overflow = TextOverflow.Ellipsis,
         modifier =
             Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .background(
+                    MaterialTheme.colorScheme.primaryContainer,
+                    MaterialTheme.shapes.extraSmall,
+                ).padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }
 
