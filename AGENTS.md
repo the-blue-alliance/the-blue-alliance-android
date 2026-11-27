@@ -4,6 +4,19 @@
 
 When asked to commit a checkpoint, write a short summary line and a brief description of what changed and why. Keep it concise.
 
+## UI conventions
+
+Highlight shapes (the hover, press and focus highlight of anything clickable):
+
+1. **Full width → square.** A highlight that spans its container edge to edge stays square: list
+   rows, match-list rows, table rows, blue bands. Material list items work this way.
+2. **Inset → rounded.** A highlight that stops short of its container's edges gets rounded
+   corners, sized to the element:
+   - one line of text or a number (links, score cells, footer links): `MaterialTheme.shapes.small`, 8dp
+   - a card-sized, multi-line block (the inset Last/Next match row, media tiles): `MaterialTheme.shapes.medium`, 12dp
+
+`paddedClickable` clips to the shape you pass; pick it by these rules.
+
 ## Verifying changes on an emulator
 
 After a substantive UI change, build and run the app to confirm it. Run all

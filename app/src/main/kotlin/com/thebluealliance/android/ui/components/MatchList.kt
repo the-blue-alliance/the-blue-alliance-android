@@ -260,6 +260,12 @@ internal fun matchFocusReturnKey(
 /** Width of the accent bar on the selected row's start edge. */
 private val SelectedRowAccentWidth = 4.dp
 
+/**
+ * One match row. Its highlight spans [modifier]'s bounds edge to edge and is square, like a list
+ * row. Where the row sits inset from its container (a card-sized block, e.g. Team@Event's Last
+ * Match), pass `Modifier.clip(MaterialTheme.shapes.medium)` so the highlight is rounded per the
+ * highlight-shape rules in AGENTS.md ("UI conventions").
+ */
 @Composable
 fun MatchItem(
     match: Match,
