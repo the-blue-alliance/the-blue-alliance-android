@@ -1,5 +1,7 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.unit.dp
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -67,5 +69,21 @@ class ReadingWidthTest {
     fun `sheet margins are even whole pixels`() {
         assertEquals(92f, sheetInset(1024f, 840f))
         assertEquals(2f, sheetInset(843f, 840f))
+    }
+
+    @Test
+    fun `centred messages sit on the plain page colour in both themes`() {
+        val light = lightColorScheme()
+        val dark = darkColorScheme()
+        assertEquals(light.background, light.messageBackground)
+        assertEquals(dark.background, dark.messageBackground)
+    }
+
+    @Test
+    fun `the message colour is one of the two wide-window page colours`() {
+        val light = lightColorScheme()
+        val dark = darkColorScheme()
+        assertEquals(light.pageSheet, light.messageBackground)
+        assertEquals(dark.pageBackdrop, dark.messageBackground)
     }
 }

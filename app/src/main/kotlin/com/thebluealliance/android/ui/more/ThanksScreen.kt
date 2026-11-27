@@ -6,13 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,7 +37,11 @@ import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.messageBackground
+import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 
@@ -55,7 +55,7 @@ fun ThanksScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     Scaffold(
-        contentWindowInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal),
+        contentWindowInsets = TopLevelContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 title = { TopBarTitle("Thanks") },
@@ -76,7 +76,7 @@ fun ThanksScreen(
                 Box(
                     modifier =
                         Modifier
-                            .padding(innerPadding)
+                            .padding(innerPadding.withoutBottom())
                             .fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -87,8 +87,8 @@ fun ThanksScreen(
                 Column(
                     modifier =
                         Modifier
-                            .pageBackground()
-                            .padding(innerPadding)
+                            .messageBackground()
+                            .padding(innerPadding.withoutBottom())
                             .fillMaxSize()
                             .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -106,12 +106,17 @@ fun ThanksScreen(
                 }
             }
             is ThanksUiState.Success -> {
-                ReadingWidthBox(modifier = Modifier.fillMaxSize()) { readingPadding ->
+                ReadingWidthBox(
+                    innerPadding.onlyBottom(),
+                    Modifier
+                        .padding(innerPadding.withoutBottom())
+                        .fillMaxSize(),
+                ) { readingPadding ->
                     LazyColumn(
                         modifier =
                             Modifier
-                                .padding(innerPadding)
-                                .fillMaxSize(),
+                                .fillMaxSize()
+                                .pageBackground(),
                         contentPadding = readingPadding,
                     ) {
                         items(state.contributors) { contributor ->

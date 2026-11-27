@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
@@ -128,9 +127,10 @@ fun TBANavigation(
         }
     }
 
+    val bottomBarShown = showBottomBar && !useRail
+
     NavigationFrame(
         showRail = useRail,
-        absorbBottomInset = showBottomBar,
         rail = {
             TBANavigationRail(
                 currentRoute = navState.currentRoute,
@@ -150,6 +150,16 @@ fun TBANavigation(
                 Modifier
                     .weight(1f)
                     .fillMaxSize()
+                    // The bottom bar takes the bottom inset; with none, screens pad their content by it.
+                    .then(
+                        if (bottomBarShown) {
+                            Modifier.consumeWindowInsets(
+                                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
+                            )
+                        } else {
+                            Modifier
+                        },
+                    )
                     // Keeps sliding screens from drawing over the rail beside them.
                     .clipToBounds()
                     .background(MaterialTheme.colorScheme.background),
@@ -485,10 +495,10 @@ fun TBANavigation(
                 ),
         )
 
-        UserMessageHost(padNavigationBars = !showBottomBar)
+        UserMessageHost(padNavigationBars = !bottomBarShown)
 
         AnimatedVisibility(
-            visible = showBottomBar && !useRail,
+            visible = bottomBarShown,
             enter =
                 slideInVertically(
                     animationSpec = TBAMotionTokens.defaultSpatialSpec(),
@@ -510,13 +520,12 @@ fun TBANavigation(
 }
 
 /**
- * Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. With
- * [absorbBottomInset], the frame pads the bottom inset a bottom bar would otherwise have taken.
+ * Lays [rail] out to the start of [content], which stacks the screen above any bottom bar. The frame
+ * leaves the bottom inset to the screens, so their backgrounds reach the window's bottom edge.
  */
 @Composable
 private fun NavigationFrame(
     showRail: Boolean,
-    absorbBottomInset: Boolean,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -543,22 +552,12 @@ private fun NavigationFrame(
                     Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        // Also paints the bottom inset the column absorbs beside the rail.
                         .pageBackground()
                         .then(
-                            // The rail owns the start inset. Detail screens handle their own bottom
-                            // inset, as they do beside a hidden bottom bar.
+                            // The rail owns the start inset.
                             if (showRail) {
                                 Modifier.consumeWindowInsets(
                                     WindowInsets.safeDrawing.only(WindowInsetsSides.Start),
-                                )
-                            } else {
-                                Modifier
-                            },
-                        ).then(
-                            if (showRail && absorbBottomInset) {
-                                Modifier.windowInsetsPadding(
-                                    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
                                 )
                             } else {
                                 Modifier
