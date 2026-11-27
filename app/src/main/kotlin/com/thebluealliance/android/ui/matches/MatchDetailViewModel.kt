@@ -8,6 +8,7 @@ import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -44,6 +45,8 @@ class MatchDetailViewModel
 
         private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
 
+        private val matchMissing = MutableStateFlow(false)
+
         private val timeFormatter =
             DateTimeFormatter.ofPattern(
                 "EEE, MMM d, yyyy 'at' h:mm a",
@@ -56,7 +59,8 @@ class MatchDetailViewModel
                 eventRepository.observeEvent(eventKey),
                 eventRepository.observeEventAlliances(eventKey),
                 refreshOutcome,
-            ) { match, event, alliances, outcome ->
+                matchMissing,
+            ) { match, event, alliances, outcome, missing ->
                 val breakdown = match?.scoreBreakdown?.let { parseScoreBreakdown(it) }
                 val videos = match?.videos?.let { parseVideos(it) } ?: emptyList()
                 val timeToDisplay = match?.actualTime ?: match?.predictedTime ?: match?.time
@@ -79,7 +83,8 @@ class MatchDetailViewModel
                     videos = videos,
                     year = year,
                     // Only give up on an empty cache once a refresh has actually finished.
-                    loadFailed = match == null && outcome != RefreshOutcome.PENDING,
+                    loadFailed = match == null && !missing && outcome != RefreshOutcome.PENDING,
+                    matchMissing = missing,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MatchDetailUiState())
 
@@ -98,7 +103,18 @@ class MatchDetailViewModel
         }
 
         fun refresh() {
-            refreshingTracked(refreshOutcome, { matchRepository.refreshMatch(matchKey) })
+            refreshingTracked(refreshOutcome, { refreshMatch() })
+        }
+
+        // Records whether TBA has the match at all, so a 404 shows "not found", not a load error.
+        private suspend fun refreshMatch() {
+            try {
+                matchRepository.refreshMatch(matchKey)
+                matchMissing.value = false
+            } catch (e: Exception) {
+                if (e.isNotFound()) matchMissing.value = true
+                throw e
+            }
         }
 
         private fun formatMatchTime(epochSeconds: Long?): String? {
