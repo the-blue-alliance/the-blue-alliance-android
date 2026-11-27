@@ -53,7 +53,8 @@ fun <T : Any> rememberFocusReturnNavEntryDecorator(focusReturn: FocusReturn): Na
                         } ?: return@LaunchedEffect
                     // Let the launcher be placed before it takes focus.
                     withFrameNanos {}
-                    requester.requestFocus()
+                    // The list may have reloaded or dropped the launcher during that frame.
+                    if (entryFocus.holds(key, requester)) requester.requestFocus()
                 }
                 CompositionLocalProvider(LocalEntryFocus provides entryFocus) { entry.Content() }
             },

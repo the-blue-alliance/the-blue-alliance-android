@@ -40,6 +40,12 @@ class EntryFocus internal constructor(
         }
     }
 
+    /** Whether [requester] is still the composed launcher for [key]. */
+    internal fun holds(
+        key: Long,
+        requester: FocusRequester,
+    ): Boolean = requesters[key] === requester
+
     /** The pending return to keep across activity recreation, or null when there is none. */
     internal fun savedReturn(): Long? = returnTo
 

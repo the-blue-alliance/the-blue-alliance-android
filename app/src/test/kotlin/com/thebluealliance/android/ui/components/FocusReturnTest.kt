@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.InputMode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -102,6 +103,29 @@ class FocusReturnTest {
         focusReturn.onNavigate()
         list.restoreReturn(ROW)
         assertEquals(OTHER_ROW, list.takeReturn(InputMode.Keyboard))
+    }
+
+    @Test
+    fun `a composed launcher holds its key`() {
+        val requester = FocusRequester()
+        list.requesters[ROW] = requester
+        assertTrue(list.holds(ROW, requester))
+    }
+
+    @Test
+    fun `a launcher removed before focus moves holds nothing`() {
+        val requester = FocusRequester()
+        list.requesters[ROW] = requester
+        list.requesters.remove(ROW)
+        assertFalse(list.holds(ROW, requester))
+    }
+
+    @Test
+    fun `a recomposed launcher replaces the old requester`() {
+        val old = FocusRequester()
+        list.requesters[ROW] = old
+        list.requesters[ROW] = FocusRequester()
+        assertFalse(list.holds(ROW, old))
     }
 
     @Test
