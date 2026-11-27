@@ -12,6 +12,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UserMessageBus
@@ -24,6 +25,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,10 +34,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.concurrent.atomic.AtomicBoolean
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = TeamDetailViewModel.Factory::class)
@@ -68,10 +73,15 @@ class TeamDetailViewModel
 
         private val teamMissing = MutableStateFlow(false)
 
+        private val loadOutcomes = MutableStateFlow<Map<TeamDetailTab, RefreshOutcome>>(emptyMap())
+
+        // Opening fetches the team and its season separately; say "couldn't refresh" once.
+        private val refreshFailureReported = AtomicBoolean(false)
+
         private val _yearsParticipated = MutableStateFlow<List<Int>>(emptyList())
         val yearsParticipated: StateFlow<List<Int>> = _yearsParticipated.asStateFlow()
 
-        val uiState: StateFlow<TeamDetailUiState> =
+        private val state: Flow<TeamDetailUiState> =
             combine(
                 teamRepository.observeTeam(teamKey),
                 selection.year.flatMapLatest { year ->
@@ -81,14 +91,19 @@ class TeamDetailViewModel
                     teamRepository.observeTeamMedia(teamKey, year)
                 },
                 teamMissing,
-            ) { team, events, media, missing ->
+                loadOutcomes,
+            ) { team, events, media, missing, outcomes ->
                 TeamDetailUiState(
                     team = team,
                     events = events,
                     media = media,
                     teamMissing = missing,
+                    loadOutcomes = outcomes,
                 )
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamDetailUiState())
+            }
+
+        val uiState: StateFlow<TeamDetailUiState> =
+            state.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TeamDetailUiState())
 
         val isFavorite: StateFlow<Boolean> =
             myTBARepository
@@ -106,7 +121,7 @@ class TeamDetailViewModel
         init {
             // Year data waits for the default season, so nothing is fetched for a season the
             // picker is about to leave.
-            refreshing({ refreshTeam() })
+            refreshTracked(TeamDetailTab.INFO to { refreshTeam() })
             if (navKey.year != null) refreshYearData()
             loadSeasons()
         }
@@ -155,6 +170,7 @@ class TeamDetailViewModel
         }
 
         fun selectYear(year: Int) {
+            refreshFailureReported.set(false)
             selection.pick(year)
             refreshYearData()
         }
@@ -208,26 +224,28 @@ class TeamDetailViewModel
         fun isSignedIn(): Boolean = authRepository.isSignedIn()
 
         fun refreshAll() {
+            refreshFailureReported.set(false)
             val year = selection.year.value
-            refreshing(
-                { refreshTeam() },
-                { eventRepository.refreshTeamEvents(teamKey, year) },
-                { teamRepository.refreshTeamMedia(teamKey, year) },
+            refreshTracked(
+                TeamDetailTab.INFO to { refreshTeam() },
+                TeamDetailTab.EVENTS to { eventRepository.refreshTeamEvents(teamKey, year) },
+                TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
             )
         }
 
         fun refreshTab(tab: TeamDetailTab) {
+            refreshFailureReported.set(false)
             val year = selection.year.value
             when (tab) {
                 TeamDetailTab.INFO ->
-                    refreshing(
-                        { refreshTeam() },
-                        { teamRepository.refreshTeamMedia(teamKey, year) },
+                    refreshTracked(
+                        tab to { refreshTeam() },
+                        TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
                     )
                 TeamDetailTab.EVENTS ->
-                    refreshing({ eventRepository.refreshTeamEvents(teamKey, year) })
+                    refreshTracked(tab to { eventRepository.refreshTeamEvents(teamKey, year) })
                 TeamDetailTab.MEDIA ->
-                    refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                    refreshTracked(tab to { teamRepository.refreshTeamMedia(teamKey, year) })
             }
         }
 
@@ -244,10 +262,25 @@ class TeamDetailViewModel
 
         private fun refreshYearData() {
             val year = selection.year.value
-            refreshing(
-                { eventRepository.refreshTeamEvents(teamKey, year) },
-                { teamRepository.refreshTeamMedia(teamKey, year) },
+            // A new season's tabs haven't been fetched yet; the last season's outcome isn't theirs.
+            loadOutcomes.update { it - TeamDetailTab.EVENTS - TeamDetailTab.MEDIA }
+            refreshTracked(
+                TeamDetailTab.EVENTS to { eventRepository.refreshTeamEvents(teamKey, year) },
+                TeamDetailTab.MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
             )
+        }
+
+        private fun refreshTracked(vararg tasks: Pair<TeamDetailTab?, suspend () -> Unit>) {
+            refreshTabs(loadOutcomes, ::reportFailedRefresh, *tasks)
+        }
+
+        // Reads the cache itself: an offline refresh can fail before the screen has collected it.
+        private suspend fun reportFailedRefresh(failed: Set<TeamDetailTab>) {
+            if (failed.isEmpty()) return
+            val cached = state.first()
+            if (failed.any { cached.hasData(it) } && !refreshFailureReported.getAndSet(true)) {
+                userMessages.show("Couldn't refresh team")
+            }
         }
 
         @AssistedFactory

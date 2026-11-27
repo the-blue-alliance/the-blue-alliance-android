@@ -59,6 +59,7 @@ import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.previousSeason
@@ -330,7 +331,21 @@ fun TeamDetailScreen(
                 onRefresh = { viewModel.refreshTab(TeamDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
-                when (TeamDetailTab.entries[page]) {
+                val tab = TeamDetailTab.entries[page]
+                if (uiState.loadFailed(tab)) {
+                    // With no team the pull spinner is hidden, so show the retry in progress here.
+                    if (isRefreshing && uiState.team == null) {
+                        LoadingBox(modifier = Modifier.padding(bottomPadding))
+                    } else {
+                        ErrorBox(
+                            modifier = Modifier.padding(bottomPadding),
+                            message = tab.loadErrorMessage(),
+                            onRetry = { viewModel.refreshTab(tab) },
+                        )
+                    }
+                    return@TouchPullToRefreshBox
+                }
+                when (tab) {
                     TeamDetailTab.INFO ->
                         InfoTab(
                             team = uiState.team,
@@ -387,6 +402,13 @@ fun TeamDetailScreen(
         }
     }
 }
+
+private fun TeamDetailTab.loadErrorMessage(): String =
+    when (this) {
+        TeamDetailTab.INFO -> "Couldn't load team"
+        TeamDetailTab.EVENTS -> "Couldn't load events"
+        TeamDetailTab.MEDIA -> "Couldn't load media"
+    }
 
 @Composable
 private fun InfoTab(
