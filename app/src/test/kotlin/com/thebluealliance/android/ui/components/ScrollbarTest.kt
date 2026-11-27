@@ -83,4 +83,39 @@ class ScrollbarTest {
         assertTrue(canGrabThumb(PointerType.Touch, primaryPressed = false))
         assertTrue(canGrabThumb(PointerType.Stylus, primaryPressed = false))
     }
+
+    @Test
+    fun `mouse released on the strip keeps the scrollbar awake`() {
+        assertTrue(
+            hoversAfterDrag(PointerType.Mouse, released = true, inBounds = true, onStrip = true),
+        )
+    }
+
+    @Test
+    fun `mouse dragged off the strip lets the scrollbar fade`() {
+        assertFalse(
+            hoversAfterDrag(PointerType.Mouse, released = true, inBounds = true, onStrip = false),
+        )
+    }
+
+    @Test
+    fun `mouse dragged out of the list lets the scrollbar fade`() {
+        assertFalse(
+            hoversAfterDrag(PointerType.Mouse, released = true, inBounds = false, onStrip = true),
+        )
+    }
+
+    @Test
+    fun `drag cut off without a release lets the scrollbar fade`() {
+        assertFalse(
+            hoversAfterDrag(PointerType.Mouse, released = false, inBounds = true, onStrip = true),
+        )
+    }
+
+    @Test
+    fun `touch release never hovers the scrollbar`() {
+        assertFalse(
+            hoversAfterDrag(PointerType.Touch, released = true, inBounds = true, onStrip = true),
+        )
+    }
 }

@@ -80,7 +80,13 @@ fun FastScrollbar(
         modifier =
             modifier
                 .fillMaxSize()
-                .verticalScrollbar(listState, contentPadding, keepVisible = isDragging)
+                .verticalScrollbar(
+                    listState,
+                    contentPadding,
+                    keepVisible = isDragging,
+                    // Only draws the thumb: the handler below is the one drag handler on the edge.
+                    draggable = false,
+                )
                 // Watches presses on the Initial pass instead of covering the rows with a strip, so
                 // hover, the hand pointer, and taps on the strip all reach the row underneath. A
                 // press becomes a fast scroll only once it moves past the slop mostly vertically.
