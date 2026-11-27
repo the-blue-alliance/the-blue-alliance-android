@@ -22,4 +22,7 @@ data class MatchDetailUiState(
      * link (404) or an uncached match we couldn't fetch (offline). Either way: stop spinning.
      */
     val loadFailed: Boolean = false,
-)
+) {
+    /** TBA has no match with this key, and none is cached. */
+    val notFound: Boolean get() = false
+}
