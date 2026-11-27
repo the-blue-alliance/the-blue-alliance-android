@@ -59,7 +59,10 @@ import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.sortableHeader
+import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
+import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -660,11 +663,12 @@ private fun StandardOPRsView(
         }
     }
 
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        stickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
                 TableHeaderCell(
                     text = "Team",
@@ -756,11 +760,12 @@ private fun COPRView(
             }
         }
 
+    val headerFocus = rememberStickyHeaderFocusOrder()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
-        stickyHeader {
+        tabOrderedStickyHeader(headerFocus) {
             InsightsTableHeaderRow(onShowStatSelector = onShowStatSelector) {
                 TableHeaderCell(
                     text = "Team",

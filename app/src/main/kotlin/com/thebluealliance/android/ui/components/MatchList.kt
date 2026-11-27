@@ -160,6 +160,7 @@ fun MatchList(
     }
 
     val coroutineScope = rememberCoroutineScope()
+    val headerFocus = rememberStickyHeaderFocusOrder()
 
     // When the detail pane closes (Esc, Close or Back), keyboard focus goes back to the match it
     // showed, so a keyboard user keeps their place in the list instead of landing on the top bar.
@@ -187,7 +188,10 @@ fun MatchList(
 
     LazyColumn(
         state = listState,
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .stickyHeaderFocusOrder(headerFocus),
         contentPadding = innerPadding,
     ) {
         if (headerContent != null) {
@@ -195,7 +199,7 @@ fun MatchList(
         }
         grouped.forEach { (group, levelMatches) ->
             val headerKey = "match_header_${group.label}"
-            stickyHeader(key = headerKey) {
+            tabOrderedStickyHeader(headerFocus, key = headerKey) {
                 Box(modifier = Modifier.tableWidth()) {
                     SectionHeader(
                         label = group.label,
