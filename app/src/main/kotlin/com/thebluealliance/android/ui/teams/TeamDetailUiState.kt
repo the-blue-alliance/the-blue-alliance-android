@@ -13,4 +13,7 @@ data class TeamDetailUiState(
 ) {
     /** TBA has no team with this key, and none is cached. */
     val notFound: Boolean get() = teamMissing && team == null
+
+    /** The tab's last fetch failed and there is nothing cached to show instead. */
+    fun loadFailed(tab: TeamDetailTab): Boolean = false
 }
