@@ -2,8 +2,10 @@ package com.thebluealliance.android.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.LocalRippleThemeConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.RippleDefaults
 import androidx.compose.material3.RippleThemeConfiguration
 import androidx.compose.material3.darkColorScheme
@@ -14,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.core.theme.TbaBrandColors
 import com.thebluealliance.android.core.theme.TbaPaletteTokens
 import com.thebluealliance.android.core.theme.TbaDarkColorTokens as Dark
@@ -156,6 +160,60 @@ internal val TbaDarkColorScheme =
  */
 internal val TbaRippleThemeConfiguration: RippleThemeConfiguration =
     RippleDefaults.InsetFocusRingThemeConfiguration
+
+/**
+ * How far [TbaRippleThemeConfiguration]'s focus ring reaches in from a target's edge. Content
+ * needs more inner padding than this, or the ring draws over it.
+ */
+internal val FocusRingDepth: Dp =
+    when (val focus = TbaRippleThemeConfiguration.focus) {
+        is RippleThemeConfiguration.Focus.InsetRing ->
+            maxOf(
+                focus.outerStrokeInset + focus.outerStrokeWidth,
+                focus.innerStrokeInset + focus.innerStrokeWidth,
+            )
+        else -> 0.dp
+    }
+
+/**
+ * Focus ring colors for content on a brand surface of [container] color. The theme's default ring
+ * (secondary over onSecondary) nearly matches TBA Blue, so only its inner stroke shows there. On a
+ * brand surface the outer stroke is [OnBrand] and the inner stroke is the surface's own color: one
+ * of the two contrasts with whatever is behind it, whether that's the bar or a white selected chip.
+ */
+internal fun brandFocusRing(container: Color): RippleConfiguration =
+    RippleConfiguration(
+        focus =
+            RippleConfiguration.Focus.InsetRing(
+                outerStrokeColor = OnBrand,
+                innerStrokeColor = container,
+            ),
+    )
+
+/**
+ * Draws the focus ring in brand colors (see [brandFocusRing]) for clickables in [content], which
+ * sits on a brand surface of [container] color. Menus that pop up from inside [content] should
+ * wrap their items in [SurfaceFocusRing], since a popup inherits this but draws on a surface.
+ */
+@Composable
+fun BrandFocusRing(
+    container: Color,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalRippleConfiguration provides brandFocusRing(container),
+        content = content,
+    )
+}
+
+/** Restores the theme's focus ring colors inside a [BrandFocusRing], e.g. in a popup menu. */
+@Composable
+fun SurfaceFocusRing(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalRippleConfiguration provides RippleConfiguration(),
+        content = content,
+    )
+}
 
 @Composable
 fun TBATheme(

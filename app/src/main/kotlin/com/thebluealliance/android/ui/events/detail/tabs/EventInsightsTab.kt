@@ -60,6 +60,7 @@ import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -455,36 +456,38 @@ private fun InsightsView(
         // Left as it was: both of this table's columns hold prose, not figures, and they are
         // wide enough that spending COLUMN_GUTTER on each edge would wrap values that fit today.
         stickyHeader {
-            Row(
-                modifier =
-                    Modifier
-                        .tableWidth()
-                        .blocksRowsBeneath()
-                        .background(BrandHeaderContainer)
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = insightHeader,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
-                    modifier = Modifier.weight(1.5f),
-                )
-                Text(
-                    text = "Value",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
-                    modifier = Modifier.weight(1f),
-                )
-                IconButton(
-                    onClick = onShowStatSelector,
-                    modifier = Modifier.padding(0.dp),
+            BrandFocusRing(BrandHeaderContainer) {
+                Row(
+                    modifier =
+                        Modifier
+                            .tableWidth()
+                            .blocksRowsBeneath()
+                            .background(BrandHeaderContainer)
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = TbaIcons.MoreVert,
-                        contentDescription = "Select stat type",
-                        tint = OnBrand,
+                    Text(
+                        text = insightHeader,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = OnBrand,
+                        modifier = Modifier.weight(1.5f),
                     )
+                    Text(
+                        text = "Value",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = OnBrand,
+                        modifier = Modifier.weight(1f),
+                    )
+                    IconButton(
+                        onClick = onShowStatSelector,
+                        modifier = Modifier.padding(0.dp),
+                    ) {
+                        Icon(
+                            imageVector = TbaIcons.MoreVert,
+                            contentDescription = "Select stat type",
+                            tint = OnBrand,
+                        )
+                    }
                 }
             }
         }
@@ -832,34 +835,38 @@ private fun InsightsTableHeaderRow(
     onShowStatSelector: () -> Unit,
     cells: @Composable RowScope.() -> Unit,
 ) {
-    Row(
-        modifier =
-            Modifier
-                .tableWidth()
-                .blocksRowsBeneath()
-                .background(BrandHeaderContainer)
-                .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
-                // Header cells fill this height, so every sort band matches the tallest cell.
-                .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        cells()
-        Box(
-            // A fixed slot rather than a weighted one: the data rows below reserve the same width,
-            // so both rows share one weighted region and their columns cannot drift apart. The end
-            // padding keeps the button's outer edge on the 16.dp screen margin.
+    // The sort bands and the overflow button sit on the header blue, so their focus ring uses
+    // brand colors.
+    BrandFocusRing(BrandHeaderContainer) {
+        Row(
             modifier =
                 Modifier
-                    .width(OVERFLOW_SLOT_WIDTH)
-                    .padding(end = COLUMN_GUTTER),
-            contentAlignment = Alignment.Center,
+                    .tableWidth()
+                    .blocksRowsBeneath()
+                    .background(BrandHeaderContainer)
+                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
+                    // Header cells fill this height, so every sort band matches the tallest cell.
+                    .height(IntrinsicSize.Min),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onShowStatSelector) {
-                Icon(
-                    imageVector = TbaIcons.MoreVert,
-                    contentDescription = "Select stat type",
-                    tint = OnBrand,
-                )
+            cells()
+            Box(
+                // A fixed slot rather than a weighted one: the data rows below reserve the same width,
+                // so both rows share one weighted region and their columns cannot drift apart. The end
+                // padding keeps the button's outer edge on the 16.dp screen margin.
+                modifier =
+                    Modifier
+                        .width(OVERFLOW_SLOT_WIDTH)
+                        .padding(end = COLUMN_GUTTER),
+                contentAlignment = Alignment.Center,
+            ) {
+                IconButton(onClick = onShowStatSelector) {
+                    Icon(
+                        imageVector = TbaIcons.MoreVert,
+                        contentDescription = "Select stat type",
+                        tint = OnBrand,
+                    )
+                }
             }
         }
     }

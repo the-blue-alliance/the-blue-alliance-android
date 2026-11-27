@@ -22,6 +22,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -64,6 +65,7 @@ import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 import com.thebluealliance.android.ui.theme.OnBrandOutline
 import com.thebluealliance.android.ui.theme.TbaIcons
+import com.thebluealliance.android.ui.theme.brandFocusRing
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -384,6 +386,7 @@ private fun WeekFilterChips(
 
     CompositionLocalProvider(
         LocalContentColor provides OnBrand,
+        LocalRippleConfiguration provides brandFocusRing(barColor),
     ) {
         Row(
             modifier =

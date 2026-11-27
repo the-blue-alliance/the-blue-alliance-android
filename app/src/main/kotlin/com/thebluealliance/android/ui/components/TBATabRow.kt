@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 
@@ -24,27 +25,29 @@ fun TBATabRow(
     tabs: @Composable () -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    PrimaryScrollableTabRow(
-        selectedTabIndex = selectedTabIndex,
-        modifier = modifier.verticalWheelScrollsSideways(scrollState),
-        scrollState = scrollState,
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = OnBrand,
-        edgePadding = 0.dp,
-        divider = {
-            HorizontalDivider(
-                color = OnBrand.copy(alpha = 0.12f),
-            )
-        },
-        indicator = {
-            SecondaryIndicator(
-                modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                height = 3.dp,
-                color = OnBrand,
-            )
-        },
-        tabs = tabs,
-    )
+    BrandFocusRing(MaterialTheme.colorScheme.primaryContainer) {
+        PrimaryScrollableTabRow(
+            selectedTabIndex = selectedTabIndex,
+            modifier = modifier.verticalWheelScrollsSideways(scrollState),
+            scrollState = scrollState,
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = OnBrand,
+            edgePadding = 0.dp,
+            divider = {
+                HorizontalDivider(
+                    color = OnBrand.copy(alpha = 0.12f),
+                )
+            },
+            indicator = {
+                SecondaryIndicator(
+                    modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                    height = 3.dp,
+                    color = OnBrand,
+                )
+            },
+            tabs = tabs,
+        )
+    }
 }
 
 @Composable

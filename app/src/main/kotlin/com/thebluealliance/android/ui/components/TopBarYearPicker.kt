@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 private val HORIZONTAL_TARGET_PADDING = 12.dp
@@ -90,27 +91,29 @@ fun TopBarYearPicker(
             expanded = yearDropdownExpanded,
             onDismissRequest = { yearDropdownExpanded = false },
         ) {
-            years.forEach { year ->
-                val isSelected = year == selectedYear
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = year.toString(),
-                            fontWeight = if (isSelected) FontWeight.Bold else null,
-                        )
-                    },
-                    trailingIcon =
-                        if (isSelected) {
-                            { Icon(imageVector = TbaIcons.Check, contentDescription = null) }
-                        } else {
-                            null
+            SurfaceFocusRing {
+                years.forEach { year ->
+                    val isSelected = year == selectedYear
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = year.toString(),
+                                fontWeight = if (isSelected) FontWeight.Bold else null,
+                            )
                         },
-                    modifier = Modifier.selectedIfCurrent(isSelected),
-                    onClick = {
-                        onYearSelected(year)
-                        yearDropdownExpanded = false
-                    },
-                )
+                        trailingIcon =
+                            if (isSelected) {
+                                { Icon(imageVector = TbaIcons.Check, contentDescription = null) }
+                            } else {
+                                null
+                            },
+                        modifier = Modifier.selectedIfCurrent(isSelected),
+                        onClick = {
+                            onYearSelected(year)
+                            yearDropdownExpanded = false
+                        },
+                    )
+                }
             }
         }
     }
