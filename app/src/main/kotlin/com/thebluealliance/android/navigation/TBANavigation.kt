@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -42,7 +43,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
+import com.thebluealliance.android.ui.common.LocalUserMessageInsets
 import com.thebluealliance.android.ui.common.UserMessageHost
+import com.thebluealliance.android.ui.common.UserMessageState
 import com.thebluealliance.android.ui.common.rememberUserMessageState
 import com.thebluealliance.android.ui.components.FocusReturn
 import com.thebluealliance.android.ui.components.LocalNavigationRailShown
@@ -154,11 +157,20 @@ fun TBANavigation(
     // The rail or the bottom bar, whichever shows: keyboard focus starts there.
     val focusEntry = remember { WindowFocusEntry() }
     val userMessages = rememberUserMessageState()
+    // Screens pad by the snackbar's room. Above the bottom bar, NavDisplay has taken the bar's
+    // bottom inset, which Scaffold subtracts from what screens pad by, so it's counted in too.
+    val barInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+    val userMessageInsets =
+        remember(userMessages, bottomBarShown, barInsets) {
+            userMessages.insets(below = if (bottomBarShown) barInsets else null)
+        }
 
     NavigationFrame(
         showRail = useRail,
         navigationShown = useRail || bottomBarShown,
         focusEntry = focusEntry,
+        userMessages = userMessages,
+        userMessageInsets = userMessageInsets,
         rail = {
             TBANavigationRail(
                 currentRoute = navState.currentRoute,
@@ -181,10 +193,9 @@ fun TBANavigation(
                 Modifier
                     .weight(1f)
                     .fillMaxSize()
-                    // The bottom bar, or a snackbar taking room, takes the bottom inset; with
-                    // neither, screens pad their content by it.
+                    // The bottom bar takes the bottom inset; with none, screens pad their content by it.
                     .then(
-                        if (bottomBarShown || userMessages.reservesSpace) {
+                        if (bottomBarShown) {
                             Modifier.consumeWindowInsets(
                                 WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
                             )
@@ -579,6 +590,8 @@ private fun NavigationFrame(
     showRail: Boolean,
     navigationShown: Boolean,
     focusEntry: WindowFocusEntry,
+    userMessages: UserMessageState,
+    userMessageInsets: WindowInsets,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -622,8 +635,18 @@ private fun NavigationFrame(
                                 Modifier
                             },
                         ),
-                content = content,
-            )
+            ) {
+                // A snackbar with buttons covers the bottom of the screen: screens pad their lists
+                // by it, and focused items scroll into view above it.
+                val parentSpec = LocalBringIntoViewSpec.current
+                CompositionLocalProvider(
+                    LocalUserMessageInsets provides userMessageInsets,
+                    LocalBringIntoViewSpec provides
+                        remember(parentSpec, userMessages) {
+                            userMessages.bringIntoViewSpec(parentSpec)
+                        },
+                ) { content() }
+            }
         }
     }
 }

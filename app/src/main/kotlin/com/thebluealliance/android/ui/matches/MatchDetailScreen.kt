@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -69,6 +69,7 @@ import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.LocalUserMessageInsets
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -78,6 +79,7 @@ import com.thebluealliance.android.ui.components.MediaGridItem
 import com.thebluealliance.android.ui.components.MediaGridRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.RpDots
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
@@ -168,9 +170,11 @@ fun MatchDetailScreen(
     Scaffold(
         contentWindowInsets =
             if (paneChrome != null) {
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom + WindowInsetsSides.End)
+                WindowInsets.safeDrawing
+                    .only(WindowInsetsSides.Bottom + WindowInsetsSides.End)
+                    .union(LocalUserMessageInsets.current)
             } else {
-                ScaffoldDefaults.contentWindowInsets
+                ScreenContentWindowInsets
             },
         topBar = {
             if (paneChrome != null) {

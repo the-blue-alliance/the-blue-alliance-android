@@ -4,20 +4,25 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.ui.focus.FocusDirection
 
 /**
- * Whether the snackbar showing [visuals] takes room at the bottom of the window, so the screen
- * above it ends where it starts. Nothing does yet: every snackbar draws over the content.
+ * Whether the snackbar showing [visuals] makes room at the bottom of the screen: screens pad their
+ * lists by its height and focused items scroll into view above it (see [UserMessageInsets]). One
+ * with buttons stays until it's used, so lists must be able to scroll their rows, and Tab must be
+ * able to bring a focused row, out from under it. A short message goes away on its own and draws
+ * over the content, so nothing shifts for it.
  */
-internal fun reservesSpace(visuals: SnackbarVisuals?): Boolean = false
+internal fun reservesSpace(visuals: SnackbarVisuals?): Boolean =
+    visuals != null && (visuals.actionLabel != null || visuals.withDismissAction)
 
 /**
  * The bottom inset screens pad their content by while a snackbar covers [coveredPx] of the bottom
  * of the screen, when the frame has already taken [consumedBelowPx] of the window's bottom inset
- * for the bottom bar. Only the snackbar counts yet, not the bar's share.
+ * for the bottom bar. Scaffold subtracts that consumed share from its content insets, so it's
+ * added back here while the snackbar shows.
  */
 internal fun snackbarContentInset(
     coveredPx: Int,
     consumedBelowPx: Int,
-): Int = coveredPx
+): Int = if (coveredPx > 0) coveredPx + consumedBelowPx else 0
 
 /** One end of the snackbar's row of buttons. */
 internal enum class SnackbarEdge { First, Last }
@@ -54,9 +59,26 @@ internal class SnackbarFocus {
         if (!hasFocus) enteredBy = null
     }
 
-    /** Whether focus entering the snackbar goes to its action button. */
-    fun entersAtAction(hasAction: Boolean): Boolean = false
+    /**
+     * Whether focus entering the snackbar goes to its action button. It does from either side, so
+     * one Tab or one Shift+Tab reaches Retry; the close button is one more Tab, or Esc.
+     */
+    fun entersAtAction(hasAction: Boolean): Boolean = hasAction
 
-    /** How to move focus out as the snackbar closes, or null to leave focus alone. */
-    fun exit(): SnackbarExit? = null
+    /**
+     * How to move focus out as the snackbar closes, or null to leave focus alone: back the way it
+     * came in, past the snackbar's other button, so it lands on the element it left. Focus that
+     * got in without a focus search goes to the content before the snackbar.
+     */
+    fun exit(): SnackbarExit? {
+        if (!inside) return null
+        return when (enteredBy) {
+            FocusDirection.Previous -> SnackbarExit(SnackbarEdge.Last, FocusDirection.Next)
+            FocusDirection.Down -> SnackbarExit(null, FocusDirection.Up)
+            FocusDirection.Up -> SnackbarExit(null, FocusDirection.Down)
+            FocusDirection.Right -> SnackbarExit(SnackbarEdge.First, FocusDirection.Left)
+            FocusDirection.Left -> SnackbarExit(SnackbarEdge.Last, FocusDirection.Right)
+            else -> SnackbarExit(SnackbarEdge.First, FocusDirection.Previous)
+        }
+    }
 }
