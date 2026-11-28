@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.search
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -39,6 +37,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -47,7 +46,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -312,6 +310,10 @@ internal fun searchFieldEscape(query: CharSequence): SearchFieldEscape =
 /**
  * Places [field] in the top-bar slot at [fit]'s start offset and no wider than its width, or across
  * the whole slot while [fit] is null.
+ *
+ * The fit arrives after the first layout. It moves the field by placing it again, not with padding:
+ * in a TopAppBar title, padding that changes later leaves Compose reporting the field's old window
+ * position for everything inside it, and Clear's tooltip would open where Clear used to be.
  */
 @Composable
 internal fun SearchFieldSlot(
@@ -319,13 +321,14 @@ internal fun SearchFieldSlot(
     modifier: Modifier = Modifier,
     field: @Composable () -> Unit,
 ) {
-    Box(
-        modifier
-            .padding(start = fit?.start ?: 0.dp)
-            .widthIn(max = fit?.maxWidth ?: Dp.Unspecified)
-            .fillMaxWidth(),
-    ) {
-        field()
+    Layout(content = field, modifier = modifier) { measurables, constraints ->
+        val start = fit?.start?.roundToPx()?.coerceIn(0, constraints.maxWidth) ?: 0
+        val room = constraints.maxWidth - start
+        val width = fit?.maxWidth?.roundToPx()?.coerceIn(0, room) ?: room
+        val placeable =
+            measurables.first().measure(constraints.copy(minWidth = width, maxWidth = width))
+        val height = placeable.height.coerceIn(constraints.minHeight, constraints.maxHeight)
+        layout(constraints.maxWidth, height) { placeable.placeRelative(start, 0) }
     }
 }
 
