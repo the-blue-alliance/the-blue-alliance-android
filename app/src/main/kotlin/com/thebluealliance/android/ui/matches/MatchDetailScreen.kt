@@ -56,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.BREAKDOWN_MISSING
+import com.thebluealliance.android.domain.INFO_SEPARATOR
 import com.thebluealliance.android.domain.MatchAdvancementMsgs
 import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.camelCaseToLabel
@@ -149,7 +150,12 @@ fun MatchDetailScreen(
                 label = "Share",
                 icon = TbaIcons.Share,
                 onClick = {
-                    val eventLabel = uiState.eventName?.let { "${uiState.year} $it - " } ?: ""
+                    val eventLabel =
+                        uiState.eventName
+                            ?.takeIf {
+                                it.isNotBlank()
+                            }?.let { "${uiState.year} $it$INFO_SEPARATOR" }
+                            ?: ""
                     context.shareTbaUrl(
                         title = "$eventLabel${match.getFullLabel(uiState.playoffType)}",
                         url = "https://www.thebluealliance.com/match/${match.key}",

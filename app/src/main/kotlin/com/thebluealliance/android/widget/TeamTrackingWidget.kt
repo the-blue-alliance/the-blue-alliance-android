@@ -53,6 +53,7 @@ import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.thebluealliance.android.R
+import com.thebluealliance.android.domain.teamLabel
 import com.thebluealliance.android.ui.theme.TbaDarkColorScheme
 import com.thebluealliance.android.ui.theme.TbaLightColorScheme
 import com.thebluealliance.android.util.teamNumber
@@ -1389,9 +1390,9 @@ internal fun widgetTeamLabel(
     teamNumber: String,
     teamNickname: String,
 ): String =
-    if (teamNumber.isNotEmpty()) {
-        if (teamNickname.isNotEmpty()) {
-            "$teamNumber \u2014 $teamNickname"
+    if (teamNumber.isNotBlank()) {
+        if (teamNickname.isNotBlank()) {
+            teamLabel(teamNumber, teamNickname)
         } else {
             "Team $teamNumber"
         }

@@ -21,6 +21,7 @@ import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.teamLabel
 import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.util.addRoundedCorners
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -109,7 +110,7 @@ class TBAShortcutManager
             val (team, avatar) =
                 loadShortcutTeam(teamKey, teamRepository, season, attemptedMediaFetches)
                     ?: return null
-            val label = "${team.number} ${team.nickname}"
+            val label = teamLabel(team.number, team.nickname, team.name)
             val uri = "https://www.thebluealliance.com/team/${team.number}".toUri()
 
             return ShortcutInfoCompat

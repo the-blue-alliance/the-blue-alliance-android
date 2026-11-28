@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.events
 
+import com.thebluealliance.android.domain.INFO_SEPARATOR
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventType
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
@@ -341,7 +342,7 @@ fun computeThisWeekEvents(
             }
 
         rawEvents = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "Upcoming This Week \u2014 ${weekLabel(selectedYear, currentWeek)}"
+        label = "Upcoming This Week$INFO_SEPARATOR${weekLabel(selectedYear, currentWeek)}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)

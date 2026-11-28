@@ -39,6 +39,28 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 - Acronyms (RP, BCVI)
 - Data from the server (event names, team names, etc.)
 
+## Dashes and separators
+
+Four marks, each with one job:
+
+| Mark | Use | Examples |
+|---|---|---|
+| – en dash, spaced | A range, or a pairing of two values | "Fri, Mar 20 – Sun, Mar 22", "199 – 140" |
+| · middle dot, spaced | Separating independent pieces of info on one line | "Pit 12 · San Jose, CA", "Offline · 3h ago", "Advances to upper bracket · R2-8", "Sofia S · 422" |
+| — em dash, alone | Only the "no value" mark, `NO_VALUE` | an empty table cell |
+| - hyphen | Inside a single token (codes, records, compound words) and verbatim server data | "R2-8", "8-2-0", event names from the server |
+
+- A team number with its nickname is always "254 · The Cheesy Poofs". With no nickname it falls back
+  to the team's name, and with neither it is just "254", never "254 · " or "254 - ". Build it with
+  `teamLabel(number, nickname, name)` (`domain/TeamLabel.kt`), not by hand. Other " · " joins use
+  `INFO_SEPARATOR` from the same file.
+- Text that is only read aloud (a `contentDescription` or a complication description) uses commas
+  and periods, not " · ", since screen readers may say "middle dot".
+- Never use a spaced hyphen (" - ") or an em dash as a separator in our own text.
+  `SeparatorPunctuationTest` scans `strings.xml`, layout text and Kotlin string literals in
+  `app/`, `wear/` and `tv/` and fails on either; intentional cases go in its allowlist.
+- Server data is shown as-is, hyphens and all.
+
 ## Terminology
 
 | Preferred (user-facing)  | Avoid (user-facing)      | Notes                                                |

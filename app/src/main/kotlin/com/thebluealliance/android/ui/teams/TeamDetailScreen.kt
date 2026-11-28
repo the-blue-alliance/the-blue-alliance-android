@@ -56,6 +56,7 @@ import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.teamLabel
 import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
@@ -171,13 +172,7 @@ fun TeamDetailScreen(
     if (showNotificationSheet) {
         NotificationPreferencesSheet(
             displayName =
-                uiState.team?.let {
-                    "Team ${it.number}" + (
-                        it.nickname?.let { n ->
-                            " - $n"
-                        } ?: ""
-                    )
-                }
+                uiState.team?.let { "Team ${teamLabel(it.number, it.nickname, it.name)}" }
                     ?: "Team",
             modelType = ModelType.TEAM,
             isFavorite = isFavorite,
@@ -209,13 +204,8 @@ fun TeamDetailScreen(
                             title = {
                                 Text(
                                     text =
-                                        if (team !=
-                                            null
-                                        ) {
-                                            "${team.number} - ${team.nickname ?: ""}"
-                                        } else {
-                                            "Team"
-                                        },
+                                        team?.let { teamLabel(it.number, it.nickname, it.name) }
+                                            ?: "Team",
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -263,8 +253,12 @@ fun TeamDetailScreen(
                                     onClick = {
                                         context.shareTbaUrl(
                                             title =
-                                                "Team ${team.number} - " +
-                                                    (team.nickname ?: ""),
+                                                "Team " +
+                                                    teamLabel(
+                                                        team.number,
+                                                        team.nickname,
+                                                        team.name,
+                                                    ),
                                             url =
                                                 "https://www.thebluealliance.com/team/" +
                                                     "${team.number}",
