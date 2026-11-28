@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
@@ -150,8 +149,8 @@ fun SearchScreen(
     }
 
     Scaffold(
-        // Search opens with the keyboard up: the results' bottom padding covers it, not just the
-        // navigation bar, so the last result scrolls clear of it.
+        // Search opens with the keyboard up: the bottom padding covers it, not just the navigation
+        // bar, so the last result scrolls clear of it and the messages center above it.
         contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
         topBar = {
             TBATopAppBar(
@@ -223,12 +222,13 @@ fun SearchScreen(
                     .fillMaxSize()
                     .onGloballyPositioned { contentBounds = it.unclippedBoundsInRoot() },
         ) {
-            // The messages center in the space above the keyboard, following it as it opens and
-            // closes. The fill still reaches the window's bottom edge behind it.
+            // The messages center above the keyboard or the navigation bar, whichever is taller,
+            // following the keyboard as it opens and closes. The fill still reaches the window's
+            // bottom edge behind them.
             if (uiState.query.isBlank()) {
                 EmptyBox(
                     message = "Try a team number, team name or event name",
-                    modifier = Modifier.imePadding(),
+                    modifier = Modifier.padding(innerPadding.onlyBottom()),
                 )
                 return@Column
             }
@@ -238,7 +238,7 @@ fun SearchScreen(
             if (searchSettled && uiState.teams.isEmpty() && uiState.events.isEmpty()) {
                 EmptyBox(
                     message = "No results for \"${uiState.query}\"",
-                    modifier = Modifier.imePadding(),
+                    modifier = Modifier.padding(innerPadding.onlyBottom()),
                 )
                 return@Column
             }
