@@ -4,6 +4,7 @@ import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class TeamDistrictStandingTest {
+    private val strings = ResourceQuantityStrings
+
     private fun event(
         key: String,
         district: String?,
@@ -145,14 +148,14 @@ class TeamDistrictStandingTest {
     @Test
     fun `rank and points read as one phrase`() {
         val standing = TeamDistrictStanding("2026fim", "FIRST In Michigan", rank = 12, points = 187)
-        assertEquals("Rank 12 · 187 pts", standing.rankAndPoints())
-        assertEquals("Rank 40 · 1 pt", standing.copy(rank = 40, points = 1).rankAndPoints())
+        assertEquals("Rank 12 · 187 pts", standing.rankAndPoints(strings))
+        assertEquals("Rank 40 · 1 pt", standing.copy(rank = 40, points = 1).rankAndPoints(strings))
     }
 
     @Test
     fun `the district link covers exactly the name in the line`() {
         val standing = TeamDistrictStanding("2026ca", "FIRST California", rank = 2, points = 364)
-        val line = districtStandingLine(standing)
+        val line = districtStandingLine(standing, strings)
         assertEquals("District: FIRST California · Rank 2 · 364 pts", line)
         assertEquals("FIRST California", line.substring(districtLinkRange(standing)))
     }
@@ -171,8 +174,8 @@ class TeamDistrictStandingTest {
         val full = short.copy(districtName = "FIRST In New England")
         assertFalse(
             linkFitsLayout(
-                laidOutText = districtStandingLine(short),
-                text = districtStandingLine(full),
+                laidOutText = districtStandingLine(short, strings),
+                text = districtStandingLine(full, strings),
                 link = districtLinkRange(full),
             ),
         )
@@ -182,7 +185,7 @@ class TeamDistrictStandingTest {
     fun `a layout of the same line places its link`() {
         val standing =
             TeamDistrictStanding("2026ne", "FIRST In New England", rank = 5, points = 120)
-        val line = districtStandingLine(standing)
+        val line = districtStandingLine(standing, strings)
         assertTrue(linkFitsLayout(line, line, districtLinkRange(standing)))
     }
 

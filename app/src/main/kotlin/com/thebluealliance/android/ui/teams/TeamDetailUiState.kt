@@ -1,10 +1,12 @@
 package com.thebluealliance.android.ui.teams
 
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.District
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.ui.common.RefreshOutcome
 
 data class TeamDetailUiState(
@@ -86,5 +88,5 @@ fun teamDistrictStanding(
     }
 
 /** What follows the linked district name: "Rank 12 · 187 pts". */
-fun TeamDistrictStanding.rankAndPoints(): String =
-    "Rank $rank \u00b7 $points ${if (points == 1) "pt" else "pts"}"
+fun TeamDistrictStanding.rankAndPoints(strings: QuantityStrings): String =
+    "Rank $rank \u00b7 ${strings.get(R.plurals.points_short, points)}"

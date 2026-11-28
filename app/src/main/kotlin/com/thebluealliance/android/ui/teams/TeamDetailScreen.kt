@@ -68,8 +68,10 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.previousSeason
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FocusHandoffEffect
@@ -573,10 +575,11 @@ private fun DistrictStandingText(
 ) {
     val linkColor = MaterialTheme.colorScheme.primary
     val link = districtLinkRange(standing)
+    val strings = rememberQuantityStrings()
     val text =
-        remember(standing, linkColor) {
+        remember(standing, linkColor, strings) {
             buildAnnotatedString {
-                append(districtStandingLine(standing))
+                append(districtStandingLine(standing, strings))
                 // Link colour with no underline, like the app's other inline links.
                 addStyle(SpanStyle(color = linkColor), link.first, link.last + 1)
             }
@@ -612,8 +615,10 @@ private fun DistrictStandingText(
 }
 
 /** The Info tab's district line, as [DistrictStandingText] shows it. */
-internal fun districtStandingLine(standing: TeamDistrictStanding): String =
-    "District: ${standing.districtName} \u00b7 ${standing.rankAndPoints()}"
+internal fun districtStandingLine(
+    standing: TeamDistrictStanding,
+    strings: QuantityStrings,
+): String = "District: ${standing.districtName} \u00b7 ${standing.rankAndPoints(strings)}"
 
 /** Where the district name sits in [districtStandingLine]. */
 internal fun districtLinkRange(standing: TeamDistrictStanding): IntRange {
