@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDefaults
@@ -22,6 +20,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -46,6 +45,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.focusRegion
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.theme.TbaIcons
@@ -135,10 +135,10 @@ fun UserMessageHost(
 }
 
 /**
- * Material's snackbar, with the hand pointer on its buttons, and Esc dismissing it while it has
- * keyboard focus. Like [com.thebluealliance.android.ui.components.EscapeHandler], Esc acts on
- * release and only for a press seen going down here, and the press is claimed so nothing
- * beneath acts on it.
+ * Material's snackbar, with the hand pointer on its buttons, a tooltip on its close button (as on
+ * every icon-only button in the app), and Esc dismissing it while it has keyboard focus. Like
+ * [com.thebluealliance.android.ui.components.EscapeHandler], Esc acts on release and only for a
+ * press seen going down here, and the press is claimed so nothing beneath acts on it.
  */
 @Composable
 private fun UserMessageSnackbar(shown: SnackbarData) {
@@ -195,14 +195,19 @@ private fun UserMessageSnackbar(shown: SnackbarData) {
         dismissAction =
             if (visuals.withDismissAction) {
                 {
-                    IconButton(
-                        onClick = data::dismiss,
-                        modifier = Modifier.focusRequester(last).handCursor(),
-                        colors =
-                            IconButtonDefaults.iconButtonColors(
-                                contentColor = SnackbarDefaults.dismissActionContentColor,
-                            ),
-                    ) { Icon(TbaIcons.Close, contentDescription = "Dismiss") }
+                    // Tints the icon and its hover and press ripple, as IconButton's colors did.
+                    CompositionLocalProvider(
+                        LocalContentColor provides SnackbarDefaults.dismissActionContentColor,
+                    ) {
+                        TooltipIconButton(
+                            label = "Dismiss",
+                            icon = TbaIcons.Close,
+                            onClick = data::dismiss,
+                            modifier = Modifier.focusRequester(last),
+                            // Above, clear of the window's bottom edge and the gesture bar.
+                            tooltipAbove = true,
+                        )
+                    }
                 }
             } else {
                 null
