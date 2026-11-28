@@ -17,6 +17,8 @@ Highlight shapes (the hover, press and focus highlight of anything clickable):
 
 `paddedClickable` clips to the shape you pass; pick it by these rules.
 
+Data tables use the shared table component, `TbaTable` and its building blocks in `ui/components/TbaTable.kt` (`TableHeaderBand`, `SortableHeaderCell`, `TableRow`, `TableRankCell`, `TableTeamCell`, `TableValueCell`, `TableRowDivider`), rather than their own header, cells or dividers.
+
 ## Verifying changes on an emulator
 
 After a substantive UI change, build and run the app to confirm it. Run all
