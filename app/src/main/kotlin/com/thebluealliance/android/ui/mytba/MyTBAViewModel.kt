@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -184,7 +185,8 @@ class MyTBAViewModel
         fun refresh() {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
-                refreshing(
+                refreshingReported(
+                    ::reportFailedRefresh,
                     { tracked(favoritesOutcome) { myTBARepository.refreshFavorites() } },
                     { tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() } },
                 )
@@ -196,15 +198,23 @@ class MyTBAViewModel
                 if (!authRepository.isSignedIn()) return@launch
                 when (tab) {
                     MyTBATab.FAVORITES ->
-                        refreshing({
+                        refreshingReported(::reportFailedRefresh, {
                             tracked(favoritesOutcome) { myTBARepository.refreshFavorites() }
                         })
                     MyTBATab.NOTIFICATIONS ->
-                        refreshing({
+                        refreshingReported(::reportFailedRefresh, {
                             tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() }
                         })
                 }
             }
+        }
+
+        // With nothing cached, each tab's error screen says it instead.
+        private suspend fun reportFailedRefresh() {
+            val cached =
+                myTBARepository.observeFavorites().first().isNotEmpty() ||
+                    myTBARepository.observeSubscriptions().first().isNotEmpty()
+            if (cached) userMessages.showRetry("Couldn't refresh myTBA", ::refresh)
         }
 
         private suspend fun tracked(

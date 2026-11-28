@@ -534,7 +534,7 @@ fun TBANavigation(
                 ),
         )
 
-        UserMessageHost(padNavigationBars = !bottomBarShown)
+        UserMessageHost(padNavigationBars = !bottomBarShown, screen = navState.currentRoute)
 
         AnimatedVisibility(
             visible = bottomBarShown,

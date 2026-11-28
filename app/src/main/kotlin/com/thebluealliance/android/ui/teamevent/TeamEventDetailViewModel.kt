@@ -148,7 +148,7 @@ class TeamEventDetailViewModel
         }
 
         fun refreshAll() {
-            refreshing(
+            refreshTracked(
                 { teamRepository.refreshTeam(teamKey) },
                 {
                     eventRepository.refreshEvent(eventKey)
@@ -170,7 +170,7 @@ class TeamEventDetailViewModel
             when (tab) {
                 // The summary overview needs most of the event data
                 TeamEventDetailTab.SUMMARY ->
-                    refreshing(
+                    refreshTracked(
                         { teamRepository.refreshTeam(teamKey) },
                         {
                             eventRepository.refreshEvent(eventKey)
@@ -185,14 +185,26 @@ class TeamEventDetailViewModel
                         { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
                     )
                 TeamEventDetailTab.MATCHES ->
-                    refreshing({ matchRepository.refreshEventMatches(eventKey) })
+                    refreshTracked({ matchRepository.refreshEventMatches(eventKey) })
                 TeamEventDetailTab.MEDIA ->
-                    refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                    refreshTracked({ teamRepository.refreshTeamMedia(teamKey, year) })
                 TeamEventDetailTab.STATS ->
-                    refreshing({ eventRepository.refreshEventOPRs(eventKey) })
+                    refreshTracked({ eventRepository.refreshEventOPRs(eventKey) })
                 TeamEventDetailTab.AWARDS ->
-                    refreshing({ eventRepository.refreshEventAwards(eventKey) })
+                    refreshTracked({ eventRepository.refreshEventAwards(eventKey) })
             }
+        }
+
+        private fun refreshTracked(vararg tasks: suspend () -> Unit) {
+            refreshingReported(::reportFailedRefresh, *tasks)
+        }
+
+        // Retries everything: a tab's own refresh can't tell which of its fetches failed.
+        private suspend fun reportFailedRefresh() {
+            val cached =
+                teamRepository.observeTeam(teamKey).first() != null ||
+                    eventRepository.observeEvent(eventKey).first() != null
+            if (cached) userMessages.showRetry("Couldn't refresh team at event", ::refreshAll)
         }
 
         // Regional advancement is a whole-season payload that only applies to non-district

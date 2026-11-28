@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -74,6 +75,17 @@ class TeamsViewModel
         }
 
         fun refreshTeams() {
-            refreshingTracked(refreshOutcome, { teamRepository.refreshAllTeams() })
+            refreshingTracked(
+                refreshOutcome,
+                ::reportFailedRefresh,
+                { teamRepository.refreshAllTeams() },
+            )
+        }
+
+        // With nothing cached, the error screen says it instead.
+        private suspend fun reportFailedRefresh() {
+            if (teamRepository.observeAllTeams().first().isNotEmpty()) {
+                userMessages.showRetry("Couldn't refresh teams", ::refreshTeams)
+            }
         }
     }
