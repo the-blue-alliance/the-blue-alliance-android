@@ -8,6 +8,7 @@ import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -27,6 +28,7 @@ class RegionalAdvancementViewModel
         @Assisted navKey: Screen.RegionalAdvancement,
         private val repository: RegionalAdvancementRepository,
         private val seasons: SeasonRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val fallbackYear = Calendar.getInstance().get(Calendar.YEAR)
 

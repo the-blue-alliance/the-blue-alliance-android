@@ -17,12 +17,16 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.net.UnknownHostException
@@ -88,5 +92,43 @@ class DistrictDetailViewModelRetryTest {
                 coVerify(exactly = 2) { districts.refreshDistrictRankings("2024fim") }
                 cancelAndIgnoreRemainingEvents()
             }
+        }
+
+    private fun TestScope.subscribedViewModel(): DistrictDetailViewModel {
+        val viewModel =
+            DistrictDetailViewModel(Screen.DistrictDetail("2024fim"), districts, events, bus)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        return viewModel
+    }
+
+    @Test
+    fun `an uncached district that fails to load shows errors, not a spinner`() =
+        runTest {
+            every { events.observeDistrictEvents(any()) } returns flowOf(emptyList())
+            val state = subscribedViewModel().uiState.value
+            assertTrue(state.loadFailed(DistrictDetailTab.EVENTS))
+            assertTrue(state.loadFailed(DistrictDetailTab.RANKINGS))
+        }
+
+    @Test
+    fun `a district with no events says so once loaded`() =
+        runTest {
+            every { events.observeDistrictEvents(any()) } returns flowOf(emptyList())
+            coEvery { events.refreshDistrictEvents(any()) } returns Unit
+            val state = subscribedViewModel().uiState.value
+            assertFalse(state.loadFailed(DistrictDetailTab.EVENTS))
+            assertEquals(emptyList<Any>(), state.eventSections)
+        }
+
+    @Test
+    fun `retrying a failed tab loads it`() =
+        runTest {
+            every { districts.observeDistrictRankings(any()) } returns flowOf(emptyList())
+            val viewModel = subscribedViewModel()
+            coEvery { districts.refreshDistrictRankings(any()) } returns Unit
+            viewModel.refreshTab(DistrictDetailTab.RANKINGS)
+            assertFalse(viewModel.uiState.value.loadFailed(DistrictDetailTab.RANKINGS))
         }
 }

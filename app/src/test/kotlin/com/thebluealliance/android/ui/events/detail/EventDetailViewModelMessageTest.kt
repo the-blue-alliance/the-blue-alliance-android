@@ -72,7 +72,7 @@ class EventDetailViewModelMessageTest {
                 RuntimeException()
             viewModel().updatePreferences(favorite = true, notifications = emptyList())
             bus.messages.test {
-                assertEquals("Failed to save notification preferences", awaitItem().text)
+                assertEquals("Couldn't save notification preferences", awaitItem().text)
             }
         }
 }

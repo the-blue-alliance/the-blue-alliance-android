@@ -1,23 +1,31 @@
 package com.thebluealliance.android.ui.regional
 
+import android.util.Log
+import app.cash.turbine.test
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.UnknownHostException
 import java.util.Calendar
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -41,7 +49,12 @@ class RegionalAdvancementViewModelTest {
     @Test
     fun `opens on the default season, not the max season`() {
         val viewModel =
-            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
         assertEquals(2025, viewModel.selectedYear.value)
         assertEquals(2027, viewModel.maxYear.value)
         coVerify { repository.getRegionalRankings(2025) }
@@ -52,7 +65,12 @@ class RegionalAdvancementViewModelTest {
         val default = CompletableDeferred<Int>()
         coEvery { seasons.defaultSeason() } coAnswers { default.await() }
         val viewModel =
-            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
         viewModel.selectYear(2019)
         default.complete(2025)
         assertEquals(2019, viewModel.selectedYear.value)
@@ -66,7 +84,12 @@ class RegionalAdvancementViewModelTest {
         val default = CompletableDeferred<Int>()
         coEvery { seasons.defaultSeason() } coAnswers { default.await() }
         val viewModel =
-            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
         default.complete(launchYear + 1)
         stale.complete(listOf(mockk(relaxed = true)))
         assertEquals(UiState.Empty, viewModel.uiState.value)
@@ -77,7 +100,12 @@ class RegionalAdvancementViewModelTest {
         val stale = CompletableDeferred<List<RegionalRanking>>()
         coEvery { repository.getRegionalRankings(2025) } coAnswers { stale.await() }
         val viewModel =
-            RegionalAdvancementViewModel(Screen.RegionalAdvancement(), repository, seasons)
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
         assertEquals(true, viewModel.isRefreshing.value)
         viewModel.selectYear(2019)
         assertEquals(false, viewModel.isRefreshing.value)
@@ -106,5 +134,56 @@ class RegionalAdvancementViewModelTest {
     }
 
     private fun linkedViewModel(year: Int) =
-        RegionalAdvancementViewModel(Screen.RegionalAdvancement(year), repository, seasons)
+        RegionalAdvancementViewModel(
+            Screen.RegionalAdvancement(year),
+            repository,
+            seasons,
+            UserMessageBus(),
+        )
+
+    @Test
+    fun `a failed load says so without the exception's text`() {
+        mockkStatic(Log::class)
+        every { Log.w(any(), any<String>(), any()) } returns 0
+        coEvery { repository.getRegionalRankings(any()) } throws
+            UnknownHostException("Unable to resolve host \"www.thebluealliance.com\"")
+        val viewModel =
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(2025),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
+        assertEquals(UiState.Error("Couldn't load regional advancement"), viewModel.uiState.value)
+        unmockkStatic(Log::class)
+    }
+
+    @Test
+    fun `a failed refresh keeps the shown rankings and offers Retry`() =
+        runTest {
+            mockkStatic(Log::class)
+            every { Log.w(any(), any<String>(), any()) } returns 0
+            val rankings = listOf<RegionalRanking>(mockk(relaxed = true))
+            coEvery { repository.getRegionalRankings(any()) } returns rankings
+            val bus = UserMessageBus()
+            val viewModel =
+                RegionalAdvancementViewModel(
+                    Screen.RegionalAdvancement(2025),
+                    repository,
+                    seasons,
+                    bus,
+                )
+            coEvery { repository.getRegionalRankings(any()) } throws UnknownHostException()
+            viewModel.refreshRankings()
+            assertEquals(UiState.Success(rankings), viewModel.uiState.value)
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Couldn't refresh regional advancement", message.text)
+                assertEquals("Retry", message.action?.label)
+                message.action!!.onPerform()
+                coVerify(exactly = 3) { repository.getRegionalRankings(2025) }
+                cancelAndIgnoreRemainingEvents()
+            }
+            unmockkStatic(Log::class)
+        }
 }

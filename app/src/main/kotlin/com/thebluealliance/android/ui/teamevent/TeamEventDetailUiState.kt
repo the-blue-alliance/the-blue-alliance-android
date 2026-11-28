@@ -23,4 +23,8 @@ data class TeamEventDetailUiState(
     val pitLocation: String? = null,
     val advancementPoints: EventAdvancementPoints? = null,
     val cmpAdvancement: CmpAdvancement? = null,
-)
+) {
+    /** Whether [tab]'s fetch failed with nothing cached to show instead. Not tracked yet. */
+    @Suppress("UNUSED_PARAMETER", "FunctionOnlyReturningConstant")
+    fun loadFailed(tab: TeamEventDetailTab): Boolean = false
+}
