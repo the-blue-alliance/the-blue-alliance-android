@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,13 +23,11 @@ import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandRipple
-import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 data class SectionHeaderInfo(
@@ -97,34 +93,21 @@ fun SectionHeader(
                 },
             )
 
-            DropdownMenu(
+            SelectableMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-                SurfaceFocusRing {
-                    allHeaders.forEach { info ->
-                        val isSelected = info.label == label
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    text = info.label,
-                                    fontWeight =
-                                        if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    color =
-                                        if (isSelected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurface
-                                        },
-                                )
-                            },
-                            onClick = {
-                                menuExpanded = false
-                                onHeaderSelected(info)
-                            },
-                            modifier = Modifier.handCursor().selectedIfCurrent(isSelected),
-                        )
-                    }
+                allHeaders.forEachIndexed { index, info ->
+                    SelectableMenuItem(
+                        text = info.label,
+                        selected = info.label == label,
+                        index = index,
+                        count = allHeaders.size,
+                        onClick = {
+                            menuExpanded = false
+                            onHeaderSelected(info)
+                        },
+                    )
                 }
             }
         }
