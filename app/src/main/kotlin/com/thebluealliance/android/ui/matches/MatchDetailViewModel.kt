@@ -105,7 +105,14 @@ class MatchDetailViewModel
         }
 
         fun refresh() {
-            refreshingTracked(refreshOutcome, { refreshMatch() })
+            refreshingTracked(refreshOutcome, ::reportFailedRefresh, { refreshMatch() })
+        }
+
+        // With nothing cached, the error screen says it instead.
+        private suspend fun reportFailedRefresh() {
+            if (matchRepository.observeMatch(matchKey).first() != null) {
+                userMessages.showRetry("Couldn't refresh match", ::refresh)
+            }
         }
 
         // Records whether TBA has the match at all, so a 404 shows "not found", not a load error.

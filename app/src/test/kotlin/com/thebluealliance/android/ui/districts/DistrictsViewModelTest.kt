@@ -80,25 +80,28 @@ class DistrictsViewModelTest {
     fun `a failed refresh over cached districts offers Retry, which refreshes again`() =
         runTest {
             mockkStatic(Log::class)
-            every { Log.w(any(), any<String>(), any()) } returns 0
-            val bus = UserMessageBus()
-            every { repository.observeDistrictsForYear(any()) } returns
-                flowOf(listOf(District("2025fim", "fim", "FIRST In Michigan", 2025)))
-            var refreshes = 0
-            coEvery { repository.refreshDistrictsForYear(2025) } answers {
-                refreshes++
-                throw UnknownHostException()
+            try {
+                every { Log.w(any(), any<String>(), any()) } returns 0
+                val bus = UserMessageBus()
+                every { repository.observeDistrictsForYear(any()) } returns
+                    flowOf(listOf(District("2025fim", "fim", "FIRST In Michigan", 2025)))
+                var refreshes = 0
+                coEvery { repository.refreshDistrictsForYear(2025) } answers {
+                    refreshes++
+                    throw UnknownHostException()
+                }
+                DistrictsViewModel(repository, seasons, bus)
+                bus.messages.test {
+                    val message = awaitItem()
+                    assertEquals("Couldn't refresh districts", message.text)
+                    assertEquals("Retry", message.action?.label)
+                    val before = refreshes
+                    message.action!!.onPerform()
+                    assertEquals(before + 1, refreshes)
+                    cancelAndIgnoreRemainingEvents()
+                }
+            } finally {
+                unmockkStatic(Log::class)
             }
-            DistrictsViewModel(repository, seasons, bus)
-            bus.messages.test {
-                val message = awaitItem()
-                assertEquals("Couldn't refresh districts", message.text)
-                assertEquals("Retry", message.action?.label)
-                val before = refreshes
-                message.action!!.onPerform()
-                assertEquals(before + 1, refreshes)
-                cancelAndIgnoreRemainingEvents()
-            }
-            unmockkStatic(Log::class)
         }
 }

@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -86,9 +87,19 @@ class DistrictsViewModel
         }
 
         fun refreshDistricts() {
+            val year = selection.year.value
             refreshingTracked(
                 refreshOutcome,
-                { districtRepository.refreshDistrictsForYear(selection.year.value) },
+                { reportFailedRefresh(year) },
+                { districtRepository.refreshDistrictsForYear(year) },
             )
+        }
+
+        // With nothing cached, the error screen says it instead.
+        private suspend fun reportFailedRefresh(year: Int) {
+            if (year != selection.year.value) return
+            if (districtRepository.observeDistrictsForYear(year).first().isNotEmpty()) {
+                userMessages.showRetry("Couldn't refresh districts", ::refreshDistricts)
+            }
         }
     }

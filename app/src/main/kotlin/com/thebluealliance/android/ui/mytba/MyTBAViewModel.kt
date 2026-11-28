@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -184,7 +185,8 @@ class MyTBAViewModel
         fun refresh() {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
-                refreshing(
+                refreshingReported(
+                    { reportFailedRefresh(MyTBATab.entries, ::refresh) },
                     { tracked(favoritesOutcome) { myTBARepository.refreshFavorites() } },
                     { tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() } },
                 )
@@ -194,17 +196,37 @@ class MyTBAViewModel
         fun refreshTab(tab: MyTBATab) {
             viewModelScope.launch {
                 if (!authRepository.isSignedIn()) return@launch
+                val report = suspend { reportFailedRefresh(listOf(tab)) { refreshTab(tab) } }
                 when (tab) {
                     MyTBATab.FAVORITES ->
-                        refreshing({
+                        refreshingReported(report, {
                             tracked(favoritesOutcome) { myTBARepository.refreshFavorites() }
                         })
                     MyTBATab.NOTIFICATIONS ->
-                        refreshing({
+                        refreshingReported(report, {
                             tracked(subscriptionsOutcome) { myTBARepository.refreshSubscriptions() }
                         })
                 }
             }
+        }
+
+        // A tab that failed with nothing cached shows its error screen instead.
+        private suspend fun reportFailedRefresh(
+            tabs: List<MyTBATab>,
+            retry: () -> Unit,
+        ) {
+            val failedOverCache =
+                tabs.any { tab ->
+                    when (tab) {
+                        MyTBATab.FAVORITES ->
+                            favoritesOutcome.value == RefreshOutcome.FAILED &&
+                                myTBARepository.observeFavorites().first().isNotEmpty()
+                        MyTBATab.NOTIFICATIONS ->
+                            subscriptionsOutcome.value == RefreshOutcome.FAILED &&
+                                myTBARepository.observeSubscriptions().first().isNotEmpty()
+                    }
+                }
+            if (failedOverCache) userMessages.showRetry("Couldn't refresh myTBA", retry)
         }
 
         private suspend fun tracked(

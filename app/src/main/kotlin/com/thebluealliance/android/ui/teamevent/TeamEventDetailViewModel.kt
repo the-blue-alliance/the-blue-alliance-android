@@ -148,7 +148,8 @@ class TeamEventDetailViewModel
         }
 
         fun refreshAll() {
-            refreshing(
+            refreshReported(
+                ::refreshAll,
                 { teamRepository.refreshTeam(teamKey) },
                 {
                     eventRepository.refreshEvent(eventKey)
@@ -167,10 +168,12 @@ class TeamEventDetailViewModel
         }
 
         fun refreshTab(tab: TeamEventDetailTab) {
+            val retry = { refreshTab(tab) }
             when (tab) {
                 // The summary overview needs most of the event data
                 TeamEventDetailTab.SUMMARY ->
-                    refreshing(
+                    refreshReported(
+                        retry,
                         { teamRepository.refreshTeam(teamKey) },
                         {
                             eventRepository.refreshEvent(eventKey)
@@ -185,14 +188,28 @@ class TeamEventDetailViewModel
                         { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
                     )
                 TeamEventDetailTab.MATCHES ->
-                    refreshing({ matchRepository.refreshEventMatches(eventKey) })
+                    refreshReported(retry, { matchRepository.refreshEventMatches(eventKey) })
                 TeamEventDetailTab.MEDIA ->
-                    refreshing({ teamRepository.refreshTeamMedia(teamKey, year) })
+                    refreshReported(retry, { teamRepository.refreshTeamMedia(teamKey, year) })
                 TeamEventDetailTab.STATS ->
-                    refreshing({ eventRepository.refreshEventOPRs(eventKey) })
+                    refreshReported(retry, { eventRepository.refreshEventOPRs(eventKey) })
                 TeamEventDetailTab.AWARDS ->
-                    refreshing({ eventRepository.refreshEventAwards(eventKey) })
+                    refreshReported(retry, { eventRepository.refreshEventAwards(eventKey) })
             }
+        }
+
+        private fun refreshReported(
+            retry: () -> Unit,
+            vararg tasks: suspend () -> Unit,
+        ) {
+            refreshingReported({ reportFailedRefresh(retry) }, *tasks)
+        }
+
+        private suspend fun reportFailedRefresh(retry: () -> Unit) {
+            val cached =
+                teamRepository.observeTeam(teamKey).first() != null ||
+                    eventRepository.observeEvent(eventKey).first() != null
+            if (cached) userMessages.showRetry("Couldn't refresh team at event", retry)
         }
 
         // Regional advancement is a whole-season payload that only applies to non-district

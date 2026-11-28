@@ -111,4 +111,30 @@ class TeamEventDetailViewModelRetryTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+
+    @Test
+    fun `a failed tab refresh's Retry refreshes only that tab`() =
+        runTest {
+            coEvery { teams.refreshTeam(any()) } returns Unit
+            coEvery { events.refreshEvent(any()) } returns Unit
+            coEvery { matches.refreshEventMatches(any()) } returns Unit
+            coEvery { teams.refreshTeamMedia(any(), any()) } throws UnknownHostException()
+            val viewModel =
+                TeamEventDetailViewModel(
+                    navKey = Screen.TeamEventDetail("frc254", "2024casj"),
+                    teamRepository = teams,
+                    eventRepository = events,
+                    matchRepository = matches,
+                    regionalAdvancementRepository = regional,
+                    userMessages = bus,
+                )
+            bus.messages.test {
+                awaitItem()
+                viewModel.refreshTab(TeamEventDetailTab.MEDIA)
+                awaitItem().action!!.onPerform()
+                coVerify(exactly = 3) { teams.refreshTeamMedia("frc254", 2024) }
+                coVerify(exactly = 1) { teams.refreshTeam("frc254") }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
 }

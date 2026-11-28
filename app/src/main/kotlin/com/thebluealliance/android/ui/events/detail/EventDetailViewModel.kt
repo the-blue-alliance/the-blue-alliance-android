@@ -336,7 +336,9 @@ class EventDetailViewModel
         private suspend fun reportFailedRefresh(failed: Set<EventDetailTab>) {
             if (failed.isEmpty()) return
             val cached = state.first()
-            if (failed.any { cached.hasData(it) }) userMessages.show("Couldn't refresh event")
+            if (failed.any { cached.hasData(it) }) {
+                userMessages.showRetry("Couldn't refresh event", ::refreshAll)
+            }
         }
 
         // Records whether TBA has the event at all, so a 404 shows "not found", not a spinner.

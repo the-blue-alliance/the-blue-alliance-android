@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -147,14 +148,23 @@ class EventsViewModel
         }
 
         fun refreshEvents() {
-            refreshing({
+            val year = selection.year.value
+            refreshingReported({ reportFailedRefresh(year) }, {
                 try {
-                    eventRepository.refreshEventsForYear(selection.year.value)
-                    districtRepository.refreshDistrictsForYear(selection.year.value)
+                    eventRepository.refreshEventsForYear(year)
+                    districtRepository.refreshDistrictsForYear(year)
                 } finally {
                     hasLoaded.value = true
                 }
             })
+        }
+
+        // A season the user has left doesn't report over the new one.
+        private suspend fun reportFailedRefresh(year: Int) {
+            if (year != selection.year.value) return
+            if (eventRepository.observeEventsForYear(year).first().isNotEmpty()) {
+                userMessages.showRetry("Couldn't refresh events", ::refreshEvents)
+            }
         }
 
         @AssistedFactory
