@@ -75,6 +75,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.detailOverflowActions
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
@@ -255,7 +256,7 @@ fun TeamDetailScreen(
                             )
                         },
                     overflowActions =
-                        listOfNotNull(
+                        detailOverflowActions(
                             uiState.team?.let { team ->
                                 TopBarAction(
                                     label = "Share",
@@ -272,15 +273,19 @@ fun TeamDetailScreen(
                                     },
                                 )
                             },
-                            if (viewModel.canPinShortcuts && !uiState.notFound) {
-                                TopBarAction(
-                                    label = "Add to home screen",
-                                    icon = TbaIcons.AddToHomeScreen,
-                                    onClick = viewModel::requestPinShortcut,
-                                )
-                            } else {
-                                null
-                            },
+                            search =
+                                TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                            pinShortcut =
+                                if (viewModel.canPinShortcuts) {
+                                    TopBarAction(
+                                        label = "Add to home screen",
+                                        icon = TbaIcons.AddToHomeScreen,
+                                        onClick = viewModel::requestPinShortcut,
+                                    )
+                                } else {
+                                    null
+                                },
+                            notFound = uiState.notFound,
                         ),
                 )
 

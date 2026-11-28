@@ -44,6 +44,7 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
+import com.thebluealliance.android.ui.components.detailOverflowActions
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
 import com.thebluealliance.android.ui.components.pageBackground
@@ -83,6 +84,7 @@ fun EventDetailScreen(
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToDistrict: (districtKey: String) -> Unit = {},
     onNavigateToPitMap: (eventKey: String, highlightedTeamKeys: List<String>) -> Unit = { _, _ -> },
+    onNavigateToSearch: () -> Unit = {},
     initialTab: EventDetailTab = EventDetailTab.INFO,
     viewModel: EventDetailViewModel,
 ) {
@@ -211,7 +213,7 @@ fun EventDetailScreen(
                             )
                         },
                     overflowActions =
-                        listOfNotNull(
+                        detailOverflowActions(
                             uiState.event?.let { event ->
                                 TopBarAction(
                                     label = "Share",
@@ -226,15 +228,19 @@ fun EventDetailScreen(
                                     },
                                 )
                             },
-                            if (viewModel.canPinShortcuts && !uiState.notFound) {
-                                TopBarAction(
-                                    label = "Add to home screen",
-                                    icon = TbaIcons.AddToHomeScreen,
-                                    onClick = viewModel::requestPinShortcut,
-                                )
-                            } else {
-                                null
-                            },
+                            search =
+                                TopBarAction("Search", TbaIcons.Search, onNavigateToSearch),
+                            pinShortcut =
+                                if (viewModel.canPinShortcuts) {
+                                    TopBarAction(
+                                        label = "Add to home screen",
+                                        icon = TbaIcons.AddToHomeScreen,
+                                        onClick = viewModel::requestPinShortcut,
+                                    )
+                                } else {
+                                    null
+                                },
+                            notFound = uiState.notFound,
                         ),
                 )
 
