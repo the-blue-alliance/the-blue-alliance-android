@@ -17,7 +17,7 @@ Highlight shapes (the hover, press and focus highlight of anything clickable):
 
 `paddedClickable` clips to the shape you pass; pick it by these rules.
 
-Menus that show a current item (year picker, section jump menus) use `SelectableMenuItem`.
+Menus that show a current item (year picker, section jump menus) use `SelectableMenuItem` inside `SelectableMenu`.
 
 ## Verifying changes on an emulator
 
