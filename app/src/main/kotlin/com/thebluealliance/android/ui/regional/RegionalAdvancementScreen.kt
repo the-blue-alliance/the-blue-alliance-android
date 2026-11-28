@@ -37,14 +37,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.RegionalEventPoints
 import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
-import com.thebluealliance.android.ui.components.PaddedClickableHorizontalPadding
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TableCellHighlightPadding
 import com.thebluealliance.android.ui.components.TableCellPadding
 import com.thebluealliance.android.ui.components.TableColumnGutter
 import com.thebluealliance.android.ui.components.TableHeaderBand
@@ -167,6 +170,7 @@ fun RegionalAdvancementScreen(
             },
         ) { rankings ->
             val minWidths = regionalColumnMinWidths(rankings)
+            val strings = rememberQuantityStrings()
             TbaTable(
                 weights = COLUMN_WEIGHTS,
                 minWidths = minWidths,
@@ -181,6 +185,7 @@ fun RegionalAdvancementScreen(
                         ranking = ranking,
                         onNavigateToTeam = onNavigateToTeam,
                         onNavigateToEvent = onNavigateToEvent,
+                        strings = strings,
                     )
                 }
             }
@@ -216,14 +221,15 @@ internal fun regionalRowDescription(
     bonus: Int,
     total: Int,
     qualified: String?,
+    strings: QuantityStrings,
 ): String =
     buildList {
         add("Rank $rank")
         add("Team $teamNumber")
-        add(event1?.let { "Event 1: $it points" } ?: "Event 1 none")
-        add(event2?.let { "Event 2: $it points" } ?: "Event 2 none")
+        add(event1?.let { "Event 1: ${strings.get(R.plurals.points, it)}" } ?: "Event 1 none")
+        add(event2?.let { "Event 2: ${strings.get(R.plurals.points, it)}" } ?: "Event 2 none")
         add(if (bonus > 0) "bonus $bonus" else "bonus none")
-        add("$total total points")
+        add(strings.get(R.plurals.total_points, total))
         add(qualified?.takeIf { it.isNotBlank() }?.let { "qualified: $it" } ?: "not qualified")
     }.joinToString(", ")
 
@@ -286,6 +292,7 @@ private fun TableScope.RegionalRankingRow(
     ranking: RegionalRanking,
     onNavigateToTeam: (String) -> Unit,
     onNavigateToEvent: (String) -> Unit,
+    strings: QuantityStrings,
 ) {
     val events = eventTotals(ranking)
     val description =
@@ -297,12 +304,15 @@ private fun TableScope.RegionalRankingRow(
             bonus = (ranking.rookieBonus + ranking.singleEventBonus).toInt(),
             total = ranking.pointTotal.toInt(),
             qualified = ranking.advancementMethod,
+            strings = strings,
         )
     Column(modifier = Modifier.tableWidth(tableWidth)) {
         TableRow(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    // A row of plain cells is shorter than one with event links; keep a 48dp target.
+                    .heightIn(min = 48.dp)
                     .returnsFocus()
                     .handCursor()
                     .clickable(onClickLabel = viewTeamClickLabel(ranking.teamKey)) {
@@ -326,10 +336,12 @@ private fun TableScope.RegionalRankingRow(
                     EventScoreCell(
                         score = event.total.toInt(),
                         onClick = { onNavigateToEvent(event.eventKey) },
+                        // The sideways-scrolling part clips at its start edge.
+                        atScrollEdge = i == 0 && rowScroll != null,
                         modifier =
                             Modifier
                                 .tableColumn(this, 2 + i)
-                                .padding(horizontal = TableColumnGutter),
+                                .padding(end = TableColumnGutter),
                     )
                 } else {
                     TableValueCell(
@@ -372,21 +384,24 @@ private fun TableScope.RegionalRankingRow(
 }
 
 /**
- * An event's score that opens the event. The highlight hugs the score and bleeds past its start
- * without moving it; the tap target runs from that bleed to the cell's end, so it is wide enough
- * that touch never stretches it further into the previous column.
+ * An event's score that opens the event, in line with the column's other values. The highlight
+ * bleeds past the cell's start so the score keeps [TableCellHighlightPadding] of room, except
+ * [atScrollEdge], where the edge would clip it and it keeps the cell's gutter instead. The tap
+ * target runs from that bleed to the cell's end.
  */
 @Composable
 private fun EventScoreCell(
     score: Int,
     onClick: () -> Unit,
+    atScrollEdge: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val bleed = if (atScrollEdge) 0.dp else TableCellHighlightPadding - TableColumnGutter
     val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier =
             modifier
-                .bleedHorizontally(start = PaddedClickableHorizontalPadding, end = 0.dp)
+                .bleedHorizontally(start = bleed, end = 0.dp)
                 .returnsFocus()
                 .handCursor()
                 .clickable(
@@ -407,7 +422,12 @@ private fun EventScoreCell(
                 Modifier
                     .clip(MaterialTheme.shapes.small)
                     .indication(interactionSource, ripple())
-                    .padding(horizontal = PaddedClickableHorizontalPadding, vertical = 6.dp),
+                    .padding(
+                        start = TableColumnGutter + bleed,
+                        end = TableCellHighlightPadding,
+                        top = 6.dp,
+                        bottom = 6.dp,
+                    ),
         )
     }
 }
