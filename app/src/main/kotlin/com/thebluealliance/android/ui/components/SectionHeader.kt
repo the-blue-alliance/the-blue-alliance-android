@@ -158,7 +158,9 @@ private fun SectionHeaderRow(
             text = label,
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
-            modifier = Modifier.semantics { heading() },
+            // Not fill: a short label keeps the trailing content beside it, and a long one wraps
+            // rather than pushing that content off the row.
+            modifier = Modifier.weight(1f, fill = false).semantics { heading() },
         )
         trailingContent?.invoke(this)
     }
