@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -170,10 +171,11 @@ private fun EventsList(
             sections.map { it.label }
         }
 
-    val currentWeekLabel =
-        remember(allEvents, today, selectedYear) {
-            currentWeekChipLabel(allEvents, today, selectedYear)
+    val currentTarget =
+        remember(sections, favoriteEventKeys, today, selectedYear) {
+            autoscrollTarget(sections, favoriteEventKeys, today, selectedYear)
         }
+    val latestTarget by rememberUpdatedState(currentTarget)
 
     val headerInfos =
         remember(sections, favoriteEventKeys) {
@@ -228,6 +230,16 @@ private fun EventsList(
         }
     }
 
+    // Scrolls to the current week (or this month's offseason events), keeping its chip lit.
+    suspend fun animateToTarget(target: AutoscrollTarget) {
+        scrollOverride = target.chipLabel
+        try {
+            listState.animateScrollToItem(target.itemIndex)
+        } finally {
+            scrollOverride = null
+        }
+    }
+
     // Reset scroll position when year changes (but not on initial composition/back navigation)
     var previousYear by rememberSaveable { mutableIntStateOf(selectedYear) }
     LaunchedEffect(selectedYear) {
@@ -239,18 +251,23 @@ private fun EventsList(
 
     // Auto-select current week on first load
     var hasAutoSelected by rememberSaveable(selectedYear) { mutableStateOf(false) }
-    LaunchedEffect(currentWeekLabel, weekChipLabels) {
-        if (!hasAutoSelected && currentWeekLabel != null && currentWeekLabel in weekChipLabels) {
+    // Keyed on whether there is a target, not on the target: favorites and fresh events loading
+    // during the scroll move its index, and restarting here would cancel the scroll partway.
+    val hasTarget = currentTarget != null
+    LaunchedEffect(selectedYear, hasTarget) {
+        val target = latestTarget
+        if (!hasAutoSelected && target != null) {
             hasAutoSelected = true
-            animateToHeader(currentWeekLabel)
+            animateToTarget(target)
         }
     }
 
     // Tab reselect: scroll to current week (or top if no current week)
     LaunchedEffect(reselectFlow) {
         reselectFlow.collect {
-            if (currentWeekLabel != null && currentWeekLabel in weekChipLabels) {
-                animateToHeader(currentWeekLabel)
+            val target = latestTarget
+            if (target != null) {
+                animateToTarget(target)
             } else {
                 scrollOverride = SCROLL_TO_FAVORITES
                 try {
