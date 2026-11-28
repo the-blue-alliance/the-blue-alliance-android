@@ -24,6 +24,7 @@ import com.thebluealliance.android.domain.model.Award
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.MinLinkHeight
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.verticalScrollbar
@@ -96,6 +97,9 @@ internal fun awardRecipient(
     }
 }
 
+// Lifts a one-line bodyMedium recipient to MinLinkHeight, since several stack with no gap.
+private val RecipientLineVerticalPadding = (MinLinkHeight - 20.dp) / 2
+
 @Composable
 fun EventAwardsTab(
     awards: List<Award>?,
@@ -149,7 +153,14 @@ private fun AwardGroupItem(
     onTeamClick: (String) -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier.fillMaxWidth().padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 8.dp,
+                // Recipient lines carry their own bottom padding.
+                bottom = if (group.recipients.isEmpty()) 8.dp else 0.dp,
+            ),
     ) {
         Text(
             text = group.name,
@@ -193,12 +204,12 @@ private fun AwardRecipientLine(
             if (teamKey != null) {
                 Modifier.paddedClickable(
                     MaterialTheme.shapes.small,
-                    vertical = 4.dp,
+                    vertical = RecipientLineVerticalPadding,
                     keepContentInPlace = true,
                     onClickLabel = "View team ${teamKey.teamNumber}",
                 ) { onTeamClick(teamKey) }
             } else {
-                Modifier.padding(vertical = 4.dp)
+                Modifier.padding(vertical = RecipientLineVerticalPadding)
             }.semantics { contentDescription = recipient.spoken },
     )
 }
