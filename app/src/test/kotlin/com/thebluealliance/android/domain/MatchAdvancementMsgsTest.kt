@@ -4,7 +4,9 @@ import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class MatchAdvancementMsgsTest {
@@ -37,18 +39,18 @@ class MatchAdvancementMsgsTest {
     fun `eight team bracket routes every set per the official table`() {
         val expected =
             mapOf(
-                1 to ("Advances to Upper Bracket - R2-7" to "Advances to Lower Bracket - R2-5"),
-                2 to ("Advances to Upper Bracket - R2-7" to "Advances to Lower Bracket - R2-5"),
-                3 to ("Advances to Upper Bracket - R2-8" to "Advances to Lower Bracket - R2-6"),
-                4 to ("Advances to Upper Bracket - R2-8" to "Advances to Lower Bracket - R2-6"),
-                5 to ("Advances to Lower Bracket - R3-10" to "Eliminated"),
-                6 to ("Advances to Lower Bracket - R3-9" to "Eliminated"),
-                7 to ("Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-9"),
-                8 to ("Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-10"),
-                9 to ("Advances to Lower Bracket - R4-12" to "Eliminated"),
-                10 to ("Advances to Lower Bracket - R4-12" to "Eliminated"),
-                11 to ("Advances to Finals" to "Advances to Lower Bracket - R5-13"),
-                12 to ("Advances to Lower Bracket - R5-13" to "Eliminated"),
+                1 to ("Advances to Upper Bracket · R2-7" to "Advances to Lower Bracket · R2-5"),
+                2 to ("Advances to Upper Bracket · R2-7" to "Advances to Lower Bracket · R2-5"),
+                3 to ("Advances to Upper Bracket · R2-8" to "Advances to Lower Bracket · R2-6"),
+                4 to ("Advances to Upper Bracket · R2-8" to "Advances to Lower Bracket · R2-6"),
+                5 to ("Advances to Lower Bracket · R3-10" to "Eliminated"),
+                6 to ("Advances to Lower Bracket · R3-9" to "Eliminated"),
+                7 to ("Advances to Upper Bracket · R4-11" to "Advances to Lower Bracket · R3-9"),
+                8 to ("Advances to Upper Bracket · R4-11" to "Advances to Lower Bracket · R3-10"),
+                9 to ("Advances to Lower Bracket · R4-12" to "Eliminated"),
+                10 to ("Advances to Lower Bracket · R4-12" to "Eliminated"),
+                11 to ("Advances to Finals" to "Advances to Lower Bracket · R5-13"),
+                12 to ("Advances to Lower Bracket · R5-13" to "Eliminated"),
                 13 to ("Advances to Finals" to "Eliminated"),
             )
 
@@ -65,7 +67,7 @@ class MatchAdvancementMsgsTest {
         val msgs = upperFinal.getAdvancement(PlayoffType.DOUBLE_ELIM_8_TEAM)
 
         assertEquals("Advances to Finals", msgs?.blue)
-        assertEquals("Advances to Lower Bracket - R5-13", msgs?.red)
+        assertEquals("Advances to Lower Bracket · R5-13", msgs?.red)
     }
 
     @Test
@@ -73,7 +75,17 @@ class MatchAdvancementMsgsTest {
         val msgs = match(setNumber = 3).getAdvancement(PlayoffType.DOUBLE_ELIM_4_TEAM)
 
         assertEquals("Advances to Finals", msgs?.red)
-        assertEquals("Advances to Lower Bracket - R3-5", msgs?.blue)
+        assertEquals("Advances to Lower Bracket · R3-5", msgs?.blue)
+    }
+
+    @Test
+    fun `advancement separates bracket and match code with a middle dot`() {
+        val msgs = match(setNumber = 3).getAdvancement(PlayoffType.DOUBLE_ELIM_8_TEAM)!!
+
+        // Spaced middot between the pieces; the hyphen stays inside the match code.
+        assertTrue(msgs.red.endsWith("Bracket · R2-8"), msgs.red)
+        assertTrue(msgs.blue.endsWith("Bracket · R2-6"), msgs.blue)
+        assertFalse(msgs.red.contains(" - ") || msgs.blue.contains(" - "))
     }
 
     @Test
