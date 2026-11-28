@@ -44,10 +44,13 @@ import com.thebluealliance.android.domain.model.EventAdvancementPoints
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.components.TableRowDivider
 import com.thebluealliance.android.ui.components.expandableRow
 import com.thebluealliance.android.ui.components.paddedClickable
+import com.thebluealliance.android.ui.components.tableRankLabel
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.verticalScrollbar
+import com.thebluealliance.android.ui.components.viewTeamClickLabel
 import com.thebluealliance.android.ui.theme.TBAMotionTokens
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
@@ -146,7 +149,7 @@ private fun AdvancementPointsItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "#$rank",
+                text = tableRankLabel(rank),
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.width(48.dp),
             )
@@ -160,7 +163,7 @@ private fun AdvancementPointsItem(
                             MaterialTheme.shapes.small,
                             vertical = 2.dp,
                             keepContentInPlace = true,
-                            onClickLabel = "View team ${points.teamKey.teamNumber}",
+                            onClickLabel = viewTeamClickLabel(points.teamKey),
                         ) { onTeamClick(points.teamKey) },
                 )
                 if (teamName != null) {
@@ -253,7 +256,7 @@ private fun AdvancementPointsItem(
             }
         }
 
-        HorizontalDivider()
+        TableRowDivider()
     }
 }
 
