@@ -28,6 +28,17 @@ class TeamLabelTest {
     }
 
     @Test
+    fun `padding around the nickname and name is trimmed`() {
+        assertEquals("254 · The Cheesy Poofs", teamLabel(254, "  The Cheesy Poofs ", null))
+        assertEquals("1 · The Juggernauts", teamLabel(1, null, " The Juggernauts  "))
+    }
+
+    @Test
+    fun `blank string team number leaves just the label`() {
+        assertEquals("The Cheesy Poofs", teamLabel(" ", "The Cheesy Poofs"))
+    }
+
+    @Test
     fun `string team number formats the same way`() {
         assertEquals("177 · Bobcat Robotics", teamLabel("177", "Bobcat Robotics"))
     }

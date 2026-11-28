@@ -234,16 +234,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
         }
 
         val teamLabel: String
-            get() =
-                if (teamNumber.isNotEmpty()) {
-                    if (teamNickname.isNotEmpty()) {
-                        "$teamNumber \u2014 $teamNickname"
-                    } else {
-                        "Team $teamNumber"
-                    }
-                } else {
-                    "Team Tracker"
-                }
+            get() = widgetTeamLabel(teamNumber, teamNickname)
 
         /** Last match brief summary for when there's no next match. */
         val lastMatchBrief: String?
@@ -1391,4 +1382,19 @@ private fun tbaWidgetColors(): ColorProviders =
         DynamicThemeColorProviders
     } else {
         ColorProviders(light = TbaLightColorScheme, dark = TbaDarkColorScheme)
+    }
+
+/** The widget header: "254 · The Cheesy Poofs", "Team 254" without a nickname, "Team Tracker" unset. */
+internal fun widgetTeamLabel(
+    teamNumber: String,
+    teamNickname: String,
+): String =
+    if (teamNumber.isNotEmpty()) {
+        if (teamNickname.isNotEmpty()) {
+            "$teamNumber \u2014 $teamNickname"
+        } else {
+            "Team $teamNumber"
+        }
+    } else {
+        "Team Tracker"
     }
