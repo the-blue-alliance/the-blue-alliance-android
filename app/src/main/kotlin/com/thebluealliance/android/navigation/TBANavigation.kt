@@ -43,6 +43,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.thebluealliance.android.MainActivity
 import com.thebluealliance.android.ui.TOP_LEVEL_DESTINATIONS
 import com.thebluealliance.android.ui.common.UserMessageHost
+import com.thebluealliance.android.ui.common.rememberUserMessageState
 import com.thebluealliance.android.ui.components.FocusReturn
 import com.thebluealliance.android.ui.components.LocalNavigationRailShown
 import com.thebluealliance.android.ui.components.LocalRefreshTargets
@@ -152,6 +153,7 @@ fun TBANavigation(
     val bottomBarShown = showBottomBar && !useRail
     // The rail or the bottom bar, whichever shows: keyboard focus starts there.
     val focusEntry = remember { WindowFocusEntry() }
+    val userMessages = rememberUserMessageState()
 
     NavigationFrame(
         showRail = useRail,
@@ -179,9 +181,10 @@ fun TBANavigation(
                 Modifier
                     .weight(1f)
                     .fillMaxSize()
-                    // The bottom bar takes the bottom inset; with none, screens pad their content by it.
+                    // The bottom bar, or a snackbar taking room, takes the bottom inset; with
+                    // neither, screens pad their content by it.
                     .then(
-                        if (bottomBarShown) {
+                        if (bottomBarShown || userMessages.reservesSpace) {
                             Modifier.consumeWindowInsets(
                                 WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom),
                             )
@@ -534,7 +537,11 @@ fun TBANavigation(
                 ),
         )
 
-        UserMessageHost(padNavigationBars = !bottomBarShown, screen = navState.currentRoute)
+        UserMessageHost(
+            state = userMessages,
+            padNavigationBars = !bottomBarShown,
+            screen = navState.currentRoute,
+        )
 
         AnimatedVisibility(
             visible = bottomBarShown,
