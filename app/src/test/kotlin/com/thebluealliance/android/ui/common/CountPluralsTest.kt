@@ -2,6 +2,8 @@ package com.thebluealliance.android.ui.common
 
 import com.thebluealliance.android.R
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class CountPluralsTest {
@@ -19,13 +21,20 @@ class CountPluralsTest {
     }
 
     @Test
-    fun `every plural has one and other items with the count`() {
+    fun `every plural has distinct one and other items`() {
         R.plurals::class.java.fields.forEach { field ->
+            val items = ResourceQuantityStrings.itemsOf(field.name)
+            assertTrue("one" in items && "other" in items, field.name)
+            assertNotEquals(items["one"], items["other"], field.name)
+        }
+    }
+
+    @Test
+    fun `counted plurals format the count`() {
+        R.plurals::class.java.fields.filter { it.name != "sponsor_credit" }.forEach { field ->
             val id = field.getInt(null)
-            if (field.name != "sponsor_credit") {
-                assertEquals("1", strings.get(id, 1).filter(Char::isDigit), field.name)
-                assertEquals("2", strings.get(id, 2).filter(Char::isDigit), field.name)
-            }
+            assertEquals("1", strings.get(id, 1).filter(Char::isDigit), field.name)
+            assertEquals("2", strings.get(id, 2).filter(Char::isDigit), field.name)
         }
     }
 }

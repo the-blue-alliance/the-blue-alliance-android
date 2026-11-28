@@ -309,6 +309,7 @@ private fun RankingsTab(
         )
         return
     }
+    val strings = rememberQuantityStrings()
     val scrollbarState = rememberLazyListState()
     LazyColumn(
         state = scrollbarState,
@@ -387,7 +388,6 @@ private fun RankingsTab(
             val dcmpPoints = dcmpPoints(ranking.eventPoints)
             val rookieBonus = ranking.rookieBonus.toInt()
             val pointTotal = ranking.pointTotal.toInt()
-            val strings = rememberQuantityStrings()
             val description =
                 districtRowDescription(
                     rank = ranking.rank,
