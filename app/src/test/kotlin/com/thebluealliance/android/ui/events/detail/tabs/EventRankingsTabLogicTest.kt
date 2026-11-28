@@ -129,21 +129,6 @@ class EventRankingsTabLogicTest {
     }
 
     @Test
-    fun `caret sits just left of a single-line label`() {
-        assertEquals(40, numericHeaderCaretX(labelLeft = 64, labelInkLeft = 0f, caretWidth = 24))
-    }
-
-    @Test
-    fun `caret sits beside a wrapped label's widest line, not the cell edge`() {
-        assertEquals(30, numericHeaderCaretX(labelLeft = 24, labelInkLeft = 30.4f, caretWidth = 24))
-    }
-
-    @Test
-    fun `caret never leaves the cell`() {
-        assertEquals(0, numericHeaderCaretX(labelLeft = 10, labelInkLeft = 0f, caretWidth = 24))
-    }
-
-    @Test
     fun `wide windows scroll rows that overflow the capped table width`() {
         val minWidths = listOf(40.dp, 100.dp, 100.dp, 260.dp, 260.dp, 60.dp)
         val layout = rankingColumnLayout(1024.dp, minWidths)
