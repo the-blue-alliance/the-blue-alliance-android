@@ -129,6 +129,25 @@ class FocusReturnTest {
     }
 
     @Test
+    fun `a menu item hands its return to the button that opened the menu`() {
+        list.standIns[MENU_ITEM] = MORE_BUTTON
+        list.focusChanged(MENU_ITEM, focused = true)
+        focusReturn.onNavigate()
+        assertEquals(MORE_BUTTON, list.takeReturn(InputMode.Keyboard))
+    }
+
+    @Test
+    fun `moving between menu items keeps the return on the button`() {
+        list.standIns[MENU_ITEM] = MORE_BUTTON
+        list.standIns[OTHER_MENU_ITEM] = MORE_BUTTON
+        list.focusChanged(OTHER_MENU_ITEM, focused = true)
+        list.focusChanged(MENU_ITEM, focused = true)
+        list.focusChanged(OTHER_MENU_ITEM, focused = false)
+        focusReturn.onNavigate()
+        assertEquals(MORE_BUTTON, list.takeReturn(InputMode.Keyboard))
+    }
+
+    @Test
     fun `focus returns only in keyboard mode`() {
         assertTrue(returnsFocusIn(InputMode.Keyboard))
         assertFalse(returnsFocusIn(InputMode.Touch))
@@ -137,5 +156,8 @@ class FocusReturnTest {
     private companion object {
         const val ROW = 1L
         const val OTHER_ROW = 2L
+        const val MORE_BUTTON = 3L
+        const val MENU_ITEM = 4L
+        const val OTHER_MENU_ITEM = 5L
     }
 }

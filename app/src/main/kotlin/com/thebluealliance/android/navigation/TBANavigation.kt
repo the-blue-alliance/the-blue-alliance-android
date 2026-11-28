@@ -402,6 +402,7 @@ fun TBANavigation(
                                             Screen.PitMap(eventKey, highlightedTeamKeys),
                                         )
                                     },
+                                    onNavigateToSearch = { navigator.navigate(Screen.Search) },
                                     initialTab = eventDetail.initialTab,
                                 )
                             }

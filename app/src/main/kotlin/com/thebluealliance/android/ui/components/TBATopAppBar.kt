@@ -18,6 +18,7 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.currentCompositeKeyHashCode
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -276,15 +277,23 @@ private fun TopBarIconButton(action: TopBarAction) {
 private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
     var expanded by remember { mutableStateOf(false) }
     val close = { expanded = false }
+    // Items that open a screen hand focus back to More options, since the menu is shut on return.
+    val anchor = currentCompositeKeyHashCode
     Box {
-        TooltipIconButton("More options", TbaIcons.MoreVert, onClick = { expanded = true })
+        TooltipIconButton(
+            "More options",
+            TbaIcons.MoreVert,
+            onClick = { expanded = true },
+            modifier = Modifier.returnsFocus(anchor),
+        )
         DropdownMenu(expanded = expanded, onDismissRequest = close) {
             SurfaceFocusRing {
                 actions.forEach { action ->
                     DropdownMenuItem(
                         text = { Text(action.label) },
                         leadingIcon = { Icon(action.icon, contentDescription = null) },
-                        modifier = Modifier.handCursor().actionState(action),
+                        modifier =
+                            Modifier.returnsFocusTo(anchor).handCursor().actionState(action),
                         onClick = {
                             close()
                             action.onClick()

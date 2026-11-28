@@ -27,6 +27,9 @@ class EntryFocus internal constructor(
     /** The launcher that opened the screen covering this entry, to focus when it shows again. */
     internal var returnTo: Long? = null
 
+    /** Launchers gone on return, such as menu items, by key, to the key focus returns to instead. */
+    internal val standIns = mutableMapOf<Long, Long>()
+
     internal fun focusChanged(
         key: Long,
         focused: Boolean,
@@ -87,7 +90,7 @@ class FocusReturn {
     /** Call as a new screen opens: the focused launcher, if any, gets focus back on return. */
     fun onNavigate() {
         val (entry, key) = focused ?: return
-        entry.returnTo = key
+        entry.returnTo = entry.standIns[key] ?: key
     }
 }
 
@@ -105,9 +108,12 @@ val LocalEntryFocus = staticCompositionLocalOf<EntryFocus?> { null }
  * It's `composed` so it can join non-composable modifier helpers such as [paddedClickable].
  */
 fun Modifier.returnsFocus(): Modifier =
+    composed { Modifier.returnsFocus(currentCompositeKeyHashCode) }
+
+/** [returnsFocus] under an explicit [key], for an anchor that [returnsFocusTo] shares. */
+internal fun Modifier.returnsFocus(key: Long): Modifier =
     composed {
         val entry = LocalEntryFocus.current ?: return@composed Modifier
-        val key = currentCompositeKeyHashCode
         val requester = remember { FocusRequester() }
         DisposableEffect(entry, key, requester) {
             entry.requesters[key] = requester
@@ -118,4 +124,19 @@ fun Modifier.returnsFocus(): Modifier =
         Modifier
             .onFocusChanged { entry.focusChanged(key, it.isFocused) }
             .focusRequester(requester)
+    }
+
+/**
+ * Marks a launcher that is gone when the user returns, such as a menu item, so focus comes back to
+ * the element marked `returnsFocus(anchor)` instead, such as the button that opened the menu.
+ */
+internal fun Modifier.returnsFocusTo(anchor: Long): Modifier =
+    composed {
+        val entry = LocalEntryFocus.current ?: return@composed Modifier
+        val key = currentCompositeKeyHashCode
+        DisposableEffect(entry, key, anchor) {
+            entry.standIns[key] = anchor
+            onDispose { if (entry.standIns[key] == anchor) entry.standIns.remove(key) }
+        }
+        Modifier.onFocusChanged { entry.focusChanged(key, it.isFocused) }
     }
