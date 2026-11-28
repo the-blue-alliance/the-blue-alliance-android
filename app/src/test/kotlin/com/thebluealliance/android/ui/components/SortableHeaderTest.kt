@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.components
 
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -32,14 +31,5 @@ class SortableHeaderTest {
     @Test
     fun `a gutter already 8dp wide needs no bleed`() {
         assertEquals(TableCellBleed(0.dp, 0.dp), tableCellBleed(12.dp, false))
-    }
-
-    @Test
-    fun `bleed widens the content but not the reported width`() {
-        val constraints = Constraints.fixedWidth(100)
-        val widened = bleedConstraints(constraints, totalPx = 8)
-        assertEquals(108, widened.minWidth)
-        assertEquals(108, widened.maxWidth)
-        assertEquals(100, bleedLayoutWidth(constraints, contentWidth = 108, totalPx = 8))
     }
 }

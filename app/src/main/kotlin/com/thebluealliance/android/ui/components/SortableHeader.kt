@@ -5,15 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.constrainWidth
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.offset
 
 /** Spoken sort state of a table header cell; the visual carat carries no description of its own. */
 internal fun sortStateDescription(
@@ -99,33 +95,3 @@ fun Modifier.sortableHeader(
                     onClick = onClick,
                 ),
         )
-
-/**
- * Lets the rest of the chain extend [start] and [end] past this element's edges without changing
- * the space it takes in its parent.
- */
-internal fun Modifier.bleedHorizontally(
-    start: Dp,
-    end: Dp,
-): Modifier =
-    layout { measurable, constraints ->
-        val startPx = start.roundToPx()
-        val totalPx = startPx + end.roundToPx()
-        val placeable = measurable.measure(bleedConstraints(constraints, totalPx))
-        layout(bleedLayoutWidth(constraints, placeable.width, totalPx), placeable.height) {
-            placeable.placeRelative(-startPx, 0)
-        }
-    }
-
-/** Constraints for the bled content: [totalPx] wider than the element's own. */
-internal fun bleedConstraints(
-    constraints: Constraints,
-    totalPx: Int,
-): Constraints = constraints.offset(horizontal = totalPx)
-
-/** The width the bled element reports to its parent: the content's, less [totalPx]. */
-internal fun bleedLayoutWidth(
-    constraints: Constraints,
-    contentWidth: Int,
-    totalPx: Int,
-): Int = constraints.constrainWidth(contentWidth - totalPx)

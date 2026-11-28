@@ -3,6 +3,8 @@ package com.thebluealliance.android.ui.regional
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,7 +36,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,14 +50,15 @@ import com.thebluealliance.android.domain.model.RegionalRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.components.PaddedClickableHorizontalPadding
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
+import com.thebluealliance.android.ui.components.bleedHorizontally
 import com.thebluealliance.android.ui.components.fitColumnWidths
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
-import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.tableSpan
@@ -374,7 +380,7 @@ private fun RegionalRankingRow(
                 .fillMaxWidth()
                 .returnsFocus()
                 .handCursor()
-                .clickable {
+                .clickable(onClickLabel = "View team ${ranking.teamKey.teamNumber}") {
                     onNavigateToTeam(ranking.teamKey)
                 }.padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
@@ -395,19 +401,10 @@ private fun RegionalRankingRow(
             )
             val sortedEvents = ranking.eventPoints.sortedBy { it.eventKey }
             if (sortedEvents.isNotEmpty()) {
-                Text(
-                    text = "${sortedEvents[0].total.toInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    softWrap = false,
-                    modifier =
-                        Modifier
-                            .regionalColumn(this, 2, columnWidths)
-                            .paddedClickable(
-                                MaterialTheme.shapes.small,
-                                vertical = 6.dp,
-                                onClickLabel = "View event",
-                            ) { onNavigateToEvent(sortedEvents[0].eventKey) },
+                EventScoreCell(
+                    score = sortedEvents[0].total.toInt(),
+                    onClick = { onNavigateToEvent(sortedEvents[0].eventKey) },
+                    modifier = Modifier.regionalColumn(this, 2, columnWidths),
                 )
             } else {
                 Text(
@@ -420,19 +417,10 @@ private fun RegionalRankingRow(
                 )
             }
             if (sortedEvents.size > 1) {
-                Text(
-                    text = "${sortedEvents[1].total.toInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    softWrap = false,
-                    modifier =
-                        Modifier
-                            .regionalColumn(this, 3, columnWidths)
-                            .paddedClickable(
-                                MaterialTheme.shapes.small,
-                                vertical = 6.dp,
-                                onClickLabel = "View event",
-                            ) { onNavigateToEvent(sortedEvents[1].eventKey) },
+                EventScoreCell(
+                    score = sortedEvents[1].total.toInt(),
+                    onClick = { onNavigateToEvent(sortedEvents[1].eventKey) },
+                    modifier = Modifier.regionalColumn(this, 3, columnWidths),
                 )
             } else {
                 Text(
@@ -475,6 +463,47 @@ private fun RegionalRankingRow(
                 modifier = Modifier.regionalColumn(this, 6, columnWidths),
             )
         }
+    }
+}
+
+/**
+ * An event's score that opens the event. The highlight hugs the score and bleeds past its start
+ * without moving it; the tap target runs from that bleed to the cell's end, so it is wide enough
+ * that touch never stretches it further into the previous column.
+ */
+@Composable
+private fun EventScoreCell(
+    score: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier =
+            modifier
+                .bleedHorizontally(start = PaddedClickableHorizontalPadding, end = 0.dp)
+                .returnsFocus()
+                .handCursor()
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClickLabel = "View event",
+                    role = Role.Button,
+                    onClick = onClick,
+                ),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Text(
+            text = "$score",
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            softWrap = false,
+            modifier =
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .indication(interactionSource, ripple())
+                    .padding(horizontal = PaddedClickableHorizontalPadding, vertical = 6.dp),
+        )
     }
 }
 

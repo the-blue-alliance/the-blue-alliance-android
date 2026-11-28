@@ -682,6 +682,7 @@ private fun StatsTab(
                         .paddedClickable(
                             MaterialTheme.shapes.small,
                             vertical = 4.dp,
+                            keepContentInPlace = true,
                             onClickLabel = "Open in browser",
                         ) {
                             context.openUrl(

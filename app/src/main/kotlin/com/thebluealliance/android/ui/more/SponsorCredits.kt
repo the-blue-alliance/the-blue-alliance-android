@@ -62,8 +62,8 @@ fun SponsorCredits(
                 val tap =
                     Modifier.paddedClickable(
                         MaterialTheme.shapes.small,
-                        horizontal = 0.dp,
                         vertical = 6.dp,
+                        keepContentInPlace = true,
                         onClickLabel = "Open in browser",
                         onClick = { context.openUrl(sponsor.url) },
                     )

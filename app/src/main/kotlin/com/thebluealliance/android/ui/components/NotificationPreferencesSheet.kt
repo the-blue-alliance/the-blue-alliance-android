@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -31,9 +30,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -203,6 +200,8 @@ internal val StringStateListSaver =
  */
 internal val SwitchRowVerticalPadding = 8.dp
 
+private val SwitchRowHighlightPadding = 12.dp
+
 /** A full-width row that toggles [checked]; the label and the switch are one target. */
 @Composable
 private fun SwitchRow(
@@ -215,10 +214,16 @@ private fun SwitchRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clip(MaterialTheme.shapes.small)
-                .handCursor()
-                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-                .padding(vertical = SwitchRowVerticalPadding),
+                // The highlight bleeds into the sheet's 16dp margin, so the label and switch keep
+                // their place but no longer sit against its edges.
+                .paddedToggleable(
+                    value = checked,
+                    shape = MaterialTheme.shapes.small,
+                    horizontal = SwitchRowHighlightPadding,
+                    vertical = SwitchRowVerticalPadding,
+                    keepContentInPlace = true,
+                    onValueChange = onCheckedChange,
+                ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text = text, style = style, modifier = Modifier.weight(1f))
