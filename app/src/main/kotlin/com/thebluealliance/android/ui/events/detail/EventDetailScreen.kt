@@ -410,6 +410,7 @@ fun EventDetailScreen(
                     EventDetailTab.AWARDS ->
                         EventAwardsTab(
                             awards = uiState.awards,
+                            teams = uiState.teams,
                             onTeamClick = { teamKey ->
                                 val eventKey = uiState.event?.key
                                 if (eventKey != null) {
