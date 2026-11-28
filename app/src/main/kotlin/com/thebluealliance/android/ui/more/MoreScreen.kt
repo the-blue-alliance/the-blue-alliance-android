@@ -70,7 +70,7 @@ fun MoreScreen(
             HorizontalDivider()
             MoreItem(
                 icon = TbaIcons.EmojiEvents,
-                label = "Regional Advancement",
+                label = "Regional advancement",
                 onClick = onNavigateToRegionalAdvancement,
             )
             HorizontalDivider()
@@ -99,7 +99,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = SmallTextLinkVerticalPadding,
-                            onClickLabel = "Open About",
+                            onClickLabel = "Open",
                             onClick = onNavigateToAbout,
                         ),
                 )
@@ -118,7 +118,7 @@ fun MoreScreen(
                             MaterialTheme.shapes.small,
                             horizontal = 8.dp,
                             vertical = SmallTextLinkVerticalPadding,
-                            onClickLabel = "Open Thanks",
+                            onClickLabel = "Open",
                             onClick = onNavigateToThanks,
                         ),
                 )

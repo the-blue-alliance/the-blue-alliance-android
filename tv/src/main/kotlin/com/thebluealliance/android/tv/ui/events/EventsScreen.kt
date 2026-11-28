@@ -164,7 +164,7 @@ private fun Webcast.pickerTitle(): String = stringResource(R.string.watch_on, ty
 @Composable
 private fun RowTitle.text(): AnnotatedString {
     // Today's group rows lead with what the row is ("FIRST In Michigan") and demote the shared
-    // "Happening Now" marker to a quieter suffix, so a stack of today rows scans by group name.
+    // "Happening now" marker to a quieter suffix, so a stack of today rows scans by group name.
     val group =
         when (this) {
             RowTitle.HappeningNow -> stringResource(R.string.section_happening_now)

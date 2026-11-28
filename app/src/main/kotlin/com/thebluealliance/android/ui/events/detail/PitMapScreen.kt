@@ -70,9 +70,9 @@ fun PitMapScreen(
                 title = {
                     TopBarTitle(
                         if (uiState.eventTitle.isNotEmpty()) {
-                            "${uiState.eventTitle} Pit Map"
+                            "${uiState.eventTitle} pit map"
                         } else {
-                            "Pit Map"
+                            "Pit map"
                         },
                     )
                 },

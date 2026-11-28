@@ -76,7 +76,7 @@ class FixtureDecodeTest {
             ),
             rows.map { it.title },
         )
-        // NE and PNW each have one event today, so they share More Events instead of 1-card rows.
+        // NE and PNW each have one event today, so they share More events instead of 1-card rows.
         assertEquals(
             listOf("2026nhgrs", "2026wasam"),
             rows.first { it.title == RowTitle.MoreEvents }.events.map { it.key },

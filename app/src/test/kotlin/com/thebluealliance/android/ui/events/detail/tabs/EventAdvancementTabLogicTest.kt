@@ -32,7 +32,7 @@ class EventAdvancementTabLogicTest {
         val rows = advancementBreakdownRows(points, isDistrictEvent = false)
 
         assertEquals(
-            listOf("Qualification", "Playoff", "Alliance", "Awards", "Team Age"),
+            listOf("Qualification", "Playoff", "Alliance", "Awards", "Team age"),
             rows.map { it.first },
         )
         assertEquals(listOf(18, 20, 8, 5, 10), rows.map { it.second })

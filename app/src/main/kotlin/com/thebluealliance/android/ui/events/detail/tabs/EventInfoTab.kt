@@ -174,7 +174,7 @@ fun EventInfoTab(
             if (pitLocations.isNotEmpty()) {
                 item {
                     EventInfoLinkRow(
-                        text = "Pit Map",
+                        text = "Pit map",
                         onClickLabel = "View pit map",
                         onClick = { onNavigateToPitMap(event.key, favoriteTeamKeys) },
                         icon = {
