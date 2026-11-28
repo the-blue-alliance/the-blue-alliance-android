@@ -14,8 +14,14 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailTab.AWARDS
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailTab.MATCHES
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailTab.MEDIA
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailTab.STATS
+import com.thebluealliance.android.ui.teamevent.TeamEventDetailTab.SUMMARY
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -57,7 +63,10 @@ class TeamEventDetailViewModel
         private val regionalCmpAdvancementByTeam =
             MutableStateFlow<Map<String, CmpAdvancement>>(emptyMap())
 
-        val uiState: StateFlow<TeamEventDetailUiState> =
+        private val loadOutcomes =
+            MutableStateFlow<Map<TeamEventDetailTab, RefreshOutcome>>(emptyMap())
+
+        private val state =
             combine(
                 teamRepository.observeTeam(teamKey),
                 eventRepository.observeEvent(eventKey),
@@ -137,33 +146,38 @@ class TeamEventDetailViewModel
                             )
                         },
                 )
-            }.stateIn(
-                viewModelScope,
-                SharingStarted.WhileSubscribed(5000),
-                TeamEventDetailUiState(),
-            )
+            }
+
+        val uiState: StateFlow<TeamEventDetailUiState> =
+            state
+                .combine(loadOutcomes) { base, outcomes -> base.copy(loadOutcomes = outcomes) }
+                .stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5000),
+                    TeamEventDetailUiState(),
+                )
 
         init {
             refreshAll()
         }
 
         fun refreshAll() {
-            refreshReported(
+            refreshTracked(
                 ::refreshAll,
-                { teamRepository.refreshTeam(teamKey) },
-                {
+                SUMMARY to { teamRepository.refreshTeam(teamKey) },
+                SUMMARY to {
                     eventRepository.refreshEvent(eventKey)
                     refreshRegionalCmpAdvancement()
                 },
-                { matchRepository.refreshEventMatches(eventKey) },
-                { eventRepository.refreshEventRankings(eventKey) },
-                { eventRepository.refreshEventAwards(eventKey) },
-                { eventRepository.refreshEventOPRs(eventKey) },
-                { eventRepository.refreshEventAlliances(eventKey) },
-                { eventRepository.refreshEventDistrictPoints(eventKey) },
-                { eventRepository.refreshEventRegionalPoints(eventKey) },
-                { teamRepository.refreshTeamMedia(teamKey, year) },
-                { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
+                MATCHES to { matchRepository.refreshEventMatches(eventKey) },
+                SUMMARY to { eventRepository.refreshEventRankings(eventKey) },
+                AWARDS to { eventRepository.refreshEventAwards(eventKey) },
+                STATS to { eventRepository.refreshEventOPRs(eventKey) },
+                SUMMARY to { eventRepository.refreshEventAlliances(eventKey) },
+                STATS to { eventRepository.refreshEventDistrictPoints(eventKey) },
+                STATS to { eventRepository.refreshEventRegionalPoints(eventKey) },
+                MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
+                null to { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
             )
         }
 
@@ -171,45 +185,63 @@ class TeamEventDetailViewModel
             val retry = { refreshTab(tab) }
             when (tab) {
                 // The summary overview needs most of the event data
-                TeamEventDetailTab.SUMMARY ->
-                    refreshReported(
+                SUMMARY ->
+                    refreshTracked(
                         retry,
-                        { teamRepository.refreshTeam(teamKey) },
-                        {
+                        SUMMARY to { teamRepository.refreshTeam(teamKey) },
+                        SUMMARY to {
                             eventRepository.refreshEvent(eventKey)
                             refreshRegionalCmpAdvancement(forceRefresh = true)
                         },
-                        { matchRepository.refreshEventMatches(eventKey) },
-                        { eventRepository.refreshEventRankings(eventKey) },
-                        { eventRepository.refreshEventAlliances(eventKey) },
-                        { eventRepository.refreshEventAwards(eventKey) },
-                        { eventRepository.refreshEventDistrictPoints(eventKey) },
-                        { eventRepository.refreshEventRegionalPoints(eventKey) },
-                        { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
+                        null to { matchRepository.refreshEventMatches(eventKey) },
+                        SUMMARY to { eventRepository.refreshEventRankings(eventKey) },
+                        SUMMARY to { eventRepository.refreshEventAlliances(eventKey) },
+                        null to { eventRepository.refreshEventAwards(eventKey) },
+                        null to { eventRepository.refreshEventDistrictPoints(eventKey) },
+                        null to { eventRepository.refreshEventRegionalPoints(eventKey) },
+                        null to { teamRepository.refreshTeamEventPitLocation(teamKey, eventKey) },
                     )
-                TeamEventDetailTab.MATCHES ->
-                    refreshReported(retry, { matchRepository.refreshEventMatches(eventKey) })
-                TeamEventDetailTab.MEDIA ->
-                    refreshReported(retry, { teamRepository.refreshTeamMedia(teamKey, year) })
-                TeamEventDetailTab.STATS ->
-                    refreshReported(retry, { eventRepository.refreshEventOPRs(eventKey) })
-                TeamEventDetailTab.AWARDS ->
-                    refreshReported(retry, { eventRepository.refreshEventAwards(eventKey) })
+                MATCHES ->
+                    refreshTracked(
+                        retry,
+                        MATCHES to { matchRepository.refreshEventMatches(eventKey) },
+                    )
+                MEDIA ->
+                    refreshTracked(
+                        retry,
+                        MEDIA to { teamRepository.refreshTeamMedia(teamKey, year) },
+                    )
+                STATS ->
+                    refreshTracked(
+                        retry,
+                        STATS to { eventRepository.refreshEventOPRs(eventKey) },
+                    )
+                AWARDS ->
+                    refreshTracked(
+                        retry,
+                        AWARDS to { eventRepository.refreshEventAwards(eventKey) },
+                    )
             }
         }
 
-        private fun refreshReported(
+        private fun refreshTracked(
             retry: () -> Unit,
-            vararg tasks: suspend () -> Unit,
+            vararg tasks: Pair<TeamEventDetailTab?, suspend () -> Unit>,
         ) {
-            refreshingReported({ reportFailedRefresh(retry) }, *tasks)
+            refreshTabs(loadOutcomes, { failed -> reportFailedRefresh(failed, retry) }, *tasks)
         }
 
-        private suspend fun reportFailedRefresh(retry: () -> Unit) {
-            val cached =
-                teamRepository.observeTeam(teamKey).first() != null ||
-                    eventRepository.observeEvent(eventKey).first() != null
-            if (cached) userMessages.showRetry("Couldn't refresh team at event", retry)
+        // Reads the cache itself: an offline refresh can fail before the screen has collected it.
+        // With nothing cached, the failed tab's error screen says it instead.
+        private suspend fun reportFailedRefresh(
+            failed: Set<TeamEventDetailTab>,
+            retry: () -> Unit,
+        ) {
+            if (failed.isEmpty()) return
+            val cached = state.first()
+            if (failed.any { cached.hasData(it) }) {
+                userMessages.showRetry("Couldn't refresh team at event", retry)
+            }
         }
 
         // Regional advancement is a whole-season payload that only applies to non-district

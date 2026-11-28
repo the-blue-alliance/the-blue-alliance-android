@@ -167,14 +167,14 @@ class TBAShortcutManager
         suspend fun requestPinShortcut(favorite: Favorite) {
             val shortcutInfo = favorite.getShortcutInfo(seasons.defaultSeason())
             if (shortcutInfo == null) {
-                userMessages.show("Failed to create shortcut")
+                userMessages.show("Couldn't create shortcut")
                 return
             }
 
             try {
                 val success = ShortcutManagerCompat.requestPinShortcut(context, shortcutInfo, null)
                 if (!success) {
-                    userMessages.show("Failed to add shortcut to home screen")
+                    userMessages.show("Couldn't add shortcut to home screen")
                 }
             } catch (e: IllegalStateException) {
                 // requestPinShortcut throws if the app is no longer in the foreground

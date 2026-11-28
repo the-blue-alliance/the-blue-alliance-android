@@ -36,6 +36,7 @@ import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.DistrictEventPoints
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.EventRow
@@ -157,7 +158,21 @@ fun DistrictDetailScreen(
                 onRefresh = { viewModel.refreshTab(DistrictDetailTab.entries[page]) },
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
-                when (DistrictDetailTab.entries[page]) {
+                val tab = DistrictDetailTab.entries[page]
+                if (uiState.loadFailed(tab)) {
+                    // The pull spinner is hidden over an error, so show the retry in progress here.
+                    if (isRefreshing) {
+                        LoadingBox(modifier = Modifier.padding(bottomPadding))
+                    } else {
+                        ErrorBox(
+                            modifier = Modifier.padding(bottomPadding),
+                            message = "Couldn't load ${tab.readableName.lowercase()}",
+                            onRetry = { viewModel.refreshTab(tab) },
+                        )
+                    }
+                    return@TouchPullToRefreshBox
+                }
+                when (tab) {
                     DistrictDetailTab.EVENTS ->
                         EventsTab(
                             sections = uiState.eventSections,

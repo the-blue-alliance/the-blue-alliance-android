@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.regional
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
@@ -82,17 +83,30 @@ class RegionalAdvancementViewModel
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
-                            UiState.Error(
-                                e.message ?: "Unable to load regional advancement rankings",
-                            )
+                            Log.w(TAG, "regional advancement load failed", e)
+                            null
                         }
                     // A slower load for a year no longer selected must not replace the current one.
-                    if (selection.year.value == year) _uiState.value = state
+                    if (selection.year.value != year) return@refreshing
+                    when {
+                        state != null -> _uiState.value = state
+                        // A failed refresh keeps the rankings on screen and says so.
+                        _uiState.value is UiState.Success ->
+                            userMessages.showRetry(
+                                "Couldn't refresh regional advancement",
+                                ::refreshRankings,
+                            )
+                        else -> _uiState.value = UiState.Error("Couldn't load regional advancement")
+                    }
                 })
         }
 
         @AssistedFactory
         interface Factory {
             fun create(navKey: Screen.RegionalAdvancement): RegionalAdvancementViewModel
+        }
+
+        private companion object {
+            const val TAG = "RegionalAdvancementVM"
         }
     }

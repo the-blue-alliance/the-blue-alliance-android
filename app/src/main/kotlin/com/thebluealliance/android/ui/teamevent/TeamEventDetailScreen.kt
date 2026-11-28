@@ -51,6 +51,7 @@ import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.components.EventRow
@@ -94,6 +95,14 @@ enum class TeamEventDetailTab(
     STATS("Stats"),
     AWARDS("Awards"),
 }
+
+/** What the tab's error screen says when its load fails with nothing cached. */
+internal val TeamEventDetailTab.loadErrorMessage: String
+    get() =
+        when (this) {
+            TeamEventDetailTab.SUMMARY -> "Couldn't load team at event"
+            else -> "Couldn't load ${readableName.lowercase()}"
+        }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -225,7 +234,21 @@ fun TeamEventDetailScreen(
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 val evt = uiState.event
-                when (TeamEventDetailTab.entries[page]) {
+                val tab = TeamEventDetailTab.entries[page]
+                if (uiState.loadFailed(tab)) {
+                    // The pull spinner is hidden over an error, so show the retry in progress here.
+                    if (isRefreshing) {
+                        LoadingBox(modifier = Modifier.padding(bottomPadding))
+                    } else {
+                        ErrorBox(
+                            modifier = Modifier.padding(bottomPadding),
+                            message = tab.loadErrorMessage,
+                            onRetry = { viewModel.refreshTab(tab) },
+                        )
+                    }
+                    return@TouchPullToRefreshBox
+                }
+                when (tab) {
                     TeamEventDetailTab.SUMMARY ->
                         SummaryTab(
                             teamKey = viewModel.teamKey,
