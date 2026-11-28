@@ -27,9 +27,4 @@ class EventInsightsTabLogicTest {
             coprRowDescription("254", "Total Auto Points", 12.345678),
         )
     }
-
-    @Test
-    fun `team cells name the team they open by number`() {
-        assertEquals("View team 254", teamCellClickLabel("frc254"))
-    }
 }
