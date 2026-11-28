@@ -36,6 +36,8 @@ class RegionalAdvancementViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        mockkStatic(Log::class)
+        every { Log.w(any(), any<String>(), any()) } returns 0
         coEvery { repository.getRegionalRankings(any()) } returns emptyList()
         coEvery { seasons.maxSeason() } returns 2027
         coEvery { seasons.defaultSeason() } returns 2025
@@ -44,6 +46,7 @@ class RegionalAdvancementViewModelTest {
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkStatic(Log::class)
     }
 
     @Test
@@ -143,8 +146,6 @@ class RegionalAdvancementViewModelTest {
 
     @Test
     fun `a failed load says so without the exception's text`() {
-        mockkStatic(Log::class)
-        every { Log.w(any(), any<String>(), any()) } returns 0
         coEvery { repository.getRegionalRankings(any()) } throws
             UnknownHostException("Unable to resolve host \"www.thebluealliance.com\"")
         val viewModel =
@@ -155,14 +156,11 @@ class RegionalAdvancementViewModelTest {
                 UserMessageBus(),
             )
         assertEquals(UiState.Error("Couldn't load regional advancement"), viewModel.uiState.value)
-        unmockkStatic(Log::class)
     }
 
     @Test
     fun `a failed refresh keeps the shown rankings and offers Retry`() =
         runTest {
-            mockkStatic(Log::class)
-            every { Log.w(any(), any<String>(), any()) } returns 0
             val rankings = listOf<RegionalRanking>(mockk(relaxed = true))
             coEvery { repository.getRegionalRankings(any()) } returns rankings
             val bus = UserMessageBus()
@@ -184,6 +182,20 @@ class RegionalAdvancementViewModelTest {
                 coVerify(exactly = 3) { repository.getRegionalRankings(2025) }
                 cancelAndIgnoreRemainingEvents()
             }
-            unmockkStatic(Log::class)
         }
+
+    @Test
+    fun `a failed load for a newly picked year doesn't show the previous year's rankings`() {
+        coEvery { repository.getRegionalRankings(2025) } returns listOf(mockk(relaxed = true))
+        coEvery { repository.getRegionalRankings(2024) } throws UnknownHostException()
+        val viewModel =
+            RegionalAdvancementViewModel(
+                Screen.RegionalAdvancement(2025),
+                repository,
+                seasons,
+                UserMessageBus(),
+            )
+        viewModel.selectYear(2024)
+        assertEquals(UiState.Error("Couldn't load regional advancement"), viewModel.uiState.value)
+    }
 }
