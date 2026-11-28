@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.search
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -155,58 +156,63 @@ fun SearchScreen(
         topBar = {
             TBATopAppBar(
                 title = {
-                    TextField(
-                        state = viewModel.queryState,
-                        placeholder = { Text("Search teams and events") },
-                        lineLimits = TextFieldLineLimits.SingleLine,
+                    SearchFieldSlot(
+                        fit = fieldFit,
                         modifier =
-                            Modifier
-                                .onGloballyPositioned { fieldBounds = it.unclippedBoundsInRoot() }
-                                .padding(start = fieldFit?.start ?: 0.dp)
-                                .widthIn(max = fieldFit?.maxWidth ?: Dp.Unspecified)
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                                .onPreviewKeyEvent { event ->
-                                    if (event.key != Key.Escape) return@onPreviewKeyEvent false
-                                    if (event.type == KeyEventType.KeyUp) {
-                                        when (searchFieldEscape(viewModel.queryState.text)) {
-                                            SearchFieldEscape.ClearText ->
-                                                viewModel.queryState.clearText()
-                                            SearchFieldEscape.ClearFocus ->
-                                                focusManager
-                                                    .clearFocus()
+                            Modifier.onGloballyPositioned {
+                                fieldBounds = it.unclippedBoundsInRoot()
+                            },
+                    ) {
+                        TextField(
+                            state = viewModel.queryState,
+                            placeholder = { Text("Search teams and events") },
+                            lineLimits = TextFieldLineLimits.SingleLine,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester)
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.key != Key.Escape) return@onPreviewKeyEvent false
+                                        if (event.type == KeyEventType.KeyUp) {
+                                            when (searchFieldEscape(viewModel.queryState.text)) {
+                                                SearchFieldEscape.ClearText ->
+                                                    viewModel.queryState.clearText()
+                                                SearchFieldEscape.ClearFocus ->
+                                                    focusManager
+                                                        .clearFocus()
+                                            }
                                         }
-                                    }
-                                    true
-                                },
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                focusedPlaceholderColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                unfocusedPlaceholderColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                cursorColor = MaterialTheme.colorScheme.primary,
-                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
-                                focusedTrailingIconColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                unfocusedTrailingIconColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                            ),
-                        trailingIcon = {
-                            if (viewModel.queryState.text.isNotEmpty()) {
-                                TooltipIconButton(
-                                    label = "Clear",
-                                    icon = TbaIcons.Close,
-                                    onClick = { viewModel.queryState.clearText() },
-                                )
-                            }
-                        },
-                    )
+                                        true
+                                    },
+                            colors =
+                                TextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedPlaceholderColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unfocusedPlaceholderColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    cursorColor = MaterialTheme.colorScheme.primary,
+                                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+                                    focusedTrailingIconColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unfocusedTrailingIconColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                ),
+                            trailingIcon = {
+                                if (viewModel.queryState.text.isNotEmpty()) {
+                                    TooltipIconButton(
+                                        label = "Clear",
+                                        icon = TbaIcons.Close,
+                                        onClick = { viewModel.queryState.clearText() },
+                                    )
+                                }
+                            },
+                        )
+                    }
                 },
                 navigationIcon = {
                     TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
@@ -303,8 +309,28 @@ internal enum class SearchFieldEscape { ClearText, ClearFocus }
 internal fun searchFieldEscape(query: CharSequence): SearchFieldEscape =
     if (query.isEmpty()) SearchFieldEscape.ClearFocus else SearchFieldEscape.ClearText
 
+/**
+ * Places [field] in the top-bar slot at [fit]'s start offset and no wider than its width, or across
+ * the whole slot while [fit] is null.
+ */
+@Composable
+internal fun SearchFieldSlot(
+    fit: SearchFieldFit?,
+    modifier: Modifier = Modifier,
+    field: @Composable () -> Unit,
+) {
+    Box(
+        modifier
+            .padding(start = fit?.start ?: 0.dp)
+            .widthIn(max = fit?.maxWidth ?: Dp.Unspecified)
+            .fillMaxWidth(),
+    ) {
+        field()
+    }
+}
+
 /** Start offset and widest size of the search field, in its top-bar slot. */
-private data class SearchFieldFit(
+internal data class SearchFieldFit(
     val start: Dp,
     val maxWidth: Dp,
 )
