@@ -62,7 +62,7 @@ internal fun advancementBreakdownRows(
         add("Alliance" to points.alliancePoints)
         add("Awards" to points.awardPoints)
         if (!isDistrictEvent) {
-            add("Team Age" to points.rookieBonus)
+            add("Team age" to points.rookieBonus)
         }
     }
 
@@ -238,7 +238,7 @@ private fun AdvancementPointsItem(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = "CMP Qualification",
+                                text = "CMP qualification",
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.weight(1f),
                             )
@@ -264,7 +264,7 @@ private fun cmpAdvancementDetail(advancement: CmpAdvancement): String? =
             val name = advancement.eventShortName ?: advancement.eventKey.ifBlank { null }
             name?.let { "via $it" }
         }
-        is CmpAdvancement.PoolQualified -> "via Week ${advancement.week} Pool"
+        is CmpAdvancement.PoolQualified -> "via Week ${advancement.week} pool"
         is CmpAdvancement.Qualified -> null
     }
 

@@ -240,7 +240,7 @@ data class EventFeed(
         /** At or below this many events today, one row reads better than several half-empty ones. */
         const val SPLIT_THRESHOLD = 6
 
-        /** A district needs this many events today to earn its own row; otherwise it joins More Events. */
+        /** A district needs this many events today to earn its own row; otherwise it joins More events. */
         const val MIN_DISTRICT_ROW = 2
 
         private val byName: Comparator<Event> =
@@ -249,8 +249,8 @@ data class EventFeed(
         /**
          * Splits today's events into short themed rows so a mid-season Saturday (40-60 events) isn't
          * one endless row: Championship, then each busy district (alphabetically, so a district's row
-         * is always in the same place), Regionals, More Events, Offseason.
-         * Quiet days (or days with only one kind of event) keep a single "Happening Now" row.
+         * is always in the same place), Regionals, More events, Offseason.
+         * Quiet days (or days with only one kind of event) keep a single "Happening now" row.
          */
         fun todayRows(live: List<Event>): List<FeedRow> {
             if (live.isEmpty()) return emptyList()

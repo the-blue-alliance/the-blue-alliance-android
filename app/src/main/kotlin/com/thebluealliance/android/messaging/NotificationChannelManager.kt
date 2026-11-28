@@ -25,14 +25,14 @@ class NotificationChannelManager
                 listOf(
                     NotificationChannel(
                         CHANNEL_MATCH,
-                        "Match Alerts",
+                        "Match alerts",
                         NotificationManager.IMPORTANCE_HIGH,
                     ).apply {
                         description = "Upcoming matches, scores, and match videos"
                     },
                     NotificationChannel(
                         CHANNEL_EVENT,
-                        "Event Updates",
+                        "Event updates",
                         NotificationManager.IMPORTANCE_DEFAULT,
                     ).apply {
                         description =

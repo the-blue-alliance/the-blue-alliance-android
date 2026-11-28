@@ -510,7 +510,7 @@ private fun TableScope.RankingItem(
                         modifier = Modifier.statRowWidth().padding(vertical = 4.dp),
                     )
                     Text(
-                        text = "Additional Stats",
+                        text = "Additional stats",
                         style = MaterialTheme.typography.titleSmall,
                         modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
                     )

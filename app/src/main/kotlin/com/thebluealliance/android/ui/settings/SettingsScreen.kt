@@ -186,7 +186,7 @@ private fun sendTestMatchScore(context: Context) {
     val notification =
         builder.build(
             channelId = NotificationChannelManager.CHANNEL_MATCH,
-            title = "BCVI Q42 Results",
+            title = "BCVI Q42 Results", // sentence-case-exempt: server notification copy
             body = "177, 254, 1114 beat 2056, 148, 67 scoring 152-138.",
             eventKey = "2026bcvi",
             matchKey = "2026bcvi_qm42",
@@ -202,7 +202,7 @@ private fun sendTestUpcomingMatch(context: Context) {
     val notification =
         builder.build(
             channelId = NotificationChannelManager.CHANNEL_MATCH,
-            title = "BCVI Q43 Starting Soon",
+            title = "BCVI Q43 Starting Soon", // sentence-case-exempt: server notification copy
             body = "BC District Event, Quals 43: 177, 1519, 4909 will play 2791, 3467, 78.",
             eventKey = "2026bcvi",
             matchKey = "2026bcvi_qm43",
@@ -218,7 +218,7 @@ private fun sendTestEventUpdate(context: Context) {
     val notification =
         builder.build(
             channelId = NotificationChannelManager.CHANNEL_EVENT,
-            title = "BCVI Schedule Updated",
+            title = "BCVI Schedule Updated", // sentence-case-exempt: server notification copy
             body =
                 "The BC District Event match schedule has been updated. " +
                     "The next match starts at 14:30 ET.",
@@ -245,7 +245,7 @@ private fun sendTestDuplicateMatch(context: Context) {
         val notification =
             builder.build(
                 channelId = NotificationChannelManager.CHANNEL_MATCH,
-                title = "CMPTX Q61 Results",
+                title = "CMPTX Q61 Results", // sentence-case-exempt: server notification copy
                 body = "254, 1323, 1718 beat 118, 148, 195 scoring 168-150.",
                 eventKey = data["event_key"],
                 matchKey = data["match_key"],

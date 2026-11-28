@@ -71,7 +71,7 @@ enum class EventDetailTab(
     MATCHES({ "Matches" }),
     ALLIANCES({ "Alliances" }),
     INSIGHTS({ "Insights" }),
-    ADVANCEMENT_POINTS({ if (it?.district != null) "District Points" else "Regional Points" }),
+    ADVANCEMENT_POINTS({ if (it?.district != null) "District points" else "Regional points" }),
     AWARDS({ "Awards" }),
 }
 

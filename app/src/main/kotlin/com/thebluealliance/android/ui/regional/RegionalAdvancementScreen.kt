@@ -115,7 +115,7 @@ fun RegionalAdvancementScreen(
                                 emptyList()
                             },
                         onYearSelected = viewModel::selectYear,
-                        title = { Text("Regional Advancement") },
+                        title = { Text("Regional advancement") },
                     )
                 },
                 navigationIcon = {
@@ -291,7 +291,7 @@ private fun regionalColumnContentWidths(rankings: List<RegionalRanking>): List<D
                 ),
             ),
             maxOf(
-                headerWords("Total Points"),
+                headerWords("Total points"),
                 widest(rankings.map { "${it.pointTotal.toInt()}" }, typography.labelLarge),
             ),
             maxOf(
@@ -354,7 +354,7 @@ private fun RankingsTableHeader(columnWidths: List<Dp>?) {
                 modifier = Modifier.regionalColumn(this, 4, columnWidths),
             )
             Text(
-                text = "Total Points",
+                text = "Total points",
                 style = MaterialTheme.typography.labelSmall,
                 modifier = Modifier.regionalColumn(this, 5, columnWidths),
             )

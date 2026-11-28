@@ -26,24 +26,24 @@ fun Match.getAdvancement(playoffType: PlayoffType?): MatchAdvancementMsgs? {
             // (W9 vs W10, winner to M13, loser out).
             PlayoffType.DOUBLE_ELIM_8_TEAM ->
                 when (this.setNumber) {
-                    1, 2 -> "Advances to Upper Bracket - R2-7" to "Advances to Lower Bracket - R2-5"
-                    3, 4 -> "Advances to Upper Bracket - R2-8" to "Advances to Lower Bracket - R2-6"
-                    5 -> "Advances to Lower Bracket - R3-10" to "Eliminated"
-                    6 -> "Advances to Lower Bracket - R3-9" to "Eliminated"
-                    7 -> "Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-9"
-                    8 -> "Advances to Upper Bracket - R4-11" to "Advances to Lower Bracket - R3-10"
-                    9 -> "Advances to Lower Bracket - R4-12" to "Eliminated"
-                    10 -> "Advances to Lower Bracket - R4-12" to "Eliminated"
-                    11 -> "Advances to Finals" to "Advances to Lower Bracket - R5-13"
-                    12 -> "Advances to Lower Bracket - R5-13" to "Eliminated"
+                    1, 2 -> "Advances to upper bracket - R2-7" to "Advances to lower bracket - R2-5"
+                    3, 4 -> "Advances to upper bracket - R2-8" to "Advances to lower bracket - R2-6"
+                    5 -> "Advances to lower bracket - R3-10" to "Eliminated"
+                    6 -> "Advances to lower bracket - R3-9" to "Eliminated"
+                    7 -> "Advances to upper bracket - R4-11" to "Advances to lower bracket - R3-9"
+                    8 -> "Advances to upper bracket - R4-11" to "Advances to lower bracket - R3-10"
+                    9 -> "Advances to lower bracket - R4-12" to "Eliminated"
+                    10 -> "Advances to lower bracket - R4-12" to "Eliminated"
+                    11 -> "Advances to Finals" to "Advances to lower bracket - R5-13"
+                    12 -> "Advances to lower bracket - R5-13" to "Eliminated"
                     13 -> "Advances to Finals" to "Eliminated"
                     else -> null
                 }
             PlayoffType.DOUBLE_ELIM_4_TEAM ->
                 when (this.setNumber) {
-                    1, 2 -> "Advances to Upper Bracket - R2-3" to "Advances to Lower Bracket - R2-4"
-                    3 -> "Advances to Finals" to "Advances to Lower Bracket - R3-5"
-                    4 -> "Advances to Lower Bracket - R3-5" to "Eliminated"
+                    1, 2 -> "Advances to upper bracket - R2-3" to "Advances to lower bracket - R2-4"
+                    3 -> "Advances to Finals" to "Advances to lower bracket - R3-5"
+                    4 -> "Advances to lower bracket - R3-5" to "Eliminated"
                     5 -> "Advances to Finals" to "Eliminated"
                     else -> null
                 }

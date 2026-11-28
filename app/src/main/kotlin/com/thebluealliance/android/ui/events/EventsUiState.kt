@@ -135,7 +135,7 @@ private fun buildSubSections(
                 .filter { it.district == null && it.type == EventType.REGIONAL }
                 .sortedBy { it.name }
         if (regionals.isNotEmpty()) {
-            add(EventSubSection("Regional Events", regionals))
+            add(EventSubSection("Regional events", regionals))
         }
 
         val others = events.filter { it.district == null && it.type != EventType.REGIONAL }
@@ -159,9 +159,9 @@ private fun buildSubSections(
                             if (monthName !=
                                 null
                             ) {
-                                "$monthName Offseason Events"
+                                "$monthName offseason events"
                             } else {
-                                "Offseason Events"
+                                "Offseason events"
                             }
                         add(EventSubSection(label, monthEvents))
                     }
@@ -185,7 +185,7 @@ private fun buildSubSections(
 
                     // Append "District" if we're falling back to a code/abbreviation
                     if (name == null && !label.contains("District", ignoreCase = true)) {
-                        label = "$label District"
+                        label = "$label District" // sentence-case-exempt: a district name
                     }
 
                     EventSubSection(label, districtEvents)
@@ -341,13 +341,13 @@ fun computeThisWeekEvents(
             }
 
         rawEvents = (weekEvents + championshipEvents).distinctBy { it.key }
-        label = "Upcoming This Week \u2014 ${weekLabel(selectedYear, currentWeek)}"
+        label = "Upcoming this week \u2014 ${weekLabel(selectedYear, currentWeek)}"
     } else {
         // Offseason fallback: calendar week overlap (Monday-Sunday)
         val monday = today.with(DayOfWeek.MONDAY)
         val sunday = monday.plusDays(6)
         rawEvents = allEvents.filter { datesOverlap(it, monday, sunday) }
-        label = "Upcoming This Week"
+        label = "Upcoming this week"
     }
 
     // Remove events that have already ended

@@ -193,7 +193,7 @@ class EventsUiStateTest {
     // --- buildEventSections: sub-section labels ---
 
     @Test
-    fun `regional events have Regional Events sub-section label`() {
+    fun `regional events have Regional events sub-section label`() {
         val events =
             listOf(
                 makeEvent(name = "Regional 1", type = EventType.REGIONAL, week = 0),
@@ -202,7 +202,7 @@ class EventsUiStateTest {
         val week1 = sections.first { it.label == "Week 1" }
 
         assertEquals(1, week1.subSections.size)
-        assertEquals("Regional Events", week1.subSections[0].label)
+        assertEquals("Regional events", week1.subSections[0].label)
     }
 
     @Test
@@ -392,7 +392,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Upcoming This Week \u2014 Week 3", result!!.label)
+        assertEquals("Upcoming this week \u2014 Week 3", result!!.label)
         assertEquals(2, result.events.size)
         assertEquals(setOf("2026abc", "2026def"), result.events.map { it.key }.toSet())
     }
