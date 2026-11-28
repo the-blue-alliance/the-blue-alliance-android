@@ -67,8 +67,7 @@ fun TooltipIconButton(
                         val modified =
                             event.isAltPressed || event.isCtrlPressed || event.isMetaPressed
                         if (tooltipState.onKey(event.type, event.key, modified)) {
-                            // Default priority: M3 hides a non-persistent tooltip after 1.5 s.
-                            scope.launch { tooltipState.show() }
+                            scope.launch { tooltipState.showForFocus() }
                         }
                         false
                     },
@@ -98,6 +97,9 @@ fun TooltipIconButton(
 internal class FocusTooltipState(
     private val tooltip: TooltipState,
 ) : TooltipState by tooltip {
+    /** The button has keyboard focus. */
+    private var focused = false
+
     /** The button has focus and hasn't received a key since it gained it. */
     private var awaitingFirstKey = false
 
@@ -106,6 +108,7 @@ internal class FocusTooltipState(
 
     /** Called with the button's focus whenever it changes. */
     fun onFocusChanged(isFocused: Boolean) {
+        focused = isFocused
         awaitingFirstKey = isFocused
         focusShowPending = isFocused
     }
@@ -124,6 +127,14 @@ internal class FocusTooltipState(
         val show = awaitingFirstKey && movedFocusHere(type, key, withAltCtrlOrMeta)
         awaitingFirstKey = false
         return show
+    }
+
+    /**
+     * Shows the tooltip for focus that [onKey] approved, unless focus has already moved on. Default
+     * priority, so M3 hides the non-persistent tooltip after 1.5 s.
+     */
+    suspend fun showForFocus() {
+        if (focused) tooltip.show()
     }
 
     override suspend fun show(mutatePriority: MutatePriority) {
