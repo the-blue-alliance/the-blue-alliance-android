@@ -38,16 +38,22 @@ internal data class AwardGroup(
 )
 
 /**
- * One recipient line. [lead] is drawn first and [trail] after a " · "; whichever of them is the
- * team number is link-coloured ([leadIsTeamNumber]). [teamKey] is null when nothing opens.
+ * One recipient line: "[person · ]number[ · nickname]", parts joined with [RECIPIENT_SEPARATOR].
+ * The team number is link-coloured. [teamKey] is null when nothing opens.
  */
 internal data class AwardRecipient(
     val teamKey: String?,
-    val lead: String,
-    val trail: String?,
-    val leadIsTeamNumber: Boolean,
+    val person: String?,
+    val teamNumber: String?,
+    val nickname: String?,
     val spoken: String,
 )
+
+internal const val RECIPIENT_SEPARATOR = " · "
+
+/** The line as plain text, e.g. "Sofia S · 422 · The Mech Tech Dragons". */
+internal val AwardRecipient.label: String
+    get() = listOfNotNull(person, teamNumber, nickname).joinToString(RECIPIENT_SEPARATOR)
 
 /**
  * Groups the per-recipient [awards] rows by award as recorded (type and name), keeping first-seen
@@ -74,27 +80,22 @@ internal fun awardRecipient(
     val teamKey = award.teamKey.takeIf { it.isNotBlank() }
     val number = teamKey?.teamNumber
     val awardee = award.awardee?.trim()?.takeIf { it.isNotEmpty() }
-    return when {
-        awardee != null ->
-            AwardRecipient(
-                teamKey = teamKey,
-                lead = awardee,
-                trail = number,
-                leadIsTeamNumber = false,
-                spoken = if (number != null) "$awardee, team $number" else awardee,
-            )
-        number != null -> {
-            val nickname = nicknamesByTeamKey[teamKey]?.trim()?.takeIf { it.isNotEmpty() }
-            AwardRecipient(
-                teamKey = teamKey,
-                lead = number,
-                trail = nickname,
-                leadIsTeamNumber = true,
-                spoken = if (nickname != null) "Team $number, $nickname" else "Team $number",
-            )
-        }
-        else -> null
-    }
+    if (awardee == null && number == null) return null
+    val nickname =
+        teamKey
+            ?.let { nicknamesByTeamKey[it] }
+            ?.trim()
+            ?.takeIf { number != null && it.isNotEmpty() }
+    // "Sofia S, team 422, The Mech Tech Dragons" or "Team 422, The Mech Tech Dragons".
+    val spokenTeam = number?.let { if (awardee == null) "Team $it" else "team $it" }
+    val spoken = listOfNotNull(awardee, spokenTeam, nickname).joinToString(", ")
+    return AwardRecipient(
+        teamKey = teamKey,
+        person = awardee,
+        teamNumber = number,
+        nickname = nickname,
+        spoken = spoken,
+    )
 }
 
 // Lifts a one-line bodyMedium recipient to MinLinkHeight, since several stack with no gap.
@@ -181,18 +182,14 @@ private fun AwardRecipientLine(
     val link = MaterialTheme.colorScheme.primary
     val text =
         buildAnnotatedString {
-            if (recipient.leadIsTeamNumber) {
-                withStyle(SpanStyle(color = link)) { append(recipient.lead) }
-            } else {
-                append(recipient.lead)
+            recipient.person?.let { append(it) }
+            recipient.teamNumber?.let { number ->
+                if (recipient.person != null) append(RECIPIENT_SEPARATOR)
+                withStyle(SpanStyle(color = link)) { append(number) }
             }
-            if (recipient.trail != null) {
-                append(" · ")
-                if (recipient.leadIsTeamNumber) {
-                    append(recipient.trail)
-                } else {
-                    withStyle(SpanStyle(color = link)) { append(recipient.trail) }
-                }
+            recipient.nickname?.let {
+                append(RECIPIENT_SEPARATOR)
+                append(it)
             }
         }
     val teamKey = recipient.teamKey
