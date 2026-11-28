@@ -185,7 +185,7 @@ private fun buildSubSections(
 
                     // Append "District" if we're falling back to a code/abbreviation
                     if (name == null && !label.contains("District", ignoreCase = true)) {
-                        label = "$label District"
+                        label = "$label District" // sentence-case-exempt: a district name
                     }
 
                     EventSubSection(label, districtEvents)

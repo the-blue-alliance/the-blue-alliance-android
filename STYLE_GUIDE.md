@@ -19,9 +19,29 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 
 ### What counts as a proper noun (keep capitalized)
 
-- Brand names: YouTube, Twitch, Livestream
+- Brand names: YouTube, Twitch, Livestream, Google, Nexus (FRC Nexus), Maps (the app)
 - FRC-specific proper nouns: Red alliance, Blue alliance (alliance is not a proper noun, but Red/Blue are color names used as proper team identifiers — keep "Red" and "Blue" capitalized)
-- Product names: myTBA
+- Product names: myTBA, The Blue Alliance, Team @ Event (TBA's name for a team's page at one event)
+- FIRST program, event and award names, written the way the Game Manual writes them:
+  - FIRST Championship, and "Championship" on its own when it means that event.
+  - Einstein: the Championship's finals field.
+  - Regional Pool: the manual capitalizes it as the name of the regional Championship qualification pool.
+  - Impact Award, FIRST Leadership Award, Engineering Inspiration, Rookie All Star: official award names.
+  - Week 1, Week 2, …: the manual's names for competition weeks.
+  - Finals: the manual's name for the last playoff round.
+- Days of the week and months.
+
+These are **not** proper nouns, so they take sentence case. The manual and the TBA website write
+them in lowercase in running text, and the website's Title Case headings are its heading style,
+not a sign of a proper noun:
+
+- district points, regional points, team age (the manual's section titles are Title Case, its prose is not)
+- regional advancement, pit map, pit location, upper bracket, lower bracket
+
+The list is enforced by `SentenceCaseTest`
+(`app/src/test/kotlin/com/thebluealliance/android/ui/SentenceCaseTest.kt`). It fails on a capital
+anywhere but a sentence's first word unless the word is in
+`app/src/test/resources/sentence-case-allowlist.txt`. Add a proper noun here and to that file together.
 
 ### Applies to
 
