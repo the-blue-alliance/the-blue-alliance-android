@@ -20,7 +20,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -67,9 +66,9 @@ import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
-import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
@@ -185,12 +184,7 @@ fun TeamEventDetailScreen(
                         }
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                            Icon(
-                                imageVector = TbaIcons.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
+                        TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                     },
                     secondaryActions =
                         listOf(

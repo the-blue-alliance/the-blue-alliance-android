@@ -66,6 +66,7 @@ import com.thebluealliance.android.ui.components.ReadingTabRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
@@ -171,12 +172,7 @@ fun MyTBAScreen(
                 navigationIcon =
                     onNavigateUp?.let { navigateUp ->
                         {
-                            IconButton(onClick = navigateUp, modifier = Modifier.handCursor()) {
-                                Icon(
-                                    imageVector = TbaIcons.ArrowBack,
-                                    contentDescription = "Back",
-                                )
-                            }
+                            TooltipIconButton("Back", TbaIcons.ArrowBack, navigateUp)
                         }
                     },
                 secondaryActions =

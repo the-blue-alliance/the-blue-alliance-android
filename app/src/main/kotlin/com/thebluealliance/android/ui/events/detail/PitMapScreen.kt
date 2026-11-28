@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarTitle
-import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.buildNexusPitMapUrl
 import com.thebluealliance.android.util.buildTbaPitMapUrl
@@ -79,12 +77,7 @@ fun PitMapScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                        Icon(
-                            imageVector = TbaIcons.ArrowBack,
-                            contentDescription = "Back",
-                        )
-                    }
+                    TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                 },
             )
         },

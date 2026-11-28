@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,10 +17,10 @@ import com.thebluealliance.android.BuildConfig
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
-import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.handOverListItems
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
@@ -42,9 +40,7 @@ fun AboutScreen(
             TBATopAppBar(
                 title = { TopBarTitle("About") },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                        Icon(TbaIcons.ArrowBack, contentDescription = "Back")
-                    }
+                    TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                 },
                 secondaryActions =
                     listOf(

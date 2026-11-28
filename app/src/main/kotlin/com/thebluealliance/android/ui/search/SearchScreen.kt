@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -56,7 +54,7 @@ import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TeamRow
-import com.thebluealliance.android.ui.components.handCursor
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.readingColumnFit
@@ -194,20 +192,17 @@ fun SearchScreen(
                             ),
                         trailingIcon = {
                             if (viewModel.queryState.text.isNotEmpty()) {
-                                IconButton(
+                                TooltipIconButton(
+                                    label = "Clear",
+                                    icon = TbaIcons.Close,
                                     onClick = { viewModel.queryState.clearText() },
-                                    modifier = Modifier.handCursor(),
-                                ) {
-                                    Icon(TbaIcons.Close, contentDescription = "Clear")
-                                }
+                                )
                             }
                         },
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                        Icon(TbaIcons.ArrowBack, contentDescription = "Back")
-                    }
+                    TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                 },
             )
         },

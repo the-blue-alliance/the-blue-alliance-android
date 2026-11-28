@@ -15,8 +15,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -47,6 +45,7 @@ import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
@@ -117,12 +116,7 @@ fun DistrictDetailScreen(
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = onNavigateUp, modifier = Modifier.handCursor()) {
-                            Icon(
-                                imageVector = TbaIcons.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
+                        TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
                     },
                     secondaryActions =
                         listOf(

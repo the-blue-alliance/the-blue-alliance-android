@@ -8,7 +8,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -265,12 +264,12 @@ private fun TBATopAppBarContent(
 
 @Composable
 private fun TopBarIconButton(action: TopBarAction) {
-    IconButton(
+    TooltipIconButton(
+        label = action.label,
+        icon = action.icon,
         onClick = action.onClick,
-        modifier = Modifier.returnsFocus().handCursor().actionState(action),
-    ) {
-        Icon(action.icon, contentDescription = action.label)
-    }
+        modifier = Modifier.returnsFocus().actionState(action),
+    )
 }
 
 @Composable
@@ -278,9 +277,7 @@ private fun TopBarOverflowMenu(actions: List<TopBarAction>) {
     var expanded by remember { mutableStateOf(false) }
     val close = { expanded = false }
     Box {
-        IconButton(onClick = { expanded = true }, modifier = Modifier.handCursor()) {
-            Icon(TbaIcons.MoreVert, contentDescription = "More options")
-        }
+        TooltipIconButton("More options", TbaIcons.MoreVert, onClick = { expanded = true })
         DropdownMenu(expanded = expanded, onDismissRequest = close) {
             SurfaceFocusRing {
                 actions.forEach { action ->
