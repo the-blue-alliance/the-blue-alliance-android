@@ -18,6 +18,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -159,6 +160,8 @@ class EventsViewModel
             refreshingReported({ reportFailedRefresh(year) }, {
                 try {
                     eventRepository.refreshEventsForYear(year)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     // Like refreshTabs: a 404 or empty answer means none, not a failure.
                     val outcome =

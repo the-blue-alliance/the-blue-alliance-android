@@ -152,13 +152,18 @@ fun DistrictDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
+            val tab = DistrictDetailTab.entries[page]
+            // Until a tab has loaded, or once it failed, its own box shows the progress.
+            val tabLoaded =
+                when (tab) {
+                    DistrictDetailTab.EVENTS -> uiState.eventSections != null
+                    DistrictDetailTab.RANKINGS -> uiState.rankings != null
+                }
             TouchPullToRefreshBox(
-                isRefreshing =
-                    isRefreshing && uiState.eventSections != null && uiState.rankings != null,
-                onRefresh = { viewModel.refreshTab(DistrictDetailTab.entries[page]) },
+                isRefreshing = isRefreshing && tabLoaded && !uiState.loadFailed(tab),
+                onRefresh = { viewModel.refreshTab(tab) },
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
-                val tab = DistrictDetailTab.entries[page]
                 if (uiState.loadFailed(tab)) {
                     // The pull spinner is hidden over an error, so show the retry in progress here.
                     if (isRefreshing) {

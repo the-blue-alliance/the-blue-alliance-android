@@ -228,13 +228,17 @@ fun TeamEventDetailScreen(
                     .padding(top = innerPadding.calculateTopPadding())
                     .pageBackground(),
         ) { page ->
+            val tab = TeamEventDetailTab.entries[page]
             TouchPullToRefreshBox(
-                isRefreshing = isRefreshing && uiState.matches != null && uiState.awards != null,
-                onRefresh = { viewModel.refreshTab(TeamEventDetailTab.entries[page]) },
+                isRefreshing =
+                    isRefreshing &&
+                        !uiState.loadFailed(tab) &&
+                        uiState.matches != null &&
+                        uiState.awards != null,
+                onRefresh = { viewModel.refreshTab(tab) },
                 modifier = Modifier.fillMaxSize().pagerPageFocus(pagerState, page),
             ) {
                 val evt = uiState.event
-                val tab = TeamEventDetailTab.entries[page]
                 if (uiState.loadFailed(tab)) {
                     // The pull spinner is hidden over an error, so show the retry in progress here.
                     if (isRefreshing) {

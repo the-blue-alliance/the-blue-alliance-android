@@ -167,6 +167,8 @@ class MyTBAViewModel
 
         private fun restoreFavorite(favorite: Favorite) {
             viewModelScope.launch {
+                // An Undo left up after signing out has no account to restore to.
+                if (!authRepository.isSignedIn()) return@launch
                 try {
                     myTBARepository.addFavorite(favorite.modelKey, favorite.modelType)
                 } catch (e: CancellationException) {
@@ -210,8 +212,12 @@ class MyTBAViewModel
                     }
                     return@launch
                 }
-                userMessages.showUndo("Removed from notifications") {
-                    restoreSubscription(modelKey, modelType, isFavorited, previous)
+                if (previous.isEmpty()) {
+                    userMessages.show("Removed from notifications")
+                } else {
+                    userMessages.showUndo("Removed from notifications") {
+                        restoreSubscription(modelKey, modelType, previous)
+                    }
                 }
             }
         }
@@ -219,18 +225,23 @@ class MyTBAViewModel
         private fun restoreSubscription(
             modelKey: String,
             modelType: Int,
-            favorite: Boolean,
             notifications: List<String>,
         ) {
             viewModelScope.launch {
+                if (!authRepository.isSignedIn()) return@launch
                 try {
+                    // Read now, so restoring notifications keeps a favorite change made since.
+                    val favorite =
+                        myTBARepository.observeFavorites().first().any {
+                            it.modelKey == modelKey && it.modelType == modelType
+                        }
                     myTBARepository.updatePreferences(modelKey, modelType, favorite, notifications)
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Exception) {
                     android.util.Log.w("MyTBAViewModel", "Failed to restore subscription", e)
                     userMessages.showRetry("Couldn't restore notifications") {
-                        restoreSubscription(modelKey, modelType, favorite, notifications)
+                        restoreSubscription(modelKey, modelType, notifications)
                     }
                 }
             }

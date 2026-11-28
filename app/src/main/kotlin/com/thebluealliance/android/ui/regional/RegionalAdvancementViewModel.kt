@@ -66,10 +66,15 @@ class RegionalAdvancementViewModel
 
         private var rankingsJob: Job? = null
 
+        // The year the shown rankings belong to, so a failed refresh can tell them apart.
+        private var loadedYear: Int? = null
+
         fun refreshRankings() {
             val year = selection.year.value
             // A load for a year no longer selected is abandoned, so it can't hold the spinner.
             rankingsJob?.cancel()
+            // Another year's rankings never stand in for this one's.
+            if (loadedYear != year) _uiState.value = UiState.Loading
             rankingsJob =
                 refreshing({
                     val state =
@@ -89,9 +94,12 @@ class RegionalAdvancementViewModel
                     // A slower load for a year no longer selected must not replace the current one.
                     if (selection.year.value != year) return@refreshing
                     when {
-                        state != null -> _uiState.value = state
+                        state != null -> {
+                            _uiState.value = state
+                            loadedYear = year
+                        }
                         // A failed refresh keeps the rankings on screen and says so.
-                        _uiState.value is UiState.Success ->
+                        _uiState.value is UiState.Success && loadedYear == year ->
                             userMessages.showRetry(
                                 "Couldn't refresh regional advancement",
                                 ::refreshRankings,

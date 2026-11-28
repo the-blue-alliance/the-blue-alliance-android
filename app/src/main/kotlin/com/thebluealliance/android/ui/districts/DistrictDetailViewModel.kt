@@ -150,6 +150,8 @@ class DistrictDetailViewModel
                             districtRepository.observeDistrictRankings(key).first().isNotEmpty()
                     }
                 }
+            // The user may have picked another year while the cache was read.
+            if (key != "${_selectedYear.value}$districtAbbreviation") return
             if (cached) userMessages.showRetry("Couldn't refresh district", ::refreshAll)
         }
 
