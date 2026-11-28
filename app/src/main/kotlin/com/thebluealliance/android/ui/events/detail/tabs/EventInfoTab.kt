@@ -118,10 +118,11 @@ fun EventInfoTab(
                 }
             }
 
-            if (event.locationName != null) {
+            val venueLines = eventVenueLines(event.locationName, event.address)
+            if (venueLines.venue != null) {
                 item {
                     Text(
-                        text = event.locationName,
+                        text = venueLines.venue,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(horizontal = CONTENT_INSET).padding(top = 4.dp),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -130,13 +131,14 @@ fun EventInfoTab(
             }
 
             // Address (tappable → opens Google Maps)
-            if (event.address != null) {
+            if (venueLines.address != null) {
                 item {
                     EventInfoLinkRow(
-                        text = event.address,
+                        text = venueLines.address,
                         onClickLabel = "Open in Maps",
                         onClick = {
-                            val url = event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(event.address)}"
+                            val url =
+                                event.gmapsUrl ?: "geo:0,0?q=${Uri.encode(venueLines.address)}"
                             context.openUrl(url)
                         },
                         icon = {
@@ -227,6 +229,17 @@ fun EventInfoTab(
         }
     }
 }
+
+/** The venue and address lines the Info tab prints; a null line is not shown. */
+internal data class EventVenueLines(
+    val venue: String?,
+    val address: String?,
+)
+
+internal fun eventVenueLines(
+    locationName: String?,
+    address: String?,
+): EventVenueLines = EventVenueLines(venue = locationName, address = address)
 
 /**
  * A tappable link row on the Event Info tab.
