@@ -19,15 +19,15 @@ All UI strings use **sentence case**: capitalize only the first word and proper 
 
 ### What counts as a proper noun (keep capitalized)
 
-- Brand names: YouTube, Twitch, Livestream, Google, Nexus (FRC Nexus), Maps (the app)
+- Brand names: YouTube, Twitch, Livestream, Google, Android, Nexus (FRC Nexus), Maps (the app, only as "in Maps"), Apache License (a license's name)
 - FRC-specific proper nouns: Red alliance, Blue alliance (alliance is not a proper noun, but Red/Blue are color names used as proper team identifiers — keep "Red" and "Blue" capitalized)
-- Product names: myTBA, The Blue Alliance, Team @ Event (TBA's name for a team's page at one event)
+- Product names: myTBA, The Blue Alliance (and "the Blue Alliance"), Team @ Event (TBA's name for a team's page at one event)
 - FIRST program, event and award names, written the way the Game Manual writes them:
   - FIRST Championship, and "Championship" on its own when it means that event.
   - Einstein: the Championship's finals field.
   - Regional Pool: the manual capitalizes it as the name of the regional Championship qualification pool.
   - Impact Award, FIRST Leadership Award, Engineering Inspiration, Rookie All Star: official award names.
-  - Week 1, Week 2, …: the manual's names for competition weeks.
+  - Week 1, Week 2, …: the manual's names for competition weeks. "Week" keeps its capital only before a number.
   - Finals: the manual's name for the last playoff round.
 - Days of the week and months.
 

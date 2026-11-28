@@ -1,6 +1,7 @@
 # Proper nouns and phrases that keep their capitals in UI text. SentenceCaseTest reads this file.
 # Keep it in sync with STYLE_GUIDE.md "What counts as a proper noun". One entry per line; an entry
-# with spaces is a phrase whose words are allowed only together. Words with two or more capitals
+# with spaces is a phrase whose words are allowed only together, and # in a phrase stands for a
+# number or placeholder. Words with two or more capitals
 # (OPR, myTBA, YouTube, GitHub) and words with digits (Q42) pass without an entry.
 
 # Product and brand names
@@ -11,7 +12,7 @@ Android
 Twitch
 Livestream
 Nexus
-Maps
+in Maps
 Apache License
 Team @ Event
 
@@ -25,7 +26,7 @@ Impact Award
 Leadership Award
 Engineering Inspiration
 Rookie All Star
-Week
+Week #
 Finals
 
 # Calendar names

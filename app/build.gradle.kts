@@ -163,6 +163,11 @@ android {
     testOptions {
         unitTests.all {
             it.useJUnitPlatform()
+            // SentenceCaseTest reads every module's UI sources, so edits there must rerun it.
+            it.inputs
+                .files(listOf("app", "wear", "tv").map { m -> rootProject.fileTree("$m/src/main") })
+                .withPropertyName("sentenceCaseSources")
+                .withPathSensitivity(PathSensitivity.RELATIVE)
         }
     }
 }

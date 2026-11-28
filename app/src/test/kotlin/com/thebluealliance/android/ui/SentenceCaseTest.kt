@@ -10,13 +10,14 @@ import javax.xml.parsers.DocumentBuilderFactory
 /**
  * Enforces STYLE_GUIDE.md's sentence case on UI text in the app, wear and tv modules.
  *
- * It reads every `src/main/res/values/strings.xml`, and the string literals at Kotlin UI call
+ * It reads every `src/main/res/values/strings.xml` (English only), and the string literals at Kotlin UI call
  * sites in `src/main/kotlin`: the first string argument of a label-taking call ([UI_CALL]), a
  * named UI argument ([UI_PARAM]), an enum entry's label lambda, both strings of a
  * `"key" to "Label"` pair, and both branches of an `if` in any of those. A capital on any word
  * but a sentence's first fails unless the word is in `sentence-case-allowlist.txt` (test
- * resources), which mirrors STYLE_GUIDE.md's proper-noun list. Words with two or more capitals
- * (OPR, myTBA, YouTube) and words with digits (Q42, R2) count as acronyms. A line holding
+ * resources), which mirrors STYLE_GUIDE.md's proper-noun list; a `#` in an allowlist phrase
+ * stands for a number or placeholder ("Week #"). Words with two or more capitals (OPR, myTBA,
+ * YouTube) and words with digits (Q42, R2) count as acronyms. A line holding
  * `sentence-case-exempt` is skipped: use it only for copies of server text or names built
  * from it.
  */
@@ -33,15 +34,17 @@ class SentenceCaseTest {
                         .resolve("res")
                         .walkTopDown()
                         .filter {
-                            it.name == "strings.xml" &&
-                                it.parentFile.name.startsWith("values")
+                            it.name == "strings.xml" && it.parentFile.name == "values"
                         }.flatMap { stringsXmlEntries(it) }
+                        .toList()
                 val kotlin =
                     src
                         .resolve("kotlin")
                         .walkTopDown()
                         .filter { it.extension == "kt" }
                         .flatMap { uiLiterals(it) }
+                        .toList()
+                check(xml.size + kotlin.size > 0) { "No UI strings found in $src" }
                 (xml + kotlin).flatMap { entry ->
                     titleCaseWords(entry.text, allowlist).map { word ->
                         val text = entry.text.replace(PLACEHOLDER, '…')
@@ -77,6 +80,10 @@ class SentenceCaseTest {
             "Regionals · Happening now",
             "Advances to R2-7",
             "SAMPLE DATA",
+            "Upcoming this week — Week 3",
+            "via Week \u0000 pool",
+            "I'm not sure, I've checked",
+            "Open in Google's app",
         ).forEach { assertEquals(emptyList<String>(), titleCaseWords(it, allowlist), it) }
     }
 
@@ -92,6 +99,16 @@ class SentenceCaseTest {
             "Team @ Event",
         ).forEach { assertEquals(emptyList<String>(), titleCaseWords(it, allowlist), it) }
         assertEquals(listOf("Pool"), titleCaseWords("Week 3 Pool", allowlist))
+    }
+
+    @Test
+    fun `flags capitals next to numbers, percents and placeholders`() {
+        val allowlist = Allowlist.load()
+        assertEquals(listOf("Win"), titleCaseWords("100% Win rate", allowlist))
+        assertEquals(listOf("Title"), titleCaseWords("\u0000Title", allowlist))
+        assertEquals(listOf("Regional"), titleCaseWords("2026 Regional", allowlist))
+        assertEquals(listOf("Week"), titleCaseWords("Upcoming this Week", allowlist))
+        assertEquals(listOf("Maps"), titleCaseWords("Pit Maps", allowlist))
     }
 
     @Test
@@ -119,6 +136,8 @@ class SentenceCaseTest {
                 },
             )
             POINTS({ if (it != null) "District Points" else "Regional Points" }),
+            text = if (x) "Teams: ${'$'}{list.joinToString(", ")}" else "No Teams Found"
+            label = if (a) "One A" else if (b) "Two B" else "Three C"
             """.trimIndent()
         val file = File.createTempFile("ui-literals", ".kt").apply { writeText(source) }
         try {
@@ -137,6 +156,11 @@ class SentenceCaseTest {
                     18 to "Pit Map",
                     21 to "District Points",
                     21 to "Regional Points",
+                    22 to "Teams: \u0000",
+                    22 to "No Teams Found",
+                    23 to "One A",
+                    23 to "Two B",
+                    23 to "Three C",
                 ),
                 uiLiterals(file).map { it.line to it.text }.toList(),
             )
@@ -162,8 +186,8 @@ class SentenceCaseTest {
                         SentenceCaseTest::class.java.getResource("/sentence-case-allowlist.txt"),
                     ).readText()
                         .lines()
-                        .map { it.substringBefore('#').trim() }
-                        .filter { it.isNotEmpty() }
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() && !it.startsWith("# ") && it != "#" }
                 val (phrases, words) = lines.partition { ' ' in it }
                 return Allowlist(words.toSet(), phrases.map { it.split(' ') })
             }
@@ -194,13 +218,16 @@ class SentenceCaseTest {
         val ENUM_LABEL = Regex("\\b[A-Z][A-Z0-9_]+\\s*\\(\\s*\\{\\s*$IF")
         val PAIR_VALUE = Regex("\"\\s+to\\s+$")
         val PAIR_KEY = Regex("^\"\\s+to\\s+")
-        val ELSE_BRANCH = Regex("\"\\s*\\}?\\s*else\\s*\\{?\\s*$")
+        val ELSE_BRANCH = Regex("\"\\s*\\}?\\s*else\\s*\\{?\\s*$IF")
         const val EXEMPT = "sentence-case-exempt"
 
         const val PLACEHOLDER = '\u0000'
-        val FORMAT_ARG = Regex("%(\\d+\\$)?[-#+ 0,(]*\\d*(\\.\\d+)?[a-zA-Z%]")
+        val FORMAT_ARG = Regex("%(\\d+\\$)?[-#+0,(]*\\d*(\\.\\d+)?[sSdfxXoeEgGcbBhHn%]")
         val URL = Regex("https?://\\S+")
-        val TOKEN = Regex("[A-Za-z][A-Za-z0-9'’]*|[@&]|[.!?·—–|:\\n\\t]")
+        val TOKEN =
+            Regex("\u0000|[0-9][A-Za-z0-9'’]*|[A-Za-z][A-Za-z0-9'’]*|[@&]|[.!?·—–|:\\n\\t]")
+        val CONTRACTION = Regex("I['’][a-z]+")
+        val POSSESSIVE = Regex("['’]s$")
         const val SENTENCE_BREAKS = ".!?·—–|:\n\t"
 
         fun projectRoot(): File {
@@ -217,11 +244,20 @@ class SentenceCaseTest {
             allowlist: Allowlist,
         ): List<String> {
             val cleaned = URL.replace(FORMAT_ARG.replace(text, "$PLACEHOLDER"), " ")
-            val tokens = TOKEN.findAll(cleaned.replace(PLACEHOLDER, 'X')).map { it.value }.toList()
+            val tokens =
+                TOKEN
+                    .findAll(cleaned.replace("$PLACEHOLDER", " $PLACEHOLDER "))
+                    .map { it.value.replace(POSSESSIVE, "") }
+                    .toList()
             val exempt = BooleanArray(tokens.size)
+
+            fun matches(
+                token: String,
+                word: String,
+            ) = token == word || (word == "#" && (token[0].isDigit() || token[0] == PLACEHOLDER))
             allowlist.phrases.forEach { phrase ->
                 for (i in 0..tokens.size - phrase.size) {
-                    if (phrase.indices.all { tokens[i + it] == phrase[it] }) {
+                    if (phrase.indices.all { matches(tokens[i + it], phrase[it]) }) {
                         phrase.indices.forEach { exempt[i + it] = true }
                     }
                 }
@@ -235,20 +271,16 @@ class SentenceCaseTest {
                 }
                 val first = sentenceStart
                 sentenceStart = false
-                if (first ||
-                    exempt[i] ||
-                    !token[0].isUpperCase() ||
-                    token.length == 1
-                ) {
-                    return@forEachIndexed
-                }
-                if (token.count { it.isUpperCase() } > 1 ||
-                    token.any { it.isDigit() }
-                ) {
-                    return@forEachIndexed
-                }
-                if (token in allowlist.words) return@forEachIndexed
-                flagged += token
+                val acronym = token.count { it.isUpperCase() } > 1 || token.any { it.isDigit() }
+                val ok =
+                    first ||
+                        exempt[i] ||
+                        !token[0].isUpperCase() ||
+                        token.length == 1 ||
+                        acronym ||
+                        CONTRACTION.matches(token) ||
+                        token in allowlist.words
+                if (!ok) flagged += token
             }
             return flagged
         }
@@ -267,8 +299,10 @@ class SentenceCaseTest {
                     (0 until nodes.length).map { nodes.item(it) as Element }
                 }
             return (strings + items)
-                .filter { it.getAttribute("translatable") != "false" }
-                .map { element ->
+                .filter {
+                    it.getAttribute("translatable") != "false" &&
+                        (it.parentNode as? Element)?.getAttribute("translatable") != "false"
+                }.map { element ->
                     val name =
                         element
                             .getAttribute(
@@ -277,7 +311,10 @@ class SentenceCaseTest {
                     Entry(
                         file,
                         lineOf(name),
-                        element.textContent.replace("\\'", "'").replace("\\n", "\n"),
+                        element.textContent
+                            .replace(Regex("\\s+"), " ")
+                            .replace("\\'", "'")
+                            .replace("\\n", "\n"),
                     )
                 }.asSequence()
         }
@@ -309,8 +346,12 @@ class SentenceCaseTest {
                                     ),
                                 ),
                             ) ||
-                            (previousWasUi && ELSE_BRANCH.containsMatchIn(context))
-                    previousWasUi = ui
+                            (
+                                !literal.nested &&
+                                    previousWasUi &&
+                                    ELSE_BRANCH.containsMatchIn(context)
+                            )
+                    if (!literal.nested) previousWasUi = ui
                     val line = src.substring(0, literal.start).count { it == '\n' } + 1
                     if (ui && EXEMPT !in lines[line - 1]) Entry(file, line, literal.value) else null
                 }.asSequence()
@@ -325,6 +366,7 @@ class SentenceCaseTest {
             val start: Int,
             val end: Int,
             val value: String,
+            val nested: Boolean,
         )
 
         class Result(
@@ -336,14 +378,14 @@ class SentenceCaseTest {
         private val literals = mutableListOf<Literal>()
 
         fun lex(): Result {
-            code(0, topLevel = true)
+            code(0, nesting = 0)
             return Result(literals.sortedBy { it.start }, masked.toString())
         }
 
         /** Scans code from [from]; inside a template, stops after the closing brace. */
         private fun code(
             from: Int,
-            topLevel: Boolean,
+            nesting: Int,
         ): Int {
             var i = from
             var depth = 0
@@ -369,8 +411,8 @@ class SentenceCaseTest {
                         blank(i, end)
                         i = end
                     }
-                    src.startsWith("\"\"\"", i) -> i = string(i, raw = true)
-                    c == '"' -> i = string(i, raw = false)
+                    src.startsWith("\"\"\"", i) -> i = string(i, raw = true, nesting)
+                    c == '"' -> i = string(i, raw = false, nesting)
                     c == '\'' -> {
                         val end =
                             if (src.getOrNull(i + 1) ==
@@ -388,7 +430,7 @@ class SentenceCaseTest {
                     }
                     c == '}' -> {
                         i++
-                        if (!topLevel && depth == 0) return i
+                        if (nesting > 0 && depth == 0) return i
                         depth--
                     }
                     else -> i++
@@ -400,9 +442,11 @@ class SentenceCaseTest {
         private fun string(
             start: Int,
             raw: Boolean,
+            nesting: Int,
         ): Int {
             val quote = if (raw) "\"\"\"" else "\""
             var i = start + quote.length
+            var textStart = i
             val value = StringBuilder()
             while (i < src.length && !src.startsWith(quote, i)) {
                 val c = src[i]
@@ -425,7 +469,10 @@ class SentenceCaseTest {
                     }
                     src.startsWith("\${", i) -> {
                         value.append(PLACEHOLDER)
-                        i = code(i + 2, topLevel = false)
+                        blank(textStart, i + 2)
+                        i = code(i + 2, nesting + 1)
+                        blank(i - 1, i)
+                        textStart = i
                     }
                     c == '$' &&
                         src
@@ -443,8 +490,8 @@ class SentenceCaseTest {
                 }
             }
             val end = minOf(src.length, i + quote.length)
-            blank(start + quote.length, i)
-            literals += Literal(start, end, value.toString())
+            blank(textStart, i)
+            literals += Literal(start, end, value.toString(), nested = nesting > 0)
             return end
         }
 
