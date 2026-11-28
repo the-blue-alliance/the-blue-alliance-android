@@ -157,12 +157,20 @@ fun TBANavigation(
     // The rail or the bottom bar, whichever shows: keyboard focus starts there.
     val focusEntry = remember { WindowFocusEntry() }
     val userMessages = rememberUserMessageState()
+    // Screens pad by the snackbar's room. Above the bottom bar, NavDisplay has taken the bar's
+    // bottom inset, which Scaffold subtracts from what screens pad by, so it's counted in too.
+    val barInsets = WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
+    val userMessageInsets =
+        remember(userMessages, bottomBarShown, barInsets) {
+            userMessages.insets(below = if (bottomBarShown) barInsets else null)
+        }
 
     NavigationFrame(
         showRail = useRail,
         navigationShown = useRail || bottomBarShown,
         focusEntry = focusEntry,
         userMessages = userMessages,
+        userMessageInsets = userMessageInsets,
         rail = {
             TBANavigationRail(
                 currentRoute = navState.currentRoute,
@@ -583,6 +591,7 @@ private fun NavigationFrame(
     navigationShown: Boolean,
     focusEntry: WindowFocusEntry,
     userMessages: UserMessageState,
+    userMessageInsets: WindowInsets,
     rail: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
@@ -631,9 +640,11 @@ private fun NavigationFrame(
                 // by it, and focused items scroll into view above it.
                 val parentSpec = LocalBringIntoViewSpec.current
                 CompositionLocalProvider(
-                    LocalUserMessageInsets provides userMessages.insets,
+                    LocalUserMessageInsets provides userMessageInsets,
                     LocalBringIntoViewSpec provides
-                        remember(parentSpec) { userMessages.bringIntoViewSpec(parentSpec) },
+                        remember(parentSpec, userMessages) {
+                            userMessages.bringIntoViewSpec(parentSpec)
+                        },
                 ) { content() }
             }
         }

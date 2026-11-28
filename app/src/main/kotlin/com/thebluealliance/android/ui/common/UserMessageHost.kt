@@ -64,16 +64,19 @@ class UserMessageState {
     /** The snackbar host's height, from the window's bottom edge (or the bottom bar) up. */
     internal var hostHeightPx by mutableIntStateOf(0)
 
-    /** Whether the snackbar showing takes room at the bottom of the window. */
-    val reservesSpace: Boolean
+    /** Whether the snackbar showing makes room at the bottom of the screen. */
+    internal val reservesSpace: Boolean
         get() = reservesSpace(hostState.currentSnackbarData?.visuals)
 
     /** Pixels at the bottom of the screen that a snackbar taking room covers, or 0. */
     internal val coveredPx: Int
         get() = if (reservesSpace) hostHeightPx else 0
 
-    /** [coveredPx] as a bottom inset, for [LocalUserMessageInsets]. */
-    val insets: WindowInsets = UserMessageInsets { coveredPx }
+    /**
+     * [coveredPx] as a bottom inset, for [LocalUserMessageInsets], above [below]: the bottom inset
+     * the frame took for the bottom bar, if it shows.
+     */
+    fun insets(below: WindowInsets?): WindowInsets = UserMessageInsets(below) { coveredPx }
 
     /** [parent] keeping focused items clear of the snackbar, for LocalBringIntoViewSpec. */
     @OptIn(ExperimentalFoundationApi::class)
@@ -148,7 +151,7 @@ private fun UserMessageSnackbar(shown: SnackbarData) {
     val focusManager = LocalFocusManager.current
     // Every way out (the action, the close button, Esc) first sends keyboard focus back out.
     val data =
-        remember(shown) {
+        remember(shown, focusManager) {
             FocusReturningSnackbarData(shown) { exitFocus(focus, first, last, focusManager) }
         }
     val visuals = data.visuals

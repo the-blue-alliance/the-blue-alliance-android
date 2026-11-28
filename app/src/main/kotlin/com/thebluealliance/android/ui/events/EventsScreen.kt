@@ -47,6 +47,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.SidewaysBringIntoView
 import com.thebluealliance.android.ui.common.StateContent
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.components.EventRow
@@ -457,57 +458,60 @@ private fun WeekFilterChips(
             // Beside the rail a chip scrolled part-way off the start reads as cut by the rail's
             // edge, so the start fades there as it does under the pinned star.
             val fadeStart = hasFavorites || LocalNavigationRailShown.current
-            LazyRow(
-                state = chipRowState,
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .verticalWheelScrollsSideways(chipRowState)
-                        .then(
-                            if (fadeStart) {
-                                Modifier.drawWithContent {
-                                    drawContent()
-                                    if (chipRowState.canScrollBackward) {
-                                        val solidZone = 4.dp.toPx()
-                                        val totalWidth = fadeWidth.toPx()
-                                        drawRect(
-                                            brush =
-                                                Brush.horizontalGradient(
-                                                    colorStops =
-                                                        arrayOf(
-                                                            0f to barColor,
-                                                            solidZone / totalWidth to barColor,
-                                                            1f to Color.Transparent,
-                                                        ),
-                                                    endX = totalWidth,
-                                                ),
-                                            size = size.copy(width = totalWidth),
-                                        )
+            // Chips scroll into the whole row: the Retry snackbar covers the screen's bottom.
+            SidewaysBringIntoView {
+                LazyRow(
+                    state = chipRowState,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .verticalWheelScrollsSideways(chipRowState)
+                            .then(
+                                if (fadeStart) {
+                                    Modifier.drawWithContent {
+                                        drawContent()
+                                        if (chipRowState.canScrollBackward) {
+                                            val solidZone = 4.dp.toPx()
+                                            val totalWidth = fadeWidth.toPx()
+                                            drawRect(
+                                                brush =
+                                                    Brush.horizontalGradient(
+                                                        colorStops =
+                                                            arrayOf(
+                                                                0f to barColor,
+                                                                solidZone / totalWidth to barColor,
+                                                                1f to Color.Transparent,
+                                                            ),
+                                                        endX = totalWidth,
+                                                    ),
+                                                size = size.copy(width = totalWidth),
+                                            )
+                                        }
                                     }
-                                }
-                            } else {
-                                Modifier
-                            },
+                                } else {
+                                    Modifier
+                                },
+                            ),
+                    contentPadding =
+                        PaddingValues(
+                            start = 8.dp,
+                            end = 12.dp,
+                            bottom = 4.dp,
                         ),
-                contentPadding =
-                    PaddingValues(
-                        start = 8.dp,
-                        end = 12.dp,
-                        bottom = 4.dp,
-                    ),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(weekLabels.size) { index ->
-                    val label = weekLabels[index]
-                    FilterChip(
-                        selected = selectedLabel == label && !isFavoritesSelected,
-                        onClick = { onWeekSelected(label) },
-                        label = { Text(label) },
-                        colors = weekChipColors,
-                        elevation = null,
-                        border = weekChipBorder,
-                        modifier = Modifier.handCursor(),
-                    )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(weekLabels.size) { index ->
+                        val label = weekLabels[index]
+                        FilterChip(
+                            selected = selectedLabel == label && !isFavoritesSelected,
+                            onClick = { onWeekSelected(label) },
+                            label = { Text(label) },
+                            colors = weekChipColors,
+                            elevation = null,
+                            border = weekChipBorder,
+                            modifier = Modifier.handCursor(),
+                        )
+                    }
                 }
             }
         }

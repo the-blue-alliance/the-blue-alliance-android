@@ -1,9 +1,14 @@
 package com.thebluealliance.android.ui.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.BringIntoViewSpec
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.unit.Density
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalFoundationApi::class)
 class UserMessageInsetsTest {
     // Compose's default: scroll the least distance that shows the whole item in the container.
     private val default: (Float, Float, Float) -> Float = { offset, size, container ->
@@ -59,5 +64,24 @@ class UserMessageInsetsTest {
         val density = Density(1f)
         assertEquals(240, insets.getBottom(density))
         assertEquals(0, insets.getTop(density))
+    }
+
+    @Test
+    fun `above the bottom bar, the inset adds the bar's inset while the snackbar shows`() {
+        val density = Density(1f)
+        assertEquals(253, UserMessageInsets(WindowInsets(bottom = 63)) { 190 }.getBottom(density))
+        assertEquals(0, UserMessageInsets(WindowInsets(bottom = 63)) { 0 }.getBottom(density))
+    }
+
+    @Test
+    fun `a pane shorter than the snackbar keeps the default`() {
+        assertEquals(0f, distance(offset = 100f, size = 0f, container = 200f, covered = 300f))
+    }
+
+    @Test
+    fun `sideways rows bring items into view without the snackbar's room`() {
+        val parent = object : BringIntoViewSpec {}
+        assertSame(parent, AboveSnackbarBringIntoViewSpec(parent) { 190 }.ignoringSnackbar())
+        assertSame(parent, parent.ignoringSnackbar())
     }
 }

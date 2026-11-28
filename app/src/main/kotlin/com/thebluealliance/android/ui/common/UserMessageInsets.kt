@@ -2,7 +2,10 @@ package com.thebluealliance.android.ui.common
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.BringIntoViewSpec
+import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -11,9 +14,11 @@ import androidx.compose.ui.unit.LayoutDirection
  * The bottom of the window that a snackbar with buttons covers, as an inset screens add to their
  * content padding (see [com.thebluealliance.android.ui.components.TopLevelContentWindowInsets]):
  * lists scroll their last row clear of it while backgrounds still reach the window's edge.
- * Zero while no such snackbar shows.
+ * Zero while no such snackbar shows. [below] is the bottom inset the frame already took for the
+ * bottom bar, if it shows (see [snackbarContentInset]).
  */
 internal class UserMessageInsets(
+    private val below: WindowInsets? = null,
     private val coveredPx: () -> Int,
 ) : WindowInsets {
     override fun getLeft(
@@ -28,7 +33,8 @@ internal class UserMessageInsets(
         layoutDirection: LayoutDirection,
     ) = 0
 
-    override fun getBottom(density: Density) = coveredPx()
+    override fun getBottom(density: Density) =
+        snackbarContentInset(coveredPx(), below?.getBottom(density) ?: 0)
 }
 
 /** The window's [UserMessageInsets]; none outside the navigation frame. */
@@ -49,7 +55,7 @@ internal fun scrollDistanceAbove(
     default: (offset: Float, size: Float, containerSize: Float) -> Float,
 ): Float {
     val above = containerSize - covered
-    return if (covered <= 0f || size > above) {
+    return if (covered <= 0f || above <= 0f || size > above) {
         default(offset, size, containerSize)
     } else {
         default(offset, size, above)
@@ -59,7 +65,7 @@ internal fun scrollDistanceAbove(
 /** [parent], bringing focused items into view above the snackbar (see [scrollDistanceAbove]). */
 @OptIn(ExperimentalFoundationApi::class)
 internal class AboveSnackbarBringIntoViewSpec(
-    private val parent: BringIntoViewSpec,
+    val parent: BringIntoViewSpec,
     private val coveredPx: () -> Int,
 ) : BringIntoViewSpec {
     @Suppress("DEPRECATION")
@@ -73,4 +79,25 @@ internal class AboveSnackbarBringIntoViewSpec(
         scrollDistanceAbove(offset, size, containerSize, coveredPx().toFloat()) { o, s, c ->
             parent.calculateScrollDistance(o, s, c)
         }
+}
+
+/**
+ * This spec without the snackbar's room. [LocalBringIntoViewSpec] has no axis, and the snackbar
+ * covers the bottom of the screen, not the end of a row.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+internal fun BringIntoViewSpec.ignoringSnackbar(): BringIntoViewSpec =
+    (this as? AboveSnackbarBringIntoViewSpec)?.parent ?: this
+
+/**
+ * [content] with Compose's own bring-into-view, for a row that scrolls sideways (tabs, chips): its
+ * focused items scroll into the whole row, not into a row shortened by the snackbar's height.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun SidewaysBringIntoView(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalBringIntoViewSpec provides LocalBringIntoViewSpec.current.ignoringSnackbar(),
+        content = content,
+    )
 }
