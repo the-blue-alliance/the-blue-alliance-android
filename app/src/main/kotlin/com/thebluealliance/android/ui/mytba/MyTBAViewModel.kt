@@ -154,8 +154,30 @@ class MyTBAViewModel
             viewModelScope.launch {
                 try {
                     myTBARepository.removeFavorite(favorite.modelKey, favorite.modelType)
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     android.util.Log.w("MyTBAViewModel", "Failed to remove favorite", e)
+                    userMessages.showRetry("Couldn't remove favorite") { removeFavorite(favorite) }
+                    return@launch
+                }
+                userMessages.showUndo("Removed from favorites") { restoreFavorite(favorite) }
+            }
+        }
+
+        private fun restoreFavorite(favorite: Favorite) {
+            viewModelScope.launch {
+                // An Undo left up after signing out has no account to restore to.
+                if (!authRepository.isSignedIn()) return@launch
+                try {
+                    myTBARepository.addFavorite(favorite.modelKey, favorite.modelType)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    android.util.Log.w("MyTBAViewModel", "Failed to restore favorite", e)
+                    userMessages.showRetry(
+                        "Couldn't restore favorite",
+                    ) { restoreFavorite(favorite) }
                 }
             }
         }
@@ -165,19 +187,62 @@ class MyTBAViewModel
             modelType: Int,
         ) {
             viewModelScope.launch {
+                val isFavorited =
+                    uiState.value.favorites.any {
+                        it.modelKey == modelKey && it.modelType == modelType
+                    }
+                val previous =
+                    uiState.value.subscriptions
+                        .firstOrNull { it.modelKey == modelKey && it.modelType == modelType }
+                        ?.notifications
+                        .orEmpty()
                 try {
-                    val isFavorited =
-                        uiState.value.favorites.any {
-                            it.modelKey == modelKey && it.modelType == modelType
-                        }
                     myTBARepository.updatePreferences(
                         modelKey = modelKey,
                         modelType = modelType,
                         favorite = isFavorited,
                         notifications = emptyList(),
                     )
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     android.util.Log.w("MyTBAViewModel", "Failed to remove subscription", e)
+                    userMessages.showRetry("Couldn't remove notifications") {
+                        removeSubscription(modelKey, modelType)
+                    }
+                    return@launch
+                }
+                if (previous.isEmpty()) {
+                    userMessages.show("Removed from notifications")
+                } else {
+                    userMessages.showUndo("Removed from notifications") {
+                        restoreSubscription(modelKey, modelType, previous)
+                    }
+                }
+            }
+        }
+
+        private fun restoreSubscription(
+            modelKey: String,
+            modelType: Int,
+            notifications: List<String>,
+        ) {
+            viewModelScope.launch {
+                if (!authRepository.isSignedIn()) return@launch
+                try {
+                    // Read now, so restoring notifications keeps a favorite change made since.
+                    val favorite =
+                        myTBARepository.observeFavorites().first().any {
+                            it.modelKey == modelKey && it.modelType == modelType
+                        }
+                    myTBARepository.updatePreferences(modelKey, modelType, favorite, notifications)
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    android.util.Log.w("MyTBAViewModel", "Failed to restore subscription", e)
+                    userMessages.showRetry("Couldn't restore notifications") {
+                        restoreSubscription(modelKey, modelType, notifications)
+                    }
                 }
             }
         }

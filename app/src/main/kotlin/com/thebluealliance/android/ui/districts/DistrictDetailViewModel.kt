@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.events.buildEventSections
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel(assistedFactory = DistrictDetailViewModel.Factory::class)
@@ -42,6 +44,12 @@ class DistrictDetailViewModel
         private val _availableYears = MutableStateFlow<List<Int>>(emptyList())
         val availableYears: StateFlow<List<Int>> = _availableYears.asStateFlow()
 
+        private val loadOutcomes =
+            MutableStateFlow<Map<DistrictDetailTab, RefreshOutcome>>(emptyMap())
+
+        // Bumped on a year change, so the last season's late fetches don't decide this one's tabs.
+        private val seasonGeneration = AtomicInteger(0)
+
         val uiState: StateFlow<DistrictDetailUiState> =
             combine(
                 _selectedYear.flatMapLatest { year ->
@@ -53,11 +61,23 @@ class DistrictDetailViewModel
                 _selectedYear.flatMapLatest { year ->
                     districtRepository.observeDistrictRankings("$year$districtAbbreviation")
                 },
-            ) { district, events, rankings ->
+                loadOutcomes,
+            ) { district, events, rankings, outcomes ->
+                fun loaded(tab: DistrictDetailTab) = outcomes[tab] == RefreshOutcome.SUCCEEDED
                 DistrictDetailUiState(
                     district = district,
-                    eventSections = if (events.isEmpty()) null else buildEventSections(events),
-                    rankings = rankings,
+                    eventSections =
+                        when {
+                            events.isNotEmpty() -> buildEventSections(events)
+                            loaded(DistrictDetailTab.EVENTS) -> emptyList()
+                            else -> null
+                        },
+                    rankings =
+                        rankings.takeIf {
+                            it.isNotEmpty() ||
+                                loaded(DistrictDetailTab.RANKINGS)
+                        },
+                    loadOutcomes = outcomes,
                 )
             }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), DistrictDetailUiState())
 
@@ -78,41 +98,60 @@ class DistrictDetailViewModel
 
         fun selectYear(year: Int) {
             if (_selectedYear.value == year) return
+            seasonGeneration.incrementAndGet()
+            loadOutcomes.value = emptyMap()
             _selectedYear.value = year
             refreshAll()
         }
 
         fun refreshAll() {
-            val key = "${_selectedYear.value}$districtAbbreviation"
-            refreshingReported(
-                { reportFailedRefresh(key) },
-                { eventRepository.refreshDistrictEvents(key) },
-                { districtRepository.refreshDistrictRankings(key) },
-            )
+            refreshDistrictTabs(*DistrictDetailTab.entries.toTypedArray())
         }
 
         fun refreshTab(tab: DistrictDetailTab) {
-            val key = "${_selectedYear.value}$districtAbbreviation"
-            when (tab) {
-                DistrictDetailTab.EVENTS ->
-                    refreshingReported(
-                        { reportFailedRefresh(key) },
-                        { eventRepository.refreshDistrictEvents(key) },
-                    )
-                DistrictDetailTab.RANKINGS ->
-                    refreshingReported(
-                        { reportFailedRefresh(key) },
-                        { districtRepository.refreshDistrictRankings(key) },
-                    )
-            }
+            refreshDistrictTabs(tab)
         }
 
-        // A season the user has left doesn't report over the new one.
-        private suspend fun reportFailedRefresh(key: String) {
-            if (key != "${_selectedYear.value}$districtAbbreviation") return
+        private fun refreshDistrictTabs(vararg tabs: DistrictDetailTab) {
+            val key = "${_selectedYear.value}$districtAbbreviation"
+            val generation = seasonGeneration.get()
+            val tasks =
+                tabs.map { tab ->
+                    val task: suspend () -> Unit =
+                        when (tab) {
+                            DistrictDetailTab.EVENTS -> {
+                                { eventRepository.refreshDistrictEvents(key) }
+                            }
+                            DistrictDetailTab.RANKINGS -> {
+                                { districtRepository.refreshDistrictRankings(key) }
+                            }
+                        }
+                    tab to task
+                }
+            refreshTabs(
+                loadOutcomes,
+                { failed -> reportFailedRefresh(key, failed) },
+                *tasks.toTypedArray(),
+                isCurrent = { seasonGeneration.get() == generation },
+            )
+        }
+
+        // With nothing cached, the failed tab's error screen says it instead.
+        private suspend fun reportFailedRefresh(
+            key: String,
+            failed: Set<DistrictDetailTab>,
+        ) {
             val cached =
-                eventRepository.observeDistrictEvents(key).first().isNotEmpty() ||
-                    districtRepository.observeDistrictRankings(key).first().isNotEmpty()
+                failed.any { tab ->
+                    when (tab) {
+                        DistrictDetailTab.EVENTS ->
+                            eventRepository.observeDistrictEvents(key).first().isNotEmpty()
+                        DistrictDetailTab.RANKINGS ->
+                            districtRepository.observeDistrictRankings(key).first().isNotEmpty()
+                    }
+                }
+            // The user may have picked another year while the cache was read.
+            if (key != "${_selectedYear.value}$districtAbbreviation") return
             if (cached) userMessages.showRetry("Couldn't refresh district", ::refreshAll)
         }
 
