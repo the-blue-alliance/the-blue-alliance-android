@@ -87,9 +87,10 @@ fun TooltipIconButton(
  * phone, a screen opened by keyboard or a deep link gets focus on its Back button, and the tooltip
  * would sit over the first tab. TooltipBox's focus show is dropped here. Instead the button shows
  * the tooltip at default priority, which M3 hides after 1.5 s, when the first key to reach it after
- * gaining focus is the release of the Tab or arrow key that moved focus there (focus moves on the
- * press, so the release goes to the newly focused button). Focus placed by the app is followed by
- * no key, or by the release of the Enter or Alt+Left that opened the screen, and shows nothing.
+ * gaining focus (Shift aside) is the release of the Tab or arrow key that moved focus there (focus
+ * moves on the press, so the release goes to the newly focused button). Focus placed by the app is
+ * followed by no key, or by the release of the Enter, Alt or Ctrl that opened the screen, and shows
+ * nothing.
  * Hover and long press go straight to [tooltip].
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,6 +119,8 @@ internal class FocusTooltipState(
         key: Key,
         withAltCtrlOrMeta: Boolean,
     ): Boolean {
+        // Shift+Tab's Shift can be released before its Tab.
+        if (isShiftKey(key)) return false
         val show = awaitingFirstKey && movedFocusHere(type, key, withAltCtrlOrMeta)
         awaitingFirstKey = false
         return show
@@ -142,6 +145,8 @@ internal fun movedFocusHere(
     key: Key,
     withAltCtrlOrMeta: Boolean,
 ): Boolean = type == KeyEventType.KeyUp && isFocusKey(key) && !withAltCtrlOrMeta
+
+internal fun isShiftKey(key: Key): Boolean = key == Key.ShiftLeft || key == Key.ShiftRight
 
 /** [onClick], after hiding [tooltipState]'s tooltip if it's showing. */
 @OptIn(ExperimentalMaterial3Api::class)
