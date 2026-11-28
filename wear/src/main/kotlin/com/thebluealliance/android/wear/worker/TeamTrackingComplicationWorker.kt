@@ -266,7 +266,7 @@ class TeamTrackingComplicationWorker
                                 event.startDate?.let {
                                     LocalDate.parse(it).format(DateTimeFormatter.ofPattern("MMM d"))
                                 } ?: ""
-                            "$date \u2014 $name"
+                            upcomingEventRow(date, name)
                         }
                     } else {
                         ""
@@ -404,3 +404,9 @@ class TeamTrackingComplicationWorker
 
         // endregion
     }
+
+/** One upcoming-event row, "Mar 20 · Hartford", or just the name when the date is unknown. */
+internal fun upcomingEventRow(
+    date: String,
+    name: String,
+): String = "$date \u2014 $name"

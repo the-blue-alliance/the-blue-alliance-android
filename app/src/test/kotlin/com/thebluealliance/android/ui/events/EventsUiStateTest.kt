@@ -392,7 +392,7 @@ class EventsUiStateTest {
         val result = computeThisWeekEvents(events, today, selectedYear = 2026)
 
         assertNotNull(result)
-        assertEquals("Upcoming This Week \u2014 Week 3", result!!.label)
+        assertEquals("Upcoming This Week · Week 3", result!!.label)
         assertEquals(2, result.events.size)
         assertEquals(setOf("2026abc", "2026def"), result.events.map { it.key }.toSet())
     }

@@ -81,7 +81,7 @@ class MyTBADisplayNamesTest {
     fun `team maps to number and nickname`() {
         val names = buildMyTBADisplayNames(listOf(makeTeam()), emptyList(), emptyList())
 
-        assertEquals("254 - The Cheesy Poofs", names["frc254"])
+        assertEquals("254 · The Cheesy Poofs", names["frc254"])
     }
 
     @Test
@@ -96,7 +96,7 @@ class MyTBADisplayNamesTest {
                 emptyList(),
             )
 
-        assertEquals("1 - The Juggernauts", names["frc1"])
+        assertEquals("1 · The Juggernauts", names["frc1"])
         assertEquals("2", names["frc2"])
     }
 
@@ -111,7 +111,7 @@ class MyTBADisplayNamesTest {
     fun `match with cached event maps to match label and event name`() {
         val names = buildMyTBADisplayNames(emptyList(), listOf(makeEvent()), listOf(makeMatch()))
 
-        assertEquals("Qual 42 - 2026 Silicon Valley Regional", names["2026casj_qm42"])
+        assertEquals("Qual 42 · 2026 Silicon Valley Regional", names["2026casj_qm42"])
     }
 
     @Test
@@ -126,7 +126,7 @@ class MyTBADisplayNamesTest {
 
         val names = buildMyTBADisplayNames(emptyList(), listOf(makeEvent()), listOf(match))
 
-        assertEquals("Match 8 (Round 2) - 2026 Silicon Valley Regional", names["2026casj_sf8m1"])
+        assertEquals("Match 8 (Round 2) · 2026 Silicon Valley Regional", names["2026casj_sf8m1"])
     }
 
     @Test
