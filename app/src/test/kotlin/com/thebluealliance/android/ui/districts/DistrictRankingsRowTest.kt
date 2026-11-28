@@ -1,11 +1,14 @@
 package com.thebluealliance.android.ui.districts
 
 import com.thebluealliance.android.domain.model.DistrictEventPoints
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class DistrictRankingsRowTest {
+    private val strings = ResourceQuantityStrings
+
     private fun points(
         eventKey: String,
         total: Double,
@@ -47,7 +50,7 @@ class DistrictRankingsRowTest {
         assertEquals(
             "Rank 3, Team 254, Event 1: 45 points, Event 2: 52 points, DCMP none, " +
                 "rookie bonus none, 97 total points",
-            districtRowDescription(3, "254", 45, 52, null, 0, 97),
+            districtRowDescription(3, "254", 45, 52, null, 0, 97, strings),
         )
     }
 
@@ -56,7 +59,7 @@ class DistrictRankingsRowTest {
         assertEquals(
             "Rank 40, Team 10254, Event 1: 30 points, Event 2 none, DCMP: 12 points, " +
                 "rookie bonus 10, 52 total points",
-            districtRowDescription(40, "10254", 30, null, 12, 10, 52),
+            districtRowDescription(40, "10254", 30, null, 12, 10, 52, strings),
         )
     }
 
@@ -65,7 +68,7 @@ class DistrictRankingsRowTest {
         assertEquals(
             "Rank 5, Team 254, Event 1: 1 point, Event 2: 2 points, DCMP: 0 points, " +
                 "rookie bonus none, 1 total point",
-            districtRowDescription(5, "254", 1, 2, 0, 0, 1),
+            districtRowDescription(5, "254", 1, 2, 0, 0, 1, strings),
         )
     }
 }

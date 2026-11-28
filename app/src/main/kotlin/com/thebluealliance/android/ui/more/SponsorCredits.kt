@@ -21,13 +21,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.PlatinumSponsor
 import com.thebluealliance.android.domain.model.SponsorLogoStyle
+import com.thebluealliance.android.ui.common.QuantityStrings
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.util.openUrl
 
-internal fun sponsorCreditLabel(count: Int): String =
-    if (count == 1) "Thanks to our platinum sponsor" else "Thanks to our platinum sponsors"
+internal fun sponsorCreditLabel(
+    count: Int,
+    strings: QuantityStrings,
+): String = strings.get(R.plurals.sponsor_credit, count)
 
 /** Pick the logo drawn for this background, falling back to the other variant, then to none. */
 internal fun PlatinumSponsor.logoFor(darkBackground: Boolean): Any? =
@@ -48,7 +53,7 @@ fun SponsorCredits(
     val logoFilter = if (darkBackground) ColorFilter.tint(ink, BlendMode.Modulate) else null
     Column(modifier = modifier.padding(horizontal = 16.dp)) {
         Text(
-            text = sponsorCreditLabel(sponsors.size),
+            text = sponsorCreditLabel(sponsors.size, rememberQuantityStrings()),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

@@ -70,6 +70,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.LocalDetailPaneChrome
@@ -494,6 +495,7 @@ private fun RowScope.AllianceScoreSummaryCol(
     val rpBonus = if (alliance == "red") rpBonuses?.red else rpBonuses?.blue
     val advancementMsg = if (alliance == "red") advancementMsgs?.red else advancementMsgs?.blue
 
+    val strings = rememberQuantityStrings()
     val scoreState = allianceScoreState(match.winningAlliance, alliance, score)
     // One stop per alliance; the win is otherwise only bold.
     Column(
@@ -526,7 +528,7 @@ private fun RowScope.AllianceScoreSummaryCol(
                     FontWeight.Normal
                 },
             color = mainColor,
-            modifier = Modifier.semantics { contentDescription = scoreDescription(score) },
+            modifier = Modifier.semantics { contentDescription = scoreDescription(score, strings) },
         )
         rpBonus?.let {
             RpDots(it, mainColor, Modifier.padding(top = 4.dp), dotSize = 8.dp, gap = 4.dp)
@@ -804,6 +806,7 @@ private fun BreakdownRow(
     bluePlayoffAllianceTitle: String? = null,
     scoreSeparatorWidth: Dp? = null,
 ) {
+    val strings = rememberQuantityStrings()
     // One stop per row that says which value is whose.
     val rowModifier =
         modifier.clearAndSetSemantics {
@@ -812,6 +815,7 @@ private fun BreakdownRow(
                     label,
                     redValue,
                     blueValue,
+                    strings,
                     redPlayoffAllianceTitle,
                     bluePlayoffAllianceTitle,
                 )

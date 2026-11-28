@@ -1,9 +1,11 @@
 package com.thebluealliance.android.ui.components
 
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.displayTitle
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.util.teamNumber
 
 /**
@@ -18,6 +20,7 @@ internal fun matchRowDescription(
     rpBonuses: AllianceRpBonuses?,
     scheduledTime: String?,
     isEstimate: Boolean,
+    strings: QuantityStrings,
 ): String {
     val played = match.redScore >= 0
     return buildString {
@@ -25,6 +28,7 @@ internal fun matchRowDescription(
         append(". ")
         append(
             allianceDescription(
+                strings = strings,
                 color = "Red",
                 alliance = match.redPlayoffAlliance,
                 teamKeys = match.redTeamKeys,
@@ -36,6 +40,7 @@ internal fun matchRowDescription(
         append(" ")
         append(
             allianceDescription(
+                strings = strings,
                 color = "Blue",
                 alliance = match.bluePlayoffAlliance,
                 teamKeys = match.blueTeamKeys,
@@ -60,6 +65,7 @@ internal fun rpBonusDescription(bonuses: List<Boolean>): String =
     "${bonuses.count { it }} of ${bonuses.size} bonus ranking points"
 
 private fun allianceDescription(
+    strings: QuantityStrings,
     color: String,
     alliance: Alliance?,
     teamKeys: List<String>,
@@ -76,7 +82,7 @@ private fun allianceDescription(
                 if (key in surrogateKeys) "${key.teamNumber} surrogate" else key.teamNumber
             },
         )
-        if (score != null) append(", $score points")
+        if (score != null) append(", ${strings.get(R.plurals.points, score)}")
         if (bonuses != null) append(", ${rpBonusDescription(bonuses)}")
         append(".")
     }

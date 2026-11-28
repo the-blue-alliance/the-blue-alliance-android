@@ -4,10 +4,13 @@ import com.thebluealliance.android.domain.AllianceRpBonuses
 import com.thebluealliance.android.domain.model.Alliance
 import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class MatchRowDescriptionTest {
+    private val strings = ResourceQuantityStrings
+
     private fun match(
         redScore: Int = 251,
         blueScore: Int = 180,
@@ -45,6 +48,7 @@ class MatchRowDescriptionTest {
                 bonuses,
                 scheduledTime = null,
                 isEstimate = false,
+                strings = strings,
             ),
         )
     }
@@ -53,11 +57,11 @@ class MatchRowDescriptionTest {
     fun `blue win and tie`() {
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496, 100 points. Blue 254, 1678, 118, 120 points. Blue wins.",
-            matchRowDescription(match(100, 120, "blue"), "Qual 1", null, null, false),
+            matchRowDescription(match(100, 120, "blue"), "Qual 1", null, null, false, strings),
         )
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496, 90 points. Blue 254, 1678, 118, 90 points. Tie.",
-            matchRowDescription(match(90, 90, ""), "Qual 1", null, null, false),
+            matchRowDescription(match(90, 90, ""), "Qual 1", null, null, false, strings),
         )
     }
 
@@ -65,7 +69,7 @@ class MatchRowDescriptionTest {
     fun `a one-point score reads singular and zero plural`() {
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496, 1 point. Blue 254, 1678, 118, 0 points. Red wins.",
-            matchRowDescription(match(1, 0, "red"), "Qual 1", null, null, false),
+            matchRowDescription(match(1, 0, "red"), "Qual 1", null, null, false, strings),
         )
     }
 
@@ -73,11 +77,18 @@ class MatchRowDescriptionTest {
     fun `unplayed match reads its scheduled time`() {
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496. Blue 254, 1678, 118. Scheduled Saturday 9:25 AM (estimated).",
-            matchRowDescription(match(-1, -1, null), "Qual 1", null, "Saturday 9:25 AM", true),
+            matchRowDescription(
+                match(-1, -1, null),
+                "Qual 1",
+                null,
+                "Saturday 9:25 AM",
+                true,
+                strings,
+            ),
         )
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496. Blue 254, 1678, 118. Not yet scheduled.",
-            matchRowDescription(match(-1, -1, null), "Qual 1", null, null, false),
+            matchRowDescription(match(-1, -1, null), "Qual 1", null, null, false, strings),
         )
     }
 
@@ -102,6 +113,7 @@ class MatchRowDescriptionTest {
                 null,
                 null,
                 false,
+                strings,
             ),
         )
     }
