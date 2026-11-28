@@ -14,6 +14,17 @@ class MatchScoreDescriptionTest {
     }
 
     @Test
+    fun `one point reads singular`() {
+        assertEquals("1 point", scoreDescription(1))
+    }
+
+    @Test
+    fun `zero and two points read plural`() {
+        assertEquals("0 points", scoreDescription(0))
+        assertEquals("2 points", scoreDescription(2))
+    }
+
+    @Test
     fun `unplayed score reads as not played`() {
         assertEquals("Not played", scoreDescription(-1))
     }

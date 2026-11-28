@@ -62,6 +62,14 @@ class MatchRowDescriptionTest {
     }
 
     @Test
+    fun `a one-point score reads singular and zero plural`() {
+        assertEquals(
+            "Qual 1. Red 6324, 4907, 9496, 1 point. Blue 254, 1678, 118, 0 points. Red wins.",
+            matchRowDescription(match(1, 0, "red"), "Qual 1", null, null, false),
+        )
+    }
+
+    @Test
     fun `unplayed match reads its scheduled time`() {
         assertEquals(
             "Qual 1. Red 6324, 4907, 9496. Blue 254, 1678, 118. Scheduled Saturday 9:25 AM (estimated).",

@@ -59,4 +59,13 @@ class DistrictRankingsRowTest {
             districtRowDescription(40, "10254", 30, null, 12, 10, 52),
         )
     }
+
+    @Test
+    fun `row description reads one point as singular`() {
+        assertEquals(
+            "Rank 5, Team 254, Event 1: 1 point, Event 2: 2 points, DCMP: 0 points, " +
+                "rookie bonus none, 1 total point",
+            districtRowDescription(5, "254", 1, 2, 0, 0, 1),
+        )
+    }
 }
