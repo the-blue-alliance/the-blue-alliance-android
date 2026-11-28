@@ -89,6 +89,27 @@ class FocusTooltipStateTest {
         }
 
     @Test
+    fun `Shift released before Tab still shows the tooltip`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertFalse(state.onKey(KeyEventType.KeyUp, Key.ShiftLeft, false))
+            assertTrue(state.onKey(KeyEventType.KeyUp, Key.Tab, false))
+        }
+
+    @Test
+    fun `Alt released before Left shows no tooltip`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertFalse(state.onKey(KeyEventType.KeyUp, Key.AltLeft, false))
+            assertFalse(state.onKey(KeyEventType.KeyUp, Key.DirectionLeft, false))
+            assertFalse(state.isVisible)
+        }
+
+    @Test
     fun `a focus tooltip hides on its own`() =
         runTest {
             val state = newState()
