@@ -58,6 +58,7 @@ import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
@@ -241,7 +242,11 @@ private fun EventsTab(
         val headerFocus = rememberStickyHeaderFocusOrder()
         LazyColumn(
             state = listState,
-            modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .stickyHeaderFocusOrder(headerFocus)
+                    .verticalScrollbar(listState, readingPadding),
             contentPadding = readingPadding,
         ) {
             if (thisWeekResult != null) {
@@ -306,8 +311,10 @@ private fun RankingsTab(
         )
         return
     }
+    val scrollbarState = rememberLazyListState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        state = scrollbarState,
+        modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, innerPadding),
         contentPadding = innerPadding,
     ) {
         stickyHeader {

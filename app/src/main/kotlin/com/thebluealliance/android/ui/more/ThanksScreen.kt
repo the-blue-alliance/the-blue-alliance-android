@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,6 +40,7 @@ import com.thebluealliance.android.ui.components.TopLevelContentWindowInsets
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.onlyBottom
 import com.thebluealliance.android.ui.components.pageBackground
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.components.withoutBottom
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
@@ -87,11 +89,14 @@ fun ThanksScreen(
                         .padding(innerPadding.withoutBottom())
                         .fillMaxSize(),
                 ) { readingPadding ->
+                    val scrollbarState = rememberLazyListState()
                     LazyColumn(
+                        state = scrollbarState,
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .pageBackground(),
+                                .pageBackground()
+                                .verticalScrollbar(scrollbarState, readingPadding),
                         contentPadding = readingPadding,
                     ) {
                         items(state.contributors) { contributor ->

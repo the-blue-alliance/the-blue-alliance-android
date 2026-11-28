@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.AlertDialog
@@ -78,6 +79,7 @@ import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
 import com.thebluealliance.android.ui.components.tableCellTarget
 import com.thebluealliance.android.ui.components.tableWidth
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
@@ -505,8 +507,14 @@ private fun InsightsView(
             }
         }
 
+    val scrollbarState = rememberLazyListState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        state = scrollbarState,
+        modifier =
+            Modifier.fillMaxSize().verticalScrollbar(
+                scrollbarState,
+                PaddingValues(bottom = innerPadding.calculateBottomPadding()),
+            ),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         // Left as it was: both of this table's columns hold prose, not figures, and they are
@@ -719,8 +727,17 @@ private fun StandardOPRsView(
 
     // Team numbers are links, so Tab needs the header ordered before them.
     val headerFocus = rememberStickyHeaderFocusOrder()
+    val scrollbarState = rememberLazyListState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
+        state = scrollbarState,
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .stickyHeaderFocusOrder(headerFocus)
+                .verticalScrollbar(
+                    scrollbarState,
+                    PaddingValues(bottom = innerPadding.calculateBottomPadding()),
+                ),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         tabOrderedStickyHeader(headerFocus) {
@@ -822,8 +839,17 @@ private fun COPRView(
 
     // Team numbers are links, so Tab needs the header ordered before them.
     val headerFocus = rememberStickyHeaderFocusOrder()
+    val scrollbarState = rememberLazyListState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize().stickyHeaderFocusOrder(headerFocus),
+        state = scrollbarState,
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .stickyHeaderFocusOrder(headerFocus)
+                .verticalScrollbar(
+                    scrollbarState,
+                    PaddingValues(bottom = innerPadding.calculateBottomPadding()),
+                ),
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         tabOrderedStickyHeader(headerFocus) {

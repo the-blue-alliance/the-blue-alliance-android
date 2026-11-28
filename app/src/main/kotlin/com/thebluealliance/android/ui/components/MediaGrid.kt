@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -240,7 +241,9 @@ fun MediaTab(
             }
         }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        val scrollbarState = rememberLazyGridState()
         LazyVerticalGrid(
+            state = scrollbarState,
             columns =
                 GridCells.Adaptive(
                     minSize = mediaTileMinSize(currentWindowAdaptiveInfo().windowSizeClass),
@@ -248,6 +251,7 @@ fun MediaTab(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .verticalScrollbar(scrollbarState, readingPadding)
                     .padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),

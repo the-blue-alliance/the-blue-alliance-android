@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.thebluealliance.android.domain.model.Team
@@ -12,6 +13,7 @@ import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TeamRow
+import com.thebluealliance.android.ui.components.verticalScrollbar
 
 @Composable
 fun EventTeamsTab(
@@ -34,8 +36,10 @@ fun EventTeamsTab(
         return
     }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        val scrollbarState = rememberLazyListState()
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = scrollbarState,
+            modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, readingPadding),
             contentPadding = readingPadding,
         ) {
             items(teams, key = { it.key }) { team ->

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,6 +78,7 @@ import com.thebluealliance.android.ui.components.recordDescription
 import com.thebluealliance.android.ui.components.statRowWidth
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.topBarTitleSemantics
+import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import com.thebluealliance.android.ui.events.detail.tabs.AdvancementBreakdownRow
 import com.thebluealliance.android.ui.events.detail.tabs.advancementBreakdownRows
@@ -346,8 +348,10 @@ private fun SummaryTab(
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        val scrollbarState = rememberLazyListState()
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = scrollbarState,
+            modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, readingPadding),
             contentPadding = readingPadding,
         ) {
             // Event header
@@ -760,8 +764,10 @@ private fun AwardsTab(
         return
     }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
+        val scrollbarState = rememberLazyListState()
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            state = scrollbarState,
+            modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, readingPadding),
             contentPadding = readingPadding,
         ) {
             if (event != null) {
