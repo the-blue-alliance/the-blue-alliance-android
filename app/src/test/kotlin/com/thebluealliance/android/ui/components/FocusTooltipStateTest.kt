@@ -123,6 +123,48 @@ class FocusTooltipStateTest {
         }
 
     @Test
+    fun `Tab released before the keyboard app gets it shows the tooltip`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertTrue(state.onKeyBeforeSoftKeyboard(KeyEventType.KeyUp, Key.Tab, false))
+            backgroundScope.launch { state.showForFocus() }
+            runCurrent()
+            assertTrue(state.isVisible)
+        }
+
+    @Test
+    fun `Shift+Tab released before the keyboard app gets it shows the tooltip`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertFalse(state.onKeyBeforeSoftKeyboard(KeyEventType.KeyUp, Key.ShiftLeft, false))
+            assertTrue(state.onKeyBeforeSoftKeyboard(KeyEventType.KeyUp, Key.Tab, false))
+        }
+
+    @Test
+    fun `a release seen before and after the keyboard app counts once`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            assertTrue(state.onKeyBeforeSoftKeyboard(KeyEventType.KeyUp, Key.Tab, false))
+            assertFalse(state.onKey(KeyEventType.KeyUp, Key.Tab, false))
+        }
+
+    @Test
+    fun `Enter released before the keyboard app gets it shows no tooltip`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertFalse(state.onKeyBeforeSoftKeyboard(KeyEventType.KeyUp, Key.Enter, false))
+            assertFalse(state.onKey(KeyEventType.KeyUp, Key.Enter, false))
+            assertFalse(state.isVisible)
+        }
+
+    @Test
     fun `a focus tooltip hides on its own`() =
         runTest {
             val state = newState()

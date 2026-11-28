@@ -21,11 +21,13 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isMetaPressed
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.launch
@@ -63,10 +65,14 @@ fun TooltipIconButton(
                 modifier
                     .handCursor()
                     .onFocusChanged { tooltipState.onFocusChanged(it.isFocused) }
-                    .onPreviewKeyEvent { event ->
-                        val modified =
-                            event.isAltPressed || event.isCtrlPressed || event.isMetaPressed
-                        if (tooltipState.onKey(event.type, event.key, modified)) {
+                    .onPreInterceptKeyBeforeSoftKeyboard { event ->
+                        val modified = event.withAltCtrlOrMeta
+                        if (tooltipState.onKeyBeforeSoftKeyboard(event.type, event.key, modified)) {
+                            scope.launch { tooltipState.showForFocus() }
+                        }
+                        false
+                    }.onPreviewKeyEvent { event ->
+                        if (tooltipState.onKey(event.type, event.key, event.withAltCtrlOrMeta)) {
                             scope.launch { tooltipState.showForFocus() }
                         }
                         false
@@ -130,6 +136,16 @@ internal class FocusTooltipState(
     }
 
     /**
+     * Called for each key event that reaches the focused button before the keyboard app sees it.
+     * Returns whether to show the tooltip now, as [onKey] does.
+     */
+    fun onKeyBeforeSoftKeyboard(
+        type: KeyEventType,
+        key: Key,
+        withAltCtrlOrMeta: Boolean,
+    ): Boolean = false
+
+    /**
      * Shows the tooltip for focus that [onKey] approved, unless focus has already moved on. Default
      * priority, so M3 hides the non-persistent tooltip after 1.5 s.
      */
@@ -156,6 +172,9 @@ internal fun movedFocusHere(
     key: Key,
     withAltCtrlOrMeta: Boolean,
 ): Boolean = type == KeyEventType.KeyUp && isFocusKey(key) && !withAltCtrlOrMeta
+
+private val KeyEvent.withAltCtrlOrMeta: Boolean
+    get() = isAltPressed || isCtrlPressed || isMetaPressed
 
 internal fun isShiftKey(key: Key): Boolean = key == Key.ShiftLeft || key == Key.ShiftRight
 
