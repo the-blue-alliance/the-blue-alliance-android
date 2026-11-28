@@ -1,9 +1,6 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -13,7 +10,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -69,17 +65,20 @@ import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.FocusHandoffEffect
-import com.thebluealliance.android.ui.components.blocksRowsBeneath
+import com.thebluealliance.android.ui.components.SortableHeaderCell
+import com.thebluealliance.android.ui.components.TABULAR_FIGURES
+import com.thebluealliance.android.ui.components.TableColumnGutter
+import com.thebluealliance.android.ui.components.TableRowDivider
+import com.thebluealliance.android.ui.components.TableRowPadding
+import com.thebluealliance.android.ui.components.TableTeamCell
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
-import com.thebluealliance.android.ui.components.returnsFocus
-import com.thebluealliance.android.ui.components.sortableHeader
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
-import com.thebluealliance.android.ui.components.tableCellTarget
+import com.thebluealliance.android.ui.components.tableHeaderBand
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.BrandFocusRing
@@ -94,16 +93,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.int
-
-/**
- * Half of the gutter between two table columns, applied inside every cell of both the header and
- * the data rows so the columns stay aligned. The rows carry [TABLE_ROW_PADDING] instead of the
- * usual 16.dp so the outermost cells' content still lands on the screen's 16.dp margin.
- */
-private val COLUMN_GUTTER = 4.dp
-
-/** Row inset that, plus [COLUMN_GUTTER] inside the end cells, restores the 16.dp screen margin. */
-private val TABLE_ROW_PADDING = 12.dp
 
 /** How far the team cell's target reaches into the row's vertical padding: 48dp tall in all. */
 private val TEAM_TARGET_BLEED = 12.dp
@@ -122,7 +111,7 @@ private fun Modifier.bleedVertically(bleed: Dp): Modifier =
  * Width the header rows' overflow button occupies. The data rows reserve the same trailing slot,
  * so both rows share one weighted region and their columns cannot drift apart.
  */
-private val OVERFLOW_SLOT_WIDTH = 48.dp + COLUMN_GUTTER
+private val OVERFLOW_SLOT_WIDTH = 48.dp + TableColumnGutter
 
 /**
  * One column of an insights table.
@@ -157,12 +146,6 @@ internal fun coprRowDescription(
     statName: String,
     value: Double,
 ): String = "Team $team, $statName ${formatStatValue(value)}"
-
-/** What activating a team cell does, read after its number: the same as the rankings table. */
-internal fun teamCellClickLabel(teamKey: String): String = "View team ${teamKey.teamNumber}"
-
-/** OpenType tabular figures: every digit takes the same advance, so the columns grid up. */
-private const val TABULAR_FIGURES = "tnum"
 
 private val OPR_TEAM_COLUMN = TableColumn(weight = 1.2f)
 private val OPR_VALUE_COLUMN = TableColumn(weight = 1f, numeric = true)
@@ -520,15 +503,13 @@ private fun InsightsView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         // Left as it was: both of this table's columns hold prose, not figures, and they are
-        // wide enough that spending COLUMN_GUTTER on each edge would wrap values that fit today.
+        // wide enough that spending TableColumnGutter on each edge would wrap values that fit today.
         inPlaceStickyHeader {
             BrandFocusRing(BrandHeaderContainer) {
                 Row(
                     modifier =
                         Modifier
-                            .tableWidth()
-                            .blocksRowsBeneath()
-                            .background(BrandHeaderContainer)
+                            .tableHeaderBand()
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -588,7 +569,7 @@ private fun InsightsView(
                     )
                     Box(modifier = Modifier.weight(0.4f))
                 }
-                HorizontalDivider()
+                TableRowDivider()
             }
         }
 
@@ -796,12 +777,12 @@ private fun StandardOPRsView(
                 InsightsTableDataRow(
                     description = oprRowDescription(teamKey.teamNumber, opr, dpr, ccwm),
                 ) {
-                    TableTeamCell(teamKey, OPR_TEAM_COLUMN, onTeamClick)
+                    InsightsTeamCell(teamKey, OPR_TEAM_COLUMN, onTeamClick)
                     TableDataCell(text = formatStatValue(opr), column = OPR_VALUE_COLUMN)
                     TableDataCell(text = formatStatValue(dpr), column = OPR_VALUE_COLUMN)
                     TableDataCell(text = formatStatValue(ccwm), column = OPR_VALUE_COLUMN)
                 }
-                HorizontalDivider()
+                TableRowDivider()
             }
         }
 
@@ -898,10 +879,10 @@ private fun COPRView(
                 InsightsTableDataRow(
                     description = coprRowDescription(teamKey.teamNumber, statName, value),
                 ) {
-                    TableTeamCell(teamKey, COPR_TEAM_COLUMN, onTeamClick)
+                    InsightsTeamCell(teamKey, COPR_TEAM_COLUMN, onTeamClick)
                     TableDataCell(text = formatStatValue(value), column = COPR_VALUE_COLUMN)
                 }
-                HorizontalDivider()
+                TableRowDivider()
             }
         }
 
@@ -948,10 +929,8 @@ private fun InsightsTableHeaderRow(
         Row(
             modifier =
                 Modifier
-                    .tableWidth()
-                    .blocksRowsBeneath()
-                    .background(BrandHeaderContainer)
-                    .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
+                    .tableHeaderBand()
+                    .padding(horizontal = TableRowPadding, vertical = 8.dp)
                     // Header cells fill this height, so every sort band matches the tallest cell.
                     .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
@@ -964,7 +943,7 @@ private fun InsightsTableHeaderRow(
                 modifier =
                     Modifier
                         .width(OVERFLOW_SLOT_WIDTH)
-                        .padding(end = COLUMN_GUTTER),
+                        .padding(end = TableColumnGutter),
                 contentAlignment = Alignment.Center,
             ) {
                 // OnBrand ripple on the header blue, as in InsightsView's header.
@@ -1001,7 +980,7 @@ private fun InsightsTableDataRow(
                 // The plain cells clear their own semantics, so the row reads as one stop; the team
                 // cell stays a separate target.
                 .semantics(mergeDescendants = true) { contentDescription = description }
-                .padding(horizontal = TABLE_ROW_PADDING, vertical = 16.dp),
+                .padding(horizontal = TableRowPadding, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         cells()
@@ -1010,10 +989,10 @@ private fun InsightsTableDataRow(
 }
 
 /**
- * A column's header cell. Pass [onSortClick] to make the column sortable.
+ * A column's sortable header cell (see [SortableHeaderCell]).
  *
  * The sort target is a rounded band spanning the whole column. It bleeds past the label's edge so
- * the label keeps 8dp of room inside it while staying [COLUMN_GUTTER] from the column edge, in
+ * the label keeps 8dp of room inside it while staying [TableColumnGutter] from the column edge, in
  * line with the data cells below. The header row's height is set by its 48.dp icon button, so the
  * vertical padding does not change the header's layout, and every cell fills that height.
  *
@@ -1033,46 +1012,19 @@ private fun InsightsTableDataRow(
 private fun RowScope.TableHeaderCell(
     text: String,
     column: TableColumn,
-    sorted: Boolean = false,
-    ascending: Boolean = false,
-    onSortClick: (() -> Unit)? = null,
+    sorted: Boolean,
+    ascending: Boolean,
+    onSortClick: () -> Unit,
 ) {
-    val sortTarget =
-        if (onSortClick == null) {
-            Modifier.padding(horizontal = COLUMN_GUTTER)
-        } else {
-            Modifier.sortableHeader(
-                shape = MaterialTheme.shapes.small,
-                label = text,
-                sorted = sorted,
-                ascending = ascending,
-                gutter = COLUMN_GUTTER,
-                labelAtEnd = column.numeric,
-                onClick = onSortClick,
-            )
-        }
-    Row(
-        modifier =
-            Modifier
-                .weight(column.weight)
-                .fillMaxHeight()
-                .then(sortTarget)
-                .padding(vertical = 8.dp),
-        horizontalArrangement = if (column.numeric) Arrangement.End else Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (sorted && column.numeric) {
-            SortIndicator(ascending)
-        }
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleSmall,
-            color = OnBrand,
-        )
-        if (sorted && !column.numeric) {
-            SortIndicator(ascending)
-        }
-    }
+    SortableHeaderCell(
+        text = text,
+        sorted = sorted,
+        ascending = ascending,
+        onClick = onSortClick,
+        modifier = Modifier.weight(column.weight),
+        numeric = column.numeric,
+        verticalPadding = 8.dp,
+    )
 }
 
 /** A column's data cell, aligned and styled from the same [TableColumn] as its header. */
@@ -1087,7 +1039,7 @@ private fun RowScope.TableDataCell(
         modifier =
             Modifier
                 .weight(column.weight)
-                .padding(horizontal = COLUMN_GUTTER)
+                .padding(horizontal = TableColumnGutter)
                 .clearAndSetSemantics {},
         style = if (column.numeric) style.copy(fontFeatureSettings = TABULAR_FIGURES) else style,
         textAlign = if (column.numeric) TextAlign.End else TextAlign.Start,
@@ -1096,38 +1048,15 @@ private fun RowScope.TableDataCell(
 
 /** A data row's team number, a link to the team at this event like the rankings table's. */
 @Composable
-private fun RowScope.TableTeamCell(
+private fun RowScope.InsightsTeamCell(
     teamKey: String,
     column: TableColumn,
     onTeamClick: (String) -> Unit,
 ) {
-    Text(
-        text = teamKey.teamNumber,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.primary,
-        modifier =
-            Modifier
-                .weight(column.weight)
-                .bleedVertically(TEAM_TARGET_BLEED)
-                .tableCellTarget(
-                    shape = MaterialTheme.shapes.small,
-                    gutter = COLUMN_GUTTER,
-                    labelAtEnd = false,
-                    interaction =
-                        Modifier.returnsFocus().handCursor().clickable(
-                            onClickLabel = teamCellClickLabel(teamKey),
-                            role = Role.Button,
-                        ) { onTeamClick(teamKey) },
-                ).padding(vertical = TEAM_TARGET_BLEED),
-    )
-}
-
-@Composable
-private fun SortIndicator(ascending: Boolean) {
-    Icon(
-        imageVector = if (ascending) TbaIcons.ArrowDropUp else TbaIcons.ArrowDropDown,
-        // The header cell's stateDescription announces the sort.
-        contentDescription = null,
-        tint = OnBrand,
+    TableTeamCell(
+        teamKey = teamKey,
+        onClick = onTeamClick,
+        modifier = Modifier.weight(column.weight).bleedVertically(TEAM_TARGET_BLEED),
+        verticalPadding = TEAM_TARGET_BLEED,
     )
 }
