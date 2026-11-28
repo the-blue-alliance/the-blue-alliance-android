@@ -1,9 +1,13 @@
 package com.thebluealliance.android.ui.search
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +17,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -145,6 +150,9 @@ fun SearchScreen(
     }
 
     Scaffold(
+        // Search opens with the keyboard up: the results' bottom padding covers it, not just the
+        // navigation bar, so the last result scrolls clear of it.
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
         topBar = {
             TBATopAppBar(
                 title = {
@@ -215,15 +223,23 @@ fun SearchScreen(
                     .fillMaxSize()
                     .onGloballyPositioned { contentBounds = it.unclippedBoundsInRoot() },
         ) {
+            // The messages center in the space above the keyboard, following it as it opens and
+            // closes. The fill still reaches the window's bottom edge behind it.
             if (uiState.query.isBlank()) {
-                EmptyBox(message = "Try a team number, team name or event name")
+                EmptyBox(
+                    message = "Try a team number, team name or event name",
+                    modifier = Modifier.imePadding(),
+                )
                 return@Column
             }
             // Only declare "no results" once the debounced search has caught up with
             // what the user typed, so the message can't flash mid-keystroke.
             val searchSettled = uiState.query == uiState.searchedQuery
             if (searchSettled && uiState.teams.isEmpty() && uiState.events.isEmpty()) {
-                EmptyBox(message = "No results for \"${uiState.query}\"")
+                EmptyBox(
+                    message = "No results for \"${uiState.query}\"",
+                    modifier = Modifier.imePadding(),
+                )
                 return@Column
             }
             ReadingWidthBox(innerPadding.onlyBottom(), Modifier.fillMaxSize()) { readingPadding ->
