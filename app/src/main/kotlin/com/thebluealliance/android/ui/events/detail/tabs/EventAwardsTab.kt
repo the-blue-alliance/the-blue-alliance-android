@@ -1,6 +1,5 @@
 package com.thebluealliance.android.ui.events.detail.tabs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,20 +11,95 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.domain.model.Award
+import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.components.ReadingWidthBox
-import com.thebluealliance.android.ui.components.handCursor
-import com.thebluealliance.android.ui.components.returnsFocus
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.util.teamNumber
+
+/** One award as shown on the Awards tab: its title once, then each recipient in data order. */
+internal data class AwardGroup(
+    val key: String,
+    val name: String,
+    val recipients: List<AwardRecipient>,
+)
+
+/**
+ * One recipient line. [lead] is drawn first and [trail] after a " · "; whichever of them is the
+ * team number is link-coloured ([leadIsTeamNumber]). [teamKey] is null when nothing opens.
+ */
+internal data class AwardRecipient(
+    val teamKey: String?,
+    val lead: String,
+    val trail: String?,
+    val leadIsTeamNumber: Boolean,
+    val spoken: String,
+)
+
+/**
+ * Groups the per-recipient [awards] rows by award as recorded (type and name), keeping first-seen
+ * order. Recipients with neither a team nor an awardee name are dropped.
+ */
+internal fun groupAwards(
+    awards: List<Award>,
+    nicknamesByTeamKey: Map<String, String>,
+): List<AwardGroup> =
+    awards
+        .groupBy { it.awardType to it.name }
+        .map { (typeAndName, rows) ->
+            AwardGroup(
+                key = "${typeAndName.first}_${typeAndName.second}",
+                name = typeAndName.second,
+                recipients = rows.mapNotNull { awardRecipient(it, nicknamesByTeamKey) },
+            )
+        }
+
+internal fun awardRecipient(
+    award: Award,
+    nicknamesByTeamKey: Map<String, String>,
+): AwardRecipient? {
+    val teamKey = award.teamKey.takeIf { it.isNotBlank() }
+    val number = teamKey?.teamNumber
+    val awardee = award.awardee?.trim()?.takeIf { it.isNotEmpty() }
+    return when {
+        awardee != null ->
+            AwardRecipient(
+                teamKey = teamKey,
+                lead = awardee,
+                trail = number,
+                leadIsTeamNumber = false,
+                spoken = if (number != null) "$awardee, team $number" else awardee,
+            )
+        number != null -> {
+            val nickname = nicknamesByTeamKey[teamKey]?.trim()?.takeIf { it.isNotEmpty() }
+            AwardRecipient(
+                teamKey = teamKey,
+                lead = number,
+                trail = nickname,
+                leadIsTeamNumber = true,
+                spoken = if (nickname != null) "Team $number, $nickname" else "Team $number",
+            )
+        }
+        else -> null
+    }
+}
 
 @Composable
 fun EventAwardsTab(
     awards: List<Award>?,
+    teams: List<Team>? = null,
     onTeamClick: (String) -> Unit = {},
     isRefreshing: Boolean = false,
     innerPadding: PaddingValues = PaddingValues.Zero,
@@ -45,6 +119,16 @@ fun EventAwardsTab(
         }
         return
     }
+    val groups =
+        remember(awards, teams) {
+            val nicknames =
+                teams
+                    ?.mapNotNull { t ->
+                        t.nickname?.let { t.key to it }
+                    }?.toMap()
+                    .orEmpty()
+            groupAwards(awards, nicknames)
+        }
     ReadingWidthBox(innerPadding, Modifier.fillMaxSize()) { readingPadding ->
         val scrollbarState = rememberLazyListState()
         LazyColumn(
@@ -52,47 +136,69 @@ fun EventAwardsTab(
             modifier = Modifier.fillMaxSize().verticalScrollbar(scrollbarState, readingPadding),
             contentPadding = readingPadding,
         ) {
-            items(awards, key = {
-                "${it.eventKey}_${it.awardType}_${it.teamKey}_${it.awardee.orEmpty()}"
-            }) { award ->
-                Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .then(
-                                if (award.teamKey.isNotEmpty()) {
-                                    Modifier.returnsFocus().handCursor().clickable(
-                                        onClickLabel = "View team ${award.teamKey.teamNumber}",
-                                    ) { onTeamClick(award.teamKey) }
-                                } else {
-                                    Modifier
-                                },
-                            ).padding(horizontal = 16.dp, vertical = 8.dp),
-                ) {
-                    Text(
-                        text = award.name,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    val recipient =
-                        buildString {
-                            if (award.awardee != null) append(award.awardee)
-                            if (award.teamKey.isNotEmpty()) {
-                                if (isNotEmpty()) {
-                                    append(" (${award.teamKey.teamNumber})")
-                                } else {
-                                    append(award.teamKey.teamNumber)
-                                }
-                            }
-                        }
-                    if (recipient.isNotEmpty()) {
-                        Text(
-                            text = recipient,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+            items(groups, key = { it.key }) { group ->
+                AwardGroupItem(group, onTeamClick)
             }
         }
     }
+}
+
+@Composable
+private fun AwardGroupItem(
+    group: AwardGroup,
+    onTeamClick: (String) -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+    ) {
+        Text(
+            text = group.name,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
+        group.recipients.forEach { recipient ->
+            AwardRecipientLine(recipient, onTeamClick)
+        }
+    }
+}
+
+@Composable
+private fun AwardRecipientLine(
+    recipient: AwardRecipient,
+    onTeamClick: (String) -> Unit,
+) {
+    val link = MaterialTheme.colorScheme.primary
+    val text =
+        buildAnnotatedString {
+            if (recipient.leadIsTeamNumber) {
+                withStyle(SpanStyle(color = link)) { append(recipient.lead) }
+            } else {
+                append(recipient.lead)
+            }
+            if (recipient.trail != null) {
+                append(" · ")
+                if (recipient.leadIsTeamNumber) {
+                    append(recipient.trail)
+                } else {
+                    withStyle(SpanStyle(color = link)) { append(recipient.trail) }
+                }
+            }
+        }
+    val teamKey = recipient.teamKey
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier =
+            if (teamKey != null) {
+                Modifier.paddedClickable(
+                    MaterialTheme.shapes.small,
+                    vertical = 4.dp,
+                    keepContentInPlace = true,
+                    onClickLabel = "View team ${teamKey.teamNumber}",
+                ) { onTeamClick(teamKey) }
+            } else {
+                Modifier.padding(vertical = 4.dp)
+            }.semantics { contentDescription = recipient.spoken },
+    )
 }
