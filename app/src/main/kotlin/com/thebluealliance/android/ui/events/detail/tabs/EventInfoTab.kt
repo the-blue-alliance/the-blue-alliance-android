@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.events.detail.tabs
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.R
@@ -42,6 +44,9 @@ import com.thebluealliance.android.util.webcastUrl
  * its label still lines up with everything else on the tab.
  */
 private val CONTENT_INSET = 16.dp
+
+/** The size of each [EventInfoLinkRow] icon. */
+private val LINK_ICON_SIZE = 18.dp
 
 @Composable
 fun EventInfoTab(
@@ -146,7 +151,7 @@ fun EventInfoTab(
                                 TbaIcons.LocationOn,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(LINK_ICON_SIZE),
                             )
                         },
                     )
@@ -165,7 +170,7 @@ fun EventInfoTab(
                                 TbaIcons.Language,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(LINK_ICON_SIZE),
                             )
                         },
                     )
@@ -184,7 +189,7 @@ fun EventInfoTab(
                                 painter = painterResource(R.drawable.ic_nexus_logo),
                                 contentDescription = "FRC Nexus",
                                 tint = Color.Unspecified,
-                                modifier = Modifier.size(18.dp),
+                                modifier = Modifier.size(LINK_ICON_SIZE),
                             )
                         },
                     )
@@ -219,7 +224,7 @@ fun EventInfoTab(
                                     TbaIcons.PlayCircle,
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(18.dp),
+                                    modifier = Modifier.size(LINK_ICON_SIZE),
                                 )
                             },
                         )
@@ -236,10 +241,29 @@ internal data class EventVenueLines(
     val address: String?,
 )
 
+/**
+ * Many events' addresses open with the venue name (most up to 2019, fewer since), so the venue
+ * line is dropped when it is the address's first line, ignoring case, surrounding spaces and
+ * apostrophes (2003az has "Veteran’s" in one field and "Veterans" in the other). A venue that only
+ * starts that line ("Hartford" vs "Hartford, CT") or appears further on is kept. Blank fields, which
+ * some older and offseason events have, are not shown.
+ */
 internal fun eventVenueLines(
     locationName: String?,
     address: String?,
-): EventVenueLines = EventVenueLines(venue = locationName, address = address)
+): EventVenueLines {
+    val shownAddress = address?.takeIf { it.isNotBlank() }
+    val firstAddressLine = shownAddress?.lineSequence()?.first()
+    val shownVenue =
+        locationName
+            ?.takeIf { it.isNotBlank() }
+            ?.takeUnless { firstAddressLine != null && venueKey(it) == venueKey(firstAddressLine) }
+    return EventVenueLines(venue = shownVenue, address = shownAddress)
+}
+
+private const val APOSTROPHES = "'\u2018\u2019"
+
+private fun venueKey(line: String): String = line.filterNot { it in APOSTROPHES }.trim().lowercase()
 
 /**
  * A tappable link row on the Event Info tab.
@@ -268,15 +292,21 @@ private fun EventInfoLinkRow(
                 .handCursor()
                 .clickable(onClickLabel = onClickLabel, onClick = onClick)
                 .padding(horizontal = CONTENT_INSET, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
+        val textStyle = MaterialTheme.typography.bodyMedium
         if (icon != null) {
-            icon()
+            // Centre the icon on the first line, so it stays there when the text wraps.
+            val iconTop =
+                with(LocalDensity.current) {
+                    ((textStyle.lineHeight.toDp() - LINK_ICON_SIZE) / 2).coerceAtLeast(0.dp)
+                }
+            Box(Modifier.padding(top = iconTop)) { icon() }
             Spacer(Modifier.width(8.dp))
         }
         Text(
             text = text,
-            style = MaterialTheme.typography.bodyMedium,
+            style = textStyle,
             color = MaterialTheme.colorScheme.primary,
         )
     }
