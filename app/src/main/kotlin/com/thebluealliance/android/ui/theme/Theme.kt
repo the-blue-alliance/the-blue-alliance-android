@@ -46,6 +46,12 @@ val OnBrandMuted: Color = TbaBrandColors.OnBlueMuted
 val OnBrandOutline: Color = TbaBrandColors.OnBlueOutline
 
 /**
+ * A divider drawn on a brand surface: [OnBrand] at the 12% a Material divider uses over its
+ * surface. It marks where the tab row ends, and where a band ends over a header of the same blue.
+ */
+val OnBrandDivider: Color = OnBrand.copy(alpha = 0.12f)
+
+/**
  * Hover and press indication for clickables drawn straight on a brand surface: an [OnBrand] state
  * layer that lightens the blue, as the top bar's icons and the tabs already do. A plain
  * `clickable` there takes the surface's dark content color and darkens it instead.

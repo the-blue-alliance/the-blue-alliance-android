@@ -53,10 +53,16 @@ fun SectionHeader(
     )
 }
 
+/** Whether [info] is the entry for the header labelled [label], which its menu marks. */
+internal fun isCurrentSection(
+    info: SectionHeaderInfo,
+    label: String,
+): Boolean = info.label == label
+
 /**
  * A section header that opens a menu to jump to any of [allHeaders], wherever it is in the list,
  * and always shows the menu's arrow. [isStuck] marks the header pinned at the top, the only one
- * that takes keyboard focus.
+ * that takes keyboard focus. [clickLabel] is what activating it does, read by screen readers.
  */
 @Composable
 fun SectionHeader(
@@ -64,13 +70,15 @@ fun SectionHeader(
     isStuck: Boolean,
     allHeaders: List<SectionHeaderInfo>,
     onHeaderSelected: (SectionHeaderInfo) -> Unit,
+    modifier: Modifier = Modifier,
+    clickLabel: String = "Jump to section",
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
 
     BrandFocusRing(BrandHeaderContainer) {
         Box(
             modifier =
-                Modifier
+                modifier
                     .fillMaxWidth()
                     .readingBand(BrandHeaderContainer)
                     // Only the stuck header takes keyboard focus, so Tab meets one header before
@@ -80,7 +88,7 @@ fun SectionHeader(
                     .clickable(
                         interactionSource = null,
                         indication = OnBrandRipple,
-                        onClickLabel = "Jump to section",
+                        onClickLabel = clickLabel,
                         role = Role.DropdownList,
                     ) { menuExpanded = true },
         ) {
@@ -103,7 +111,7 @@ fun SectionHeader(
             ) {
                 SurfaceFocusRing {
                     allHeaders.forEach { info ->
-                        val isSelected = info.label == label
+                        val isSelected = isCurrentSection(info, label)
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -150,7 +158,9 @@ private fun SectionHeaderRow(
             text = label,
             style = MaterialTheme.typography.titleSmall,
             color = OnBrand,
-            modifier = Modifier.semantics { heading() },
+            // Not fill: a short label keeps the trailing content beside it, and a long one wraps
+            // rather than pushing that content off the row.
+            modifier = Modifier.weight(1f, fill = false).semantics { heading() },
         )
         trailingContent?.invoke(this)
     }
