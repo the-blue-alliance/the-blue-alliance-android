@@ -32,8 +32,8 @@ import kotlinx.coroutines.launch
 
 /**
  * An icon button whose [label] is both the icon's content description and a plain tooltip below
- * it. The tooltip shows while a mouse rests on the button and on a long press, as M3's TooltipBox
- * does by default, and for 1.5 s when the user moves keyboard focus onto the button with Tab or an
+ * it, or above it with [tooltipAbove] for a button at the bottom of the window. The tooltip shows
+ * while a mouse rests on the button and on a long press, as M3's TooltipBox does by default, and for 1.5 s when the user moves keyboard focus onto the button with Tab or an
  * arrow key (see [FocusTooltipState]). The button shows the hand pointer.
  *
  * A click dismisses the tooltip: one shown by keyboard focus would otherwise stay up over the
@@ -47,13 +47,16 @@ fun TooltipIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     tint: Color = LocalContentColor.current,
+    tooltipAbove: Boolean = false,
 ) {
     val m3State = rememberTooltipState()
     val tooltipState = remember(m3State) { FocusTooltipState(m3State) }
     val scope = rememberCoroutineScope()
     TooltipBox(
         positionProvider =
-            TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+            TooltipDefaults.rememberTooltipPositionProvider(
+                if (tooltipAbove) TooltipAnchorPosition.Above else TooltipAnchorPosition.Below,
+            ),
         tooltip = { PlainTooltip { Text(label) } },
         state = tooltipState,
     ) {
