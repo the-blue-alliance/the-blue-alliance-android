@@ -23,9 +23,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -117,15 +119,19 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     color = OnBrand,
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
-                                IconButton(
-                                    onClick = { finish() },
-                                    modifier = Modifier.handCursor().size(36.dp),
-                                ) {
-                                    Icon(
-                                        imageVector = TbaIcons.Close,
-                                        contentDescription = "Close",
-                                        tint = OnBrand,
-                                    )
+                                // IconButton's ripple takes LocalContentColor: OnBrand here makes
+                                // hover and press lighten the header blue.
+                                CompositionLocalProvider(LocalContentColor provides OnBrand) {
+                                    IconButton(
+                                        onClick = { finish() },
+                                        modifier = Modifier.handCursor().size(36.dp),
+                                    ) {
+                                        Icon(
+                                            imageVector = TbaIcons.Close,
+                                            contentDescription = "Close",
+                                            tint = OnBrand,
+                                        )
+                                    }
                                 }
                             }
 
