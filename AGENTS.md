@@ -17,6 +17,8 @@ Highlight shapes (the hover, press and focus highlight of anything clickable):
 
 `paddedClickable` clips to the shape you pass; pick it by these rules.
 
+Menus that show a current item (year picker, section jump menus) use `SelectableMenuItem`.
+
 ## Verifying changes on an emulator
 
 After a substantive UI change, build and run the app to confirm it. Run all
