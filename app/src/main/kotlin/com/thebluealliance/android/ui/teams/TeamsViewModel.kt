@@ -84,7 +84,10 @@ class TeamsViewModel
 
         // With nothing cached, the error screen says it instead.
         private suspend fun reportFailedRefresh() {
-            if (teamRepository.observeAllTeams().first().isNotEmpty()) {
+            val cached =
+                uiState.value is UiState.Success ||
+                    teamRepository.observeAllTeams().first().isNotEmpty()
+            if (cached) {
                 userMessages.showRetry("Couldn't refresh teams", ::refreshTeams)
             }
         }

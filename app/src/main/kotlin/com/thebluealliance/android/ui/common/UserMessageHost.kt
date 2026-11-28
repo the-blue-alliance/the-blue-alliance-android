@@ -19,7 +19,9 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,9 +67,12 @@ fun UserMessageHost(
             if (result == SnackbarResult.ActionPerformed) action?.onPerform?.invoke()
         }
     }
-    LaunchedEffect(screen) {
-        val showing = hostState.currentSnackbarData
-        if (showing?.visuals?.actionLabel != null) showing.dismiss()
+    // On leaving, not on arriving: a message the new screen posts right away stays.
+    DisposableEffect(screen) {
+        onDispose {
+            val showing = hostState.currentSnackbarData
+            if (showing?.visuals?.actionLabel != null) showing.dismiss()
+        }
     }
     Box(modifier.fillMaxWidth().height(0.dp)) {
         SnackbarHost(
@@ -83,11 +88,14 @@ fun UserMessageHost(
 
 /**
  * Material's snackbar, with the hand pointer on its buttons, and Esc dismissing it while it has
- * keyboard focus.
+ * keyboard focus. Like [com.thebluealliance.android.ui.components.EscapeHandler], Esc acts on
+ * release and only for a press seen going down here, and the press is claimed so nothing
+ * beneath acts on it.
  */
 @Composable
 private fun UserMessageSnackbar(data: SnackbarData) {
     val visuals = data.visuals
+    val escPressed = remember { mutableStateOf(false) }
     Snackbar(
         modifier =
             Modifier
@@ -95,9 +103,17 @@ private fun UserMessageSnackbar(data: SnackbarData) {
                 .padding(12.dp)
                 .focusRegion()
                 .onKeyEvent { event ->
-                    val esc = event.key == Key.Escape && event.type == KeyEventType.KeyUp
-                    if (esc) data.dismiss()
-                    esc
+                    if (event.key != Key.Escape) return@onKeyEvent false
+                    when (event.type) {
+                        KeyEventType.KeyDown ->
+                            if (event.nativeKeyEvent.repeatCount == 0) escPressed.value = true
+                        KeyEventType.KeyUp -> {
+                            val act = escPressed.value && !event.nativeKeyEvent.isCanceled
+                            escPressed.value = false
+                            if (act) data.dismiss()
+                        }
+                    }
+                    true
                 },
         action =
             visuals.actionLabel?.let { label ->

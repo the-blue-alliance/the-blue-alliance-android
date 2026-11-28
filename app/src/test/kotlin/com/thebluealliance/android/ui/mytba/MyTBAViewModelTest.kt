@@ -153,4 +153,18 @@ class MyTBAViewModelTest {
             viewModel().uiState.first { it.isSignedIn }
             bus.messages.test { expectNoEvents() }
         }
+
+    @Test
+    fun `failed notifications with only favorites cached leave it to the error screen`() =
+        runTest {
+            every { myTBARepository.observeFavorites() } returns
+                flowOf(listOf(Favorite(modelKey = "frc254", modelType = ModelType.TEAM)))
+            every { myTBARepository.observeSubscriptions() } returns flowOf(emptyList())
+            coEvery { myTBARepository.refreshFavorites() } returns Unit
+            coEvery { myTBARepository.refreshSubscriptions() } throws UnknownHostException()
+            val viewModel = viewModel()
+            viewModel.uiState.first { it.isSignedIn }
+            viewModel.refreshTab(MyTBATab.NOTIFICATIONS)
+            bus.messages.test { expectNoEvents() }
+        }
 }
