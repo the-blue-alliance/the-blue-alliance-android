@@ -10,33 +10,25 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,17 +38,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.InputMode
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -68,12 +58,12 @@ import com.thebluealliance.android.domain.model.EventInsights
 import com.thebluealliance.android.domain.model.EventOPRs
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
-import com.thebluealliance.android.ui.components.FocusHandoffEffect
+import com.thebluealliance.android.ui.components.SectionHeader
+import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.inPlaceStickyHeader
 import com.thebluealliance.android.ui.components.paddedClickable
-import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.sortableHeader
@@ -85,6 +75,7 @@ import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.OnBrandDivider
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.openUrl
 import com.thebluealliance.android.util.teamNumber
@@ -117,12 +108,6 @@ private fun Modifier.bleedVertically(bleed: Dp): Modifier =
             placeable.placeRelative(0, -px)
         }
     }
-
-/**
- * Width the header rows' overflow button occupies. The data rows reserve the same trailing slot,
- * so both rows share one weighted region and their columns cannot drift apart.
- */
-private val OVERFLOW_SLOT_WIDTH = 48.dp + COLUMN_GUTTER
 
 /**
  * One column of an insights table.
@@ -253,17 +238,8 @@ fun EventInsightsTab(
         mutableStateOf(CoprSortColumn.VALUE)
     }
     var coprSortAscending by rememberSaveable { mutableStateOf(false) }
-    var showStatSelector by rememberSaveable { mutableStateOf(false) }
-    val defaultStatType =
-        when {
-            hasOprData -> StatType.StandardOPRs
-            hasInsightsData && insights.qual != null -> StatType.QualInsights
-            hasInsightsData && insights.playoff != null -> StatType.PlayoffInsights
-            hasCoprData -> StatType.COPR(coprs.coprs.keys.first())
-            else -> StatType.StandardOPRs
-        }
     var selectedStatType by rememberSaveable(stateSaver = StatTypeSaver) {
-        mutableStateOf(defaultStatType)
+        mutableStateOf(defaultStatType(oprs, coprs, insights))
     }
 
     // Get available COPR stat names
@@ -272,30 +248,16 @@ fun EventInsightsTab(
             coprs?.coprs?.keys?.sorted() ?: emptyList()
         }
 
-    // A new stat type swaps the whole table, taking the focused ⋮ with it, so the dialog's own
-    // focus restore has nothing to return to. Send keyboard focus to the new table's ⋮ instead.
-    val statSelectorFocus = rememberFocusHandoff()
-    FocusHandoffEffect(statSelectorFocus, current = selectedStatType, hasContent = true)
-
-    if (showStatSelector) {
-        StatSelectorDialog(
-            currentSelection = selectedStatType,
-            availableCoprStats = coprStatNames,
-            onDismiss = { showStatSelector = false },
-            onSelect = { statType, inputMode ->
-                statSelectorFocus.arm(statType, inputMode)
-                selectedStatType = statType
-                showStatSelector = false
-                if (statType is StatType.COPR) {
-                    coprSortColumn = CoprSortColumn.VALUE
-                    coprSortAscending = false
-                }
-            },
-        )
+    val onSelectStatType: (StatType) -> Unit = { statType ->
+        selectedStatType = statType
+        if (statType is StatType.COPR) {
+            coprSortColumn = CoprSortColumn.VALUE
+            coprSortAscending = false
+        }
     }
 
     val layoutDirection = LocalLayoutDirection.current
-    Box(
+    Column(
         modifier =
             Modifier
                 .fillMaxSize()
@@ -305,186 +267,76 @@ fun EventInsightsTab(
                     end = innerPadding.calculateEndPadding(layoutDirection),
                 ),
     ) {
-        when (val statType = selectedStatType) {
-            is StatType.StandardOPRs -> {
-                StandardOPRsView(
-                    oprs = oprs ?: EventOPRs(),
-                    sortColumn = oprSortColumn,
-                    sortAscending = oprSortAscending,
-                    onSortChange = { column, ascending ->
-                        oprSortColumn = column
-                        oprSortAscending = ascending
-                    },
-                    onShowStatSelector = { showStatSelector = true },
-                    statSelectorFocus = statSelectorFocus.requester,
-                    innerPadding = innerPadding,
-                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
-                    onTeamClick = onTeamClick,
-                )
-            }
-            is StatType.QualInsights -> {
-                InsightsView(
-                    title = "Qual Insights",
-                    insightsData = insights?.qual,
-                    onShowStatSelector = { showStatSelector = true },
-                    statSelectorFocus = statSelectorFocus.requester,
-                    innerPadding = innerPadding,
-                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
-                )
-            }
-            is StatType.PlayoffInsights -> {
-                InsightsView(
-                    title = "Playoff Insights",
-                    insightsData = insights?.playoff,
-                    onShowStatSelector = { showStatSelector = true },
-                    statSelectorFocus = statSelectorFocus.requester,
-                    innerPadding = innerPadding,
-                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
-                )
-            }
-            is StatType.COPR -> {
-                val coprData = coprs?.coprs?.get(statType.statName) ?: emptyMap()
-                COPRView(
-                    statName = statType.statName,
-                    coprData = coprData,
-                    sortColumn = coprSortColumn,
-                    sortAscending = coprSortAscending,
-                    onSortChange = { column, ascending ->
-                        coprSortColumn = column
-                        coprSortAscending = ascending
-                    },
-                    onShowStatSelector = { showStatSelector = true },
-                    statSelectorFocus = statSelectorFocus.requester,
-                    innerPadding = innerPadding,
-                    onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
-                    onTeamClick = onTeamClick,
-                )
+        StatTypeSelector(
+            current = selectedStatType,
+            availableCoprStats = coprStatNames,
+            onSelect = onSelectStatType,
+        )
+        Box(modifier = Modifier.weight(1f)) {
+            when (val statType = selectedStatType) {
+                is StatType.StandardOPRs -> {
+                    StandardOPRsView(
+                        oprs = oprs ?: EventOPRs(),
+                        sortColumn = oprSortColumn,
+                        sortAscending = oprSortAscending,
+                        onSortChange = { column, ascending ->
+                            oprSortColumn = column
+                            oprSortAscending = ascending
+                        },
+                        innerPadding = innerPadding,
+                        onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                        onTeamClick = onTeamClick,
+                    )
+                }
+                is StatType.QualInsights -> {
+                    InsightsView(
+                        statType = statType,
+                        insightsData = insights?.qual,
+                        innerPadding = innerPadding,
+                        onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                    )
+                }
+                is StatType.PlayoffInsights -> {
+                    InsightsView(
+                        statType = statType,
+                        insightsData = insights?.playoff,
+                        innerPadding = innerPadding,
+                        onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                    )
+                }
+                is StatType.COPR -> {
+                    val coprData = coprs?.coprs?.get(statType.statName) ?: emptyMap()
+                    COPRView(
+                        statName = statType.statName,
+                        coprData = coprData,
+                        sortColumn = coprSortColumn,
+                        sortAscending = coprSortAscending,
+                        onSortChange = { column, ascending ->
+                            coprSortColumn = column
+                            coprSortAscending = ascending
+                        },
+                        innerPadding = innerPadding,
+                        onOpenOprLink = { context.openUrl("https://www.thebluealliance.com/opr") },
+                        onTeamClick = onTeamClick,
+                    )
+                }
             }
         }
-    }
-}
-
-@Composable
-private fun StatSelectorDialog(
-    currentSelection: StatType,
-    availableCoprStats: List<String>,
-    onDismiss: () -> Unit,
-    onSelect: (StatType, InputMode) -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Select Stat Type") },
-        text = {
-            // The dialog is its own window with its own input mode: read the mode the choice was
-            // made with here, inside the dialog, not from the screen behind it.
-            val inputModeManager = LocalInputModeManager.current
-            val onSelect: (StatType) -> Unit = { onSelect(it, inputModeManager.inputMode) }
-            LazyColumn(modifier = Modifier.selectableGroup()) {
-                item {
-                    StatTypeOption(
-                        label = "OPRs (OPR / DPR / CCWM)",
-                        selected = currentSelection is StatType.StandardOPRs,
-                        onClick = { onSelect(StatType.StandardOPRs) },
-                    )
-                }
-
-                item {
-                    StatTypeOption(
-                        label = "Qual Insights",
-                        selected = currentSelection is StatType.QualInsights,
-                        onClick = { onSelect(StatType.QualInsights) },
-                    )
-                }
-
-                item {
-                    StatTypeOption(
-                        label = "Playoff Insights",
-                        selected = currentSelection is StatType.PlayoffInsights,
-                        onClick = { onSelect(StatType.PlayoffInsights) },
-                    )
-                }
-
-                if (availableCoprStats.isNotEmpty()) {
-                    item {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        Text(
-                            text = "Component OPRs",
-                            style = MaterialTheme.typography.titleSmall,
-                            modifier =
-                                Modifier
-                                    .padding(vertical = 8.dp)
-                                    .semantics { heading() },
-                        )
-                    }
-
-                    items(availableCoprStats) { statName ->
-                        StatTypeOption(
-                            label = statName,
-                            selected =
-                                currentSelection is StatType.COPR &&
-                                    currentSelection.statName == statName,
-                            onClick = { onSelect(StatType.COPR(statName)) },
-                        )
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss, modifier = Modifier.handCursor()) {
-                Text("Close")
-            }
-        },
-    )
-}
-
-/**
- * One radio row in [StatSelectorDialog]. The whole row is the single selectable target; the
- * RadioButton only draws state, keeping its 48dp layout slot so the row height is unchanged.
- */
-@Composable
-private fun StatTypeOption(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .handCursor()
-                .selectable(
-                    selected = selected,
-                    onClick = onClick,
-                    role = Role.RadioButton,
-                ).padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        RadioButton(
-            selected = selected,
-            onClick = null,
-            modifier = Modifier.minimumInteractiveComponentSize(),
-        )
-        Text(
-            text = label,
-            modifier = Modifier.padding(start = 8.dp),
-        )
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun InsightsView(
-    title: String,
+    statType: StatType,
     insightsData: String?,
-    onShowStatSelector: () -> Unit,
-    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
 ) {
     val insightHeader =
-        when (title) {
-            "Qual Insights" -> "Qual Insight"
-            "Playoff Insights" -> "Playoff Insight"
+        when (statType) {
+            StatType.QualInsights -> "Qual insight"
+            StatType.PlayoffInsights -> "Playoff insight"
             else -> "Insight"
         }
 
@@ -493,7 +345,7 @@ private fun InsightsView(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            Text("No $title data available")
+            Text("No ${statTypeLabel(statType).lowercase()} data available")
         }
         return
     }
@@ -522,47 +374,29 @@ private fun InsightsView(
         // Left as it was: both of this table's columns hold prose, not figures, and they are
         // wide enough that spending COLUMN_GUTTER on each edge would wrap values that fit today.
         inPlaceStickyHeader {
-            BrandFocusRing(BrandHeaderContainer) {
-                Row(
-                    modifier =
-                        Modifier
-                            .tableWidth()
-                            .blocksRowsBeneath()
-                            .background(BrandHeaderContainer)
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = insightHeader,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = OnBrand,
-                        modifier = Modifier.weight(1.5f),
-                    )
-                    Text(
-                        text = "Value",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = OnBrand,
-                        modifier = Modifier.weight(1f),
-                    )
-                    // IconButton's ripple takes LocalContentColor, not colors.contentColor: OnBrand
-                    // here makes hover and press lighten the header blue.
-                    CompositionLocalProvider(LocalContentColor provides OnBrand) {
-                        IconButton(
-                            onClick = onShowStatSelector,
-                            modifier =
-                                Modifier
-                                    .focusRequester(statSelectorFocus)
-                                    .handCursor()
-                                    .padding(0.dp),
-                        ) {
-                            Icon(
-                                imageVector = TbaIcons.MoreVert,
-                                contentDescription = "Select stat type",
-                                tint = OnBrand,
-                            )
-                        }
-                    }
-                }
+            Row(
+                modifier =
+                    Modifier
+                        .tableWidth()
+                        .blocksRowsBeneath()
+                        .background(BrandHeaderContainer)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        // Every insights header is the same height, whether or not it sorts.
+                        .heightIn(min = 48.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = insightHeader,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = OnBrand,
+                    modifier = Modifier.weight(1.5f),
+                )
+                Text(
+                    text = "Value",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = OnBrand,
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
 
@@ -586,7 +420,6 @@ private fun InsightsView(
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyLarge,
                     )
-                    Box(modifier = Modifier.weight(0.4f))
                 }
                 HorizontalDivider()
             }
@@ -692,8 +525,6 @@ private fun StandardOPRsView(
     sortColumn: OprSortColumn,
     sortAscending: Boolean,
     onSortChange: (OprSortColumn, Boolean) -> Unit,
-    onShowStatSelector: () -> Unit,
-    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
     onTeamClick: (String) -> Unit,
@@ -747,10 +578,7 @@ private fun StandardOPRsView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         tabOrderedStickyHeader(headerFocus) {
-            InsightsTableHeaderRow(
-                onShowStatSelector = onShowStatSelector,
-                statSelectorFocus = statSelectorFocus,
-            ) {
+            InsightsTableHeaderRow {
                 TableHeaderCell(
                     text = "Team",
                     column = OPR_TEAM_COLUMN,
@@ -819,8 +647,6 @@ private fun COPRView(
     sortColumn: CoprSortColumn,
     sortAscending: Boolean,
     onSortChange: (CoprSortColumn, Boolean) -> Unit,
-    onShowStatSelector: () -> Unit,
-    statSelectorFocus: FocusRequester,
     innerPadding: PaddingValues,
     onOpenOprLink: () -> Unit,
     onTeamClick: (String) -> Unit,
@@ -859,10 +685,7 @@ private fun COPRView(
         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding()),
     ) {
         tabOrderedStickyHeader(headerFocus) {
-            InsightsTableHeaderRow(
-                onShowStatSelector = onShowStatSelector,
-                statSelectorFocus = statSelectorFocus,
-            ) {
+            InsightsTableHeaderRow {
                 TableHeaderCell(
                     text = "Team",
                     column = COPR_TEAM_COLUMN,
@@ -932,18 +755,10 @@ private fun OprLearnMoreLink(onClick: () -> Unit) {
     )
 }
 
-/**
- * The header row shared by every insights table: the indigo band, the row's own inset, and the
- * trailing overflow button that opens the stat selector.
- */
+/** The header row shared by the OPR and COPR tables: the indigo band and the row's own inset. */
 @Composable
-private fun InsightsTableHeaderRow(
-    onShowStatSelector: () -> Unit,
-    statSelectorFocus: FocusRequester,
-    cells: @Composable RowScope.() -> Unit,
-) {
-    // The sort bands and the overflow button sit on the header blue, so their focus ring uses
-    // brand colors.
+private fun InsightsTableHeaderRow(cells: @Composable RowScope.() -> Unit) {
+    // The sort bands sit on the header blue, so their focus ring uses brand colors.
     BrandFocusRing(BrandHeaderContainer) {
         Row(
             modifier =
@@ -952,42 +767,20 @@ private fun InsightsTableHeaderRow(
                     .blocksRowsBeneath()
                     .background(BrandHeaderContainer)
                     .padding(horizontal = TABLE_ROW_PADDING, vertical = 8.dp)
+                    // Every insights header is the same height, whether or not it sorts.
+                    .heightIn(min = 48.dp)
                     // Header cells fill this height, so every sort band matches the tallest cell.
                     .height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             cells()
-            Box(
-                // A fixed slot rather than a weighted one: the data rows below reserve the same width,
-                // so both rows share one weighted region and their columns cannot drift apart. The end
-                // padding keeps the button's outer edge on the 16.dp screen margin.
-                modifier =
-                    Modifier
-                        .width(OVERFLOW_SLOT_WIDTH)
-                        .padding(end = COLUMN_GUTTER),
-                contentAlignment = Alignment.Center,
-            ) {
-                // OnBrand ripple on the header blue, as in InsightsView's header.
-                CompositionLocalProvider(LocalContentColor provides OnBrand) {
-                    IconButton(
-                        onClick = onShowStatSelector,
-                        modifier = Modifier.focusRequester(statSelectorFocus).handCursor(),
-                    ) {
-                        Icon(
-                            imageVector = TbaIcons.MoreVert,
-                            contentDescription = "Select stat type",
-                            tint = OnBrand,
-                        )
-                    }
-                }
-            }
         }
     }
 }
 
 /**
- * A data row of an insights table, reserving the same trailing slot as the header above it. It is
- * one focus stop read as [description], since focus skips the sticky header's column labels.
+ * A data row of an insights table. It is one focus stop read as [description], since focus skips
+ * the sticky header's column labels.
  */
 @Composable
 private fun InsightsTableDataRow(
@@ -1005,7 +798,6 @@ private fun InsightsTableDataRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         cells()
-        Spacer(modifier = Modifier.width(OVERFLOW_SLOT_WIDTH))
     }
 }
 
@@ -1014,7 +806,7 @@ private fun InsightsTableDataRow(
  *
  * The sort target is a rounded band spanning the whole column. It bleeds past the label's edge so
  * the label keeps 8dp of room inside it while staying [COLUMN_GUTTER] from the column edge, in
- * line with the data cells below. The header row's height is set by its 48.dp icon button, so the
+ * line with the data cells below. The header row's height is set by its 48.dp minimum, so the
  * vertical padding does not change the header's layout, and every cell fills that height.
  *
  * A numeric column right-aligns its label onto the values' shared right edge (matching the data
@@ -1129,5 +921,80 @@ private fun SortIndicator(ascending: Boolean) {
         // The header cell's stateDescription announces the sort.
         contentDescription = null,
         tint = OnBrand,
+    )
+}
+
+/** What the stat type menu and band call [statType], in sentence case. */
+internal fun statTypeLabel(statType: StatType): String =
+    when (statType) {
+        StatType.StandardOPRs -> "OPRs"
+        StatType.QualInsights -> "Qual insights"
+        StatType.PlayoffInsights -> "Playoff insights"
+        is StatType.COPR -> statType.statName
+    }
+
+/** Every view the stat type menu offers, in order: the three fixed views, then each component OPR. */
+internal fun statTypeOptions(availableCoprStats: List<String>): List<StatType> =
+    listOf(StatType.StandardOPRs, StatType.QualInsights, StatType.PlayoffInsights) +
+        availableCoprStats.map { StatType.COPR(it) }
+
+/** The stat type menu's entries for [options], each labelled as the band would name it. */
+internal fun statTypeMenuEntries(options: List<StatType>): List<SectionHeaderInfo> =
+    options.mapIndexed { index, type ->
+        SectionHeaderInfo(key = statTypeLabel(type), label = statTypeLabel(type), itemIndex = index)
+    }
+
+/** The view the menu entry [entry] picks out of [options]. */
+internal fun statTypeForEntry(
+    options: List<StatType>,
+    entry: SectionHeaderInfo,
+): StatType = options[entry.itemIndex]
+
+/** The view the tab opens on: the first of OPRs, qual insights, playoff insights and COPRs with data. */
+internal fun defaultStatType(
+    oprs: EventOPRs?,
+    coprs: EventCOPRs?,
+    insights: EventInsights?,
+): StatType =
+    when {
+        oprs != null && oprs.oprs.isNotEmpty() -> StatType.StandardOPRs
+        insights?.qual != null -> StatType.QualInsights
+        insights?.playoff != null -> StatType.PlayoffInsights
+        coprs != null && coprs.coprs.isNotEmpty() -> StatType.COPR(coprs.coprs.keys.first())
+        else -> StatType.StandardOPRs
+    }
+
+/**
+ * The band above every insights table that names the current view and opens a menu of every view,
+ * marking the current one. It is the [SectionHeader] the Matches tab uses, capped to the table's
+ * width, and it stays put while the table under it swaps, so keyboard focus stays on it.
+ *
+ * The table's header row below is the same blue, so an [OnBrandDivider] along the band's bottom
+ * edge keeps the two from reading as one thick header.
+ */
+@Composable
+private fun StatTypeSelector(
+    current: StatType,
+    availableCoprStats: List<String>,
+    onSelect: (StatType) -> Unit,
+) {
+    val options = remember(availableCoprStats) { statTypeOptions(availableCoprStats) }
+    val entries = remember(options) { statTypeMenuEntries(options) }
+    SectionHeader(
+        label = statTypeLabel(current),
+        isStuck = true,
+        allHeaders = entries,
+        onHeaderSelected = { onSelect(statTypeForEntry(options, it)) },
+        clickLabel = "Change stat type",
+        modifier =
+            Modifier.tableWidth().drawWithContent {
+                drawContent()
+                val thickness = DividerDefaults.Thickness.toPx()
+                drawRect(
+                    OnBrandDivider,
+                    topLeft = Offset(0f, size.height - thickness),
+                    size = Size(size.width, thickness),
+                )
+            },
     )
 }

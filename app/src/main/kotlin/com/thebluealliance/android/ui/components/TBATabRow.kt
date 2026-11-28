@@ -20,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.OnBrand
+import com.thebluealliance.android.ui.theme.OnBrandDivider
 import com.thebluealliance.android.ui.theme.OnBrandMuted
 
 @Composable
@@ -56,7 +57,7 @@ fun TBATabRow(
 }
 
 private val TabRowDividerThickness = DividerDefaults.Thickness
-private val TabRowDividerColor = OnBrand.copy(alpha = 0.12f)
+private val TabRowDividerColor = OnBrandDivider
 
 /**
  * [TBATabRow] under content capped to the reading column, such as myTBA's account row: the band,
