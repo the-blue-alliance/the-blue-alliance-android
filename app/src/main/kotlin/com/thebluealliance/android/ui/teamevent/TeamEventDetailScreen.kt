@@ -64,6 +64,7 @@ import com.thebluealliance.android.ui.components.MatchList
 import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.MinLinkHeight
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
@@ -126,6 +127,7 @@ fun TeamEventDetailScreen(
     val event = uiState.event
 
     Scaffold(
+        contentWindowInsets = ScreenContentWindowInsets,
         topBar = {
             Column {
                 TBATopAppBar(

@@ -1,9 +1,14 @@
 package com.thebluealliance.android.ui.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -20,8 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusManager
@@ -34,10 +42,9 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.components.focusRegion
 import com.thebluealliance.android.ui.components.handCursor
@@ -46,16 +53,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 /**
- * The state of the window's [UserMessageHost]: the snackbar showing, and whether it takes room at
- * the bottom of the window (see [reservesSpace]). The frame stops the screen above that room.
+ * The state of the window's [UserMessageHost]: the snackbar showing, and how much of the bottom of
+ * the window it covers when it [reservesSpace]. The frame hands that to the screens as [insets],
+ * and keeps focused items above it with [bringIntoViewSpec].
  */
 @Stable
 class UserMessageState {
     internal val hostState = SnackbarHostState()
 
+    /** The snackbar host's height, from the window's bottom edge (or the bottom bar) up. */
+    internal var hostHeightPx by mutableIntStateOf(0)
+
     /** Whether the snackbar showing takes room at the bottom of the window. */
     val reservesSpace: Boolean
         get() = reservesSpace(hostState.currentSnackbarData?.visuals)
+
+    /** Pixels at the bottom of the screen that a snackbar taking room covers, or 0. */
+    internal val coveredPx: Int
+        get() = if (reservesSpace) hostHeightPx else 0
+
+    /** [coveredPx] as a bottom inset, for [LocalUserMessageInsets]. */
+    val insets: WindowInsets = UserMessageInsets { coveredPx }
+
+    /** [parent] keeping focused items clear of the snackbar, for LocalBringIntoViewSpec. */
+    @OptIn(ExperimentalFoundationApi::class)
+    fun bringIntoViewSpec(parent: BringIntoViewSpec): BringIntoViewSpec =
+        AboveSnackbarBringIntoViewSpec(parent) { coveredPx }
 }
 
 @Composable
@@ -63,10 +86,11 @@ fun rememberUserMessageState(): UserMessageState = remember { UserMessageState()
 
 /**
  * Shows [UserMessageBus] messages as snackbars. Placed in a Column between the content and the
- * bottom bar. A message with an action stays up until it's used or dismissed (Material's default
- * once a snackbar has an action), with a close button beside it; one that [reservesSpace] takes
- * its own height in the Column, and any other draws upward over the content, so nothing shifts.
- * Leaving [screen] dismisses it: its action belongs to the screen that posted it.
+ * bottom bar, it takes no height and draws upward over the content, so nothing shifts. A message
+ * with an action stays up until it's used or dismissed (Material's default once a snackbar has an
+ * action), with a close button beside it; while one does, [state] reports the height it covers so
+ * screens can pad their lists by it. Leaving [screen] dismisses it: its action belongs to the
+ * screen that posted it.
  */
 @Composable
 fun UserMessageHost(
@@ -97,24 +121,14 @@ fun UserMessageHost(
             if (showing?.visuals?.actionLabel != null) showing.dismiss()
         }
     }
-    Box(
-        modifier
-            .fillMaxWidth()
-            .layout { measurable, constraints ->
-                val placeable =
-                    measurable.measure(
-                        constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity),
-                    )
-                val height = if (state.reservesSpace) placeable.height else 0
-                // Bottom-aligned, so a snackbar taking no room draws upward over the content.
-                layout(placeable.width, height) { placeable.place(0, height - placeable.height) }
-            },
-    ) {
+    Box(modifier.fillMaxWidth().height(0.dp)) {
         SnackbarHost(
             hostState = hostState,
             modifier =
                 Modifier
                     .align(Alignment.BottomCenter)
+                    .wrapContentHeight(Alignment.Bottom, unbounded = true)
+                    .onSizeChanged { state.hostHeightPx = it.height }
                     .then(if (padNavigationBars) Modifier.navigationBarsPadding() else Modifier),
         ) { data -> UserMessageSnackbar(data) }
     }

@@ -45,6 +45,7 @@ import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATab
@@ -96,6 +97,7 @@ fun DistrictDetailScreen(
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        contentWindowInsets = ScreenContentWindowInsets,
         topBar = {
             Column {
                 TBATopAppBar(

@@ -16,7 +16,6 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -54,6 +53,7 @@ import com.thebluealliance.android.ui.components.EscapeHandler
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingMaxWidth
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.SectionHeader
 import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -151,7 +151,7 @@ fun SearchScreen(
     Scaffold(
         // Search opens with the keyboard up: the bottom padding covers it, not just the navigation
         // bar, so the last result scrolls clear of it and the messages center above it.
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.union(WindowInsets.ime),
+        contentWindowInsets = ScreenContentWindowInsets.union(WindowInsets.ime),
         topBar = {
             TBATopAppBar(
                 title = {

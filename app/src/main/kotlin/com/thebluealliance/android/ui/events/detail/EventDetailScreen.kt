@@ -38,6 +38,7 @@ import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.LocalMatchDetailPaneHost
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -162,6 +163,7 @@ fun EventDetailScreen(
     }
 
     Scaffold(
+        contentWindowInsets = ScreenContentWindowInsets,
         topBar = {
             Column {
                 TBATopAppBar(
