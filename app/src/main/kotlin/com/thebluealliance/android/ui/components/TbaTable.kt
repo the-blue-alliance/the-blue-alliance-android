@@ -135,7 +135,7 @@ internal fun tableColumnLayout(
 }
 
 /** Sideways scrolling shared by the header and every row when the columns overflow. */
-class TableRowScroll internal constructor(
+data class TableRowScroll internal constructor(
     val state: ScrollState,
     val rowWidth: Dp,
     val cueColor: Color,
@@ -147,7 +147,7 @@ class TableRowScroll internal constructor(
  * all take.
  */
 @Stable
-class TableScope internal constructor(
+data class TableScope internal constructor(
     val weights: List<Float>,
     val columnWidths: List<Dp>?,
     val rowScroll: TableRowScroll?,
@@ -368,9 +368,8 @@ fun SortableHeaderCell(
             ).padding(vertical = verticalPadding)
     if (numeric) {
         // A hand layout, because a narrow numeric column's label ("Ranking Score") wraps to two
-        // lines: the label (child 0) is measured at the cell's full width so it never ellipsizes,
-        // then right-anchored; the caret (child 1) sits just left of it, spilling into the
-        // column's left slack rather than taking width from the label.
+        // lines: the caret (child 1) reserves its width first and the label (child 0) is measured
+        // in what's left, then right-anchored, with the caret just left of its widest line.
         val labelLayout = remember { LabelLayoutHolder() }
         val measurePolicy = remember(labelLayout) { NumericHeaderMeasurePolicy(labelLayout) }
         Layout(
@@ -417,7 +416,9 @@ private class LabelLayoutHolder {
 
 /** Left edge of the widest line in [layout], which a wrapped label reports as its full width. */
 private fun inkLeft(layout: TextLayoutResult?): Float =
-    layout?.let { result -> (0 until result.lineCount).minOf { result.getLineLeft(it) } } ?: 0f
+    layout?.let { result ->
+        (0 until result.lineCount).minOfOrNull { result.getLineLeft(it) }
+    } ?: 0f
 
 /**
  * X of a numeric header's sort caret: just left of the label's widest line, which starts
