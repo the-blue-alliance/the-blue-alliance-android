@@ -33,9 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.model.CmpAdvancement
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.EventAdvancementPoints
@@ -176,7 +178,7 @@ private fun AdvancementPointsItem(
                 Spacer(modifier = Modifier.width(8.dp))
             }
             Text(
-                text = "${points.total} pts",
+                text = pluralStringResource(R.plurals.points_short, points.total, points.total),
                 style = MaterialTheme.typography.labelLarge,
             )
             Spacer(modifier = Modifier.width(4.dp))

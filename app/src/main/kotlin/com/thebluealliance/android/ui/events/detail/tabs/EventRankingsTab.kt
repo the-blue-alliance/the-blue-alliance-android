@@ -68,6 +68,7 @@ import com.thebluealliance.android.domain.model.Ranking
 import com.thebluealliance.android.domain.model.RankingSortOrder
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.TableNaturalWidth
 import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.expandableRow
@@ -777,13 +778,14 @@ private fun RankingItem(
         label = "chevron_rotation",
     )
 
+    val strings = rememberQuantityStrings()
     // The first two sort order values, without labels (the header has them).
     val (primaryValue, secondaryValue) = (0..1).map { i -> sortOrderValue(ranking, i, sortOrders) }
     val rowDescription =
         rankingRowDescription(
             rank = ranking.rank,
             teamNumber = ranking.teamKey.teamNumber,
-            record = recordDescription(ranking.wins, ranking.losses, ranking.ties),
+            record = recordDescription(ranking.wins, ranking.losses, ranking.ties, strings),
             sortLabels = rankingHeaderLabels(sortOrders).toList(),
             sortValues = listOf(primaryValue, secondaryValue),
         )

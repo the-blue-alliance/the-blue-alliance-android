@@ -2,20 +2,34 @@ package com.thebluealliance.android.ui.matches
 
 import com.thebluealliance.android.domain.BREAKDOWN_MISSING
 import com.thebluealliance.android.domain.formatBreakdownValue
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class MatchScoreDescriptionTest {
+    private val strings = ResourceQuantityStrings
+
     @Test
     fun `played score reads as points`() {
-        assertEquals("251 points", scoreDescription(251))
-        assertEquals("0 points", scoreDescription(0))
+        assertEquals("251 points", scoreDescription(251, strings))
+        assertEquals("0 points", scoreDescription(0, strings))
+    }
+
+    @Test
+    fun `one point reads singular`() {
+        assertEquals("1 point", scoreDescription(1, strings))
+    }
+
+    @Test
+    fun `zero and two points read plural`() {
+        assertEquals("0 points", scoreDescription(0, strings))
+        assertEquals("2 points", scoreDescription(2, strings))
     }
 
     @Test
     fun `unplayed score reads as not played`() {
-        assertEquals("Not played", scoreDescription(-1))
+        assertEquals("Not played", scoreDescription(-1, strings))
     }
 
     @Test
@@ -57,7 +71,7 @@ class MatchScoreDescriptionTest {
     fun `breakdown row names each value's alliance`() {
         assertEquals(
             "Auto Leave Points: Red 12; Blue 6",
-            breakdownRowDescription("Auto Leave Points", "12", "6"),
+            breakdownRowDescription("Auto Leave Points", "12", "6", strings),
         )
     }
 
@@ -65,7 +79,7 @@ class MatchScoreDescriptionTest {
     fun `breakdown row reads a missing value as none`() {
         assertEquals(
             "Coral: Red none; Blue 3",
-            breakdownRowDescription("Coral", BREAKDOWN_MISSING, "3"),
+            breakdownRowDescription("Coral", BREAKDOWN_MISSING, "3", strings),
         )
     }
 
@@ -73,7 +87,7 @@ class MatchScoreDescriptionTest {
     fun `breakdown row names playoff alliances with their colour`() {
         assertEquals(
             "Foul Points: Alliance 1, Red 0; Alliance 4, Blue 5",
-            breakdownRowDescription("Foul Points", "0", "5", "Alliance 1", "Alliance 4"),
+            breakdownRowDescription("Foul Points", "0", "5", strings, "Alliance 1", "Alliance 4"),
         )
     }
 
@@ -85,6 +99,7 @@ class MatchScoreDescriptionTest {
                 "Auto Bonus",
                 formatBreakdownValue("autoBonusAchieved", "true"),
                 formatBreakdownValue("autoBonusAchieved", "false"),
+                strings,
             ),
         )
     }
@@ -97,6 +112,7 @@ class MatchScoreDescriptionTest {
                 "Coopertition",
                 formatBreakdownValue("coopertitionCriteriaMet", "true"),
                 formatBreakdownValue("coopertitionCriteriaMet", "false"),
+                strings,
             ),
         )
     }
@@ -109,6 +125,7 @@ class MatchScoreDescriptionTest {
                 "RP",
                 formatBreakdownValue("rp", "1"),
                 formatBreakdownValue("rp", "3"),
+                strings,
             ),
         )
     }
@@ -121,13 +138,14 @@ class MatchScoreDescriptionTest {
                 "Foul Points",
                 formatBreakdownValue("foul_points", "6"),
                 formatBreakdownValue("foul_points", "0"),
+                strings,
             ),
         )
     }
 
     @Test
     fun `plain numbers read unchanged`() {
-        assertEquals("42", spokenBreakdownValue(formatBreakdownValue("totalPoints", "42")))
+        assertEquals("42", spokenBreakdownValue(formatBreakdownValue("totalPoints", "42"), strings))
     }
 
     @Test
@@ -138,6 +156,7 @@ class MatchScoreDescriptionTest {
                 "Endgame 1",
                 formatBreakdownValue("endGameRobot1", "DeepCage"),
                 formatBreakdownValue("endGameRobot1", "None"),
+                strings,
             ),
         )
     }

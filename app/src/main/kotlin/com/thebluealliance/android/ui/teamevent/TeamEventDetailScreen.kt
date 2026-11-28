@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -53,6 +54,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.LinkRowInset
 import com.thebluealliance.android.ui.components.LocalTopBarRefresh
@@ -387,11 +389,12 @@ private fun SummaryTab(
             var infoItemCount = 0
             if (ranking != null) {
                 item(key = "summary_ranking") {
+                    val strings = rememberQuantityStrings()
                     InfoRow(
                         label = "Rank ${ranking.rank}",
                         value = "${ranking.wins}-${ranking.losses}-${ranking.ties}",
                         valueDescription =
-                            recordDescription(ranking.wins, ranking.losses, ranking.ties),
+                            recordDescription(ranking.wins, ranking.losses, ranking.ties, strings),
                         onClickLabel = "View rankings",
                         onClick = {
                             event?.let {
@@ -703,7 +706,7 @@ private fun StatsTab(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "${points.total} pts",
+                    text = pluralStringResource(R.plurals.points_short, points.total, points.total),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }

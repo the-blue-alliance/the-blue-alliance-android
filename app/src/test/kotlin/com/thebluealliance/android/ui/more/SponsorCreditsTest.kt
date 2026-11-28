@@ -1,11 +1,14 @@
 package com.thebluealliance.android.ui.more
 
 import com.thebluealliance.android.domain.model.PlatinumSponsor
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
 class SponsorCreditsTest {
+    private val strings = ResourceQuantityStrings
+
     private fun sponsor(
         onLight: Any? = "light.png",
         onDark: Any? = "dark.png",
@@ -18,12 +21,12 @@ class SponsorCreditsTest {
 
     @Test
     fun labelIsSingularForOneSponsor() {
-        assertEquals("Thanks to our platinum sponsor", sponsorCreditLabel(1))
+        assertEquals("Thanks to our platinum sponsor", sponsorCreditLabel(1, strings))
     }
 
     @Test
     fun labelIsPluralForSeveralSponsors() {
-        assertEquals("Thanks to our platinum sponsors", sponsorCreditLabel(3))
+        assertEquals("Thanks to our platinum sponsors", sponsorCreditLabel(3, strings))
     }
 
     @Test

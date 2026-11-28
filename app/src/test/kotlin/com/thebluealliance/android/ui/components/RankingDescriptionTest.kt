@@ -1,17 +1,20 @@
 package com.thebluealliance.android.ui.components
 
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class RankingDescriptionTest {
+    private val strings = ResourceQuantityStrings
+
     @Test
     fun `record names wins, losses and ties`() {
-        assertEquals("7 wins, 3 losses, 0 ties", recordDescription(7, 3, 0))
+        assertEquals("7 wins, 3 losses, 0 ties", recordDescription(7, 3, 0, strings))
     }
 
     @Test
     fun `record uses singular for one`() {
-        assertEquals("1 win, 1 loss, 1 tie", recordDescription(1, 1, 1))
+        assertEquals("1 win, 1 loss, 1 tie", recordDescription(1, 1, 1, strings))
     }
 
     @Test
@@ -21,7 +24,7 @@ class RankingDescriptionTest {
             rankingRowDescription(
                 rank = 23,
                 teamNumber = "33",
-                record = recordDescription(7, 3, 0),
+                record = recordDescription(7, 3, 0, strings),
                 sortLabels = listOf("Ranking Score", "Avg Coop"),
                 sortValues = listOf("2.30", "145.20"),
             ),
@@ -35,7 +38,7 @@ class RankingDescriptionTest {
             rankingRowDescription(
                 1,
                 "254",
-                recordDescription(0, 0, 0),
+                recordDescription(0, 0, 0, strings),
                 listOf("RS", "Sort 2"),
                 listOf(null, null),
             ),

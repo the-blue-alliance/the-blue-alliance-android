@@ -6,4 +6,41 @@
     <string name="widget_description">Track your team\'s matches at an event</string>
     <string name="widget_config_not_a_team">Not a team number</string>
     <string name="widget_config_team_not_found">Team %1$s not found</string>
+    <!-- Count text: getQuantityString picks the item; %1$d is the count. -->
+    <plurals name="points">
+        <item quantity="one">%1$d point</item>
+        <item quantity="other">%1$d points</item>
+    </plurals>
+    <plurals name="points_short">
+        <item quantity="one">%1$d pt</item>
+        <item quantity="other">%1$d pts</item>
+    </plurals>
+    <plurals name="total_points">
+        <item quantity="one">%1$d total point</item>
+        <item quantity="other">%1$d total points</item>
+    </plurals>
+    <plurals name="ranking_points">
+        <item quantity="one">%1$d ranking point</item>
+        <item quantity="other">%1$d ranking points</item>
+    </plurals>
+    <plurals name="wins">
+        <item quantity="one">%1$d win</item>
+        <item quantity="other">%1$d wins</item>
+    </plurals>
+    <plurals name="losses">
+        <item quantity="one">%1$d loss</item>
+        <item quantity="other">%1$d losses</item>
+    </plurals>
+    <plurals name="ties">
+        <item quantity="one">%1$d tie</item>
+        <item quantity="other">%1$d ties</item>
+    </plurals>
+    <plurals name="contributions">
+        <item quantity="one">%1$d contribution</item>
+        <item quantity="other">%1$d contributions</item>
+    </plurals>
+    <plurals name="sponsor_credit">
+        <item quantity="one">Thanks to our platinum sponsor</item>
+        <item quantity="other">Thanks to our platinum sponsors</item>
+    </plurals>
 </resources>

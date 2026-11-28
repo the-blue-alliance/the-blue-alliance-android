@@ -27,9 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil3.compose.AsyncImage
+import com.thebluealliance.android.R
 import com.thebluealliance.android.data.remote.dto.GitHubContributorDto
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.QuantityStrings
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
@@ -132,7 +135,7 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = contributionsLabel(contributor.contributions),
+                text = contributionsLabel(contributor.contributions, rememberQuantityStrings()),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -140,5 +143,7 @@ private fun ContributorRow(contributor: GitHubContributorDto) {
     }
 }
 
-internal fun contributionsLabel(count: Int): String =
-    "$count ${if (count == 1) "contribution" else "contributions"}"
+internal fun contributionsLabel(
+    count: Int,
+    strings: QuantityStrings,
+): String = strings.get(R.plurals.contributions, count)

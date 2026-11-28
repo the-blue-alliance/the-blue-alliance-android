@@ -1,15 +1,19 @@
 package com.thebluealliance.android.ui.components
 
+import com.thebluealliance.android.R
+import com.thebluealliance.android.ui.common.QuantityStrings
+
 /** "7 wins, 3 losses, 0 ties", so a W-L-T record isn't read as a date or a subtraction. */
 internal fun recordDescription(
     wins: Int,
     losses: Int,
     ties: Int,
+    strings: QuantityStrings,
 ): String =
     listOf(
-        count(wins, "win", "wins"),
-        count(losses, "loss", "losses"),
-        count(ties, "tie", "ties"),
+        strings.get(R.plurals.wins, wins),
+        strings.get(R.plurals.losses, losses),
+        strings.get(R.plurals.ties, ties),
     ).joinToString(", ")
 
 /**
@@ -29,9 +33,3 @@ internal fun rankingRowDescription(
         add(record)
         sortLabels.zip(sortValues).forEach { (label, value) -> add("$label ${value ?: "none"}") }
     }.joinToString(", ")
-
-private fun count(
-    n: Int,
-    singular: String,
-    plural: String,
-) = "$n ${if (n == 1) singular else plural}"

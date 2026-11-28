@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.more
 
 import android.util.Log
 import com.thebluealliance.android.data.remote.GitHubApi
+import com.thebluealliance.android.ui.common.ResourceQuantityStrings
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -20,6 +21,8 @@ import java.net.UnknownHostException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ThanksTest {
+    private val strings = ResourceQuantityStrings
+
     private val gitHubApi: GitHubApi = mockk()
 
     @BeforeEach
@@ -37,13 +40,13 @@ class ThanksTest {
 
     @Test
     fun `one contribution is singular`() {
-        assertEquals("1 contribution", contributionsLabel(1))
+        assertEquals("1 contribution", contributionsLabel(1, strings))
     }
 
     @Test
     fun `other counts are plural`() {
-        assertEquals("0 contributions", contributionsLabel(0))
-        assertEquals("2 contributions", contributionsLabel(2))
+        assertEquals("0 contributions", contributionsLabel(0, strings))
+        assertEquals("2 contributions", contributionsLabel(2, strings))
     }
 
     @Test
