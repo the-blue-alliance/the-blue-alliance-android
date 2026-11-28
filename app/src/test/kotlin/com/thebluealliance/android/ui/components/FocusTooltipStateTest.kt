@@ -35,7 +35,7 @@ class FocusTooltipStateTest {
         state.onFocusChanged(true)
         boxShowsForFocus(state)
         val shows = state.onKey(KeyEventType.KeyUp, key, withAltCtrlOrMeta)
-        if (shows) backgroundScope.launch { state.show() }
+        if (shows) backgroundScope.launch { state.showForFocus() }
         runCurrent()
         return shows
     }
@@ -106,6 +106,19 @@ class FocusTooltipStateTest {
             boxShowsForFocus(state)
             assertFalse(state.onKey(KeyEventType.KeyUp, Key.AltLeft, false))
             assertFalse(state.onKey(KeyEventType.KeyUp, Key.DirectionLeft, false))
+            assertFalse(state.isVisible)
+        }
+
+    @Test
+    fun `focus gone before the tooltip shows shows nothing`() =
+        runTest {
+            val state = newState()
+            state.onFocusChanged(true)
+            boxShowsForFocus(state)
+            assertTrue(state.onKey(KeyEventType.KeyUp, Key.Tab, false))
+            state.onFocusChanged(false)
+            backgroundScope.launch { state.showForFocus() }
+            runCurrent()
             assertFalse(state.isVisible)
         }
 

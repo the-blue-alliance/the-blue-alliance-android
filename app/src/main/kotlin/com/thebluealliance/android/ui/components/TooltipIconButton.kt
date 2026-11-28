@@ -32,8 +32,9 @@ import kotlinx.coroutines.launch
 
 /**
  * An icon button whose [label] is both the icon's content description and a plain tooltip below
- * it. The tooltip shows while a mouse rests on the button, while it has keyboard focus, and on a
- * long press, as M3's TooltipBox does by default. The button shows the hand pointer.
+ * it. The tooltip shows while a mouse rests on the button and on a long press, as M3's TooltipBox
+ * does by default, and for 1.5 s when the user moves keyboard focus onto the button with Tab or an
+ * arrow key (see [FocusTooltipState]). The button shows the hand pointer.
  *
  * A click dismisses the tooltip: one shown by keyboard focus would otherwise stay up over the
  * sheet or menu the click opens, because focus moving into that popup doesn't hide it.
@@ -66,7 +67,7 @@ fun TooltipIconButton(
                         val modified =
                             event.isAltPressed || event.isCtrlPressed || event.isMetaPressed
                         if (tooltipState.onKey(event.type, event.key, modified)) {
-                            scope.launch { tooltipState.show() }
+                            scope.launch { tooltipState.showForFocus() }
                         }
                         false
                     },
@@ -77,31 +78,86 @@ fun TooltipIconButton(
 }
 
 /**
- * [TooltipIconButton]'s tooltip state: [tooltip], told when its button gains and loses focus and
- * which keys reach it.
+ * [TooltipIconButton]'s tooltip state: [tooltip], with keyboard focus handled so the tooltip shows
+ * only when the user moves focus onto the button, and hides on its own.
+ *
+ * TooltipBox shows its tooltip whenever the anchor gains focus, at a priority M3 never times out,
+ * so it stays up for as long as the button keeps focus. That includes focus nobody asked for: on a
+ * phone, a screen opened by keyboard or a deep link gets focus on its Back button, and the tooltip
+ * would sit over the first tab. TooltipBox's focus show is dropped here. Instead the button shows
+ * the tooltip at default priority, which M3 hides after 1.5 s, when the first key to reach it after
+ * gaining focus (Shift aside) is the release of the Tab or arrow key that moved focus there (focus
+ * moves on the press, so the release goes to the newly focused button). Focus placed by the app is
+ * followed by no key, or by the release of the Enter, Alt or Ctrl that opened the screen, and shows
+ * nothing.
+ * Hover and long press go straight to [tooltip].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Stable
 internal class FocusTooltipState(
     private val tooltip: TooltipState,
 ) : TooltipState by tooltip {
+    /** The button has keyboard focus. */
+    private var focused = false
+
+    /** The button has focus and hasn't received a key since it gained it. */
+    private var awaitingFirstKey = false
+
+    /** The button gained focus and TooltipBox's show for that focus hasn't arrived yet. */
+    private var focusShowPending = false
+
     /** Called with the button's focus whenever it changes. */
-    @Suppress("UNUSED_PARAMETER")
-    fun onFocusChanged(isFocused: Boolean) = Unit
+    fun onFocusChanged(isFocused: Boolean) {
+        focused = isFocused
+        awaitingFirstKey = isFocused
+        focusShowPending = isFocused
+    }
 
     /**
      * Called for each key event that reaches the focused button. Returns whether to show the
-     * tooltip now.
+     * tooltip now: only for the first key after focus arrives, when that key moved focus here.
      */
-    @Suppress("UNUSED_PARAMETER")
     fun onKey(
         type: KeyEventType,
         key: Key,
         withAltCtrlOrMeta: Boolean,
-    ): Boolean = false
+    ): Boolean {
+        // Shift+Tab's Shift can be released before its Tab.
+        if (isShiftKey(key)) return false
+        val show = awaitingFirstKey && movedFocusHere(type, key, withAltCtrlOrMeta)
+        awaitingFirstKey = false
+        return show
+    }
 
-    override suspend fun show(mutatePriority: MutatePriority) = tooltip.show(mutatePriority)
+    /**
+     * Shows the tooltip for focus that [onKey] approved, unless focus has already moved on. Default
+     * priority, so M3 hides the non-persistent tooltip after 1.5 s.
+     */
+    suspend fun showForFocus() {
+        if (focused) tooltip.show()
+    }
+
+    override suspend fun show(mutatePriority: MutatePriority) {
+        // TooltipBox shows for anchor focus at PreventUserInput, as it does for a long press.
+        if (mutatePriority == MutatePriority.PreventUserInput && focusShowPending) {
+            focusShowPending = false
+            return
+        }
+        tooltip.show(mutatePriority)
+    }
 }
+
+/**
+ * Whether a key event reaching a just-focused element is the release of the Tab, Shift+Tab or
+ * arrow key that moved focus to it.
+ */
+internal fun movedFocusHere(
+    type: KeyEventType,
+    key: Key,
+    withAltCtrlOrMeta: Boolean,
+): Boolean = type == KeyEventType.KeyUp && isFocusKey(key) && !withAltCtrlOrMeta
+
+internal fun isShiftKey(key: Key): Boolean = key == Key.ShiftLeft || key == Key.ShiftRight
 
 /** [onClick], after hiding [tooltipState]'s tooltip if it's showing. */
 @OptIn(ExperimentalMaterial3Api::class)
