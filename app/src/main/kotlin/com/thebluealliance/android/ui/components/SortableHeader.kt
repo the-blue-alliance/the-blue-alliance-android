@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.theme.OnBrandRipple
 
 /** Spoken sort state of a table header cell; the visual carat carries no description of its own. */
 internal fun sortStateDescription(
@@ -71,7 +72,7 @@ fun Modifier.tableCellTarget(
 
 /**
  * Makes a table header cell a sort button announcing [label] and its sort state, drawn as a
- * [tableCellTarget]. Chain sizing modifiers before it and the cell's vertical padding after it.
+ * [tableCellTarget]. Sort headers sit on the brand header blue, so the highlight is [OnBrandRipple]. Chain sizing modifiers before it and the cell's vertical padding after it.
  */
 fun Modifier.sortableHeader(
     shape: Shape,
@@ -90,6 +91,8 @@ fun Modifier.sortableHeader(
             labelAtEnd = labelAtEnd,
             interaction =
                 Modifier.handCursor().clickable(
+                    interactionSource = null,
+                    indication = OnBrandRipple,
                     onClickLabel = "Sort by $label",
                     role = Role.Button,
                     onClick = onClick,

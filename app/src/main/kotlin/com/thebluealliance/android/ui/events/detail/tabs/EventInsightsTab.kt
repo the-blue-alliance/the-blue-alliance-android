@@ -29,12 +29,14 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -542,19 +544,23 @@ private fun InsightsView(
                         color = OnBrand,
                         modifier = Modifier.weight(1f),
                     )
-                    IconButton(
-                        onClick = onShowStatSelector,
-                        modifier =
-                            Modifier
-                                .focusRequester(statSelectorFocus)
-                                .handCursor()
-                                .padding(0.dp),
-                    ) {
-                        Icon(
-                            imageVector = TbaIcons.MoreVert,
-                            contentDescription = "Select stat type",
-                            tint = OnBrand,
-                        )
+                    // IconButton's ripple takes LocalContentColor, not colors.contentColor: OnBrand
+                    // here makes hover and press lighten the header blue.
+                    CompositionLocalProvider(LocalContentColor provides OnBrand) {
+                        IconButton(
+                            onClick = onShowStatSelector,
+                            modifier =
+                                Modifier
+                                    .focusRequester(statSelectorFocus)
+                                    .handCursor()
+                                    .padding(0.dp),
+                        ) {
+                            Icon(
+                                imageVector = TbaIcons.MoreVert,
+                                contentDescription = "Select stat type",
+                                tint = OnBrand,
+                            )
+                        }
                     }
                 }
             }
@@ -961,15 +967,18 @@ private fun InsightsTableHeaderRow(
                         .padding(end = COLUMN_GUTTER),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(
-                    onClick = onShowStatSelector,
-                    modifier = Modifier.focusRequester(statSelectorFocus).handCursor(),
-                ) {
-                    Icon(
-                        imageVector = TbaIcons.MoreVert,
-                        contentDescription = "Select stat type",
-                        tint = OnBrand,
-                    )
+                // OnBrand ripple on the header blue, as in InsightsView's header.
+                CompositionLocalProvider(LocalContentColor provides OnBrand) {
+                    IconButton(
+                        onClick = onShowStatSelector,
+                        modifier = Modifier.focusRequester(statSelectorFocus).handCursor(),
+                    ) {
+                        Icon(
+                            imageVector = TbaIcons.MoreVert,
+                            contentDescription = "Select stat type",
+                            tint = OnBrand,
+                        )
+                    }
                 }
             }
         }
