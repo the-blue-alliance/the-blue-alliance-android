@@ -22,7 +22,6 @@ import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -50,6 +49,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thebluealliance.android.R
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TBATheme
@@ -120,18 +120,14 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
                                 )
                                 // IconButton's ripple takes LocalContentColor: OnBrand here makes
-                                // hover and press lighten the header blue.
+                                // hover and press lighten the header blue, and tints the icon.
                                 CompositionLocalProvider(LocalContentColor provides OnBrand) {
-                                    IconButton(
+                                    TooltipIconButton(
+                                        label = "Close",
+                                        icon = TbaIcons.Close,
                                         onClick = { finish() },
-                                        modifier = Modifier.handCursor().size(36.dp),
-                                    ) {
-                                        Icon(
-                                            imageVector = TbaIcons.Close,
-                                            contentDescription = "Close",
-                                            tint = OnBrand,
-                                        )
-                                    }
+                                        modifier = Modifier.size(36.dp),
+                                    )
                                 }
                             }
 
