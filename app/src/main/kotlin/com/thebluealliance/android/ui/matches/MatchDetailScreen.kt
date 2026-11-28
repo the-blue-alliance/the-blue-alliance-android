@@ -67,6 +67,7 @@ import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitle
 import com.thebluealliance.android.domain.rpBonuses
 import com.thebluealliance.android.ui.common.EmptyBox
+import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.shareTbaUrl
@@ -132,7 +133,8 @@ fun MatchDetailScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val refreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     // LoadingBox already shows progress until the match first loads.
-    val isRefreshing = refreshing && (uiState.match != null || uiState.loadFailed)
+    val isRefreshing =
+        refreshing && (uiState.match != null || uiState.loadFailed || uiState.notFound)
     val context = LocalContext.current
 
     // As a detail pane the event's bar is above, so this bar is a surface-colored pane header
@@ -219,10 +221,17 @@ fun MatchDetailScreen(
         ) {
             val match = uiState.match
             if (match == null) {
-                if (uiState.loadFailed) {
+                if (uiState.notFound) {
+                    // A 404 is TBA's answer, not a failed fetch, so Retry would only get it again.
                     EmptyBox(
                         modifier = Modifier.padding(innerPadding),
+                        message = "Match not found",
+                    )
+                } else if (uiState.loadFailed) {
+                    ErrorBox(
+                        modifier = Modifier.padding(innerPadding),
                         message = "Couldn't load match",
+                        onRetry = viewModel::refresh,
                     )
                 } else {
                     LoadingBox(

@@ -18,8 +18,13 @@ data class MatchDetailUiState(
     val videos: List<MatchVideo> = emptyList(),
     val year: Int = 0,
     /**
-     * True once a refresh has finished and there's still no match to show — a bad/stale deep
-     * link (404) or an uncached match we couldn't fetch (offline). Either way: stop spinning.
+     * True once a refresh has finished and there's still no match to show, for any reason but a
+     * 404 (offline, a server error). Retry may get it next time.
      */
     val loadFailed: Boolean = false,
-)
+    /** TBA's last answer for the match was a 404. */
+    val matchMissing: Boolean = false,
+) {
+    /** TBA has no match with this key, and none is cached. */
+    val notFound: Boolean get() = matchMissing && match == null
+}
