@@ -9,6 +9,16 @@ import androidx.compose.ui.focus.FocusDirection
  */
 internal fun reservesSpace(visuals: SnackbarVisuals?): Boolean = false
 
+/**
+ * The bottom inset screens pad their content by while a snackbar covers [coveredPx] of the bottom
+ * of the screen, when the frame has already taken [consumedBelowPx] of the window's bottom inset
+ * for the bottom bar. Only the snackbar counts yet, not the bar's share.
+ */
+internal fun snackbarContentInset(
+    coveredPx: Int,
+    consumedBelowPx: Int,
+): Int = coveredPx
+
 /** One end of the snackbar's row of buttons. */
 internal enum class SnackbarEdge { First, Last }
 
