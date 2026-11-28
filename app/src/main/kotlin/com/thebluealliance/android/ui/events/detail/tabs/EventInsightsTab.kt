@@ -68,6 +68,7 @@ import com.thebluealliance.android.ui.components.FocusHandoffEffect
 import com.thebluealliance.android.ui.components.SortableHeaderCell
 import com.thebluealliance.android.ui.components.TABULAR_FIGURES
 import com.thebluealliance.android.ui.components.TableColumnGutter
+import com.thebluealliance.android.ui.components.TableHeaderLabel
 import com.thebluealliance.android.ui.components.TableRowDivider
 import com.thebluealliance.android.ui.components.TableRowPadding
 import com.thebluealliance.android.ui.components.TableTeamCell
@@ -513,16 +514,12 @@ private fun InsightsView(
                             .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    TableHeaderLabel(
                         text = insightHeader,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = OnBrand,
                         modifier = Modifier.weight(1.5f),
                     )
-                    Text(
+                    TableHeaderLabel(
                         text = "Value",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = OnBrand,
                         modifier = Modifier.weight(1f),
                     )
                     // IconButton's ripple takes LocalContentColor, not colors.contentColor: OnBrand
