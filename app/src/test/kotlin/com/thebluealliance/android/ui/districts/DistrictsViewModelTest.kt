@@ -84,14 +84,19 @@ class DistrictsViewModelTest {
             val bus = UserMessageBus()
             every { repository.observeDistrictsForYear(any()) } returns
                 flowOf(listOf(District("2025fim", "fim", "FIRST In Michigan", 2025)))
-            coEvery { repository.refreshDistrictsForYear(any()) } throws UnknownHostException()
+            var refreshes = 0
+            coEvery { repository.refreshDistrictsForYear(2025) } answers {
+                refreshes++
+                throw UnknownHostException()
+            }
             DistrictsViewModel(repository, seasons, bus)
             bus.messages.test {
                 val message = awaitItem()
                 assertEquals("Couldn't refresh districts", message.text)
                 assertEquals("Retry", message.action?.label)
+                val before = refreshes
                 message.action!!.onPerform()
-                coVerify(exactly = 2) { repository.refreshDistrictsForYear(2025) }
+                assertEquals(before + 1, refreshes)
                 cancelAndIgnoreRemainingEvents()
             }
             unmockkStatic(Log::class)
