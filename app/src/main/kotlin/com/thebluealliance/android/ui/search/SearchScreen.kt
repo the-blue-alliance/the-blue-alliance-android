@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -38,6 +37,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
@@ -46,7 +46,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.ui.common.EmptyBox
@@ -155,58 +154,63 @@ fun SearchScreen(
         topBar = {
             TBATopAppBar(
                 title = {
-                    TextField(
-                        state = viewModel.queryState,
-                        placeholder = { Text("Search teams and events") },
-                        lineLimits = TextFieldLineLimits.SingleLine,
+                    SearchFieldSlot(
+                        fit = fieldFit,
                         modifier =
-                            Modifier
-                                .onGloballyPositioned { fieldBounds = it.unclippedBoundsInRoot() }
-                                .padding(start = fieldFit?.start ?: 0.dp)
-                                .widthIn(max = fieldFit?.maxWidth ?: Dp.Unspecified)
-                                .fillMaxWidth()
-                                .focusRequester(focusRequester)
-                                .onPreviewKeyEvent { event ->
-                                    if (event.key != Key.Escape) return@onPreviewKeyEvent false
-                                    if (event.type == KeyEventType.KeyUp) {
-                                        when (searchFieldEscape(viewModel.queryState.text)) {
-                                            SearchFieldEscape.ClearText ->
-                                                viewModel.queryState.clearText()
-                                            SearchFieldEscape.ClearFocus ->
-                                                focusManager
-                                                    .clearFocus()
+                            Modifier.onGloballyPositioned {
+                                fieldBounds = it.unclippedBoundsInRoot()
+                            },
+                    ) {
+                        TextField(
+                            state = viewModel.queryState,
+                            placeholder = { Text("Search teams and events") },
+                            lineLimits = TextFieldLineLimits.SingleLine,
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester)
+                                    .onPreviewKeyEvent { event ->
+                                        if (event.key != Key.Escape) return@onPreviewKeyEvent false
+                                        if (event.type == KeyEventType.KeyUp) {
+                                            when (searchFieldEscape(viewModel.queryState.text)) {
+                                                SearchFieldEscape.ClearText ->
+                                                    viewModel.queryState.clearText()
+                                                SearchFieldEscape.ClearFocus ->
+                                                    focusManager
+                                                        .clearFocus()
+                                            }
                                         }
-                                    }
-                                    true
-                                },
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                focusedPlaceholderColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                unfocusedPlaceholderColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                cursorColor = MaterialTheme.colorScheme.primary,
-                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
-                                focusedTrailingIconColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                                unfocusedTrailingIconColor =
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
-                            ),
-                        trailingIcon = {
-                            if (viewModel.queryState.text.isNotEmpty()) {
-                                TooltipIconButton(
-                                    label = "Clear",
-                                    icon = TbaIcons.Close,
-                                    onClick = { viewModel.queryState.clearText() },
-                                )
-                            }
-                        },
-                    )
+                                        true
+                                    },
+                            colors =
+                                TextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedPlaceholderColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unfocusedPlaceholderColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    cursorColor = MaterialTheme.colorScheme.primary,
+                                    focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                    unfocusedIndicatorColor = MaterialTheme.colorScheme.outline,
+                                    focusedTrailingIconColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                    unfocusedTrailingIconColor =
+                                        MaterialTheme.colorScheme.onSurfaceVariant,
+                                ),
+                            trailingIcon = {
+                                if (viewModel.queryState.text.isNotEmpty()) {
+                                    TooltipIconButton(
+                                        label = "Clear",
+                                        icon = TbaIcons.Close,
+                                        onClick = { viewModel.queryState.clearText() },
+                                    )
+                                }
+                            },
+                        )
+                    }
                 },
                 navigationIcon = {
                     TooltipIconButton("Back", TbaIcons.ArrowBack, onNavigateUp)
@@ -303,8 +307,33 @@ internal enum class SearchFieldEscape { ClearText, ClearFocus }
 internal fun searchFieldEscape(query: CharSequence): SearchFieldEscape =
     if (query.isEmpty()) SearchFieldEscape.ClearFocus else SearchFieldEscape.ClearText
 
+/**
+ * Places [field] in the top-bar slot at [fit]'s start offset and no wider than its width, or across
+ * the whole slot while [fit] is null.
+ *
+ * The fit arrives after the first layout. It moves the field by placing it again, not with padding:
+ * in a TopAppBar title, padding that changes later leaves Compose reporting the field's old window
+ * position for everything inside it, and Clear's tooltip would open where Clear used to be.
+ */
+@Composable
+internal fun SearchFieldSlot(
+    fit: SearchFieldFit?,
+    modifier: Modifier = Modifier,
+    field: @Composable () -> Unit,
+) {
+    Layout(content = field, modifier = modifier) { measurables, constraints ->
+        val start = fit?.start?.roundToPx()?.coerceIn(0, constraints.maxWidth) ?: 0
+        val room = constraints.maxWidth - start
+        val width = fit?.maxWidth?.roundToPx()?.coerceIn(0, room) ?: room
+        val placeable =
+            measurables.first().measure(constraints.copy(minWidth = width, maxWidth = width))
+        val height = placeable.height.coerceIn(constraints.minHeight, constraints.maxHeight)
+        layout(constraints.maxWidth, height) { placeable.placeRelative(start, 0) }
+    }
+}
+
 /** Start offset and widest size of the search field, in its top-bar slot. */
-private data class SearchFieldFit(
+internal data class SearchFieldFit(
     val start: Dp,
     val maxWidth: Dp,
 )
