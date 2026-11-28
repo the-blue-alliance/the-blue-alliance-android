@@ -1,6 +1,8 @@
 package com.thebluealliance.android.ui.components
 
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.SelectableDropdownMenuItem
@@ -14,10 +16,31 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.platform.LocalInputModeManager
+import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 /**
- * One entry of a menu that shows where you are, such as the year picker or a section jump menu.
+ * A menu that shows where you are, holding [SelectableMenuItem]s. It takes M3's standard menu
+ * container colour and shape, which the items' own container matches.
+ */
+@Composable
+fun SelectableMenu(
+    expanded: Boolean,
+    onDismissRequest: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+        shape = MenuDefaults.standaloneGroupShape,
+        containerColor = MenuDefaults.groupStandardContainerColor,
+    ) {
+        SurfaceFocusRing { content() }
+    }
+}
+
+/**
+ * One entry of a [SelectableMenu], such as the year picker or a section jump menu.
  *
  * It is M3's [SelectableDropdownMenuItem]: the current entry gets the selected container, shape
  * and a leading check, and TalkBack hears the menu as a radio group with that entry selected.

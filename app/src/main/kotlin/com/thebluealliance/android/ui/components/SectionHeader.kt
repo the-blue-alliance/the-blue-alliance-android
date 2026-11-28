@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.BrandHeaderContainer
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandRipple
-import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 data class SectionHeaderInfo(
@@ -95,23 +93,21 @@ fun SectionHeader(
                 },
             )
 
-            DropdownMenu(
+            SelectableMenu(
                 expanded = menuExpanded,
                 onDismissRequest = { menuExpanded = false },
             ) {
-                SurfaceFocusRing {
-                    allHeaders.forEachIndexed { index, info ->
-                        SelectableMenuItem(
-                            text = info.label,
-                            selected = info.label == label,
-                            index = index,
-                            count = allHeaders.size,
-                            onClick = {
-                                menuExpanded = false
-                                onHeaderSelected(info)
-                            },
-                        )
-                    }
+                allHeaders.forEachIndexed { index, info ->
+                    SelectableMenuItem(
+                        text = info.label,
+                        selected = info.label == label,
+                        index = index,
+                        count = allHeaders.size,
+                        onClick = {
+                            menuExpanded = false
+                            onHeaderSelected(info)
+                        },
+                    )
                 }
             }
         }

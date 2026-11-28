@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.thebluealliance.android.ui.theme.SurfaceFocusRing
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 private val HORIZONTAL_TARGET_PADDING = 12.dp
@@ -89,23 +87,21 @@ fun TopBarYearPicker(
                 )
             }
         }
-        DropdownMenu(
+        SelectableMenu(
             expanded = yearDropdownExpanded,
             onDismissRequest = { yearDropdownExpanded = false },
         ) {
-            SurfaceFocusRing {
-                years.forEachIndexed { index, year ->
-                    SelectableMenuItem(
-                        text = year.toString(),
-                        selected = year == selectedYear,
-                        index = index,
-                        count = years.size,
-                        onClick = {
-                            onYearSelected(year)
-                            yearDropdownExpanded = false
-                        },
-                    )
-                }
+            years.forEachIndexed { index, year ->
+                SelectableMenuItem(
+                    text = year.toString(),
+                    selected = year == selectedYear,
+                    index = index,
+                    count = years.size,
+                    onClick = {
+                        onYearSelected(year)
+                        yearDropdownExpanded = false
+                    },
+                )
             }
         }
     }
