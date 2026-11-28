@@ -12,6 +12,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.InputMode
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * Keyboard focus memory for one back-stack entry: the elements in it that open other screens
@@ -126,6 +127,9 @@ internal fun Modifier.returnsFocus(key: Long): Modifier =
             .focusRequester(requester)
     }
 
+/** Stand-in keys count down from -1, so each stand-in has its own; they are never saved. */
+private val nextStandInKey = AtomicLong(-1L)
+
 /**
  * Marks a launcher that is gone when the user returns, such as a menu item, so focus comes back to
  * the element marked `returnsFocus(anchor)` instead, such as the button that opened the menu.
@@ -133,7 +137,8 @@ internal fun Modifier.returnsFocus(key: Long): Modifier =
 internal fun Modifier.returnsFocusTo(anchor: Long): Modifier =
     composed {
         val entry = LocalEntryFocus.current ?: return@composed Modifier
-        val key = currentCompositeKeyHashCode
+        // Its own key: items composed in a loop share a composite key hash.
+        val key = remember { nextStandInKey.getAndDecrement() }
         DisposableEffect(entry, key, anchor) {
             entry.standIns[key] = anchor
             onDispose { if (entry.standIns[key] == anchor) entry.standIns.remove(key) }
