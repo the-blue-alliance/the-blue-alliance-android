@@ -11,6 +11,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -160,7 +161,7 @@ class TeamDetailViewModelLoadTest {
             refreshesThrow(UnknownHostException())
             val state = subscribedViewModel().uiState.value
             TeamDetailTab.entries.forEach { tab -> assertFalse(state.loadFailed(tab), "$tab") }
-            bus.messages.test { assertEquals("Couldn't refresh team", awaitItem()) }
+            bus.messages.test { assertEquals("Couldn't refresh team", awaitItem().text) }
         }
 
     @Test
@@ -170,7 +171,39 @@ class TeamDetailViewModelLoadTest {
             val viewModel = subscribedViewModel()
             refreshesThrow(UnknownHostException())
             viewModel.refreshTab(TeamDetailTab.EVENTS)
-            bus.messages.test { assertEquals("Couldn't refresh team", awaitItem()) }
+            bus.messages.test { assertEquals("Couldn't refresh team", awaitItem().text) }
+        }
+
+    @Test
+    fun `a failed refresh over cached data offers Retry, which refreshes again`() =
+        runTest {
+            cache(team = team, events = listOf(event), media = listOf(photo))
+            refreshesThrow(UnknownHostException())
+            subscribedViewModel()
+            bus.messages.test {
+                val action = awaitItem().action
+                assertEquals("Retry", action?.label)
+                action!!.onPerform()
+                coVerify(exactly = 2) { teams.refreshTeam(any()) }
+                coVerify(exactly = 2) { events.refreshTeamEvents(any(), any()) }
+                assertEquals("Couldn't refresh team", awaitItem().text)
+            }
+        }
+
+    @Test
+    fun `a failed pull to refresh over cached data offers Retry`() =
+        runTest {
+            cache(team = team, events = listOf(event), media = listOf(photo))
+            val viewModel = subscribedViewModel()
+            refreshesThrow(UnknownHostException())
+            viewModel.refreshTab(TeamDetailTab.EVENTS)
+            bus.messages.test {
+                val action = awaitItem().action
+                assertEquals("Retry", action?.label)
+                action!!.onPerform()
+                coVerify(exactly = 3) { events.refreshTeamEvents(any(), any()) }
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test

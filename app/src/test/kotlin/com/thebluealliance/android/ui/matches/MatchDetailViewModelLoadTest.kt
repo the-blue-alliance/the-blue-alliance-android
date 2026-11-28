@@ -1,12 +1,15 @@
 package com.thebluealliance.android.ui.matches
 
 import android.util.Log
+import app.cash.turbine.test
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.domain.model.CompLevel
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -22,6 +25,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -34,6 +38,7 @@ import java.net.UnknownHostException
 class MatchDetailViewModelLoadTest {
     private val matches: MatchRepository = mockk(relaxed = true)
     private val events: EventRepository = mockk(relaxed = true)
+    private val bus = UserMessageBus()
     private val match =
         Match(
             key = "2025notreal_qm1",
@@ -75,6 +80,7 @@ class MatchDetailViewModelLoadTest {
                 navKey = Screen.MatchDetail("2025notreal_qm1"),
                 matchRepository = matches,
                 eventRepository = events,
+                userMessages = bus,
             )
         backgroundScope.launch(
             UnconfinedTestDispatcher(testScheduler),
@@ -123,5 +129,21 @@ class MatchDetailViewModelLoadTest {
             val state = subscribedViewModel().uiState.value
             assertTrue(state.loadFailed)
             assertFalse(state.notFound)
+        }
+
+    @Test
+    fun `a failed refresh over a cached match offers Retry, which refreshes again`() =
+        runTest {
+            every { matches.observeMatch(any()) } returns flowOf(match)
+            coEvery { matches.refreshMatch(any()) } throws UnknownHostException()
+            subscribedViewModel()
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Couldn't refresh match", message.text)
+                assertEquals("Retry", message.action?.label)
+                message.action!!.onPerform()
+                coVerify(exactly = 2) { matches.refreshMatch("2025notreal_qm1") }
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 }

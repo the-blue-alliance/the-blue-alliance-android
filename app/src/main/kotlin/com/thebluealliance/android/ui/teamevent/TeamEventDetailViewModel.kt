@@ -15,6 +15,7 @@ import com.thebluealliance.android.domain.model.Media
 import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -47,6 +48,7 @@ class TeamEventDetailViewModel
         private val eventRepository: EventRepository,
         private val matchRepository: MatchRepository,
         private val regionalAdvancementRepository: RegionalAdvancementRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         val teamKey: String = navKey.teamKey
         val eventKey: String = navKey.eventKey

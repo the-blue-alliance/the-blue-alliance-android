@@ -16,6 +16,7 @@ import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,6 +44,7 @@ class MyTBAViewModel
         teamRepository: TeamRepository,
         eventRepository: EventRepository,
         matchRepository: MatchRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val favoritesOutcome = MutableStateFlow(RefreshOutcome.PENDING)
         private val subscriptionsOutcome = MutableStateFlow(RefreshOutcome.PENDING)

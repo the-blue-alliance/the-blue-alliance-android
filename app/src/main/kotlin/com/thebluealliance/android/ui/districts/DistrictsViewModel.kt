@@ -8,6 +8,7 @@ import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +28,7 @@ class DistrictsViewModel
     constructor(
         private val districtRepository: DistrictRepository,
         private val seasons: SeasonRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()

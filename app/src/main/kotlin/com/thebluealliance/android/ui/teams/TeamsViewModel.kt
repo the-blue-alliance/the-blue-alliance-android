@@ -9,6 +9,7 @@ import com.thebluealliance.android.domain.model.Team
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,6 +31,7 @@ class TeamsViewModel
         private val teamRepository: TeamRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val refreshOutcome = MutableStateFlow(RefreshOutcome.PENDING)
 

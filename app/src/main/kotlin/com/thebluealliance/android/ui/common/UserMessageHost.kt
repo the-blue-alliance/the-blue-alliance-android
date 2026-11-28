@@ -30,7 +30,7 @@ fun UserMessageHost(
     val bus = remember(context) { context.userMessageBus() }
     val hostState = remember { SnackbarHostState() }
     LaunchedEffect(bus) {
-        bus.messages.showLatest { hostState.showSnackbar(it) }
+        bus.messages.showLatest { hostState.showSnackbar(it.text) }
     }
     Box(modifier.fillMaxWidth().height(0.dp)) {
         SnackbarHost(
@@ -48,4 +48,4 @@ fun UserMessageHost(
  * Shows each message with [show], cancelling the one still showing. Cancelling
  * showSnackbar dismisses its snackbar, so a burst of taps doesn't queue up minutes of messages.
  */
-internal suspend fun Flow<String>.showLatest(show: suspend (String) -> Unit) = collectLatest(show)
+internal suspend fun <T> Flow<T>.showLatest(show: suspend (T) -> Unit) = collectLatest(show)

@@ -8,6 +8,7 @@ import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -38,6 +39,7 @@ class MatchDetailViewModel
         @Assisted val navKey: Screen.MatchDetail,
         private val matchRepository: MatchRepository,
         private val eventRepository: EventRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val matchKey: String = navKey.matchKey
         private val eventKey: String = matchKey.substringBeforeLast("_")

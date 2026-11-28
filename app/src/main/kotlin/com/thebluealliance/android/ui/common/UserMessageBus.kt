@@ -11,6 +11,18 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/** A message for [UserMessageBus], with an optional [action] shown as the snackbar's button. */
+data class UserMessage(
+    val text: String,
+    val action: Action? = null,
+) {
+    /** A snackbar button: [label] (say, "Retry") runs [onPerform] when pressed. */
+    class Action(
+        val label: String,
+        val onPerform: () -> Unit,
+    )
+}
+
 /**
  * Short messages for the user, shown as a snackbar inside the app's window by [UserMessageHost].
  *
@@ -21,12 +33,24 @@ import javax.inject.Singleton
 class UserMessageBus
     @Inject
     constructor() {
-        private val channel = Channel<String>(Channel.BUFFERED)
+        private val channel = Channel<UserMessage>(Channel.BUFFERED)
 
-        val messages: Flow<String> = channel.receiveAsFlow()
+        val messages: Flow<UserMessage> = channel.receiveAsFlow()
 
-        fun show(message: String) {
+        fun show(message: String) = show(UserMessage(message))
+
+        /** Shows [message] with a Retry button that runs [retry]. */
+        fun showRetry(
+            message: String,
+            retry: () -> Unit,
+        ) = show(UserMessage(message, UserMessage.Action(RETRY, retry)))
+
+        fun show(message: UserMessage) {
             channel.trySend(message)
+        }
+
+        companion object {
+            const val RETRY = "Retry"
         }
     }
 

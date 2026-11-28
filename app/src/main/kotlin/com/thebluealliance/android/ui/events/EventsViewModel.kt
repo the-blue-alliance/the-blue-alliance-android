@@ -11,6 +11,7 @@ import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -37,6 +38,7 @@ class EventsViewModel
         private val seasons: SeasonRepository,
         private val myTBARepository: MyTBARepository,
         private val authRepository: AuthRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Year.now().value)
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()

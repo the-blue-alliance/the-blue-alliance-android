@@ -5,6 +5,7 @@ import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.events.buildEventSections
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -28,6 +29,7 @@ class DistrictDetailViewModel
         @Assisted val navKey: Screen.DistrictDetail,
         private val districtRepository: DistrictRepository,
         private val eventRepository: EventRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val initialDistrictKey: String = navKey.districtKey
         private val districtAbbreviation: String = initialDistrictKey.drop(4)
