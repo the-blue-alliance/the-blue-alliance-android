@@ -82,6 +82,7 @@ import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarTitle
 import com.thebluealliance.android.ui.components.handCursor
+import com.thebluealliance.android.ui.components.mediaColumns
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
@@ -314,9 +315,9 @@ fun MatchDetailScreen(
                                                 items = mediaItems,
                                                 modifier = Modifier.padding(vertical = 4.dp),
                                                 columns =
-                                                    matchVideoColumns(
+                                                    mediaColumns(
                                                         mediaItems.size,
-                                                        wide = true,
+                                                        MATCH_VIDEO_COLUMNS,
                                                     ),
                                                 aspectRatio = 16f / 9f,
                                             )
@@ -333,6 +334,8 @@ fun MatchDetailScreen(
                                         videoHeader(Modifier.padding(horizontal = 16.dp))
                                     }
                                     item(key = "media_grid") {
+                                        val columns =
+                                            mediaColumns(mediaItems.size, MATCH_VIDEO_COLUMNS)
                                         MediaGridRow(
                                             items = mediaItems,
                                             // Wide windows keep the tiles on the 16dp text margin.
@@ -341,8 +344,10 @@ fun MatchDetailScreen(
                                                     horizontal = if (wide) 16.dp else 8.dp,
                                                     vertical = 4.dp,
                                                 ),
-                                            columns = matchVideoColumns(mediaItems.size, wide),
-                                            aspectRatio = if (wide) 16f / 9f else 1f,
+                                            columns = columns,
+                                            // A lone video spans the column at its own 16:9.
+                                            aspectRatio =
+                                                if (wide || columns == 1) 16f / 9f else 1f,
                                         )
                                     }
                                 }
@@ -1116,8 +1121,5 @@ internal fun matchVideoBesideScore(
     videoCount: Int,
 ): Boolean = expandedWidth && videoCount > 0
 
-/** A lone match video spans the column on wide windows; otherwise videos pair up. */
-internal fun matchVideoColumns(
-    videoCount: Int,
-    wide: Boolean,
-): Int = if (wide && videoCount == 1) 1 else 2
+/** Match videos pair up; [mediaColumns] lets a lone video span the column. */
+private const val MATCH_VIDEO_COLUMNS = 2
