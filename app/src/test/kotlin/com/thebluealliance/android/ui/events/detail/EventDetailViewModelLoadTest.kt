@@ -14,6 +14,7 @@ import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -187,7 +188,7 @@ class EventDetailViewModelLoadTest {
             val state = viewModel.uiState.value
             assertFalse(state.loadFailed(EventDetailTab.INFO))
             assertFalse(state.loadFailed(EventDetailTab.AWARDS))
-            bus.messages.test { assertEquals("Couldn't refresh event", awaitItem()) }
+            bus.messages.test { assertEquals("Couldn't refresh event", awaitItem().text) }
         }
 
     @Test
@@ -197,7 +198,39 @@ class EventDetailViewModelLoadTest {
             val viewModel = subscribedViewModel()
             refreshesThrow(UnknownHostException())
             viewModel.refreshTab(EventDetailTab.AWARDS)
-            bus.messages.test { assertEquals("Couldn't refresh event", awaitItem()) }
+            bus.messages.test { assertEquals("Couldn't refresh event", awaitItem().text) }
+        }
+
+    @Test
+    fun `a failed refresh over cached data offers Retry, which refreshes again`() =
+        runTest {
+            cache(event = event, awards = listOf(award))
+            refreshesThrow(UnknownHostException())
+            subscribedViewModel()
+            bus.messages.test {
+                val action = awaitItem().action
+                assertEquals("Retry", action?.label)
+                action!!.onPerform()
+                coVerify(exactly = 2) { events.refreshEvent(eventKey) }
+                coVerify(exactly = 2) { events.refreshEventAwards(eventKey) }
+                assertEquals("Couldn't refresh event", awaitItem().text)
+            }
+        }
+
+    @Test
+    fun `a failed pull to refresh over cached data offers Retry`() =
+        runTest {
+            cache(event = event, awards = listOf(award))
+            val viewModel = subscribedViewModel()
+            refreshesThrow(UnknownHostException())
+            viewModel.refreshTab(EventDetailTab.AWARDS)
+            bus.messages.test {
+                val action = awaitItem().action
+                assertEquals("Retry", action?.label)
+                action!!.onPerform()
+                coVerify(exactly = 3) { events.refreshEventAwards(eventKey) }
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test

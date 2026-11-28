@@ -316,7 +316,7 @@ class TeamDetailViewModel
             if (failed.isEmpty()) return
             val cached = state.first()
             if (failed.any { cached.hasData(it) } && !refreshFailureReported.getAndSet(true)) {
-                userMessages.show("Couldn't refresh team")
+                userMessages.showRetry("Couldn't refresh team", ::refreshAll)
             }
         }
 

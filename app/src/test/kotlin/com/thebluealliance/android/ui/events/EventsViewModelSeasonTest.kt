@@ -4,6 +4,7 @@ import com.thebluealliance.android.data.repository.AuthRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -36,6 +37,7 @@ class EventsViewModelSeasonTest {
             seasons = seasons,
             myTBARepository = mockk(relaxed = true),
             authRepository = auth,
+            userMessages = UserMessageBus(),
         )
 
     @BeforeEach

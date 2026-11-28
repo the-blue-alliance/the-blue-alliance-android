@@ -54,7 +54,7 @@ class TeamDetailViewModelMessageTest {
         runTest {
             coEvery { myTBA.addFavorite(any(), any()) } throws RuntimeException()
             viewModel().toggleFavorite()
-            bus.messages.test { assertEquals("Couldn't update favorite", awaitItem()) }
+            bus.messages.test { assertEquals("Couldn't update favorite", awaitItem().text) }
         }
 
     @Test
@@ -64,7 +64,7 @@ class TeamDetailViewModelMessageTest {
                 RuntimeException()
             viewModel().updatePreferences(favorite = true, notifications = emptyList())
             bus.messages.test {
-                assertEquals("Failed to save notification preferences", awaitItem())
+                assertEquals("Failed to save notification preferences", awaitItem().text)
             }
         }
 }

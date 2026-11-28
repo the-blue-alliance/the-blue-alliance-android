@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 enum class RefreshOutcome { PENDING, SUCCEEDED, FAILED }
@@ -42,11 +43,12 @@ abstract class RefreshableViewModel : ViewModel() {
     val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
     /**
-     * Like [refreshing], but records completion into [outcome] — an empty cache only
+     * Like [refreshingReported], but records completion into [outcome] — an empty cache only
      * means Empty/Error once a refresh has actually finished.
      */
     protected fun refreshingTracked(
         outcome: MutableStateFlow<RefreshOutcome>,
+        onFailed: (suspend () -> Unit)?,
         vararg tasks: suspend () -> Unit,
     ) {
         val remaining =
@@ -77,7 +79,7 @@ abstract class RefreshableViewModel : ViewModel() {
                     }
                 }
             }
-        refreshing(*tracked.toTypedArray())
+        refreshingReported(onFailed, *tracked.toTypedArray())
     }
 
     /**
@@ -130,9 +132,20 @@ abstract class RefreshableViewModel : ViewModel() {
     }
 
     protected fun refreshing(vararg tasks: suspend () -> Unit): Job =
+        refreshingReported(null, *tasks)
+
+    /**
+     * Runs [tasks] like [refreshing], then calls [onFailed] if any of them failed to fetch (see
+     * [isFetchFailure]), so the screen can say so and offer a retry.
+     */
+    protected fun refreshingReported(
+        onFailed: (suspend () -> Unit)?,
+        vararg tasks: suspend () -> Unit,
+    ): Job =
         viewModelScope.launch {
             inFlight.incrementAndGet()
             _isRefreshing.value = true
+            val failed = AtomicBoolean(false)
             try {
                 coroutineScope {
                     tasks.forEach { task ->
@@ -142,6 +155,7 @@ abstract class RefreshableViewModel : ViewModel() {
                             } catch (e: CancellationException) {
                                 throw e
                             } catch (e: Exception) {
+                                if (e.isFetchFailure()) failed.set(true)
                                 Log.w(TAG, "refresh failed", e)
                             }
                         }
@@ -150,6 +164,7 @@ abstract class RefreshableViewModel : ViewModel() {
             } finally {
                 if (inFlight.decrementAndGet() == 0) _isRefreshing.value = false
             }
+            if (failed.get()) onFailed?.invoke()
         }
 
     private companion object {

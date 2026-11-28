@@ -8,6 +8,7 @@ import com.thebluealliance.android.domain.model.withPlayoffAlliances
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.common.isNotFound
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -38,6 +39,7 @@ class MatchDetailViewModel
         @Assisted val navKey: Screen.MatchDetail,
         private val matchRepository: MatchRepository,
         private val eventRepository: EventRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val matchKey: String = navKey.matchKey
         private val eventKey: String = matchKey.substringBeforeLast("_")
@@ -103,7 +105,14 @@ class MatchDetailViewModel
         }
 
         fun refresh() {
-            refreshingTracked(refreshOutcome, { refreshMatch() })
+            refreshingTracked(refreshOutcome, ::reportFailedRefresh, { refreshMatch() })
+        }
+
+        // With nothing cached, the error screen says it instead.
+        private suspend fun reportFailedRefresh() {
+            if (matchRepository.observeMatch(matchKey).first() != null) {
+                userMessages.showRetry("Couldn't refresh match", ::refresh)
+            }
         }
 
         // Records whether TBA has the match at all, so a 404 shows "not found", not a load error.

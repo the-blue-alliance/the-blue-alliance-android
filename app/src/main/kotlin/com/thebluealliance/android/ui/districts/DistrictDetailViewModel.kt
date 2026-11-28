@@ -5,6 +5,7 @@ import com.thebluealliance.android.data.repository.DistrictRepository
 import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.RefreshableViewModel
+import com.thebluealliance.android.ui.common.UserMessageBus
 import com.thebluealliance.android.ui.events.buildEventSections
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -28,6 +30,7 @@ class DistrictDetailViewModel
         @Assisted val navKey: Screen.DistrictDetail,
         private val districtRepository: DistrictRepository,
         private val eventRepository: EventRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val initialDistrictKey: String = navKey.districtKey
         private val districtAbbreviation: String = initialDistrictKey.drop(4)
@@ -81,7 +84,8 @@ class DistrictDetailViewModel
 
         fun refreshAll() {
             val key = "${_selectedYear.value}$districtAbbreviation"
-            refreshing(
+            refreshingReported(
+                { reportFailedRefresh(key) },
                 { eventRepository.refreshDistrictEvents(key) },
                 { districtRepository.refreshDistrictRankings(key) },
             )
@@ -91,10 +95,25 @@ class DistrictDetailViewModel
             val key = "${_selectedYear.value}$districtAbbreviation"
             when (tab) {
                 DistrictDetailTab.EVENTS ->
-                    refreshing({ eventRepository.refreshDistrictEvents(key) })
+                    refreshingReported(
+                        { reportFailedRefresh(key) },
+                        { eventRepository.refreshDistrictEvents(key) },
+                    )
                 DistrictDetailTab.RANKINGS ->
-                    refreshing({ districtRepository.refreshDistrictRankings(key) })
+                    refreshingReported(
+                        { reportFailedRefresh(key) },
+                        { districtRepository.refreshDistrictRankings(key) },
+                    )
             }
+        }
+
+        // A season the user has left doesn't report over the new one.
+        private suspend fun reportFailedRefresh(key: String) {
+            if (key != "${_selectedYear.value}$districtAbbreviation") return
+            val cached =
+                eventRepository.observeDistrictEvents(key).first().isNotEmpty() ||
+                    districtRepository.observeDistrictRankings(key).first().isNotEmpty()
+            if (cached) userMessages.showRetry("Couldn't refresh district", ::refreshAll)
         }
 
         @AssistedFactory

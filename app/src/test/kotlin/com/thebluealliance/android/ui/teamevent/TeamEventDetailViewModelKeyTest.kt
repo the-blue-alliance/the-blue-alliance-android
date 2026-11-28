@@ -2,6 +2,7 @@ package com.thebluealliance.android.ui.teamevent
 
 import android.util.Log
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -40,6 +41,7 @@ class TeamEventDetailViewModelKeyTest {
                 eventRepository = mockk(relaxed = true),
                 matchRepository = mockk(relaxed = true),
                 regionalAdvancementRepository = mockk(relaxed = true),
+                userMessages = UserMessageBus(),
             )
         }
     }

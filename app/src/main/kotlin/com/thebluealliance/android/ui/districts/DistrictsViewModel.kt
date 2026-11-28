@@ -8,12 +8,14 @@ import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ class DistrictsViewModel
     constructor(
         private val districtRepository: DistrictRepository,
         private val seasons: SeasonRepository,
+        private val userMessages: UserMessageBus,
     ) : RefreshableViewModel() {
         private val _maxYear = MutableStateFlow(Calendar.getInstance().get(Calendar.YEAR))
         val maxYear: StateFlow<Int> = _maxYear.asStateFlow()
@@ -84,9 +87,19 @@ class DistrictsViewModel
         }
 
         fun refreshDistricts() {
+            val year = selection.year.value
             refreshingTracked(
                 refreshOutcome,
-                { districtRepository.refreshDistrictsForYear(selection.year.value) },
+                { reportFailedRefresh(year) },
+                { districtRepository.refreshDistrictsForYear(year) },
             )
+        }
+
+        // With nothing cached, the error screen says it instead.
+        private suspend fun reportFailedRefresh(year: Int) {
+            if (year != selection.year.value) return
+            if (districtRepository.observeDistrictsForYear(year).first().isNotEmpty()) {
+                userMessages.showRetry("Couldn't refresh districts", ::refreshDistricts)
+            }
         }
     }
