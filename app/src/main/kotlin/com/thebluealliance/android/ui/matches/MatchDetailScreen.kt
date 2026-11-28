@@ -284,7 +284,7 @@ fun MatchDetailScreen(
                     }
                     val videoHeader: @Composable (Modifier) -> Unit = { modifier ->
                         Text(
-                            text = "Match Video",
+                            text = "Match video",
                             style = MaterialTheme.typography.titleMedium,
                             modifier = modifier.padding(vertical = 8.dp),
                         )
@@ -366,7 +366,7 @@ fun MatchDetailScreen(
                                 item(key = "breakdown_header") {
                                     HorizontalDivider(modifier = dividerModifier)
                                     Text(
-                                        text = "Score Breakdown",
+                                        text = "Score breakdown",
                                         style = MaterialTheme.typography.titleMedium,
                                         modifier =
                                             breakdownWidth

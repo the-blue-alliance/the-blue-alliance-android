@@ -442,7 +442,7 @@ private fun SummaryTab(
                 }
                 item(key = "summary_pit_location") {
                     InfoRow(
-                        label = "Pit Location",
+                        label = "Pit location",
                         labelLeadingIcon = {
                             Icon(
                                 painter = painterResource(R.drawable.ic_nexus_logo),
@@ -477,7 +477,7 @@ private fun SummaryTab(
 
             if (cmpAdvancement != null) {
                 item(key = "summary_cmp_header") {
-                    SectionHeader(label = "Championship Qualification")
+                    SectionHeader(label = "Championship qualification")
                 }
                 item(key = "summary_cmp_detail") {
                     SummarySection(label = "Status") {
@@ -501,13 +501,13 @@ private fun SummaryTab(
 
                 if (lastPlayed != null || nextUnplayed != null) {
                     item(key = "summary_match_header") {
-                        SectionHeader(label = "Recent Matches")
+                        SectionHeader(label = "Recent matches")
                     }
                 }
 
                 if (lastPlayed != null) {
                     item(key = "summary_last_match") {
-                        SummarySection(label = "Last Match") {
+                        SummarySection(label = "Last match") {
                             MatchItem(
                                 match = lastPlayed,
                                 playoffType = playoffType,
@@ -520,7 +520,7 @@ private fun SummaryTab(
 
                 if (nextUnplayed != null) {
                     item(key = "summary_next_match") {
-                        SummarySection(label = "Next Match") {
+                        SummarySection(label = "Next match") {
                             MatchItem(
                                 match = nextUnplayed,
                                 playoffType = playoffType,
@@ -699,7 +699,7 @@ private fun StatsTab(
             val points = advancementPoints
             Column(Modifier.semantics(mergeDescendants = true) { heading() }) {
                 Text(
-                    text = if (isDistrictEvent) "District Points" else "Regional Points",
+                    text = if (isDistrictEvent) "District points" else "Regional points",
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(

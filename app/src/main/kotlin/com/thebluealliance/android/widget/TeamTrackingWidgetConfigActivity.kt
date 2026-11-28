@@ -114,7 +114,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     modifier = Modifier.size(20.dp),
                                 )
                                 Text(
-                                    text = "Team Tracker",
+                                    text = "Team tracker",
                                     style = MaterialTheme.typography.titleMedium,
                                     color = OnBrand,
                                     modifier = Modifier.weight(1f).padding(start = 8.dp),
@@ -197,7 +197,7 @@ class TeamTrackingWidgetConfigActivity : ComponentActivity() {
                                     // Hold the number still while it's checked, so the result
                                     // can't land on (or save) a different one.
                                     readOnly = checking,
-                                    label = { Text("Team Number") },
+                                    label = { Text("Team number") },
                                     placeholder = { Text("e.g. 9180") },
                                     isError = error != null,
                                     supportingText = error?.let { message -> { Text(message) } },

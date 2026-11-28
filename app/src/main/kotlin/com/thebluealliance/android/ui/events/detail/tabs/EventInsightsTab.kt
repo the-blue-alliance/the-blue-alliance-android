@@ -324,7 +324,7 @@ fun EventInsightsTab(
             }
             is StatType.QualInsights -> {
                 InsightsView(
-                    title = "Qual Insights",
+                    title = "Qual insights",
                     insightsData = insights?.qual,
                     onShowStatSelector = { showStatSelector = true },
                     statSelectorFocus = statSelectorFocus.requester,
@@ -334,7 +334,7 @@ fun EventInsightsTab(
             }
             is StatType.PlayoffInsights -> {
                 InsightsView(
-                    title = "Playoff Insights",
+                    title = "Playoff insights",
                     insightsData = insights?.playoff,
                     onShowStatSelector = { showStatSelector = true },
                     statSelectorFocus = statSelectorFocus.requester,
@@ -373,7 +373,7 @@ private fun StatSelectorDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Stat Type") },
+        title = { Text("Stat type") },
         text = {
             // The dialog is its own window with its own input mode: read the mode the choice was
             // made with here, inside the dialog, not from the screen behind it.
@@ -390,7 +390,7 @@ private fun StatSelectorDialog(
 
                 item {
                     StatTypeOption(
-                        label = "Qual Insights",
+                        label = "Qual insights",
                         selected = currentSelection is StatType.QualInsights,
                         onClick = { onSelect(StatType.QualInsights) },
                     )
@@ -398,7 +398,7 @@ private fun StatSelectorDialog(
 
                 item {
                     StatTypeOption(
-                        label = "Playoff Insights",
+                        label = "Playoff insights",
                         selected = currentSelection is StatType.PlayoffInsights,
                         onClick = { onSelect(StatType.PlayoffInsights) },
                     )
@@ -483,8 +483,8 @@ private fun InsightsView(
 ) {
     val insightHeader =
         when (title) {
-            "Qual Insights" -> "Qual Insight"
-            "Playoff Insights" -> "Playoff Insight"
+            "Qual insights" -> "Qual insight"
+            "Playoff insights" -> "Playoff insight"
             else -> "Insight"
         }
 

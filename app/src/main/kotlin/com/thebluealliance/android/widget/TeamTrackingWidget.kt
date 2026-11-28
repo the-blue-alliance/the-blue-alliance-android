@@ -242,7 +242,7 @@ class TeamTrackingWidget : GlanceAppWidget() {
                         "Team $teamNumber"
                     }
                 } else {
-                    "Team Tracker"
+                    "Team tracker"
                 }
 
         /** Last match brief summary for when there's no next match. */

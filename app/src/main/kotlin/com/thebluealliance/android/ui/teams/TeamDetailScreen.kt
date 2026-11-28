@@ -517,7 +517,7 @@ private fun InfoTab(
             if (team.rookieYear != null) {
                 item {
                     Text(
-                        text = "Rookie Year: ${team.rookieYear}",
+                        text = "Rookie year: ${team.rookieYear}",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(top = 8.dp),
                     )

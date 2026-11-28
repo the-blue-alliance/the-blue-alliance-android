@@ -6,6 +6,11 @@ When asked to commit a checkpoint, write a short summary line and a brief descri
 
 ## UI conventions
 
+UI text follows STYLE_GUIDE.md (sentence case), enforced by `SentenceCaseTest`
+(`app/src/test/kotlin/com/thebluealliance/android/ui/SentenceCaseTest.kt`) over strings.xml and Kotlin
+UI call sites in app, wear and tv. Add a new proper noun to STYLE_GUIDE.md and
+`app/src/test/resources/sentence-case-allowlist.txt` together.
+
 Highlight shapes (the hover, press and focus highlight of anything clickable):
 
 1. **Full width → square.** A highlight that spans its container edge to edge stays square: list
