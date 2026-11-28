@@ -11,6 +11,7 @@ import com.thebluealliance.android.data.repository.MyTBAServerException
 import com.thebluealliance.android.data.repository.TeamRepository
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.ModelType
+import com.thebluealliance.android.domain.model.Subscription
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.UserMessageBus
@@ -166,5 +167,90 @@ class MyTBAViewModelTest {
             viewModel.uiState.first { it.isSignedIn }
             viewModel.refreshTab(MyTBATab.NOTIFICATIONS)
             bus.messages.test { expectNoEvents() }
+        }
+
+    private val team = Favorite(modelKey = "frc254", modelType = ModelType.TEAM)
+
+    private fun signedInWithNothingToRefresh() {
+        every { myTBARepository.observeFavorites() } returns flowOf(listOf(team))
+        coEvery { myTBARepository.refreshFavorites() } returns Unit
+        coEvery { myTBARepository.refreshSubscriptions() } returns Unit
+    }
+
+    @Test
+    fun `removing a favorite offers Undo, which adds it back`() =
+        runTest {
+            signedInWithNothingToRefresh()
+            coEvery { myTBARepository.removeFavorite(any(), any()) } returns Unit
+            coEvery { myTBARepository.addFavorite(any(), any()) } returns Unit
+            viewModel().removeFavorite(team)
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Removed from favorites", message.text)
+                assertEquals("Undo", message.action?.label)
+                message.action!!.onPerform()
+                coVerify { myTBARepository.addFavorite("frc254", ModelType.TEAM) }
+            }
+        }
+
+    @Test
+    fun `a failed favorite removal offers Retry, which removes it again`() =
+        runTest {
+            signedInWithNothingToRefresh()
+            coEvery { myTBARepository.removeFavorite(any(), any()) } throws UnknownHostException()
+            viewModel().removeFavorite(team)
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Couldn't remove favorite", message.text)
+                assertEquals("Retry", message.action?.label)
+                message.action!!.onPerform()
+                coVerify(exactly = 2) { myTBARepository.removeFavorite("frc254", ModelType.TEAM) }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `removing notifications offers Undo, which restores them`() =
+        runTest {
+            signedInWithNothingToRefresh()
+            val subscription = Subscription("frc254", ModelType.TEAM, listOf("upcoming_match"))
+            every { myTBARepository.observeSubscriptions() } returns flowOf(listOf(subscription))
+            coEvery { myTBARepository.updatePreferences(any(), any(), any(), any()) } returns Unit
+            val viewModel = viewModel()
+            viewModel.uiState.first { it.subscriptions.isNotEmpty() }
+            viewModel.removeSubscription("frc254", ModelType.TEAM)
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Removed from notifications", message.text)
+                assertEquals("Undo", message.action?.label)
+                message.action!!.onPerform()
+                coVerify {
+                    myTBARepository.updatePreferences(
+                        "frc254",
+                        ModelType.TEAM,
+                        true,
+                        listOf("upcoming_match"),
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun `a failed notification removal offers Retry`() =
+        runTest {
+            signedInWithNothingToRefresh()
+            coEvery { myTBARepository.updatePreferences(any(), any(), any(), any()) } throws
+                UnknownHostException()
+            viewModel().removeSubscription("frc254", ModelType.TEAM)
+            bus.messages.test {
+                val message = awaitItem()
+                assertEquals("Couldn't remove notifications", message.text)
+                assertEquals("Retry", message.action?.label)
+                message.action!!.onPerform()
+                coVerify(exactly = 2) {
+                    myTBARepository.updatePreferences("frc254", ModelType.TEAM, any(), emptyList())
+                }
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 }

@@ -45,12 +45,19 @@ class UserMessageBus
             retry: () -> Unit,
         ) = show(UserMessage(message, UserMessage.Action(RETRY, retry)))
 
+        /** Shows [message] with an Undo button that runs [undo]. */
+        fun showUndo(
+            message: String,
+            undo: () -> Unit,
+        ) = show(UserMessage(message, UserMessage.Action(UNDO, undo)))
+
         fun show(message: UserMessage) {
             channel.trySend(message)
         }
 
         companion object {
             const val RETRY = "Retry"
+            const val UNDO = "Undo"
         }
     }
 

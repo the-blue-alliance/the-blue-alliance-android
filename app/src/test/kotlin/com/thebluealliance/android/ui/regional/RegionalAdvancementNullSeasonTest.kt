@@ -1,13 +1,18 @@
 package com.thebluealliance.android.ui.regional
 
+import android.util.Log
 import com.thebluealliance.android.core.network.TbaClientFactory
 import com.thebluealliance.android.data.remote.TbaApi
 import com.thebluealliance.android.data.repository.RegionalAdvancementRepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.navigation.Screen
 import com.thebluealliance.android.ui.common.UiState
+import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -35,6 +40,8 @@ class RegionalAdvancementNullSeasonTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
+        mockkStatic(Log::class)
+        every { Log.w(any(), any<String>(), any()) } returns 0
         server.start()
         coEvery { seasons.maxSeason() } returns 2027
         coEvery { seasons.defaultSeason() } returns 2027
@@ -44,6 +51,7 @@ class RegionalAdvancementNullSeasonTest {
     fun tearDown() {
         server.close()
         Dispatchers.resetMain()
+        unmockkStatic(Log::class)
     }
 
     private fun answerEvery(response: MockResponse) {
@@ -63,6 +71,7 @@ class RegionalAdvancementNullSeasonTest {
                 Screen.RegionalAdvancement(),
                 RegionalAdvancementRepository(api, mockk()),
                 seasons,
+                UserMessageBus(),
             )
         return runBlocking {
             withTimeout(

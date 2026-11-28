@@ -8,14 +8,17 @@ import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.RefreshOutcome
 import com.thebluealliance.android.ui.common.RefreshableViewModel
 import com.thebluealliance.android.ui.common.SeasonSelection
 import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.common.UserMessageBus
+import com.thebluealliance.android.ui.common.isFetchFailure
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Year
 
@@ -50,7 +54,9 @@ class EventsViewModel
 
         private val yearResolved = MutableStateFlow(navKey.year != null)
 
-        private val hasLoaded = MutableStateFlow(false)
+        // Each season's last fetch outcome. Keyed by season, not reset when the screen
+        // subscribes, so a fetch that finished first still counts.
+        private val outcomes = MutableStateFlow<Map<Int, RefreshOutcome>>(emptyMap())
 
         val uiState: StateFlow<UiState<EventsData>> =
             combine(selection.year, yearResolved) { year, resolved -> year.takeIf { resolved } }
@@ -60,17 +66,19 @@ class EventsViewModel
                     ) {
                         return@flatMapLatest flowOf<UiState<EventsData>>(UiState.Loading)
                     }
-                    hasLoaded.value = false
                     combine(
                         eventRepository.observeEventsForYear(year),
                         districtRepository.observeDistrictsForYear(year),
-                        hasLoaded,
+                        outcomes,
                         myTBARepository.observeFavorites(),
-                    ) { events, districts, hasLoaded, favorites ->
+                    ) { events, districts, outcomes, favorites ->
                         val state: UiState<EventsData> =
                             when {
-                                events.isEmpty() && !hasLoaded -> UiState.Loading
-                                events.isEmpty() -> UiState.Empty
+                                events.isEmpty() && outcomes[year] == RefreshOutcome.FAILED ->
+                                    UiState.Error("Couldn't load events")
+                                events.isEmpty() && outcomes[year] == RefreshOutcome.SUCCEEDED ->
+                                    UiState.Empty
+                                events.isEmpty() -> UiState.Loading
                                 else -> {
                                     val districtNames =
                                         buildMap {
@@ -152,10 +160,17 @@ class EventsViewModel
             refreshingReported({ reportFailedRefresh(year) }, {
                 try {
                     eventRepository.refreshEventsForYear(year)
-                    districtRepository.refreshDistrictsForYear(year)
-                } finally {
-                    hasLoaded.value = true
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    // Like refreshTabs: a 404 or empty answer means none, not a failure.
+                    val outcome =
+                        if (e.isFetchFailure()) RefreshOutcome.FAILED else RefreshOutcome.SUCCEEDED
+                    outcomes.update { it + (year to outcome) }
+                    throw e
                 }
+                outcomes.update { it + (year to RefreshOutcome.SUCCEEDED) }
+                districtRepository.refreshDistrictsForYear(year)
             })
         }
 

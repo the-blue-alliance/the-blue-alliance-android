@@ -7,6 +7,7 @@ import com.thebluealliance.android.data.repository.SeasonRepository
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.navigation.Screen
+import com.thebluealliance.android.ui.common.UiState
 import com.thebluealliance.android.ui.common.UserMessageBus
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,6 +18,7 @@ import io.mockk.unmockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -97,5 +99,28 @@ class EventsViewModelRetryTest {
                 coVerify(exactly = 2) { events.refreshEventsForYear(2024) }
                 cancelAndIgnoreRemainingEvents()
             }
+        }
+
+    @Test
+    fun `an uncached season that fails to load shows an error, not an empty list`() =
+        runTest {
+            every { events.observeEventsForYear(any()) } returns flowOf(emptyList())
+            val viewModel = viewModel()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            assertEquals(UiState.Error("Couldn't load events"), viewModel.uiState.value)
+        }
+
+    @Test
+    fun `an uncached season that loads empty says so`() =
+        runTest {
+            every { events.observeEventsForYear(any()) } returns flowOf(emptyList())
+            coEvery { events.refreshEventsForYear(any()) } returns Unit
+            val viewModel = viewModel()
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                viewModel.uiState.collect {}
+            }
+            assertEquals(UiState.Empty, viewModel.uiState.value)
         }
 }

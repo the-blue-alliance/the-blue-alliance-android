@@ -246,7 +246,7 @@ class EventDetailViewModel
                         notifications,
                     )
                 } catch (_: Exception) {
-                    userMessages.show("Failed to save notification preferences")
+                    userMessages.show("Couldn't save notification preferences")
                 }
             }
         }
