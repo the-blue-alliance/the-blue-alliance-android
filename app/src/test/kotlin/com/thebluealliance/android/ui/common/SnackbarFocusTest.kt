@@ -21,6 +21,16 @@ class SnackbarFocusTest {
             if (actionLabel == null) SnackbarDuration.Short else SnackbarDuration.Indefinite
     }
 
+    @Test
+    fun `above the bottom bar, lists pad by the snackbar plus the bar's inset`() {
+        assertEquals(190 + 63, snackbarContentInset(coveredPx = 190, consumedBelowPx = 63))
+    }
+
+    @Test
+    fun `with no snackbar, lists pad by nothing extra`() {
+        assertEquals(0, snackbarContentInset(coveredPx = 0, consumedBelowPx = 63))
+    }
+
     private fun focusEnteredBy(direction: FocusDirection) =
         SnackbarFocus().apply {
             onEnter(direction)
