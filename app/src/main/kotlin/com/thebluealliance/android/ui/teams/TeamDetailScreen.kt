@@ -69,6 +69,7 @@ import com.thebluealliance.android.ui.components.MediaTab
 import com.thebluealliance.android.ui.components.NotificationPreferencesSheet
 import com.thebluealliance.android.ui.components.ProseMaxWidth
 import com.thebluealliance.android.ui.components.ReadingWidthBox
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
@@ -192,6 +193,7 @@ fun TeamDetailScreen(
     }
 
     Scaffold(
+        contentWindowInsets = ScreenContentWindowInsets,
         topBar = {
             Column {
                 TBATopAppBar(

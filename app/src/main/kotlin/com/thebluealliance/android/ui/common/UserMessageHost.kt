@@ -1,6 +1,9 @@
 package com.thebluealliance.android.ui.common
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,16 +23,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.focusRegion
@@ -39,22 +53,58 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 /**
+ * The state of the window's [UserMessageHost]: the snackbar showing, and how much of the bottom of
+ * the window it covers when it [reservesSpace]. The frame hands that to the screens as [insets],
+ * and keeps focused items above it with [bringIntoViewSpec].
+ */
+@Stable
+class UserMessageState {
+    internal val hostState = SnackbarHostState()
+
+    /** The snackbar host's height, from the window's bottom edge (or the bottom bar) up. */
+    internal var hostHeightPx by mutableIntStateOf(0)
+
+    /** Whether the snackbar showing makes room at the bottom of the screen. */
+    internal val reservesSpace: Boolean
+        get() = reservesSpace(hostState.currentSnackbarData?.visuals)
+
+    /** Pixels at the bottom of the screen that a snackbar taking room covers, or 0. */
+    internal val coveredPx: Int
+        get() = if (reservesSpace) hostHeightPx else 0
+
+    /**
+     * [coveredPx] as a bottom inset, for [LocalUserMessageInsets], above [below]: the bottom inset
+     * the frame took for the bottom bar, if it shows.
+     */
+    fun insets(below: WindowInsets?): WindowInsets = UserMessageInsets(below) { coveredPx }
+
+    /** [parent] keeping focused items clear of the snackbar, for LocalBringIntoViewSpec. */
+    @OptIn(ExperimentalFoundationApi::class)
+    fun bringIntoViewSpec(parent: BringIntoViewSpec): BringIntoViewSpec =
+        AboveSnackbarBringIntoViewSpec(parent) { coveredPx }
+}
+
+@Composable
+fun rememberUserMessageState(): UserMessageState = remember { UserMessageState() }
+
+/**
  * Shows [UserMessageBus] messages as snackbars. Placed in a Column between the content and the
- * bottom bar, it takes no height and draws upward over the content, so nothing shifts.
- *
- * A message with an action stays up until it's used or dismissed (Material's default once a
- * snackbar has an action), with a close button beside it. Leaving [screen] dismisses it: its
- * action belongs to the screen that posted it.
+ * bottom bar, it takes no height and draws upward over the content, so nothing shifts. A message
+ * with an action stays up until it's used or dismissed (Material's default once a snackbar has an
+ * action), with a close button beside it; while one does, [state] reports the height it covers so
+ * screens can pad their lists by it. Leaving [screen] dismisses it: its action belongs to the
+ * screen that posted it.
  */
 @Composable
 fun UserMessageHost(
+    state: UserMessageState,
     padNavigationBars: Boolean,
     screen: Any?,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     val bus = remember(context) { context.userMessageBus() }
-    val hostState = remember { SnackbarHostState() }
+    val hostState = state.hostState
     LaunchedEffect(bus) {
         bus.messages.showLatest { message ->
             val action = message.action
@@ -81,6 +131,7 @@ fun UserMessageHost(
                 Modifier
                     .align(Alignment.BottomCenter)
                     .wrapContentHeight(Alignment.Bottom, unbounded = true)
+                    .onSizeChanged { state.hostHeightPx = it.height }
                     .then(if (padNavigationBars) Modifier.navigationBarsPadding() else Modifier),
         ) { data -> UserMessageSnackbar(data) }
     }
@@ -88,20 +139,36 @@ fun UserMessageHost(
 
 /**
  * Material's snackbar, with the hand pointer on its buttons, a tooltip on its close button (as on
- * every icon-only button in the app), and Esc dismissing it while it has keyboard focus. Like [com.thebluealliance.android.ui.components.EscapeHandler], Esc acts on
- * release and only for a press seen going down here, and the press is claimed so nothing
- * beneath acts on it.
+ * every icon-only button in the app), and Esc dismissing it while it has keyboard focus. Like
+ * [com.thebluealliance.android.ui.components.EscapeHandler], Esc acts on release and only for a
+ * press seen going down here, and the press is claimed so nothing beneath acts on it.
  */
 @Composable
-private fun UserMessageSnackbar(data: SnackbarData) {
+private fun UserMessageSnackbar(shown: SnackbarData) {
+    val focus = remember(shown) { SnackbarFocus() }
+    val first = remember { FocusRequester() }
+    val last = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    // Every way out (the action, the close button, Esc) first sends keyboard focus back out.
+    val data =
+        remember(shown, focusManager) {
+            FocusReturningSnackbarData(shown) { exitFocus(focus, first, last, focusManager) }
+        }
     val visuals = data.visuals
+    val hasAction = visuals.actionLabel != null
     val escPressed = remember { mutableStateOf(false) }
     Snackbar(
         modifier =
             Modifier
                 // The margin Material's own snackbar keeps from the window edges.
                 .padding(12.dp)
-                .focusRegion()
+                .onFocusChanged { focus.onFocusChanged(it.hasFocus) }
+                .focusProperties {
+                    onEnter = {
+                        focus.onEnter(requestedFocusDirection)
+                        if (focus.entersAtAction(hasAction)) first.requestFocus()
+                    }
+                }.focusRegion()
                 .onKeyEvent { event ->
                     if (event.key != Key.Escape) return@onKeyEvent false
                     when (event.type) {
@@ -120,7 +187,7 @@ private fun UserMessageSnackbar(data: SnackbarData) {
                 {
                     TextButton(
                         onClick = data::performAction,
-                        modifier = Modifier.handCursor(),
+                        modifier = Modifier.focusRequester(first).handCursor(),
                         colors =
                             ButtonDefaults.textButtonColors(
                                 contentColor = SnackbarDefaults.actionColor,
@@ -139,6 +206,7 @@ private fun UserMessageSnackbar(data: SnackbarData) {
                             label = "Dismiss",
                             icon = TbaIcons.Close,
                             onClick = data::dismiss,
+                            modifier = Modifier.focusRequester(last),
                             // Above, clear of the window's bottom edge and the gesture bar.
                             tooltipAbove = true,
                         )
@@ -148,6 +216,39 @@ private fun UserMessageSnackbar(data: SnackbarData) {
                 null
             },
     ) { Text(visuals.message) }
+}
+
+/** [data], sending keyboard focus out of the snackbar with [exitFocus] before it closes. */
+private class FocusReturningSnackbarData(
+    private val data: SnackbarData,
+    private val exitFocus: () -> Unit,
+) : SnackbarData by data {
+    override fun performAction() {
+        exitFocus()
+        data.performAction()
+    }
+
+    override fun dismiss() {
+        exitFocus()
+        data.dismiss()
+    }
+}
+
+/** Moves keyboard focus out of the snackbar the way [focus] says, if it says to. */
+private fun exitFocus(
+    focus: SnackbarFocus,
+    first: FocusRequester,
+    last: FocusRequester,
+    focusManager: FocusManager,
+) {
+    val exit = focus.exit() ?: return
+    when (exit.from) {
+        SnackbarEdge.First -> first.requestFocus()
+        // With no close button, the action is the last button too.
+        SnackbarEdge.Last -> if (!last.requestFocus()) first.requestFocus()
+        null -> Unit
+    }
+    focusManager.moveFocus(exit.direction)
 }
 
 /**

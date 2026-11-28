@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.ui.common.SidewaysBringIntoView
 import com.thebluealliance.android.ui.theme.BrandFocusRing
 import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.OnBrandMuted
@@ -30,28 +31,30 @@ fun TBATabRow(
 ) {
     val scrollState = rememberScrollState()
     BrandFocusRing(MaterialTheme.colorScheme.primaryContainer) {
-        PrimaryScrollableTabRow(
-            selectedTabIndex = selectedTabIndex,
-            modifier = modifier.verticalWheelScrollsSideways(scrollState),
-            scrollState = scrollState,
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = OnBrand,
-            edgePadding = 0.dp,
-            divider = {
-                HorizontalDivider(
-                    thickness = TabRowDividerThickness,
-                    color = TabRowDividerColor,
-                )
-            },
-            indicator = {
-                SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                    height = 3.dp,
-                    color = OnBrand,
-                )
-            },
-            tabs = tabs,
-        )
+        SidewaysBringIntoView {
+            PrimaryScrollableTabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = modifier.verticalWheelScrollsSideways(scrollState),
+                scrollState = scrollState,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = OnBrand,
+                edgePadding = 0.dp,
+                divider = {
+                    HorizontalDivider(
+                        thickness = TabRowDividerThickness,
+                        color = TabRowDividerColor,
+                    )
+                },
+                indicator = {
+                    SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        height = 3.dp,
+                        color = OnBrand,
+                    )
+                },
+                tabs = tabs,
+            )
+        }
     }
 }
 

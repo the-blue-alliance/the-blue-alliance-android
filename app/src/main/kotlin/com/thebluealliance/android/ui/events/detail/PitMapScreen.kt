@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.ui.components.ScreenContentWindowInsets
 import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarTitle
@@ -65,6 +66,7 @@ fun PitMapScreen(
     val showSpinner = tbaMapAvailable == null || (tbaMapAvailable == false && !uiState.isLoaded)
 
     Scaffold(
+        contentWindowInsets = ScreenContentWindowInsets,
         topBar = {
             TBATopAppBar(
                 title = {
