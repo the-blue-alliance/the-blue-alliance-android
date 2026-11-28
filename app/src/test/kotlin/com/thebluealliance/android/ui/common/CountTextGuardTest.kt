@@ -16,14 +16,17 @@ class CountTextGuardTest {
             "picks|notifications|subscriptions|seconds|minutes|mins|hours|hrs|days|weeks"
 
     // An interpolated value, up to one word, then a plural noun: "$n teams", "$n total points".
-    private val countTemplate = Regex("""\$(\{[^}]*\}|\w+) (?:\w+ )?($nouns)\b""")
+    private val countTemplate =
+        Regex("""\$(\{[^}]*\}|\w+) (?:\w+ )?($nouns)\b""", RegexOption.IGNORE_CASE)
 
-    // An expression `if (n == 1) a else b`, or `n == "1"`: English plurals by hand.
-    private val handRolled = Regex("""\bif \([\w.]+ == 1\) [^{]|[\w.]+ == "1"""")
+    // `if (n == 1) a else b` (also `!=`, `>`) on one line, or `n == "1"`: English plurals by hand.
+    private val handRolled =
+        Regex("""\bif \([\w.]+ (?:==|!=|>) 1\) [^{][^{]* else |[\w.]+ == "1"""")
 
-    private val formatCount = Regex("""%(\d+\$)?d (?:\w+ )?($nouns)\b""")
+    private val formatCount = Regex("""%(\d+\$)?d (?:\w+ )?($nouns)\b""", RegexOption.IGNORE_CASE)
 
-    private val stringElement = Regex("""<string\b[^>]*>(.*?)</string>""")
+    private val stringElement =
+        Regex("""<string\b[^>]*>(.*?)</string>""", RegexOption.DOT_MATCHES_ALL)
 
     // File name to a snippet of a line that is not count text.
     private val allowed =
@@ -37,12 +40,14 @@ class CountTextGuardTest {
 
     private fun isComment(line: String): Boolean {
         val trimmed = line.trimStart()
-        return trimmed.startsWith("//") || trimmed.startsWith("*")
+        return trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")
     }
 
-    // "Show $year events" names a year, not a count.
+    // "Show $year events" and "$monthName Offseason Events" interpolate a year or a name, not a count.
+    private val notACount = Regex("year|name|label|title", RegexOption.IGNORE_CASE)
+
     private fun hasCountTemplate(line: String): Boolean =
-        countTemplate.findAll(line).any { !it.groupValues[1].contains("year", ignoreCase = true) }
+        countTemplate.findAll(line).any { !notACount.containsMatchIn(it.groupValues[1]) }
 
     private fun isCountText(line: String): Boolean =
         hasCountTemplate(line) || handRolled.containsMatchIn(line)
@@ -77,9 +82,18 @@ class CountTextGuardTest {
             roots.asSequence().flatMap { root ->
                 root.walkTopDown().filter { it.isFile && it.name == "strings.xml" }
             }
+        // Whole-file match, so a <string> that spans lines is still checked.
         val found =
-            hits(files) { _, line ->
-                stringElement.findAll(line).any { formatCount.containsMatchIn(it.groupValues[1]) }
+            files.toList().flatMap { file ->
+                val xml = file.readText()
+                stringElement
+                    .findAll(xml)
+                    .filter { formatCount.containsMatchIn(it.groupValues[1]) }
+                    .map {
+                        "${file.path}:${xml.take(it.range.first).count { c ->
+                            c == '\n'
+                        } + 1}: ${it.value}"
+                    }.toList()
             }
         assertTrue(
             found.isEmpty(),
@@ -95,8 +109,14 @@ class CountTextGuardTest {
         assertTrue(isCountText("if (count == 1) \"match\" else \"matches\""))
         assertFalse(isCountText("\"Show \$year events\""))
         assertFalse(isCountText("\"Show \${selectedYear - 1} districts\""))
+        assertTrue(isCountText("\"\$n Points\""))
+        assertTrue(isCountText("if (n != 1) \"teams\" else \"team\""))
+        assertFalse(isCountText("\"\$monthName Offseason Events\""))
         assertFalse(isCountText("if (size == 1) {"))
+        assertFalse(isCountText("if (size == 1) return"))
         assertTrue(formatCount.containsMatchIn("%1\$d teams"))
+        val multiLine = stringElement.find("<string name=\"a\">Found\n    %1\$d Teams</string>")
+        assertTrue(formatCount.containsMatchIn(multiLine!!.groupValues[1]))
         assertFalse(formatCount.containsMatchIn("Day %1\$d of %2\$d"))
     }
 
