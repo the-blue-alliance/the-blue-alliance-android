@@ -409,4 +409,4 @@ class TeamTrackingComplicationWorker
 internal fun upcomingEventRow(
     date: String,
     name: String,
-): String = "$date \u2014 $name"
+): String = if (date.isNotBlank()) "$date · $name" else name

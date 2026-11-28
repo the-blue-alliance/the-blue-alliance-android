@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.thebluealliance.android.domain.INFO_SEPARATOR
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.teamLabel
 import com.thebluealliance.android.ui.theme.TbaIcons
 
 @Composable
@@ -36,7 +38,7 @@ fun TeamRow(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "${team.number} - ${team.nickname ?: team.name ?: ""}",
+                text = teamLabel(team.number, team.nickname, team.name),
                 style = MaterialTheme.typography.titleMedium,
             )
             val location = listOfNotNull(team.city, team.state, team.country).joinToString(", ")
@@ -44,7 +46,7 @@ fun TeamRow(
                 listOfNotNull(
                     subtitlePrefix,
                     location.ifEmpty { null },
-                ).joinToString(" \u00B7 ")
+                ).joinToString(INFO_SEPARATOR)
             if (subtitle.isNotEmpty()) {
                 Text(
                     text = subtitle,

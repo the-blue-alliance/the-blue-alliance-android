@@ -17,6 +17,10 @@ Highlight shapes (the hover, press and focus highlight of anything clickable):
 
 `paddedClickable` clips to the shape you pass; pick it by these rules.
 
+Dashes and separators: " · " between pieces of info, " – " for ranges and score pairs, "—" only as
+`NO_VALUE`, and hyphens only inside a token or in server data. Team titles come from `teamLabel()`. See
+[STYLE_GUIDE.md](STYLE_GUIDE.md#dashes-and-separators).
+
 ## Verifying changes on an emulator
 
 After a substantive UI change, build and run the app to confirm it. Run all

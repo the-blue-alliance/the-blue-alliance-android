@@ -637,7 +637,7 @@ private fun MatchCard(
     TitleCard(
         title = {
             Text(
-                text = "$title \u2014 $matchLabel",
+                text = "$title · $matchLabel",
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

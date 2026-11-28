@@ -44,7 +44,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
             ComplicationType.LONG_TEXT ->
                 LongTextComplicationData
                     .Builder(text = plain("Q18 ~25m"), contentDescription = description)
-                    .setTitle(plain("177 — Hartford"))
+                    .setTitle(plain("177 · Hartford"))
                     .setMonochromaticImage(lamp)
                     .build()
 
@@ -68,7 +68,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
                     long,
                     text = plain(if (long) "The Blue Alliance" else "TBA"),
                     title = null,
-                    description = plain("The Blue Alliance — tap to configure"),
+                    description = plain("The Blue Alliance, tap to configure"),
                     image = lampImage(),
                     tapAction = tapAction,
                 )
@@ -124,7 +124,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
             description =
                 countdown(content.matchTime, "Team ${content.teamNumber} next match: $label, ^1")
         }
-        val eventSuffix = if (content.eventName.isNotBlank()) " — ${content.eventName}" else ""
+        val eventSuffix = if (content.eventName.isNotBlank()) " · ${content.eventName}" else ""
         return build(
             long,
             text = text,
@@ -139,7 +139,7 @@ class TeamTrackingComplicationService : SuspendingComplicationDataSourceService(
     private fun upcomingTitle(
         long: Boolean,
         content: ComplicationContent.UpcomingEvent,
-    ): String = if (long) "${content.teamNumber} — ${content.eventName}" else content.eventName
+    ): String = if (long) "${content.teamNumber} · ${content.eventName}" else content.eventName
 
     private fun countdown(
         matchTime: Instant,

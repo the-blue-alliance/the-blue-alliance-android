@@ -6,12 +6,14 @@ import com.thebluealliance.android.data.repository.EventRepository
 import com.thebluealliance.android.data.repository.MatchRepository
 import com.thebluealliance.android.data.repository.MyTBARepository
 import com.thebluealliance.android.data.repository.TeamRepository
+import com.thebluealliance.android.domain.INFO_SEPARATOR
 import com.thebluealliance.android.domain.getFullLabel
 import com.thebluealliance.android.domain.model.Event
 import com.thebluealliance.android.domain.model.Favorite
 import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.ModelType
 import com.thebluealliance.android.domain.model.Team
+import com.thebluealliance.android.domain.teamLabel
 import com.thebluealliance.android.messaging.DeviceRegistrationManager
 import com.thebluealliance.android.shortcuts.TBAShortcutManager
 import com.thebluealliance.android.ui.common.RefreshOutcome
@@ -242,9 +244,7 @@ internal fun buildMyTBADisplayNames(
     val teamsByKey = teams.associateBy { it.key }
     return buildMap {
         teams.forEach { team ->
-            val label = team.nickname ?: team.name
-            val name = if (label.isNullOrBlank()) "${team.number}" else "${team.number} - $label"
-            put(team.key, name)
+            put(team.key, teamLabel(team.number, team.nickname, team.name))
         }
         events.forEach { event ->
             put(event.key, "${event.year} ${event.name}")
@@ -252,7 +252,7 @@ internal fun buildMyTBADisplayNames(
         matches.forEach { match ->
             val event = eventsByKey[match.eventKey] ?: return@forEach
             val label = match.getFullLabel(event.playoffType)
-            put(match.key, "$label - ${event.year} ${event.name}")
+            put(match.key, "$label$INFO_SEPARATOR${event.year} ${event.name}")
         }
         // event_team ("{eventKey}_{teamKey}") → "2471 @ 2024 <Event>", falling back to the
         // parsed key parts when the team/event aren't cached locally (#1460).
