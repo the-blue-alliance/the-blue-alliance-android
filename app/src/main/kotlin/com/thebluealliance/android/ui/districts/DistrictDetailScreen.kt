@@ -1,7 +1,6 @@
 package com.thebluealliance.android.ui.districts
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,10 +49,11 @@ import com.thebluealliance.android.ui.components.SectionHeaderInfo
 import com.thebluealliance.android.ui.components.TBATab
 import com.thebluealliance.android.ui.components.TBATabRow
 import com.thebluealliance.android.ui.components.TBATopAppBar
+import com.thebluealliance.android.ui.components.TableHeaderLabel
+import com.thebluealliance.android.ui.components.TableRowDivider
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
-import com.thebluealliance.android.ui.components.blocksRowsBeneath
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
@@ -61,12 +61,13 @@ import com.thebluealliance.android.ui.components.rememberStickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.returnsFocus
 import com.thebluealliance.android.ui.components.stickyHeaderFocusOrder
 import com.thebluealliance.android.ui.components.tabOrderedStickyHeader
+import com.thebluealliance.android.ui.components.tableHeaderBand
+import com.thebluealliance.android.ui.components.tableRankLabel
 import com.thebluealliance.android.ui.components.tableWidth
 import com.thebluealliance.android.ui.components.verticalScrollbar
+import com.thebluealliance.android.ui.components.viewTeamClickLabel
 import com.thebluealliance.android.ui.events.EventSection
 import com.thebluealliance.android.ui.events.computeThisWeekEvents
-import com.thebluealliance.android.ui.theme.BrandHeaderContainer
-import com.thebluealliance.android.ui.theme.OnBrand
 import com.thebluealliance.android.ui.theme.TbaIcons
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.launch
@@ -340,58 +341,42 @@ private fun RankingsTab(
             Row(
                 modifier =
                     Modifier
-                        .tableWidth()
-                        .blocksRowsBeneath()
-                        .background(BrandHeaderContainer)
+                        .tableHeaderBand()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(
+                TableHeaderLabel(
                     text = "Rank",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "Team",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "Event\n1",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "Event\n2",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "DCMP",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "Rookie\nBonus",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
-                Text(
+                TableHeaderLabel(
                     text = "Total\nPoints",
-                    style = MaterialTheme.typography.titleSmall,
-                    color = OnBrand,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f),
                 )
@@ -427,7 +412,7 @@ private fun RankingsTab(
                         .returnsFocus()
                         .handCursor()
                         .clickable(
-                            onClickLabel = "View team ${ranking.teamKey.teamNumber}",
+                            onClickLabel = viewTeamClickLabel(ranking.teamKey),
                         ) {
                             onNavigateToTeam(ranking.teamKey)
                         }.semantics { contentDescription = description }
@@ -435,7 +420,7 @@ private fun RankingsTab(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "#${ranking.rank}",
+                    text = tableRankLabel(ranking.rank),
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.10f).clearAndSetSemantics {},
@@ -477,10 +462,7 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
             }
-            HorizontalDivider(
-                modifier = Modifier.tableWidth().padding(horizontal = 16.dp),
-                thickness = 0.5.dp,
-            )
+            TableRowDivider(modifier = Modifier.tableWidth())
         }
     }
 }
