@@ -87,12 +87,17 @@ fun DistrictDetailScreen(
     onNavigateToTeam: (String) -> Unit,
     onNavigateToSearch: () -> Unit,
     viewModel: DistrictDetailViewModel,
+    initialTab: DistrictDetailTab = DistrictDetailTab.EVENTS,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val selectedYear by viewModel.selectedYear.collectAsStateWithLifecycle()
     val availableYears by viewModel.availableYears.collectAsStateWithLifecycle()
-    val pagerState = rememberPagerState(pageCount = { DistrictDetailTab.entries.size })
+    val pagerState =
+        rememberPagerState(
+            initialPage = initialTab.ordinal,
+            pageCount = { DistrictDetailTab.entries.size },
+        )
     val coroutineScope = rememberCoroutineScope()
 
     Scaffold(

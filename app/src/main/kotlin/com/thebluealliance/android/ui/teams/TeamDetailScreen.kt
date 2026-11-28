@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,14 +42,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thebluealliance.android.core.theme.TbaAllianceColors
@@ -60,8 +68,10 @@ import com.thebluealliance.android.shortcuts.ReportShortcutVisitEffect
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.ErrorBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
 import com.thebluealliance.android.ui.common.previousSeason
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.common.shareTbaUrl
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.FocusHandoffEffect
@@ -75,16 +85,19 @@ import com.thebluealliance.android.ui.components.TBATopAppBar
 import com.thebluealliance.android.ui.components.TooltipIconButton
 import com.thebluealliance.android.ui.components.TopBarAction
 import com.thebluealliance.android.ui.components.TopBarYearPicker
+import com.thebluealliance.android.ui.components.bleedHorizontally
 import com.thebluealliance.android.ui.components.detailOverflowActions
 import com.thebluealliance.android.ui.components.handCursor
 import com.thebluealliance.android.ui.components.mediaUrl
 import com.thebluealliance.android.ui.components.notificationPreferencesAction
+import com.thebluealliance.android.ui.components.paddedClickable
 import com.thebluealliance.android.ui.components.pageBackground
 import com.thebluealliance.android.ui.components.pagerPageFocus
 import com.thebluealliance.android.ui.components.rememberFocusHandoff
 import com.thebluealliance.android.ui.components.verticalScrollbar
 import com.thebluealliance.android.ui.theme.TbaIcons
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 enum class TeamDetailTab(
     val readableName: String,
@@ -102,6 +115,7 @@ fun TeamDetailScreen(
     onNavigateToMyTBA: () -> Unit = {},
     onNavigateToTeamEvent: (teamKey: String, eventKey: String) -> Unit = { _, _ -> },
     onNavigateToSearch: () -> Unit,
+    onNavigateToDistrictRankings: (districtKey: String) -> Unit = {},
     initialTab: Int = 0,
     viewModel: TeamDetailViewModel,
 ) {
@@ -351,6 +365,8 @@ fun TeamDetailScreen(
                         InfoTab(
                             team = uiState.team,
                             media = uiState.media,
+                            districtStanding = uiState.districtStanding,
+                            onNavigateToDistrictRankings = onNavigateToDistrictRankings,
                             innerPadding = bottomPadding,
                         )
                     TeamDetailTab.EVENTS ->
@@ -415,6 +431,8 @@ private fun TeamDetailTab.loadErrorMessage(): String =
 private fun InfoTab(
     team: Team?,
     media: List<Media>?,
+    districtStanding: TeamDistrictStanding?,
+    onNavigateToDistrictRankings: (String) -> Unit,
     innerPadding: PaddingValues = PaddingValues.Zero,
 ) {
     if (team == null) {
@@ -528,9 +546,115 @@ private fun InfoTab(
                     )
                 }
             }
+            if (districtStanding != null) {
+                item(key = "district_standing") {
+                    DistrictStandingText(
+                        standing = districtStanding,
+                        onNavigateToDistrictRankings = onNavigateToDistrictRankings,
+                        modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+            }
         }
     }
 }
+
+/**
+ * "District: FIRST in Michigan · Rank 12 · 187 pts", the district name an inline link to its
+ * rankings. A tight text link, not a 48dp row: it sits in a line of prose like the rows around it.
+ *
+ * The line stays one [Text], so it lays out exactly as plain prose. The link is a box laid over the
+ * name's glyphs with [paddedClickable], like the app's other inline links, so it gets the hover
+ * highlight, the focus ring and the hand cursor. Its highlight bleeds into the spaces either side.
+ */
+@Composable
+private fun DistrictStandingText(
+    standing: TeamDistrictStanding,
+    onNavigateToDistrictRankings: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val linkColor = MaterialTheme.colorScheme.primary
+    val link = districtLinkRange(standing)
+    val strings = rememberQuantityStrings()
+    val text =
+        remember(standing, linkColor, strings) {
+            buildAnnotatedString {
+                append(districtStandingLine(standing, strings))
+                // Link colour with no underline, like the app's other inline links.
+                addStyle(SpanStyle(color = linkColor), link.first, link.last + 1)
+            }
+        }
+    var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
+    val density = LocalDensity.current
+    Box(modifier) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            onTextLayout = { layout = it },
+        )
+        // The last layout can be of the previous text, e.g. before the district name loaded.
+        val current = layout?.takeIf { linkFitsLayout(it.layoutInput.text.text, text.text, link) }
+        current?.let { result ->
+            val bounds = linkBounds(result, link)
+            Box(
+                Modifier
+                    .offset { IntOffset(bounds.left.roundToInt(), bounds.top.roundToInt()) }
+                    .size(
+                        with(density) { bounds.width.toDp() },
+                        with(density) { bounds.height.toDp() },
+                    ).bleedHorizontally(DistrictLinkBleed, DistrictLinkBleed)
+                    .paddedClickable(
+                        MaterialTheme.shapes.small,
+                        horizontal = DistrictLinkBleed,
+                        onClickLabel = "View district rankings",
+                    ) { onNavigateToDistrictRankings(standing.districtKey) }
+                    .semantics { contentDescription = standing.districtName },
+            )
+        }
+    }
+}
+
+/** The Info tab's district line, as [DistrictStandingText] shows it. */
+internal fun districtStandingLine(
+    standing: TeamDistrictStanding,
+    strings: QuantityStrings,
+): String = "District: ${standing.districtName} \u00b7 ${standing.rankAndPoints(strings)}"
+
+/** Where the district name sits in [districtStandingLine]. */
+internal fun districtLinkRange(standing: TeamDistrictStanding): IntRange {
+    val start = "District: ".length
+    return start until start + standing.districtName.length
+}
+
+/**
+ * Whether a layout of [laidOutText] can place the [link] in [text]: it's a layout of this text and
+ * the link has characters in it.
+ */
+internal fun linkFitsLayout(
+    laidOutText: String,
+    text: String,
+    link: IntRange,
+): Boolean = laidOutText == text && !link.isEmpty() && link.last < text.length
+
+/** The name's box on the line it starts on; a name that wraps keeps its first line's part. */
+private fun linkBounds(
+    layout: TextLayoutResult,
+    range: IntRange,
+): Rect {
+    val line = layout.getLineForOffset(range.first)
+    val endsOnLine = layout.getLineForOffset(range.last) == line
+    val left = layout.getHorizontalPosition(range.first, usePrimaryDirection = true)
+    val right =
+        if (endsOnLine) {
+            layout.getBoundingBox(range.last).right
+        } else {
+            layout.getLineRight(line)
+        }
+    return Rect(left, layout.getLineTop(line), right, layout.getLineBottom(line))
+}
+
+/** How far the district link's highlight reaches past the name: about one space's width. */
+private val DistrictLinkBleed = 4.dp
 
 @Composable
 private fun EventsTab(

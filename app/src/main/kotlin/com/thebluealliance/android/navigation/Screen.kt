@@ -1,6 +1,7 @@
 package com.thebluealliance.android.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.thebluealliance.android.ui.districts.DistrictDetailTab
 import com.thebluealliance.android.ui.events.detail.EventDetailTab
 import kotlinx.serialization.Serializable
 
@@ -50,6 +51,7 @@ sealed interface Screen : NavKey {
 
     @Serializable data class DistrictDetail(
         val districtKey: String,
+        val initialTab: DistrictDetailTab = DistrictDetailTab.EVENTS,
     ) : Screen
 
     @Serializable data object MyTBA : Screen

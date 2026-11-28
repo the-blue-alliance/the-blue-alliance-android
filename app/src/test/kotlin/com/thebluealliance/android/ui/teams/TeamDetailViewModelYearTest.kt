@@ -34,6 +34,7 @@ class TeamDetailViewModelYearTest {
         navKey = navKey,
         teamRepository = teamRepository,
         eventRepository = eventRepository,
+        districtRepository = mockk(relaxed = true),
         myTBARepository = mockk(relaxed = true),
         authRepository = mockk(relaxed = true),
         tbaApi = api,

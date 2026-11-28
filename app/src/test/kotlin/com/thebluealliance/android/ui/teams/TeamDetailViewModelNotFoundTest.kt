@@ -60,6 +60,7 @@ class TeamDetailViewModelNotFoundTest {
                 navKey = Screen.TeamDetail("99999"),
                 teamRepository = teams,
                 eventRepository = events,
+                districtRepository = mockk(relaxed = true),
                 myTBARepository = mockk(relaxed = true),
                 authRepository = mockk(relaxed = true),
                 tbaApi = mockk(relaxed = true),
