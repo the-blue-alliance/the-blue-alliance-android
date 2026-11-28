@@ -1,5 +1,6 @@
 package com.thebluealliance.android.ui.matches
 
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.BREAKDOWN_FOUL_SIGN
 import com.thebluealliance.android.domain.BREAKDOWN_MISSING
 import com.thebluealliance.android.domain.BREAKDOWN_NO
@@ -7,9 +8,13 @@ import com.thebluealliance.android.domain.BREAKDOWN_RP_BONUS_MET
 import com.thebluealliance.android.domain.BREAKDOWN_RP_PREFIX
 import com.thebluealliance.android.domain.BREAKDOWN_RP_SUFFIX
 import com.thebluealliance.android.domain.BREAKDOWN_YES
+import com.thebluealliance.android.ui.common.QuantityStrings
 
 /** Spoken score; a negative score means the match has not been played. */
-internal fun scoreDescription(score: Int): String = if (score < 0) "Not played" else "$score points"
+internal fun scoreDescription(
+    score: Int,
+    strings: QuantityStrings,
+): String = if (score < 0) "Not played" else strings.get(R.plurals.points, score)
 
 /**
  * Spoken state of [alliance]'s score column, which shows the win only in bold. A played match
@@ -48,30 +53,34 @@ internal fun breakdownRowDescription(
     label: String,
     redValue: String,
     blueValue: String,
+    strings: QuantityStrings,
     redPlayoffAllianceTitle: String? = null,
     bluePlayoffAllianceTitle: String? = null,
 ): String {
     val red = allianceLabelDescription(redPlayoffAllianceTitle, "red") ?: "Red"
     val blue = allianceLabelDescription(bluePlayoffAllianceTitle, "blue") ?: "Blue"
-    val redSpoken = spokenBreakdownValue(redValue)
-    val blueSpoken = spokenBreakdownValue(blueValue)
+    val redSpoken = spokenBreakdownValue(redValue, strings)
+    val blueSpoken = spokenBreakdownValue(blueValue, strings)
     return "$label: $red $redSpoken; $blue $blueSpoken"
 }
 
 /** A displayed breakdown value as TalkBack should say it. */
-internal fun spokenBreakdownValue(value: String): String {
+internal fun spokenBreakdownValue(
+    value: String,
+    strings: QuantityStrings,
+): String {
     val rpCount =
         value
             .takeIf { it.startsWith(BREAKDOWN_RP_PREFIX) && it.endsWith(BREAKDOWN_RP_SUFFIX) }
             ?.removePrefix(BREAKDOWN_RP_PREFIX)
             ?.removeSuffix(BREAKDOWN_RP_SUFFIX)
+            ?.toIntOrNull()
     return when {
         value == BREAKDOWN_MISSING -> "none"
         value == BREAKDOWN_YES -> "yes"
         value == BREAKDOWN_NO -> "no"
-        value == BREAKDOWN_RP_BONUS_MET -> "yes, plus 1 ranking point"
-        rpCount == "1" -> "plus 1 ranking point"
-        rpCount != null -> "plus $rpCount ranking points"
+        value == BREAKDOWN_RP_BONUS_MET -> "yes, plus ${strings.get(R.plurals.ranking_points, 1)}"
+        rpCount != null -> "plus ${strings.get(R.plurals.ranking_points, rpCount)}"
         value.startsWith(BREAKDOWN_FOUL_SIGN) -> "minus ${value.removePrefix(BREAKDOWN_FOUL_SIGN)}"
         else -> value
     }

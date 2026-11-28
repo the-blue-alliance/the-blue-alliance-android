@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -32,12 +33,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.thebluealliance.android.R
 import com.thebluealliance.android.domain.NO_VALUE
 import com.thebluealliance.android.domain.model.DistrictEventPoints
 import com.thebluealliance.android.domain.model.DistrictRanking
 import com.thebluealliance.android.ui.common.EmptyBox
 import com.thebluealliance.android.ui.common.LoadingBox
+import com.thebluealliance.android.ui.common.QuantityStrings
 import com.thebluealliance.android.ui.common.TouchPullToRefreshBox
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.components.EventRow
 import com.thebluealliance.android.ui.components.ReadingWidthBox
 import com.thebluealliance.android.ui.components.SectionHeader
@@ -382,6 +386,8 @@ private fun RankingsTab(
             val event2Points = eventPoints.getOrNull(1)
             val dcmpPoints = dcmpPoints(ranking.eventPoints)
             val rookieBonus = ranking.rookieBonus.toInt()
+            val pointTotal = ranking.pointTotal.toInt()
+            val strings = rememberQuantityStrings()
             val description =
                 districtRowDescription(
                     rank = ranking.rank,
@@ -390,7 +396,8 @@ private fun RankingsTab(
                     event2 = event2Points,
                     dcmp = dcmpPoints,
                     rookieBonus = rookieBonus,
-                    total = ranking.pointTotal.toInt(),
+                    total = pointTotal,
+                    strings = strings,
                 )
 
             Row(
@@ -444,7 +451,7 @@ private fun RankingsTab(
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
                 )
                 Text(
-                    text = "${ranking.pointTotal.toInt()} pts",
+                    text = pluralStringResource(R.plurals.points_short, pointTotal, pointTotal),
                     style = MaterialTheme.typography.labelLarge,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(0.15f).clearAndSetSemantics {},
@@ -474,13 +481,14 @@ internal fun districtRowDescription(
     dcmp: Int?,
     rookieBonus: Int,
     total: Int,
+    strings: QuantityStrings,
 ): String =
     buildList {
         add("Rank $rank")
         add("Team $teamNumber")
-        add(event1?.let { "Event 1: $it points" } ?: "Event 1 none")
-        add(event2?.let { "Event 2: $it points" } ?: "Event 2 none")
-        add(dcmp?.let { "DCMP: $it points" } ?: "DCMP none")
+        add(event1?.let { "Event 1: ${strings.get(R.plurals.points, it)}" } ?: "Event 1 none")
+        add(event2?.let { "Event 2: ${strings.get(R.plurals.points, it)}" } ?: "Event 2 none")
+        add(dcmp?.let { "DCMP: ${strings.get(R.plurals.points, it)}" } ?: "DCMP none")
         add(if (rookieBonus > 0) "rookie bonus $rookieBonus" else "rookie bonus none")
-        add("$total total points")
+        add(strings.get(R.plurals.total_points, total))
     }.joinToString(", ")

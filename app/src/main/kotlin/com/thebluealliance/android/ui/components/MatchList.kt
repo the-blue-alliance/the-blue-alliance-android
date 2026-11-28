@@ -56,6 +56,7 @@ import com.thebluealliance.android.domain.model.Match
 import com.thebluealliance.android.domain.model.PlayoffType
 import com.thebluealliance.android.domain.model.displayTitleShort
 import com.thebluealliance.android.domain.rpBonuses
+import com.thebluealliance.android.ui.common.rememberQuantityStrings
 import com.thebluealliance.android.ui.theme.allianceColors
 import com.thebluealliance.android.util.teamNumber
 import kotlinx.coroutines.flow.first
@@ -278,6 +279,7 @@ fun MatchItem(
     val label = match.getShortLabel(playoffType)
     val isPlayed = match.redScore >= 0
 
+    val strings = rememberQuantityStrings()
     val rpBonuses = remember(match.scoreBreakdown) { match.rpBonuses() }
     val displayTime = match.predictedTime ?: match.time
     val isEstimate =
@@ -285,13 +287,14 @@ fun MatchItem(
             match.time != null &&
             kotlin.math.abs(match.predictedTime - match.time) > 60
     val description =
-        remember(match, playoffType, rpBonuses) {
+        remember(match, playoffType, rpBonuses, strings) {
             matchRowDescription(
                 match = match,
                 label = match.getFullLabel(playoffType),
                 rpBonuses = rpBonuses,
                 scheduledTime = displayTime?.let(::formatMatchTimeSpoken),
                 isEstimate = isEstimate,
+                strings = strings,
             )
         }
 
