@@ -93,9 +93,10 @@ fun TooltipIconButton(
  * would sit over the first tab. TooltipBox's focus show is dropped here. Instead the button shows
  * the tooltip at default priority, which M3 hides after 1.5 s, when the first key to reach it after
  * gaining focus (Shift aside) is the release of the Tab or arrow key that moved focus there (focus
- * moves on the press, so the release goes to the newly focused button). Focus placed by the app is
- * followed by no key, or by the release of the Enter, Alt or Ctrl that opened the screen, and shows
- * nothing.
+ * moves on the press, so the release goes to the newly focused button). Keys are read before the
+ * keyboard app gets them as well as after, because the keyboard app can drop the release of a Tab
+ * that leaves a text field. Focus placed by the app is followed by no key, or by the release of the
+ * Enter, Alt or Ctrl that opened the screen, and shows nothing.
  * Hover and long press go straight to [tooltip].
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,14 +137,17 @@ internal class FocusTooltipState(
     }
 
     /**
-     * Called for each key event that reaches the focused button before the keyboard app sees it.
-     * Returns whether to show the tooltip now, as [onKey] does.
+     * Called for each key event that reaches the focused button before the keyboard app sees it,
+     * which is before [onKey] sees it. Returns whether to show the tooltip now, as [onKey] does.
+     *
+     * After a Tab out of a text field, the keyboard app can drop the release, so [onKey] never gets
+     * it; this pass still does. A release seen in both passes counts once.
      */
     fun onKeyBeforeSoftKeyboard(
         type: KeyEventType,
         key: Key,
         withAltCtrlOrMeta: Boolean,
-    ): Boolean = false
+    ): Boolean = onKey(type, key, withAltCtrlOrMeta)
 
     /**
      * Shows the tooltip for focus that [onKey] approved, unless focus has already moved on. Default
