@@ -55,7 +55,6 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -578,11 +577,8 @@ private fun DistrictStandingText(
         remember(standing, linkColor) {
             buildAnnotatedString {
                 append(districtStandingLine(standing))
-                addStyle(
-                    SpanStyle(color = linkColor, textDecoration = TextDecoration.Underline),
-                    link.first,
-                    link.last + 1,
-                )
+                // Link colour with no underline, like the app's other inline links.
+                addStyle(SpanStyle(color = linkColor), link.first, link.last + 1)
             }
         }
     var layout by remember { mutableStateOf<TextLayoutResult?>(null) }
